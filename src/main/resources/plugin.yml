@@ -1,3 +1,4 @@
 name: LevellingOverhaul
 version: ${project.version}
 main: io.github.devvydoo.levellingoverhaul.LevellingOverhaul
+api-version: 1.13
