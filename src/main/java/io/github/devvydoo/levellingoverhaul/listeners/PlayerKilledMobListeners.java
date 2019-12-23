@@ -48,6 +48,10 @@ public class PlayerKilledMobListeners implements Listener {
 
         // At this point a player has killed another entity and we can calculate their xp
         int xp = BaseExperience.getBaseExperienceFromMob(livingEntity);
+        // If we have no xp to give don't do anything
+        if (xp <= 0){
+            return;
+        }
         player.giveExp(xp); // Gives player exp
         player.sendMessage(ChatColor.YELLOW + "+" + xp + " XP");
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, (float) .5, 1);

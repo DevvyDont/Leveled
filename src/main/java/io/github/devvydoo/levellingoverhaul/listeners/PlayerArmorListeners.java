@@ -2,6 +2,7 @@ package io.github.devvydoo.levellingoverhaul.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -78,6 +79,7 @@ public class PlayerArmorListeners implements Listener {
         if (event.getPlayer().getLevel() < requiredLevel ){
             event.setCancelled(true);
             event.getPlayer().sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
+            event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
         }
 
     }
@@ -124,6 +126,7 @@ public class PlayerArmorListeners implements Listener {
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel) {
                 player.sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
+                player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
                 event.setCancelled(true);
             }
 
@@ -149,6 +152,7 @@ public class PlayerArmorListeners implements Listener {
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel) {
                 player.sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
+                player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
                 event.setCancelled(true);
             }
         }
