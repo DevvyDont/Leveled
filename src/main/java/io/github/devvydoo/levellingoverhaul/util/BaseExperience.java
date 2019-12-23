@@ -3,7 +3,7 @@ package io.github.devvydoo.levellingoverhaul.util;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
-public class BaseMobExperience {
+public class BaseExperience {
 
 
     /**
@@ -15,11 +15,6 @@ public class BaseMobExperience {
     public static int getBaseExperienceFromMob(LivingEntity mob){
         switch (mob.getType()){
 
-            case WITHER:
-            case ENDER_DRAGON:
-                return 100;
-            case ELDER_GUARDIAN:
-                return 75;
             case WITHER_SKELETON:
                 return 25;
             case GIANT:

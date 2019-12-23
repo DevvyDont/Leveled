@@ -2,6 +2,7 @@ package io.github.devvydoo.levellingoverhaul.listeners;
 
 import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,20 +21,6 @@ public class PlayerExperienceListeners implements Listener {
 
     public PlayerExperienceListeners(LevellingOverhaul plugin){
         this.plugin = plugin;
-    }
-
-    /**
-     * Every time an entity is spawned, if it's an exp orb we should cancel it
-     *
-     * @param event - The EntitySpawnEvent we are listening for
-     */
-    @EventHandler
-    public void onExpOrbSpawn(EntitySpawnEvent event){
-
-        // Is the entity being spawned an exp orb?
-        if (event.getEntity() instanceof ExperienceOrb){
-            event.setCancelled(true);  // Cancel it
-        }
     }
 
     @EventHandler
