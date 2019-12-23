@@ -32,7 +32,7 @@ public class PlayerJoinListeners implements Listener {
                     ChatColor.GOLD + " has joined for the first time!");
         } else {
             this.plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + event.getPlayer().getDisplayName() +
-                    "[Level " + event.getPlayer().getLevel() + "]" + ChatColor.GREEN + " has joined!");
+                    " [Level " + event.getPlayer().getLevel() + "]" + ChatColor.GREEN + " has joined!");
         }
     }
 

@@ -18,6 +18,9 @@ public final class LevellingOverhaul extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerKilledMobListeners(), this);
         getServer().getPluginManager().registerEvents(new VanillaExperienceCancellingListeners(), this);
 
+        // Listeners involving chat
+        getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
+
     }
 
     @Override
