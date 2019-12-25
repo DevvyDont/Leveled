@@ -18,6 +18,7 @@ public final class LevellingOverhaul extends JavaPlugin {
         // Listeners involving level capped gear
         getServer().getPluginManager().registerEvents(new PlayerArmorListeners(), this);
         getServer().getPluginManager().registerEvents(new PlayerToolListeners(), this);
+        getServer().getPluginManager().registerEvents(new EnchantmentListeners(), this);
 
         // Listeners involving chat
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
