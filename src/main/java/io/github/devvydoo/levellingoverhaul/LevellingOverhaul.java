@@ -20,6 +20,7 @@ public final class LevellingOverhaul extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerToolListeners(), this);
         getServer().getPluginManager().registerEvents(new EnchantmentListeners(), this);
         getServer().getPluginManager().registerEvents(new PortalListeners(), this);
+        getServer().getPluginManager().registerEvents(new BrewingListeners(), this);
 
         // Listeners involving chat
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
