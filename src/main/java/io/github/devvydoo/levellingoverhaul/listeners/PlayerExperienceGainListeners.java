@@ -3,21 +3,33 @@ package io.github.devvydoo.levellingoverhaul.listeners;
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.inventory.FurnaceExtractEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 
 /**
- * Listeners in charge of listening for mob kill events. This is the main source of experience for our players
+ * Listeners in charge of listening for events where we should earn xp. Not to be confused with PlayerExperienceListeners
+ * where we are just handling what we should do when we gain experience in general This class is the main source of
+ * experience for our players
  */
-public class PlayerKilledMobListeners implements Listener {
+public class PlayerExperienceGainListeners implements Listener {
 
 
+    /**
+     * Listen for events where an  entity is damaged by another entity, we should check if its a player and if they
+     * should be awarded xp for the kill
+     *
+     * @param event - The EntityDamageByEntityEvent event we are listening to
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerKillEntity(EntityDamageByEntityEvent event){
 
@@ -101,4 +113,63 @@ public class PlayerKilledMobListeners implements Listener {
         }
     }
 
+    /**
+     * Listen for when a block is broken by a player, we should see if they should be awarded xp
+     *
+     * @param event - The BlockBreakEvent we are listening for
+     */
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event){
+
+        Player player = event.getPlayer();
+        int xpGained = BaseExperience.getBaseExperienceFromBlock(event.getBlock());
+
+        // Never ever ever give someone xp for silk touch breaks
+        if (event.getPlayer().getInventory().getItemInMainHand().getItemMeta() != null) {
+            if (event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasEnchant(Enchantment.SILK_TOUCH)){
+                return;
+            }
+        }
+
+        // Did we even gain experience?
+        if (xpGained <= 0){
+            return;
+        }
+
+        // Does the player even need experience?
+        if (player.getLevel() >= BaseExperience.LEVEL_CAP){
+            return;
+        }
+
+        // Looks good to give them xp
+        player.sendMessage(ChatColor.BLUE + "+" + xpGained + " XP");
+        player.giveExp(xpGained);
+    }
+
+    /**
+     * Run this before we set the exp drop to 0, we do this so we know that the furnace was meant to drop xp before
+     * we changed it, we also override the xp ourselves
+     *
+     * @param event - the FurnaceExtractEvent we are listening for
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onSmeltExtract(FurnaceExtractEvent event){
+
+        // Was this event meant to drop xp?
+        if (event.getExpToDrop() <= 0){
+            return;
+        }
+
+        Player player = event.getPlayer();
+
+        // Does the player even need xp?
+        if (player.getLevel() >= BaseExperience.LEVEL_CAP){
+            return;
+        }
+
+        // We should be good to give xp
+        int xpGained = BaseExperience.getBaseExperienceFromSmelt(event.getItemType(), event.getItemAmount());
+        player.sendMessage(ChatColor.GOLD + "+" + xpGained + " XP");
+        player.giveExp(xpGained);
+    }
 }

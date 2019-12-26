@@ -1,5 +1,7 @@
 package io.github.devvydoo.levellingoverhaul.util;
 
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 
 public abstract class BaseExperience {
@@ -89,4 +91,62 @@ public abstract class BaseExperience {
         }
     }
 
+    /**
+     * A helper method used to calculate the amount of xp we should earn from mining a block, NOTE we should not award
+     * xp if a player breaks a block with silk touch, however we should award xp if we have auto smelt and we mine
+     * either Iron or Gold
+     *
+     * @param block - The Block we mined
+     * @return the int amount of xp to give
+     */
+    public static int getBaseExperienceFromBlock(Block block){
+        switch (block.getType()){
+
+            case COAL_ORE:
+            case IRON_ORE:
+                return 1;
+            case GOLD_ORE:
+            case LAPIS_ORE:
+            case REDSTONE_ORE:
+            case NETHER_QUARTZ_ORE:
+                return 3;
+            case DIAMOND_ORE:
+                return 7;
+            case EMERALD_ORE:
+                return 10;
+            default:
+                return 0;
+        }
+    }
+
+    /**
+     * The XP we should give a player for smelting something in a furnace
+     *
+     * @param itemStack - The items smelted
+     * @return the int amount of xp we should give
+     */
+    public static int getBaseExperienceFromSmelt(Material materialSmelted, int amount){
+
+        int base;
+        switch (materialSmelted){
+            case COOKED_BEEF:
+            case COOKED_CHICKEN:
+            case COOKED_COD:
+            case COOKED_MUTTON:
+            case COOKED_PORKCHOP:
+            case COOKED_RABBIT:
+            case COOKED_SALMON:
+            case IRON_INGOT:
+                base =  1;
+                break;
+            case GOLD_INGOT:
+                base = 3;
+                break;
+            default:
+                base = 0;
+                break;
+        }
+
+        return base * amount;
+    }
 }
