@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import java.util.HashMap;
 
@@ -56,9 +55,9 @@ public class PlayerToolListeners implements Listener {
     }
 
     /**
+     * Listen for events where a player breaks a block and make sure they are high enough level to use it
      *
-     *
-     * @param event
+     * @param event - The BlockBreakEvent we are listening to
      */
     @EventHandler
     public void onBlockBreakWithTool(BlockBreakEvent event){
@@ -76,9 +75,9 @@ public class PlayerToolListeners implements Listener {
     }
 
     /**
+     * Listen for events where a player attacks something with a tool and make sure they are high enough level to use it
      *
-     *
-     * @param event
+     * @param event - The EntityDamageByEntityEvent we are listening to
      */
     @EventHandler
     public void onPlayerAttackEntity(EntityDamageByEntityEvent event){

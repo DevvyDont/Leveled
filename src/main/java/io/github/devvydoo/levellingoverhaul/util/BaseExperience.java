@@ -1,6 +1,5 @@
 package io.github.devvydoo.levellingoverhaul.util;
 
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 public class BaseExperience {

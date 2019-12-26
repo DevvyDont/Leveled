@@ -21,7 +21,7 @@ public class LevelRewards {
         // Loop through all the levels and send a message if needed
         for (int i = oldLevel + 1; i <= newLevel; i++){
             String message = getPlayerRewardInfo(i);
-            if (message != null && !message.equals("") ){
+            if (!message.equals("") ){
                 player.sendMessage(ChatColor.LIGHT_PURPLE + "Level " + i + " unlocks: " + ChatColor.AQUA + message);
             }
         }

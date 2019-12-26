@@ -9,16 +9,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MiscEquipmentListeners implements Listener {
 
-    private final int ENDER_EQUIPMENT_LEVEL_CAP = 60;
     private HashMap<Material, Integer> equipmentRequirements;
 
     public MiscEquipmentListeners(){
+
+        final int ENDER_EQUIPMENT_LEVEL_CAP = 60;
+
         this.equipmentRequirements = new HashMap<>();
 
         this.equipmentRequirements.put(Material.ENDER_PEARL, ENDER_EQUIPMENT_LEVEL_CAP);
@@ -29,6 +29,8 @@ public class MiscEquipmentListeners implements Listener {
 
     @EventHandler
     public void onItemInteract(PlayerInteractEvent event){
+
+
 
         Player player = event.getPlayer();
         Action action = event.getAction();
