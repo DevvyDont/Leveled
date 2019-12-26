@@ -2,7 +2,9 @@ package io.github.devvydoo.levellingoverhaul.util;
 
 import org.bukkit.entity.LivingEntity;
 
-public class BaseExperience {
+public abstract class BaseExperience {
+
+    public static final int LEVEL_CAP = 100;
 
 
     /**

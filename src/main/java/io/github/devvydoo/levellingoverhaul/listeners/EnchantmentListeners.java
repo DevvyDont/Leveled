@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -11,11 +12,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class EnchantmentListeners implements Listener {
 
-
     @EventHandler
     public void onEnchantmentTableInteract(PlayerInteractEvent event){
-
-        final int ENCHANT_LEVEL_CAP = 30;
 
         // Are we right clicking a block
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
@@ -34,11 +32,10 @@ public class EnchantmentListeners implements Listener {
         }
 
         // Are we a high enough level
-        if (event.getPlayer().getLevel() < ENCHANT_LEVEL_CAP){
+        if (event.getPlayer().getLevel() < LevelRewards.ENCHANTING_UNLOCK){
             event.setCancelled(true);
-            event.getPlayer().sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + ENCHANT_LEVEL_CAP + ChatColor.RED + " to enchant!");
+            event.getPlayer().sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.ENCHANTING_UNLOCK + ChatColor.RED + " to enchant!");
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, .3f, .7f);
         }
     }
-
 }

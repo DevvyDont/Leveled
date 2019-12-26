@@ -46,8 +46,8 @@ public class PlayerKilledMobListeners implements Listener {
         Player player = (Player) event.getDamager();
 
         // Does the player even need xp? i.e. are they max level
-        if (player.getLevel() >= 100){
-            player.setLevel(100);
+        if (player.getLevel() >= BaseExperience.LEVEL_CAP){
+            player.setLevel(BaseExperience.LEVEL_CAP);
             player.setExp((float) .9999);
             return;
         }

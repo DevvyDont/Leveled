@@ -1,6 +1,7 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
 import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
+import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -42,12 +43,12 @@ public class PlayerExperienceListeners implements Listener {
     public void onPlayerLevelChange(PlayerLevelChangeEvent event){
 
         // Our plugin is probably modifying the level, don't do anything
-        if (event.getOldLevel() >= 100){
+        if (event.getOldLevel() >= BaseExperience.LEVEL_CAP){
             return;
         }
 
         // We just hit max level
-        if (event.getNewLevel() == 100){
+        if (event.getNewLevel() == BaseExperience.LEVEL_CAP){
             event.getPlayer().setExp((float) .9999);
             this.plugin.getServer().broadcastMessage(ChatColor.RED + event.getPlayer().getDisplayName() + ChatColor.GOLD + " is now maxed, level " + ChatColor.RED + event.getNewLevel());
             LevelRewards.playerLeveledUp(event.getPlayer(), event.getOldLevel(), event.getNewLevel());

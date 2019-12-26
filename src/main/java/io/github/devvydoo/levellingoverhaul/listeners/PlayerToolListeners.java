@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -24,29 +25,29 @@ public class PlayerToolListeners implements Listener {
         toolLevelRequirements.put(Material.WOODEN_SHOVEL, 1);
         toolLevelRequirements.put(Material.WOODEN_SWORD, 1);
 
-        toolLevelRequirements.put(Material.STONE_PICKAXE, 5);
-        toolLevelRequirements.put(Material.STONE_HOE, 5);
-        toolLevelRequirements.put(Material.STONE_AXE, 5);
-        toolLevelRequirements.put(Material.STONE_SHOVEL, 5);
-        toolLevelRequirements.put(Material.STONE_SWORD, 5);
+        toolLevelRequirements.put(Material.STONE_PICKAXE, LevelRewards.STONE_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.STONE_HOE, LevelRewards.STONE_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.STONE_AXE, LevelRewards.STONE_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.STONE_SHOVEL, LevelRewards.STONE_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.STONE_SWORD, LevelRewards.STONE_TOOLS_UNLOCK);
 
-        toolLevelRequirements.put(Material.GOLDEN_PICKAXE, 15);
-        toolLevelRequirements.put(Material.GOLDEN_HOE, 15);
-        toolLevelRequirements.put(Material.GOLDEN_AXE, 15);
-        toolLevelRequirements.put(Material.GOLDEN_SHOVEL, 15);
-        toolLevelRequirements.put(Material.GOLDEN_SWORD, 15);
+        toolLevelRequirements.put(Material.GOLDEN_PICKAXE, LevelRewards.GOLDEN_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.GOLDEN_HOE, LevelRewards.GOLDEN_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.GOLDEN_AXE, LevelRewards.GOLDEN_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.GOLDEN_SHOVEL, LevelRewards.GOLDEN_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.GOLDEN_SWORD, LevelRewards.GOLDEN_TOOLS_UNLOCK);
 
-        toolLevelRequirements.put(Material.IRON_PICKAXE, 25);
-        toolLevelRequirements.put(Material.IRON_HOE, 25);
-        toolLevelRequirements.put(Material.IRON_AXE, 25);
-        toolLevelRequirements.put(Material.IRON_SHOVEL, 25);
-        toolLevelRequirements.put(Material.IRON_SWORD, 25);
+        toolLevelRequirements.put(Material.IRON_PICKAXE, LevelRewards.IRON_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.IRON_HOE, LevelRewards.IRON_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.IRON_AXE, LevelRewards.IRON_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.IRON_SHOVEL, LevelRewards.IRON_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.IRON_SWORD, LevelRewards.IRON_TOOLS_UNLOCK);
 
-        toolLevelRequirements.put(Material.DIAMOND_PICKAXE, 40);
-        toolLevelRequirements.put(Material.DIAMOND_HOE, 40);
-        toolLevelRequirements.put(Material.DIAMOND_AXE, 40);
-        toolLevelRequirements.put(Material.DIAMOND_SHOVEL, 40);
-        toolLevelRequirements.put(Material.DIAMOND_SWORD, 40);
+        toolLevelRequirements.put(Material.DIAMOND_PICKAXE, LevelRewards.DIAMOND_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.DIAMOND_HOE, LevelRewards.DIAMOND_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.DIAMOND_AXE, LevelRewards.DIAMOND_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.DIAMOND_SHOVEL, LevelRewards.DIAMOND_TOOLS_UNLOCK);
+        toolLevelRequirements.put(Material.DIAMOND_SWORD, LevelRewards.DIAMOND_TOOLS_UNLOCK);
     }
 
     private void cancelEquipmentUse(Player player, int requiredLevel){

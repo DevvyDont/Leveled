@@ -7,10 +7,28 @@ import org.bukkit.entity.Player;
 /**
  * This class ensures that players are told what they unlocked when they level up
  */
-public class LevelRewards {
+public abstract class LevelRewards {
+
+    public static final int STONE_TOOLS_UNLOCK = 5;
+    public static final int LEATHER_ARMOR_UNLOCK = 10;
+    public static final int GOLDEN_TOOLS_UNLOCK = 15;
+    public static final int GOLDEN_ARMOR_UNLOCK = 20;
+    public static final int IRON_TOOLS_UNLOCK = 25;
+    public static final int CHAINMAIL_ARMOR_UNLOCK = 30;
+    public static final int ENCHANTING_UNLOCK = CHAINMAIL_ARMOR_UNLOCK;
+    public static final int IRON_ARMOR_UNLOCK = 35;
+    public static final int DIAMOND_TOOLS_UNLOCK = 40;
+    public static final int NETHER_UNLOCK = DIAMOND_TOOLS_UNLOCK;
+    public static final int BREWING_UNLOCK = 45;
+    public static final int DIAMOND_ARMOR_UNLOCK = 50;
+    public static final int THE_END_UNLOCK = 60;
+    public static final int UNIVERSAL_CRAFTING_ABILITY_UNLOCK = 70;
+    public static final int CRAFT_WITHER_SKULLS_UNLOCK = 80;  // TODO: Implement
+    public static final int FLIGHT_FEATHER_UNLOCK = 90;  // TODO: Implement
+    public static final int UNBREAKABLE_TOOLS_UNLOCK = BaseExperience.LEVEL_CAP;  // TODO: Implement
 
     /**
-     * Call this method everytime a player levels up, this will tell them their unlocks
+     * Call this method every time a player levels up, this will tell them their unlocks
      *
      * @param player - The Player that leveled up
      * @param oldLevel - Their old level
@@ -34,35 +52,35 @@ public class LevelRewards {
      */
     private static String getPlayerRewardInfo(int level){
         switch (level){
-            case 5:
+            case STONE_TOOLS_UNLOCK:
                 return "You may now use Stone Tools!";
-            case 10:
+            case LEATHER_ARMOR_UNLOCK:
                 return "You may now wear Leather Armor!";
-            case 15:
+            case GOLDEN_TOOLS_UNLOCK:
                 return "You may now use Golden Tools!";
-            case 20:
+            case GOLDEN_ARMOR_UNLOCK:
                 return "You may now wear Golden Armor!";
-            case 25:
+            case IRON_TOOLS_UNLOCK:
                 return "You may now use Iron Tools!";
-            case 30:
+            case CHAINMAIL_ARMOR_UNLOCK:
                 return "You now have access to Enchanting and Chainmail Armor!";
-            case 35:
+            case IRON_ARMOR_UNLOCK:
                 return "You may now wear Iron Armor!";
-            case 40:
-                return "You may now use Diamond Tools!";
-            case 45:
+            case DIAMOND_TOOLS_UNLOCK:
+                return "You may now use Diamond Tools and travel to the Nether!";
+            case BREWING_UNLOCK:
                 return "You now have access to Potion Brewing!";
-            case 50:
+            case DIAMOND_ARMOR_UNLOCK:
                 return "You may now wear Diamond Armor!";
-            case 60:
+            case THE_END_UNLOCK:
                 return "You may now use Ender Chests, Ender Pearls, Shulker Boxes, and travel to The End!";
-            case 70:
+            case UNIVERSAL_CRAFTING_ABILITY_UNLOCK:
                 return "You have unlocked the ability to craft anywhere! Open the crafting menu by sneak right clicking with nothing in your hand.";
-            case 80:
+            case CRAFT_WITHER_SKULLS_UNLOCK:
                 return "You have unlocked the ability to craft Wither Skulls with a skeleton head, obsidian, and coal blocks!";
-            case 90:
+            case FLIGHT_FEATHER_UNLOCK:
                 return "You now have the ability to name your items on the go! Use the /name command.";
-            case 100:
+            case UNBREAKABLE_TOOLS_UNLOCK:
                 return "Congrats on reaching max level! Your tools/armor are now unbreakable.";
             default:
                 return "";

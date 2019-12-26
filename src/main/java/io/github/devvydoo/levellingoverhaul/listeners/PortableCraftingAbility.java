@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,11 +13,9 @@ public class PortableCraftingAbility implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event){
 
-        final int PORTABLE_CRAFTING_ABILITY_LEVEL_UNLOCK = 70;
-
         Player player = event.getPlayer();
         // Are we a high enough level?
-        if (player.getLevel() < PORTABLE_CRAFTING_ABILITY_LEVEL_UNLOCK){
+        if (player.getLevel() < LevelRewards.UNIVERSAL_CRAFTING_ABILITY_UNLOCK){
             return;
         }
 

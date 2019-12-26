@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -25,30 +26,30 @@ public class PlayerArmorListeners implements Listener {
 
         materialLevelCaps = new HashMap<>();
 
-        materialLevelCaps.put(Material.LEATHER_HELMET, 10);
-        materialLevelCaps.put(Material.LEATHER_CHESTPLATE, 10);
-        materialLevelCaps.put(Material.LEATHER_LEGGINGS, 10);
-        materialLevelCaps.put(Material.LEATHER_BOOTS, 10);
+        materialLevelCaps.put(Material.LEATHER_HELMET, LevelRewards.LEATHER_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.LEATHER_CHESTPLATE, LevelRewards.LEATHER_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.LEATHER_LEGGINGS, LevelRewards.LEATHER_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.LEATHER_BOOTS, LevelRewards.LEATHER_ARMOR_UNLOCK);
 
-        materialLevelCaps.put(Material.GOLDEN_HELMET, 20);
-        materialLevelCaps.put(Material.GOLDEN_CHESTPLATE, 20);
-        materialLevelCaps.put(Material.GOLDEN_LEGGINGS, 20);
-        materialLevelCaps.put(Material.GOLDEN_BOOTS, 20);
+        materialLevelCaps.put(Material.GOLDEN_HELMET, LevelRewards.GOLDEN_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.GOLDEN_CHESTPLATE, LevelRewards.GOLDEN_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.GOLDEN_LEGGINGS, LevelRewards.GOLDEN_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.GOLDEN_BOOTS, LevelRewards.GOLDEN_ARMOR_UNLOCK);
 
-        materialLevelCaps.put(Material.CHAINMAIL_HELMET, 30);
-        materialLevelCaps.put(Material.CHAINMAIL_CHESTPLATE, 30);
-        materialLevelCaps.put(Material.CHAINMAIL_LEGGINGS, 30);
-        materialLevelCaps.put(Material.CHAINMAIL_BOOTS, 30);
+        materialLevelCaps.put(Material.CHAINMAIL_HELMET, LevelRewards.CHAINMAIL_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.CHAINMAIL_CHESTPLATE, LevelRewards.CHAINMAIL_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.CHAINMAIL_LEGGINGS, LevelRewards.CHAINMAIL_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.CHAINMAIL_BOOTS, LevelRewards.CHAINMAIL_ARMOR_UNLOCK);
 
-        materialLevelCaps.put(Material.IRON_HELMET, 35);
-        materialLevelCaps.put(Material.IRON_CHESTPLATE, 35);
-        materialLevelCaps.put(Material.IRON_LEGGINGS, 35);
-        materialLevelCaps.put(Material.IRON_BOOTS, 35);
+        materialLevelCaps.put(Material.IRON_HELMET, LevelRewards.IRON_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.IRON_CHESTPLATE, LevelRewards.IRON_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.IRON_LEGGINGS, LevelRewards.IRON_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.IRON_BOOTS, LevelRewards.IRON_ARMOR_UNLOCK);
 
-        materialLevelCaps.put(Material.DIAMOND_HELMET, 50);
-        materialLevelCaps.put(Material.DIAMOND_CHESTPLATE, 50);
-        materialLevelCaps.put(Material.DIAMOND_LEGGINGS, 50);
-        materialLevelCaps.put(Material.DIAMOND_BOOTS, 50);
+        materialLevelCaps.put(Material.DIAMOND_HELMET, LevelRewards.DIAMOND_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.DIAMOND_CHESTPLATE, LevelRewards.DIAMOND_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.DIAMOND_LEGGINGS, LevelRewards.DIAMOND_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.DIAMOND_BOOTS, LevelRewards.DIAMOND_ARMOR_UNLOCK);
     }
 
     /**

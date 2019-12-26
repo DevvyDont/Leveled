@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,9 +29,6 @@ public class PortalListeners implements Listener {
     @EventHandler
     public void onNetherTeleport(PlayerPortalEvent event){
 
-        final int NETHER_LEVEL_CAP = 40;
-        final int END_LEVEL_CAP = 60;
-
         if (event.getTo() == null){
             return;
         }
@@ -43,17 +41,17 @@ public class PortalListeners implements Listener {
 
         if (event.getTo().getWorld().getEnvironment().equals(World.Environment.NETHER)){
 
-            if (player.getLevel() < NETHER_LEVEL_CAP){
+            if (player.getLevel() < LevelRewards.NETHER_UNLOCK){
                 event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + NETHER_LEVEL_CAP + ChatColor.RED + " to use this portal!");
+                event.getPlayer().sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.NETHER_UNLOCK + ChatColor.RED + " to use this portal!");
                 event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, .3f, .7f);
             }
 
         } else if (event.getTo().getWorld().getEnvironment().equals(World.Environment.THE_END)){
 
-            if (player.getLevel() < END_LEVEL_CAP){
+            if (player.getLevel() < LevelRewards.THE_END_UNLOCK){
                 event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + END_LEVEL_CAP + ChatColor.RED + " to use this portal!");
+                event.getPlayer().sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.THE_END_UNLOCK + ChatColor.RED + " to use this portal!");
                 event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, .3f, .7f);
                 event.getPlayer().teleport(findFreeSpot(player.getLocation().add(0, 1, 0)));
             }
