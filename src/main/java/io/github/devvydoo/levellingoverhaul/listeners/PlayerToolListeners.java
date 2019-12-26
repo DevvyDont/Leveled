@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -51,7 +52,7 @@ public class PlayerToolListeners implements Listener {
     }
 
     private void cancelEquipmentUse(Player player, int requiredLevel){
-        player.sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to use that item!");
+        BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to use that item!");
         player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
     }
 

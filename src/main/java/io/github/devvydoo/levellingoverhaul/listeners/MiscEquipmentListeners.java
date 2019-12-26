@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -68,16 +69,16 @@ public class MiscEquipmentListeners implements Listener {
         // We may potentially run into issues, check their main hand first
         if (mainHandNeedsChecked && player.getLevel() < equipmentRequirements.get(itemInHand.getType())){
             event.setCancelled(true);
-            player.sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(itemInHand.getType()) + ChatColor.RED + " to use this item!");
+            BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(itemInHand.getType()) + ChatColor.RED + " to use this item!");
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, .3f, .7f);
         // Now check their offhand
         } else if (offhandNeedsChecked && player.getLevel() < equipmentRequirements.get(itemInOffhand.getType())){
             event.setCancelled(true);
-            player.sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(itemInOffhand.getType()) + ChatColor.RED + " to use this item!");
+            BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(itemInOffhand.getType()) + ChatColor.RED + " to use this item!");
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, .3f, .7f);
         } else if (blockClickedNeedsChecked && player.getLevel() < equipmentRequirements.get(event.getClickedBlock().getType())){
             event.setCancelled(true);
-            player.sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(event.getClickedBlock().getType()) + ChatColor.RED + " to interact with this item!");
+            BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(event.getClickedBlock().getType()) + ChatColor.RED + " to interact with this item!");
             player.playSound(player.getLocation(), Sound.BLOCK_ENDER_CHEST_CLOSE, .3f, .7f);
         }
 

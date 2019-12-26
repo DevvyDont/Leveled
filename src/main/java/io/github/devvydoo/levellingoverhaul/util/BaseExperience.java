@@ -1,12 +1,26 @@
 package io.github.devvydoo.levellingoverhaul.util;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 public abstract class BaseExperience {
 
     public static final int LEVEL_CAP = 100;
+
+    /**
+     * Helper method to display stuff on the action bar, mainly when xp is gained
+     *
+     * @param player
+     * @param message
+     */
+    public static void displayActionBarText(Player player, String message){
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+    }
 
 
     /**

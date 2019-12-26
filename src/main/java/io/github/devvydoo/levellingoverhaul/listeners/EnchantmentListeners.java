@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -34,7 +35,7 @@ public class EnchantmentListeners implements Listener {
         // Are we a high enough level
         if (event.getPlayer().getLevel() < LevelRewards.ENCHANTING_UNLOCK){
             event.setCancelled(true);
-            event.getPlayer().sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.ENCHANTING_UNLOCK + ChatColor.RED + " to enchant!");
+            BaseExperience.displayActionBarText(event.getPlayer(), ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.ENCHANTING_UNLOCK + ChatColor.RED + " to enchant!");
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, .3f, .7f);
         }
     }

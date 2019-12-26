@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -39,7 +40,7 @@ public class BrewingListeners implements Listener {
         // Are we a high enough level?
         if (player.getLevel() < LevelRewards.BREWING_UNLOCK){
             event.setCancelled(true);
-            player.sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to brew potions!");
+            BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to brew potions!");
             player.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, .3f, .7f);
         }
     }
@@ -57,7 +58,7 @@ public class BrewingListeners implements Listener {
         // Are we high enough level?
         if (player.getLevel() < LevelRewards.BREWING_UNLOCK){
             event.setCancelled(true);
-            player.sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to drink potions!");
+            BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to drink potions!");
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, .3f, .7f);
         }
     }

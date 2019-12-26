@@ -1,6 +1,8 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -71,8 +73,9 @@ public class PlayerExperienceGainListeners implements Listener {
             return;
         }
         player.giveExp(xp); // Gives player exp
-        player.sendMessage(ChatColor.YELLOW + "+" + xp + " XP");
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, (float) .5, 1);
+
+        BaseExperience.displayActionBarText(player, ChatColor.YELLOW + "+" + xp + " XP");
     }
 
     /**
@@ -142,8 +145,9 @@ public class PlayerExperienceGainListeners implements Listener {
         }
 
         // Looks good to give them xp
-        player.sendMessage(ChatColor.BLUE + "+" + xpGained + " XP");
         player.giveExp(xpGained);
+        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .5f, 1);
+        BaseExperience.displayActionBarText(player, ChatColor.BLUE + "+" + xpGained + " XP");
     }
 
     /**
@@ -169,7 +173,8 @@ public class PlayerExperienceGainListeners implements Listener {
 
         // We should be good to give xp
         int xpGained = BaseExperience.getBaseExperienceFromSmelt(event.getItemType(), event.getItemAmount());
-        player.sendMessage(ChatColor.GOLD + "+" + xpGained + " XP");
+        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .5f, 1);
+        BaseExperience.displayActionBarText(player, ChatColor.GOLD + "+" + xpGained + " XP");
         player.giveExp(xpGained);
     }
 }

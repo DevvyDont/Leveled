@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -79,8 +80,8 @@ public class PlayerArmorListeners implements Listener {
         int requiredLevel = materialLevelCaps.get(event.getItem().getType());
         if (event.getPlayer().getLevel() < requiredLevel ){
             event.setCancelled(true);
-            event.getPlayer().sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
+            BaseExperience.displayActionBarText(event.getPlayer(), ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
         }
 
     }
@@ -126,7 +127,7 @@ public class PlayerArmorListeners implements Listener {
 
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel) {
-                player.sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
+                BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
                 event.setCancelled(true);
             }
@@ -152,7 +153,7 @@ public class PlayerArmorListeners implements Listener {
 
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel) {
-                player.sendMessage(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
+                BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
                 event.setCancelled(true);
             }
