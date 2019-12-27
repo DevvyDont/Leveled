@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul;
 
+import io.github.devvydoo.levellingoverhaul.enchantments.ExplosiveTouch;
 import io.github.devvydoo.levellingoverhaul.listeners.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,6 +24,9 @@ public final class LevellingOverhaul extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BrewingListeners(), this);
         getServer().getPluginManager().registerEvents(new MiscEquipmentListeners(), this);
         getServer().getPluginManager().registerEvents(new PortableCraftingAbility(), this);
+
+        // Listeners involving custom enchantments
+        getServer().getPluginManager().registerEvents(new ExplosiveTouch(), this);
 
         // Listeners involving chat
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
