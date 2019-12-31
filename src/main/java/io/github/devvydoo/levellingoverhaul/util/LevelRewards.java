@@ -12,9 +12,12 @@ public abstract class LevelRewards {
     public static final int STONE_TOOLS_UNLOCK = 5;
     public static final int LEATHER_ARMOR_UNLOCK = 10;
     public static final int GOLDEN_TOOLS_UNLOCK = 15;
+    public static final int NORMAL_BOW_UNLOCK = GOLDEN_TOOLS_UNLOCK;
     public static final int GOLDEN_ARMOR_UNLOCK = 20;
+    public static final int SHIELD_UNLOCK = GOLDEN_ARMOR_UNLOCK;
     public static final int IRON_TOOLS_UNLOCK = 25;
     public static final int CHAINMAIL_ARMOR_UNLOCK = 30;
+    public static final int CROSSBOW_UNLOCK = CHAINMAIL_ARMOR_UNLOCK;
     public static final int ENCHANTING_UNLOCK = CHAINMAIL_ARMOR_UNLOCK;
     public static final int IRON_ARMOR_UNLOCK = 35;
     public static final int DIAMOND_TOOLS_UNLOCK = 40;
@@ -57,13 +60,13 @@ public abstract class LevelRewards {
             case LEATHER_ARMOR_UNLOCK:
                 return "You may now wear Leather Armor!";
             case GOLDEN_TOOLS_UNLOCK:
-                return "You may now use Golden Tools!";
+                return "You may now use Golden Tools and Bows!";
             case GOLDEN_ARMOR_UNLOCK:
-                return "You may now wear Golden Armor!";
+                return "You may now wear Golden Armor and use Shields!";
             case IRON_TOOLS_UNLOCK:
                 return "You may now use Iron Tools!";
             case CHAINMAIL_ARMOR_UNLOCK:
-                return "You now have access to Enchanting and Chainmail Armor!";
+                return "You now have access to Enchanting, Chainmail Armor and Crossbows!";
             case IRON_ARMOR_UNLOCK:
                 return "You may now wear Iron Armor!";
             case DIAMOND_TOOLS_UNLOCK:
