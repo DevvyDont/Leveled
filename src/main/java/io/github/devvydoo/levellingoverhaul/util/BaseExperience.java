@@ -117,16 +117,20 @@ public abstract class BaseExperience {
         switch (block.getType()){
 
             case COAL_ORE:
-            case IRON_ORE:
-                return 1;
-            case GOLD_ORE:
+
+                if (Math.random() < .5){
+                    return 1;
+                } else {
+                    return 0;
+                }
+
             case LAPIS_ORE:
             case REDSTONE_ORE:
-            case NETHER_QUARTZ_ORE:
                 return 3;
             case DIAMOND_ORE:
                 return 7;
             case EMERALD_ORE:
+            case NETHER_QUARTZ_ORE:
                 return 10;
             default:
                 return 0;
@@ -136,7 +140,7 @@ public abstract class BaseExperience {
     /**
      * The XP we should give a player for smelting something in a furnace
      *
-     * @param itemStack - The items smelted
+     * @param materialSmelted - The items smelted
      * @return the int amount of xp we should give
      */
     public static int getBaseExperienceFromSmelt(Material materialSmelted, int amount){
@@ -150,11 +154,14 @@ public abstract class BaseExperience {
             case COOKED_PORKCHOP:
             case COOKED_RABBIT:
             case COOKED_SALMON:
-            case IRON_INGOT:
+            case DRIED_KELP:
                 base =  1;
                 break;
+            case IRON_INGOT:
+                base = 2;
+                break;
             case GOLD_INGOT:
-                base = 3;
+                base = 4;
                 break;
             default:
                 base = 0;
