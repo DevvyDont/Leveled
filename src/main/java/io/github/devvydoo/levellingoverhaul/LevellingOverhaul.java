@@ -10,6 +10,9 @@ public final class LevellingOverhaul extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
 
+        // Listeners that change how natural progression works
+        getServer().getPluginManager().registerEvents(new ProgressionModifyingListeners(), this);
+
         // Register listeners regarding experience
         getServer().getPluginManager().registerEvents(new PlayerJoinListeners(this), this);
         getServer().getPluginManager().registerEvents(new PlayerExperienceListeners(this), this);
