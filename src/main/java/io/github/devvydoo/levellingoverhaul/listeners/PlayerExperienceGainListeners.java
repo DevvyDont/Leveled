@@ -6,6 +6,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -52,12 +53,26 @@ public class PlayerExperienceGainListeners implements Listener {
             return;
         }
 
-        // Are they dying to a player?
-        if (!(event.getDamager() instanceof Player)){
+        // Are they dying to a player or an arrow?
+        if (!(event.getDamager() instanceof Player || event.getDamager() instanceof Arrow)){
             return;
         }
+        Player player;
+        // Are they dying to a player shooting an arrow?
+        if (event.getDamager() instanceof Arrow){
+            Arrow arrow = (Arrow) event.getDamager();
 
-        Player player = (Player) event.getDamager();
+            // If a player didn't shoot the arrow, we don't care
+            if (!(arrow.getShooter() instanceof Player)){
+                return;
+            }
+
+            player = (Player) arrow.getShooter();
+        } else {
+            // We know that we are dying straight from a player.
+            player = (Player) event.getDamager();
+        }
+
 
         // Does the player even need xp? i.e. are they max level
         if (player.getLevel() >= BaseExperience.LEVEL_CAP){
