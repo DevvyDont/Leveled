@@ -105,6 +105,19 @@ public abstract class BaseExperience {
             case TURTLE:
             case POLAR_BEAR:
                 return 1;
+            case PLAYER:
+                // In the event a player kills another player, we are just going to give their xp to them
+                Player deadPlayer = (Player) mob;
+                // Maxed players don't drop xp
+                if (deadPlayer.getLevel() >= BaseExperience.LEVEL_CAP){
+                    return 0;
+                }
+                // Super edge case where if we killed a player that had a full xp bar
+                if (deadPlayer.getExp() == 1){
+                        deadPlayer.setExp(.9999f);
+                }
+                // Math yay
+                return (int) (deadPlayer.getExpToLevel() * deadPlayer.getExp());
             default:
                 return 0;
 
