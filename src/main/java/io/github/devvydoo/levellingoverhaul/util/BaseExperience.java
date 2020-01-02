@@ -2,7 +2,6 @@ package io.github.devvydoo.levellingoverhaul.util;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
@@ -11,6 +10,13 @@ import org.bukkit.entity.Player;
 public abstract class BaseExperience {
 
     public static final int LEVEL_CAP = 100;
+
+    /**
+     * Because of how sanity checked xp gains are, we need a 'safe level' that we can set a player to to use as a
+     * case where we ignore logic. This will be useful if we ever implement commands that allow us to set a user's
+     * level, otherwise the command won't function properly since LevelChange events will still be fired
+     */
+    public static final int DEBUG_LEVEL = 77777777;
 
     /**
      * Helper method to display stuff on the action bar, mainly when xp is gained
