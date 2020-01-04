@@ -4,6 +4,7 @@ import io.github.devvydoo.levellingoverhaul.enchantments.ExplosiveTouch;
 import io.github.devvydoo.levellingoverhaul.listeners.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
+
 public final class LevellingOverhaul extends JavaPlugin {
 
     @Override

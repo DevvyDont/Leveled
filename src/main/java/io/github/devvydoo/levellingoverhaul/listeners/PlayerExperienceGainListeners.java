@@ -15,6 +15,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 
 /**
  * Listeners in charge of listening for events where we should earn xp. Not to be confused with PlayerExperienceListeners
@@ -188,5 +189,33 @@ public class PlayerExperienceGainListeners implements Listener {
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .5f, 1);
         BaseExperience.displayActionBarText(player, ChatColor.GOLD + "+" + xpGained + " XP");
         player.giveExp(xpGained);
+    }
+
+    /**
+     * Listen for when players earn advancements, and give them xp
+     *
+     * @param event - The PlayerAdvancementDoneEvent we are listening to
+     */
+    @EventHandler
+    public void onAdvancementEarn(PlayerAdvancementDoneEvent event){
+
+        int xpEarned = BaseExperience.getBaseExperienceFromAdvancement(event.getAdvancement());
+
+        // Valid advancement?
+        if (xpEarned <= 0){
+            return;
+        }
+
+        Player player = event.getPlayer();
+
+        // Is the player at the level cap?
+        if (player.getLevel() >= BaseExperience.LEVEL_CAP){
+            return;
+        }
+
+        // Gib xp
+        player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, .5f, 1);
+        BaseExperience.displayActionBarText(player, ChatColor.GREEN + "Challenge Completed! " + ChatColor.LIGHT_PURPLE + "+" + xpEarned + " XP");
+        player.giveExp(xpEarned);
     }
 }
