@@ -15,6 +15,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scheduler.BukkitScheduler;
 
 /**
  * This class is specifically designed to cancel all events in vanilla Minecraft that spawn EXP orbs, this is because
@@ -23,6 +24,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class VanillaExperienceCancellingListeners implements Listener {
 
     private LevellingOverhaul plugin;
+    private XPOrbKillerTask xpOrbKillerTask = null;
 
     public VanillaExperienceCancellingListeners(LevellingOverhaul plugin){
         this.plugin = plugin;
@@ -115,9 +117,15 @@ public class VanillaExperienceCancellingListeners implements Listener {
             return;
         }
 
+        // Is a task somehow still running
+        BukkitScheduler scheduler = this.plugin.getServer().getScheduler();
+        if (scheduler.isCurrentlyRunning(xpOrbKillerTask.getTaskId()) || scheduler.isQueued(xpOrbKillerTask.getTaskId())){
+            xpOrbKillerTask.cancel();
+        }
+
         // Kill xp orbs
-        XPOrbKillerTask killXPOrbsTask = new XPOrbKillerTask(dragonsWorld, 60);
-        killXPOrbsTask.runTaskTimer(this.plugin, 1, 5);
+        xpOrbKillerTask = new XPOrbKillerTask(dragonsWorld, 60);
+        xpOrbKillerTask.runTaskTimer(this.plugin, 1, 5);
     }
 
 }
