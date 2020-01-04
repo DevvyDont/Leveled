@@ -46,22 +46,22 @@ public class ExplosiveTouch implements Listener {
         event.getBlock().getWorld().createExplosion(event.getBlock().getLocation(), explosionPower);
     }
 
-    // Debug event that gives an item with our custom enchantment
-    @EventHandler
-    public void onCraftingTableInteract(PlayerInteractEvent event){
-
-        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-            if (event.getClickedBlock().getType().equals(Material.CRAFTING_TABLE)){
-                ItemStack explosiveShovel = new ItemStack(Material.WOODEN_SHOVEL);
-                CustomEnchantments.addEnchant(explosiveShovel, CustomEnchantType.EXPLOSIVE_TOUCH, count);
-                count++;
-                ItemMeta shovelMeta = explosiveShovel.getItemMeta();
-                shovelMeta.setDisplayName(ChatColor.RED + "Explosive Shovel");
-                explosiveShovel.setItemMeta(shovelMeta);
-                event.getPlayer().getInventory().addItem(explosiveShovel);
-            }
-        }
-
-    }
+//    // Debug event that gives an item with our custom enchantment
+//    @EventHandler
+//    public void onCraftingTableInteract(PlayerInteractEvent event){
+//
+//        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
+//            if (event.getClickedBlock().getType().equals(Material.CRAFTING_TABLE)){
+//                ItemStack explosiveShovel = new ItemStack(Material.WOODEN_SHOVEL);
+//                CustomEnchantments.addEnchant(explosiveShovel, CustomEnchantType.EXPLOSIVE_TOUCH, count);
+//                count++;
+//                ItemMeta shovelMeta = explosiveShovel.getItemMeta();
+//                shovelMeta.setDisplayName(ChatColor.RED + "Explosive Shovel");
+//                explosiveShovel.setItemMeta(shovelMeta);
+//                event.getPlayer().getInventory().addItem(explosiveShovel);
+//            }
+//        }
+//
+//    }
 
 }

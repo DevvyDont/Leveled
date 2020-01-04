@@ -199,6 +199,11 @@ public class PlayerExperienceGainListeners implements Listener {
     @EventHandler
     public void onAdvancementEarn(PlayerAdvancementDoneEvent event){
 
+        // We don't care about recipe advancements
+        if (event.getAdvancement().getKey().toString().startsWith("minecraft:recipes")){
+            return;
+        }
+
         int xpEarned = BaseExperience.getBaseExperienceFromAdvancement(event.getAdvancement());
 
         // Valid advancement?
