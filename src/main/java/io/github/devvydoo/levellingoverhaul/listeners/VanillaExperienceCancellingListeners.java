@@ -13,8 +13,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.scheduler.BukkitScheduler;
 
 /**
@@ -95,6 +98,29 @@ public class VanillaExperienceCancellingListeners implements Listener {
                 event.getPlayer().sendMessage(ChatColor.RED + "Grindstone is currently disabled!");
             }
         }
+    }
+
+    @EventHandler
+    public void onTrade(InventoryClickEvent event){
+
+        if (!(event.getClickedInventory() instanceof MerchantInventory)){
+            return;
+        }
+
+        if (!(event.getSlotType().equals(InventoryType.SlotType.RESULT))){
+            return;
+        }
+
+        if (event.getCurrentItem() == null){
+            return;
+        }
+
+        if (event.getCurrentItem().getType().equals(Material.AIR)){
+            return;
+        }
+
+        XPOrbKillerTask task = new XPOrbKillerTask(event.getWhoClicked().getWorld(), 10);
+        task.runTaskTimer(this.plugin, 1, 1);
     }
 
     /**
