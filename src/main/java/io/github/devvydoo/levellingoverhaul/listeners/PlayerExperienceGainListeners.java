@@ -134,8 +134,18 @@ public class PlayerExperienceGainListeners implements Listener {
      *
      * @param event - The BlockBreakEvent we are listening for
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event){
+
+        // Did a different event already cancel it? if so we don't need to do anything
+        if (event.isCancelled()){
+            return;
+        }
+
+        // Never ever ever give xp if the block isn't supposed to drop
+        if (!event.isDropItems()){
+            return;
+        }
 
         Player player = event.getPlayer();
         int xpGained = BaseExperience.getBaseExperienceFromBlock(event.getBlock());
@@ -157,10 +167,18 @@ public class PlayerExperienceGainListeners implements Listener {
             return;
         }
 
+        String xpMessage = ChatColor.BLUE + "+" + xpGained + " XP";
+
+        // 20% chance for double xp :)
+        if (Math.random() <= .2){
+            xpGained *= 2;
+            xpMessage = ChatColor.LIGHT_PURPLE + "" +  ChatColor.BOLD +  "BONUS! " + ChatColor.BLUE + "+" + xpGained + " XP";
+        }
+
         // Looks good to give them xp
         player.giveExp(xpGained);
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .5f, 1);
-        BaseExperience.displayActionBarText(player, ChatColor.BLUE + "+" + xpGained + " XP");
+        BaseExperience.displayActionBarText(player, xpMessage);
     }
 
     /**

@@ -22,6 +22,7 @@ public class ProgressionModifyingListeners implements Listener {
         if (event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.STONE_PICKAXE)){
             // If we broke gold ore with our stone pickaxe, drop it
             if (event.getBlock().getType().equals(Material.GOLD_ORE)){
+                event.setDropItems(true);
                 Location loc = event.getBlock().getLocation();
                 event.getPlayer().getWorld().dropItemNaturally(loc, new ItemStack(Material.GOLD_ORE));
             }
@@ -31,6 +32,7 @@ public class ProgressionModifyingListeners implements Listener {
         else if (event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.IRON_PICKAXE)){
             // If we broke obsidian with our iron pickaxe, drop it
             if (event.getBlock().getType().equals(Material.OBSIDIAN)){
+                event.setDropItems(true);
                 Location loc = event.getBlock().getLocation();
                 event.getPlayer().getWorld().dropItemNaturally(loc, new ItemStack(Material.OBSIDIAN));
             }
@@ -40,10 +42,12 @@ public class ProgressionModifyingListeners implements Listener {
         else if (event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.GOLDEN_PICKAXE)){
             // If we broke iron with our golden pick, drop it
             if (event.getBlock().getType().equals(Material.IRON_ORE)){
+                event.setDropItems(true);
                 Location loc = event.getBlock().getLocation();
                 event.getPlayer().getWorld().dropItemNaturally(loc, new ItemStack(Material.IRON_ORE));
             // If we broke gold ore with our gold pick, drop it
             } else if (event.getBlock().getType().equals(Material.GOLD_ORE)){
+                event.setDropItems(true);
                 Location loc = event.getBlock().getLocation();
                 event.getPlayer().getWorld().dropItemNaturally(loc, new ItemStack(Material.GOLD_ORE));
             }
