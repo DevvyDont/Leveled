@@ -144,14 +144,16 @@ public abstract class BaseExperience {
                     return 0;
                 }
 
+            case NETHER_QUARTZ_ORE:
+                return (int) (Math.random() * 6 + 1);
             case LAPIS_ORE:
+                return 5;
             case REDSTONE_ORE:
-                return 3;
+                return 6;
             case DIAMOND_ORE:
                 return 7;
             case EMERALD_ORE:
-            case NETHER_QUARTZ_ORE:
-                return 10;
+                return 30;
             default:
                 return 0;
         }
