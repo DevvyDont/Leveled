@@ -51,6 +51,9 @@ public class PlayerArmorListeners implements Listener {
         materialLevelCaps.put(Material.DIAMOND_CHESTPLATE, LevelRewards.DIAMOND_ARMOR_UNLOCK);
         materialLevelCaps.put(Material.DIAMOND_LEGGINGS, LevelRewards.DIAMOND_ARMOR_UNLOCK);
         materialLevelCaps.put(Material.DIAMOND_BOOTS, LevelRewards.DIAMOND_ARMOR_UNLOCK);
+
+
+        materialLevelCaps.put(Material.ELYTRA, LevelRewards.POST_ENDER_EQUIPMENT);
     }
 
     /**

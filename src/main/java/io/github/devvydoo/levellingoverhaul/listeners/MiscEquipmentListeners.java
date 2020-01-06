@@ -21,10 +21,10 @@ public class MiscEquipmentListeners implements Listener {
 
         this.equipmentRequirements = new HashMap<>();
 
-        this.equipmentRequirements.put(Material.ENDER_PEARL, LevelRewards.THE_END_UNLOCK);
-        this.equipmentRequirements.put(Material.ENDER_EYE, LevelRewards.THE_END_UNLOCK);
-        this.equipmentRequirements.put(Material.ENDER_CHEST, LevelRewards.THE_END_UNLOCK);
-        this.equipmentRequirements.put(Material.SHULKER_BOX, LevelRewards.THE_END_UNLOCK);
+        this.equipmentRequirements.put(Material.ENDER_PEARL, LevelRewards.PRE_ENDER_EQUIPMENT);
+        this.equipmentRequirements.put(Material.ENDER_EYE, LevelRewards.PRE_ENDER_EQUIPMENT);
+        this.equipmentRequirements.put(Material.ENDER_CHEST, LevelRewards.POST_ENDER_EQUIPMENT);
+        this.equipmentRequirements.put(Material.SHULKER_BOX, LevelRewards.POST_ENDER_EQUIPMENT);
 
         this.equipmentRequirements.put(Material.BOW, LevelRewards.NORMAL_BOW_UNLOCK);
         this.equipmentRequirements.put(Material.CROSSBOW, LevelRewards.CROSSBOW_UNLOCK);

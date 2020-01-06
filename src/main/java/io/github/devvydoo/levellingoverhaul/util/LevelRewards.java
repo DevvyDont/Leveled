@@ -24,7 +24,9 @@ public abstract class LevelRewards {
     public static final int NETHER_UNLOCK = DIAMOND_TOOLS_UNLOCK;
     public static final int BREWING_UNLOCK = 45;
     public static final int DIAMOND_ARMOR_UNLOCK = 50;
+    public static final int PRE_ENDER_EQUIPMENT = 55;
     public static final int THE_END_UNLOCK = 60;
+    public static final int POST_ENDER_EQUIPMENT = 65;
     public static final int UNIVERSAL_CRAFTING_ABILITY_UNLOCK = 70;
     public static final int CRAFT_WITHER_SKULLS_UNLOCK = 80;  // TODO: Implement
     public static final int FLIGHT_FEATHER_UNLOCK = 90;  // TODO: Implement
@@ -75,8 +77,12 @@ public abstract class LevelRewards {
                 return "You now have access to Potion Brewing!";
             case DIAMOND_ARMOR_UNLOCK:
                 return "You may now wear Diamond Armor!";
+            case PRE_ENDER_EQUIPMENT:
+                return "You may now use Ender Pearls and Eyes of Ender!";
             case THE_END_UNLOCK:
-                return "You may now use Ender Chests, Ender Pearls, Shulker Boxes, and travel to The End!";
+                return "You may now travel to The End!";
+            case POST_ENDER_EQUIPMENT:
+                return "You may now use Ender Chests, Shulker Boxes, and Elytras!";
             case UNIVERSAL_CRAFTING_ABILITY_UNLOCK:
                 return "You have unlocked the ability to craft anywhere! Open the crafting menu by sneak right clicking with nothing in your hand.";
             case CRAFT_WITHER_SKULLS_UNLOCK:
