@@ -5,12 +5,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.MagmaCube;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Slime;
+import org.bukkit.entity.*;
 
-import static org.bukkit.entity.EntityType.SPIDER;
 
 public abstract class BaseExperience {
 
@@ -26,8 +22,8 @@ public abstract class BaseExperience {
     /**
      * Helper method to display stuff on the action bar, mainly when xp is gained
      *
-     * @param player
-     * @param message
+     * @param player - The Player that we want to display text to
+     * @param message - The message we want to display
      */
     public static void displayActionBarText(Player player, String message){
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
@@ -44,7 +40,7 @@ public abstract class BaseExperience {
         switch (mob.getType()){
 
             case WITHER_SKELETON:
-                return 25;
+                return 13;
             case GIANT:
                 return 20;
             case ENDER_CRYSTAL:
