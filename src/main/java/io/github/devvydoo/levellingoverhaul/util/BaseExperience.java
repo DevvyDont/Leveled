@@ -148,23 +148,15 @@ public abstract class BaseExperience {
      */
     public static int getBaseExperienceFromBlock(Block block){
         switch (block.getType()){
-
             case COAL_ORE:
-
-                if (Math.random() < .5){
-                    return 1;
-                } else {
-                    return 0;
-                }
-
+                return Math.random() < .5 ? 1 : 0;
             case NETHER_QUARTZ_ORE:
-                return (int) (Math.random() * 6 + 1);
+                return (int) (Math.random() * 6 + 2);
             case LAPIS_ORE:
-                return 5;
             case REDSTONE_ORE:
-                return 6;
+                return 5;
             case DIAMOND_ORE:
-                return 7;
+                return 12;
             case EMERALD_ORE:
                 return 30;
             default:
@@ -346,9 +338,7 @@ public abstract class BaseExperience {
 
             // Mid-game
             case "nether/find_fortress":  // Capped at level 40
-            case "nether/uneasy_alliance":  // Capped at level 40, kill ghast in overworld
             case "nether/obtain_blaze_rod":  // Capped at level 40
-            case "nether/return_to_sender":  // Capped at level 40
                 return 20;
             case "nether/brew_potion":  // Brewing capped at 45
                 return 25;
@@ -356,6 +346,7 @@ public abstract class BaseExperience {
                 return 30;
             case "nether/fast_travel":  // Capped at level 40
             case "nether/get_wither_skull":  // Capped at level 40 technically, pretty difficult
+            case "nether/return_to_sender":  // Capped at level 40
                 return 50;
             case "husbandry/break_diamond_hoe":  // Diamond tools Capped at level 40
                 return 75;
@@ -371,6 +362,8 @@ public abstract class BaseExperience {
                 return 150;
             case "nether/summon_wither":  // Summon wither, technically capped at 40
                 return 175;
+            case "nether/uneasy_alliance":  // Capped at level 40, kill ghast in overworld
+                return 200;
             case "nether/create_full_beacon":  // Pretty difficult
                 return 225;
 
@@ -381,7 +374,7 @@ public abstract class BaseExperience {
             case "end/dragon_breath":
             case "end/kill_dragon":
             case "end/dragon_egg":
-                return 300;
+                return 400;
             case "end/levitate":
             case "end/respawn_dragon":
             case "nether/all_potions":  // have every potion effect in the game, super difficult
