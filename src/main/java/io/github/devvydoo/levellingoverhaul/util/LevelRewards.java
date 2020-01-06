@@ -66,7 +66,7 @@ public abstract class LevelRewards {
             case IRON_TOOLS_UNLOCK:
                 return "You may now use Iron Tools!";
             case CHAINMAIL_ARMOR_UNLOCK:
-                return "You now have access to Enchanting, Chainmail Armor and Crossbows!";
+                return "You now have access to Enchanting, Chainmail Armor and Crossbows! You can craft Chainmail Armor with Iron Bars!";
             case IRON_ARMOR_UNLOCK:
                 return "You may now wear Iron Armor!";
             case DIAMOND_TOOLS_UNLOCK:

@@ -2,6 +2,7 @@ package io.github.devvydoo.levellingoverhaul;
 
 import io.github.devvydoo.levellingoverhaul.enchantments.ExplosiveTouch;
 import io.github.devvydoo.levellingoverhaul.listeners.*;
+import io.github.devvydoo.levellingoverhaul.util.Recipes;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -35,6 +36,8 @@ public final class LevellingOverhaul extends JavaPlugin {
         // Listeners involving chat
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
 
+        // Register custom recipes
+        Recipes.registerRecipes(this);
     }
 
     @Override
