@@ -6,7 +6,11 @@ import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
+
+import static org.bukkit.entity.EntityType.SPIDER;
 
 public abstract class BaseExperience {
 
@@ -71,9 +75,22 @@ public abstract class BaseExperience {
             case CAVE_SPIDER:
             case IRON_GOLEM:
                 return 3;
-            case SPIDER:
             case SLIME:
             case MAGMA_CUBE:
+                Slime slime = (Slime) mob;
+                int magmaBonus = 0;
+                if (slime instanceof MagmaCube){
+                    magmaBonus = 2;
+                }
+                switch (slime.getSize()){
+                    case 3:
+                        return 3 + magmaBonus;
+                    case 4:
+                        return 5 + magmaBonus;
+                    default:
+                        return 1 + magmaBonus;
+                }
+            case SPIDER:
             case PHANTOM:
             case VEX:
             case SILVERFISH:
