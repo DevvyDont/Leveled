@@ -11,7 +11,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
 
@@ -161,6 +163,20 @@ public class PlayerArmorListeners implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+
+    @EventHandler
+    public void onArmorClick(InventoryClickEvent event){
+
+        // Was armor clicked? Armor in our plugin is unbreakable so make sure it can't break
+        if (event.getCurrentItem() != null && materialLevelCaps.containsKey(event.getCurrentItem().getType())){
+            ItemMeta meta = event.getCurrentItem().getItemMeta();
+            if (meta == null) {return; }
+            meta.setUnbreakable(true);
+            meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+            event.getCurrentItem().setItemMeta(meta);
+        }
+
     }
 
 }
