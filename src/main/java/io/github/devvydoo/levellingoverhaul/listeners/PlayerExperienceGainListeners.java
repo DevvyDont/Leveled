@@ -1,13 +1,11 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -23,6 +21,12 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
  * experience for our players
  */
 public class PlayerExperienceGainListeners implements Listener {
+
+    private LevellingOverhaul plugin;
+
+    public PlayerExperienceGainListeners(LevellingOverhaul plugin){
+        this.plugin = plugin;
+    }
 
 
     /**
@@ -81,6 +85,11 @@ public class PlayerExperienceGainListeners implements Listener {
 
         // At this point a player has killed another entity and we can calculate their xp
         int xp = BaseExperience.getBaseExperienceFromMob(livingEntity);
+
+        double extraLevelXp = 0;
+        if (!(livingEntity instanceof Player)) { extraLevelXp  =  this.plugin.getMobManager().getMobLevel(livingEntity) / (Math.random() * 20 + 11); }
+        xp += (int) extraLevelXp;
+
         // If we have no xp to give don't do anything
         if (xp <= 0){
             return;

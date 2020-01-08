@@ -27,7 +27,7 @@ public final class LevellingOverhaul extends JavaPlugin {
         // Register listeners regarding experience
         getServer().getPluginManager().registerEvents(new PlayerJoinListeners(this), this);
         getServer().getPluginManager().registerEvents(new PlayerExperienceListeners(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerExperienceGainListeners(), this);
+        getServer().getPluginManager().registerEvents(new PlayerExperienceGainListeners(this), this);
         getServer().getPluginManager().registerEvents(new VanillaExperienceCancellingListeners(this), this);
 
         // Listeners involving level capped gear
