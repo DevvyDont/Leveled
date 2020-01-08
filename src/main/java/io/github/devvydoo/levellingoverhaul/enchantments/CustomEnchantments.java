@@ -1,12 +1,15 @@
 package io.github.devvydoo.levellingoverhaul.enchantments;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -122,12 +125,8 @@ public final class CustomEnchantments {
 
         // Sanity check, don't add an enchantment if we already have it
         if (hasEnchant(item, enchantment)){
+            fixItemLore(item);
             return;
-        }
-
-        // Just in case it wasn't hidden yet
-        if (!meta.hasItemFlag(ItemFlag.HIDE_ATTRIBUTES)) {
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         }
 
         // Construct our new lore we are going to add
@@ -143,6 +142,26 @@ public final class CustomEnchantments {
         lore.addAll(loreToAdd);
         meta.setLore(lore);
         item.setItemMeta(meta);
+
+        fixItemLore(item);
+    }
+
+    /**
+     * Since we have lore that explains enchantments, we need to keep it in sync with vanilla enchantments as well
+     *
+     * @param item - The ItemStack we are enchanting
+     * @param enchantment - The vanilla Enchantment we are adding
+     * @param level - The level of the enchantment
+     */
+    public static void addEnchant(ItemStack item, Enchantment enchantment, int level){
+
+        // Don't enchant it twice
+        if (item.containsEnchantment(enchantment)){
+            return;
+        }
+
+        item.addUnsafeEnchantment(enchantment, level);
+        fixItemLore(item);
     }
 
     /**
@@ -203,6 +222,39 @@ public final class CustomEnchantments {
     }
 
     /**
+     * Simple method that will format an ItemStack to display enchantments properly
+     */
+    public static void fixItemLore(ItemStack itemStack){
+
+        // First we need to get the custom enchantment objects on the item
+        List<CustomEnchantment> customEnchantments = getCustomEnchantments(itemStack);
+        // Next get the vanilla enchantments the item has
+        Map<Enchantment, Integer> vanillaEnchantments = itemStack.getEnchantments();
+
+        // Now set some item flags that our items need, and clear the old lore
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
+        ArrayList<String> newLore = new ArrayList<>();
+
+        // Now add the new lore
+        for (CustomEnchantment enchantment: customEnchantments){
+            newLore.add("");  // Basically a newline
+            newLore.add(CustomEnchantment.getLoreContent(enchantment.getType(), enchantment.getLevel()));
+            newLore.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment.getType()));
+        }
+
+        for (Enchantment enchantment: vanillaEnchantments.keySet()){
+            newLore.add("");  // Basically a newline
+            newLore.add(String.format(ChatColor.BLUE + "%s %d", WordUtils.capitalize(enchantment.getKey().toString().replace("minecraft:", "").replace('_', ' ')), vanillaEnchantments.get(enchantment)));
+            newLore.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment));
+        }
+
+        meta.setLore(newLore);
+        itemStack.setItemMeta(meta);
+
+    }
+
+    /**
      * A method used by the CustomEnchantments class, simply returns a description
      *
      * @param type - The CustomEnchantType we want to check
@@ -216,4 +268,94 @@ public final class CustomEnchantments {
                 return "This enchantment doesn't have a description :(";
         }
     }
+
+    /**
+     * A method used by the CustomEnchantments class, simply returns a description
+     *
+     * @param enchantment - The Enchantment we want to check
+     * @return a string of the description of that type
+     */
+    public static String getEnchantmentDescription(Enchantment enchantment){
+        switch (enchantment.getKey().toString().replace("minecraft:", "")){
+            case "fire_protection":
+                return "Damage caused by fire is reduced";
+            case "sharpness":
+                return "General damage is increased";
+            case "flame":
+                return "Enemies shot will get ignited";
+            case "aqua_affinity":
+                return "See better underwater";
+            case "punch":
+                return "Enemies hit by arrows get knocked back further";
+            case "loyalty":
+                return "Your trident will return to you upon throwing";
+            case "depth_strider":
+                return "Move faster when in water";
+            case "vanishing_curse":
+                return "When this item is dropped, it will vanish";
+            case "unbreaking":
+                return "This tool has a chance to not use durability upon use";
+            case "knockback":
+                return "Enemies hit will get knocked back";
+            case "luck_of_the_sea":
+                return "You might find it easier to catch better stuff...";
+            case "binding_curse":
+                return "Careful! This item cannot be un-equipped!";
+            case "fortune":
+                return "Item drops from mining blocks is increased";
+            case "protection":
+                return "Increases resistance against general damage from enemies";
+            case "efficiency":
+                return "Increases mining speed";
+            case "mending":
+                return "Experience gains will contribute to extra tool durability";
+            case "frost_walker":
+                return "Walk on water... Technically...";
+            case "lure":
+                return "Fish will be caught quicke.";
+            case "looting":
+                return "Increases drop amount and chance from enemies";
+            case "piercing":
+                return "Increases damage done from arrows that pass through enemies";
+            case "blast_protection":
+                return "Reduces damage taken from explosions";
+            case "smite":
+                return "Increases damage done against the undead";
+            case "multishot":
+                return "Increases the amount of arrows that can be shot at once";
+            case "fire_aspect":
+                return "Causes enemies to be lit on fire when attacked";
+            case "channeling":
+                return "";
+            case "sweeping":
+                return "Increases damage done by the sweeping attack mechanic";
+            case "thorns":
+                return "Reflects damage back on enemies";
+            case "bane_of_arthropods":
+                return "Increases damage done against Spiders, Silverfish, and Bees";
+            case "respiration":
+                return "Increases lung capacity";
+            case "riptide":
+                return "Increases effectiveness in water";
+            case "silk_touch":
+                return "Causes most blocks broken to drop its original form";
+            case "quick_charge":
+                return "Increases fire rate";
+            case "projectile_protection":
+                return "Decreases damage taken from projectiles";
+            case "impaling":
+                return "Increases damage done when the Trident hits an enemy";
+            case "feather_falling":
+                return "Decreases fall damage taken";
+            case "power":
+                return "Increases the damage done for arrows shot by this bow";
+            case "infinity":
+                return "Arrows are never depleted upon shooting";
+            default:
+                System.out.println("[Enchanting] Unknown enchantment " + enchantment.getKey().toString());
+                return "This enchantment doesn't have a description :(";
+        }
+    }
 }
+
+
