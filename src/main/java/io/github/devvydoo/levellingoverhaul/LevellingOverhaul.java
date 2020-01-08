@@ -1,12 +1,20 @@
 package io.github.devvydoo.levellingoverhaul;
 
+import io.github.devvydoo.levellingoverhaul.commands.TestMobCommand;
 import io.github.devvydoo.levellingoverhaul.enchantments.ExplosiveTouch;
 import io.github.devvydoo.levellingoverhaul.listeners.*;
+import io.github.devvydoo.levellingoverhaul.mobs.MobManager;
 import io.github.devvydoo.levellingoverhaul.util.Recipes;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
 public final class LevellingOverhaul extends JavaPlugin {
+
+    private MobManager mobManager;
+
+    public MobManager getMobManager(){
+        return this.mobManager;
+    }
 
     @Override
     public void onEnable() {
@@ -38,8 +46,18 @@ public final class LevellingOverhaul extends JavaPlugin {
         // Listeners involving chat
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
 
+        // Listeners involving the scoreboard
+        getServer().getPluginManager().registerEvents(new PlayerNametags(this), this);
+
         // Register custom recipes
         Recipes.registerRecipes(this);
+
+        // Listeners involving mobs
+        mobManager = new MobManager(this, getServer().getWorlds());  // Initialize all worlds.
+        getServer().getPluginManager().registerEvents(mobManager, this);
+
+        // Register commands
+        getCommand("mob").setExecutor(new TestMobCommand(this));
     }
 
     @Override

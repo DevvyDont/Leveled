@@ -2,3 +2,7 @@ name: LevellingOverhaul
 version: ${project.version}
 main: io.github.devvydoo.levellingoverhaul.LevellingOverhaul
 api-version: 1.13
+commands:
+  mob:
+    description: Spawns a test mob
+    usage: /mob
