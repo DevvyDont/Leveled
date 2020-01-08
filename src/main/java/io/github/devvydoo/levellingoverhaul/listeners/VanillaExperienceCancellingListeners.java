@@ -143,15 +143,9 @@ public class VanillaExperienceCancellingListeners implements Listener {
             return;
         }
 
-        // Is a task somehow still running
-        BukkitScheduler scheduler = this.plugin.getServer().getScheduler();
-        if (scheduler.isCurrentlyRunning(xpOrbKillerTask.getTaskId()) || scheduler.isQueued(xpOrbKillerTask.getTaskId())){
-            xpOrbKillerTask.cancel();
-        }
-
         // Kill xp orbs
-        xpOrbKillerTask = new XPOrbKillerTask(dragonsWorld, 60);
-        xpOrbKillerTask.runTaskTimer(this.plugin, 1, 5);
+        xpOrbKillerTask = new XPOrbKillerTask(dragonsWorld, 170);
+        xpOrbKillerTask.runTaskTimer(this.plugin, 1, 3);
     }
 
 }
