@@ -11,12 +11,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
  */
 public class PlayerJoinListeners implements Listener {
 
-    private LevellingOverhaul plugin;
-
-    public PlayerJoinListeners(LevellingOverhaul plugin){
-        this.plugin = plugin;
-    }
-
     /**
      * Listen for first time joiners, if they joined for the first time set their level to 1
      *
@@ -28,10 +22,10 @@ public class PlayerJoinListeners implements Listener {
         // Is the player a newcomer?  TODO: Make the messages config-able
         if (!event.getPlayer().hasPlayedBefore()){
             event.getPlayer().setLevel(1);  // Set their level to 1
-            this.plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + event.getPlayer().getDisplayName() +
+            event.setJoinMessage(ChatColor.LIGHT_PURPLE + event.getPlayer().getDisplayName() +
                     ChatColor.GOLD + " has joined for the first time!");
         } else {
-            this.plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + event.getPlayer().getDisplayName() +
+            event.setJoinMessage(ChatColor.LIGHT_PURPLE + event.getPlayer().getDisplayName() +
                     " [Level " + event.getPlayer().getLevel() + "]" + ChatColor.GREEN + " has joined!");
         }
     }
