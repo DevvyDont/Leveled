@@ -182,6 +182,7 @@ public abstract class BaseExperience {
             case COOKED_RABBIT:
             case COOKED_SALMON:
             case DRIED_KELP:
+            case BAKED_POTATO:
                 base =  1;
                 break;
             case IRON_INGOT:

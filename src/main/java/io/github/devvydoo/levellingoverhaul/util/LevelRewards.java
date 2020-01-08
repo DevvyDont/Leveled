@@ -10,15 +10,15 @@ import org.bukkit.entity.Player;
 public abstract class LevelRewards {
 
     public static final int STONE_TOOLS_UNLOCK = 5;
-    public static final int LEATHER_ARMOR_UNLOCK = 10;
-    public static final int GOLDEN_TOOLS_UNLOCK = 15;
-    public static final int NORMAL_BOW_UNLOCK = GOLDEN_TOOLS_UNLOCK;
-    public static final int GOLDEN_ARMOR_UNLOCK = 20;
-    public static final int SHIELD_UNLOCK = GOLDEN_ARMOR_UNLOCK;
-    public static final int IRON_TOOLS_UNLOCK = 25;
-    public static final int CHAINMAIL_ARMOR_UNLOCK = 30;
-    public static final int CROSSBOW_UNLOCK = CHAINMAIL_ARMOR_UNLOCK;
-    public static final int ENCHANTING_UNLOCK = CHAINMAIL_ARMOR_UNLOCK;
+    public static final int LEATHER_ARMOR_UNLOCK = 8;
+    public static final int GOLDEN_TOOLS_UNLOCK = 12;
+    public static final int NORMAL_BOW_UNLOCK = 15;
+    public static final int GOLDEN_ARMOR_UNLOCK = 18;
+    public static final int SHIELD_UNLOCK = 20;
+    public static final int IRON_TOOLS_UNLOCK = SHIELD_UNLOCK;
+    public static final int CHAINMAIL_ARMOR_UNLOCK = 25;
+    public static final int CROSSBOW_UNLOCK = 30;
+    public static final int ENCHANTING_UNLOCK = CROSSBOW_UNLOCK;
     public static final int IRON_ARMOR_UNLOCK = 35;
     public static final int DIAMOND_TOOLS_UNLOCK = 40;
     public static final int NETHER_UNLOCK = DIAMOND_TOOLS_UNLOCK;
@@ -62,13 +62,17 @@ public abstract class LevelRewards {
             case LEATHER_ARMOR_UNLOCK:
                 return "You may now wear Leather Armor!";
             case GOLDEN_TOOLS_UNLOCK:
-                return "You may now use Golden Tools and Bows!";
+                return "You may now use Golden Tools";
+            case NORMAL_BOW_UNLOCK:
+                return "You may now use Bows!";
             case GOLDEN_ARMOR_UNLOCK:
-                return "You may now wear Golden Armor and use Shields!";
+                return "You may now wear Golden Armor!";
             case IRON_TOOLS_UNLOCK:
-                return "You may now use Iron Tools!";
+                return "You may now use Iron Tools and Shields!";
             case CHAINMAIL_ARMOR_UNLOCK:
-                return "You now have access to Enchanting, Chainmail Armor and Crossbows! You can craft Chainmail Armor with Iron Bars!";
+                return "You may now wear and craft Chainmail Armor! You can craft Chainmail Armor with Iron Bars.";
+            case ENCHANTING_UNLOCK:
+                return "You now have access to enchanting and can use crossbows!";
             case IRON_ARMOR_UNLOCK:
                 return "You may now wear Iron Armor!";
             case DIAMOND_TOOLS_UNLOCK:
