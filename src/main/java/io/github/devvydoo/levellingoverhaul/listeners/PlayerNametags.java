@@ -2,17 +2,22 @@ package io.github.devvydoo.levellingoverhaul.listeners;
 
 import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
 import org.bukkit.ChatColor;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 
 public class PlayerNametags implements Listener {
+
+    private LevellingOverhaul plugin;
 
     private static String HEALTHY_HP_COLOR = ChatColor.GREEN.toString();
     private static String DAMAGED_HP_COLOR = ChatColor.YELLOW.toString();
@@ -29,6 +34,7 @@ public class PlayerNametags implements Listener {
     }
 
     public PlayerNametags(LevellingOverhaul plugin){
+        this.plugin = plugin;
         for (Player p: plugin.getServer().getOnlinePlayers()){
             updatePlayerScoreboard(p, p.getLevel(), p.getHealth());
         }
@@ -60,6 +66,24 @@ public class PlayerNametags implements Listener {
         if (event.getEntity() instanceof Player){
             Player player = (Player) event.getEntity();
             updatePlayerScoreboard(player, player.getLevel(), player.getHealth() - event.getFinalDamage());
+
+            // If the player is dead, try again in 5 seconds, otherwise update the scoreboard
+            if (player.getHealth() - event.getFinalDamage() <= 0){
+                new BukkitRunnable(){
+                    @Override
+                    public void run(){
+
+                        if (player.isDead()){
+                            this.runTaskLater(plugin, 20 * 5);
+                            return;
+                        }
+
+                        if (player.getHealth() >= 0) {
+                            updatePlayerScoreboard(player, player.getLevel(), player.getHealth());
+                        }
+                    }
+                }.runTaskLater(this.plugin, 20 * 5);
+            }
         }
     }
 
@@ -69,6 +93,19 @@ public class PlayerNametags implements Listener {
             return;
         }
         updatePlayerScoreboard(event.getPlayer(), event.getNewLevel(), event.getPlayer().getHealth());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerHealthRegen(EntityRegainHealthEvent event){
+
+        if (event.isCancelled()){
+            return;
+        }
+
+        if (event.getEntity() instanceof Player){
+            Player player = (Player) event.getEntity();
+            updatePlayerScoreboard(player, player.getLevel(), player.getHealth() + event.getAmount());
+        }
     }
 
 }

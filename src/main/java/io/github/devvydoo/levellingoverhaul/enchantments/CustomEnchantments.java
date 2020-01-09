@@ -254,6 +254,159 @@ public final class CustomEnchantments {
 
     }
 
+    public static int getEnchantQuality(CustomEnchantType type){
+
+        switch (type){
+            case EXPLOSIVE_TOUCH:
+                return 5;
+            default:
+                throw new IllegalArgumentException("Received invalid argument for getEnchantQuality: " + type);
+        }
+
+    }
+
+    public static int getEnchantQuality(Enchantment type){
+
+        switch (type.getKey().toString()){
+            case "fire_protection":
+                return 4;
+            case "sharpness":
+            case "protection":
+            case "mending":
+            case "looting":
+            case "silk_touch":
+            case "luck_of_the_sea":
+                return 10;
+            case "feather_falling":
+            case "infinity":
+            case "power":
+            case "fortune":
+                return 11;
+            case "blast_protection":
+            case "sweeping":
+            case "punch":
+            case "depth_strider":
+            case "unbreaking":
+                return 5;
+            case "smite":
+            case "respiration":
+            case "aqua_affinity":
+                return 2;
+            case "bane_of_arthropods":
+            case "vanishing_curse":
+            case "binding_curse":
+                return 1;
+            case "projectile_protection":
+            case "channeling":
+            case "thorns":
+                return 3;
+            case "efficiency":
+            case "piercing":
+            case "multishot":
+            case "flame":
+                return 9;
+            case "frost_walker":
+            case "knockback":
+                return 2;
+            case "lure":
+                return 7;
+
+            case "fire_aspect":
+            case "riptide":
+            case "quick_charge":
+            case "impaling":
+            case "loyalty":
+                return 8;
+
+            default:
+                throw new IllegalArgumentException("Received invalid argument for getEnchantQuality: " + type.getKey().toString());
+        }
+    }
+
+    public static ArrayList<Object> getConflictingEnchantTypes(CustomEnchantType type){
+        ArrayList<Object> conflictingEnchantments = new ArrayList<>();
+
+        switch (type){
+
+        }
+
+        return conflictingEnchantments;
+    }
+
+    public static ArrayList<Object> getConflictingEnchantTypes(Enchantment type){
+        ArrayList<Object> conflictingEnchantments = new ArrayList<>();
+
+        switch (type.getKey().toString()){
+            case "fire_protection":
+                conflictingEnchantments.add("protection");
+                conflictingEnchantments.add("blast_protection");
+                conflictingEnchantments.add("projectile_protection");
+                break;
+            case "sharpness":
+                conflictingEnchantments.add("smite");
+                conflictingEnchantments.add("bane_of_arthropods");
+                break;
+            case "protection":
+                conflictingEnchantments.add("fire_protection");
+                conflictingEnchantments.add("blast_protection");
+                conflictingEnchantments.add("projectile_protection");
+                break;
+            case "blast_protection":
+                conflictingEnchantments.add("fire_protection");
+                conflictingEnchantments.add("protection");
+                conflictingEnchantments.add("projectile_protection");
+                break;
+            case "smite":
+                conflictingEnchantments.add("bane_of_arthropods");
+                conflictingEnchantments.add("sharpness");
+                break;
+            case "bane_of_arthropods":
+                conflictingEnchantments.add("smite");
+                conflictingEnchantments.add("sharpness");
+                break;
+            case "projectile_protection":
+                conflictingEnchantments.add("fire_protection");
+                conflictingEnchantments.add("protection");
+                conflictingEnchantments.add("blast_protection");
+                break;
+            case "efficiency":
+            case "mending":
+            case "frost_walker":
+            case "lure":
+            case "looting":
+            case "piercing":
+            case "multishot":
+            case "fire_aspect":
+            case "channeling":
+            case "sweeping":
+            case "thorns":
+            case "respiration":
+            case "riptide":
+            case "silk_touch":
+            case "quick_charge":
+            case "impaling":
+            case "feather_falling":
+            case "power":
+            case "infinity":
+            case "flame":
+            case "aqua_affinity":
+            case "punch":
+            case "loyalty":
+            case "depth_strider":
+            case "vanishing_curse":
+            case "unbreaking":
+            case "knockback":
+            case "luck_of_the_sea":
+            case "binding_curse":
+            case "fortune":
+                break;
+            default:
+                break;
+        }
+
+        return conflictingEnchantments;
+    }
+
     /**
      * A method used by the CustomEnchantments class, simply returns a description
      *

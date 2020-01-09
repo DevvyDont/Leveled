@@ -1,6 +1,7 @@
 package io.github.devvydoo.levellingoverhaul;
 
 import io.github.devvydoo.levellingoverhaul.commands.TestMobCommand;
+import io.github.devvydoo.levellingoverhaul.enchantments.EnchantingInterface;
 import io.github.devvydoo.levellingoverhaul.enchantments.ExplosiveTouch;
 import io.github.devvydoo.levellingoverhaul.listeners.*;
 import io.github.devvydoo.levellingoverhaul.mobs.MobManager;
@@ -41,6 +42,7 @@ public final class LevellingOverhaul extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CraftingListener(), this);
 
         // Listeners involving custom enchantments
+        getServer().getPluginManager().registerEvents(new EnchantingInterface(this), this);
         getServer().getPluginManager().registerEvents(new ExplosiveTouch(), this);
 
         // Listeners involving chat
