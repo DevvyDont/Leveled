@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
@@ -10,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 
@@ -25,6 +27,8 @@ public class PlayerToolListeners implements Listener {
         toolLevelRequirements.put(Material.WOODEN_AXE, 1);
         toolLevelRequirements.put(Material.WOODEN_SHOVEL, 1);
         toolLevelRequirements.put(Material.WOODEN_SWORD, 1);
+        toolLevelRequirements.put(Material.SHEARS, 1);
+        toolLevelRequirements.put(Material.FISHING_ROD, 1);
 
         toolLevelRequirements.put(Material.STONE_PICKAXE, LevelRewards.STONE_TOOLS_UNLOCK);
         toolLevelRequirements.put(Material.STONE_HOE, LevelRewards.STONE_TOOLS_UNLOCK);
@@ -65,10 +69,11 @@ public class PlayerToolListeners implements Listener {
     public void onBlockBreakWithTool(BlockBreakEvent event){
 
         Player player = event.getPlayer();
-        Material toolUsed = player.getInventory().getItemInMainHand().getType();
+        ItemStack toolUsed = player.getInventory().getItemInMainHand();
 
-        if (toolLevelRequirements.containsKey(toolUsed)){
-            int requiredLevel = toolLevelRequirements.get(toolUsed);
+        if (toolLevelRequirements.containsKey(toolUsed.getType())){
+            int requiredLevel = CustomEnchantments.getItemLevel(toolUsed);
+            if (requiredLevel < toolLevelRequirements.get(toolUsed.getType()))  { requiredLevel =  toolLevelRequirements.get(toolUsed.getType()); }
             if (requiredLevel > player.getLevel()){
                 event.setCancelled(true);
                 this.cancelEquipmentUse(player, requiredLevel);
@@ -89,10 +94,11 @@ public class PlayerToolListeners implements Listener {
         }
 
         Player player = (Player) event.getDamager();
-        Material toolUsed = player.getInventory().getItemInMainHand().getType();
+        ItemStack toolUsed = player.getInventory().getItemInMainHand();
 
-        if (toolLevelRequirements.containsKey(toolUsed)){
-            int requiredLevel = toolLevelRequirements.get(toolUsed);
+        if (toolLevelRequirements.containsKey(toolUsed.getType())){
+            int requiredLevel = CustomEnchantments.getItemLevel(toolUsed);
+            if (requiredLevel < toolLevelRequirements.get(toolUsed.getType())) { requiredLevel = toolLevelRequirements.get(toolUsed.getType()); }
             if (requiredLevel > player.getLevel()){
                 event.setCancelled(true);
                 this.cancelEquipmentUse(player, requiredLevel);

@@ -232,7 +232,7 @@ public class MobManager implements Listener {
                 } else if (level >= 60){
                     creeper.setPowered(true);
                 }
-                creeper.setMaxFuseTicks((int) (40 - level / 3.));
+                creeper.setMaxFuseTicks((int) (level > 80 ? 2 : 40 - level / 3.));
                 return level;
             case ENDERMAN:
                 if (entity.getWorld().getEnvironment().equals(World.Environment.NORMAL)){

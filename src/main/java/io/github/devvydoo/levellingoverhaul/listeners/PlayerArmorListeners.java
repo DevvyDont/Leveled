@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
@@ -33,6 +34,7 @@ public class PlayerArmorListeners implements Listener {
         materialLevelCaps.put(Material.LEATHER_CHESTPLATE, LevelRewards.LEATHER_ARMOR_UNLOCK);
         materialLevelCaps.put(Material.LEATHER_LEGGINGS, LevelRewards.LEATHER_ARMOR_UNLOCK);
         materialLevelCaps.put(Material.LEATHER_BOOTS, LevelRewards.LEATHER_ARMOR_UNLOCK);
+        materialLevelCaps.put(Material.TURTLE_HELMET, LevelRewards.LEATHER_ARMOR_UNLOCK);
 
         materialLevelCaps.put(Material.GOLDEN_HELMET, LevelRewards.GOLDEN_ARMOR_UNLOCK);
         materialLevelCaps.put(Material.GOLDEN_CHESTPLATE, LevelRewards.GOLDEN_ARMOR_UNLOCK);
@@ -82,7 +84,10 @@ public class PlayerArmorListeners implements Listener {
         }
 
         // Does our player have the required level to equip this?
-        int requiredLevel = materialLevelCaps.get(event.getItem().getType());
+        int requiredLevel = CustomEnchantments.getItemLevel(event.getItem());
+        if (requiredLevel < materialLevelCaps.get(event.getItem().getType())) { requiredLevel = materialLevelCaps.get(event.getItem().getType()); }
+
+
         if (event.getPlayer().getLevel() < requiredLevel ){
             event.setCancelled(true);
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
@@ -99,6 +104,18 @@ public class PlayerArmorListeners implements Listener {
      */
     @EventHandler
     public void onArmorInteract(InventoryClickEvent event){
+
+        // Do we have a player?
+        if (!(event.getWhoClicked() instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) event.getWhoClicked();
+
+        // Do we even need to check them?
+        if (player.getLevel() >= BaseExperience.LEVEL_CAP){
+            return;
+        }
 
         // Did they click an armor slot?
         if (event.getSlotType().equals(InventoryType.SlotType.ARMOR)) {
@@ -127,8 +144,8 @@ public class PlayerArmorListeners implements Listener {
                 return;
             }
 
-            int requiredLevel = materialLevelCaps.get(itemHeld.getType());
-            Player player = (Player) event.getWhoClicked();
+            int requiredLevel = CustomEnchantments.getItemLevel(itemHeld);
+            if (requiredLevel < materialLevelCaps.get(itemHeld.getType())) { requiredLevel = materialLevelCaps.get(itemHeld.getType()); }
 
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel) {
@@ -153,8 +170,8 @@ public class PlayerArmorListeners implements Listener {
             }
 
             // Are they a high enough level to equip it?
-            int requiredLevel = materialLevelCaps.get(itemClicked.getType());
-            Player player = (Player) event.getWhoClicked();
+            int requiredLevel = CustomEnchantments.getItemLevel(itemClicked);
+            if (requiredLevel < materialLevelCaps.get(itemClicked.getType())) { requiredLevel = materialLevelCaps.get(itemClicked.getType()); }
 
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel) {

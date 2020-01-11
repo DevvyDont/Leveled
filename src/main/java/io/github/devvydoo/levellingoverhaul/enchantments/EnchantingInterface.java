@@ -6,7 +6,10 @@ import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.EnchantingTable;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -100,11 +103,102 @@ public class EnchantingInterface implements Listener {
     }
 
     private boolean canBeEnchanted(ItemStack itemStack){
-        // TODO: Actual implementation
-        return itemStack.getType().equals(Material.DIAMOND_SWORD);
+        // If it's already enchanted we can't do anything
+        if (CustomEnchantments.getCustomEnchantments(itemStack).size() > 0 || itemStack.getEnchantments().size() > 0){ return false; }
+        // Check if the material type is allowed to be enchanted
+        switch (itemStack.getType()){
+            case WOODEN_SHOVEL:
+            case WOODEN_AXE:
+            case WOODEN_SWORD:
+            case WOODEN_PICKAXE:
+            case WOODEN_HOE:
+            case GOLDEN_SHOVEL:
+            case GOLDEN_AXE:
+            case GOLDEN_PICKAXE:
+            case GOLDEN_SWORD:
+            case GOLDEN_HOE:
+            case IRON_SHOVEL:
+            case IRON_AXE:
+            case IRON_SWORD:
+            case IRON_PICKAXE:
+            case IRON_HOE:
+            case DIAMOND_PICKAXE:
+            case DIAMOND_AXE:
+            case DIAMOND_SWORD:
+            case DIAMOND_HOE:
+            case DIAMOND_SHOVEL:
+            case BOW:
+            case CROSSBOW:
+            case TRIDENT:
+            case CHAINMAIL_BOOTS:
+            case IRON_BOOTS:
+            case GOLDEN_BOOTS:
+            case LEATHER_BOOTS:
+            case DIAMOND_BOOTS:
+            case CHAINMAIL_LEGGINGS:
+            case IRON_LEGGINGS:
+            case GOLDEN_LEGGINGS:
+            case DIAMOND_LEGGINGS:
+            case LEATHER_LEGGINGS:
+            case IRON_CHESTPLATE:
+            case LEATHER_CHESTPLATE:
+            case GOLDEN_CHESTPLATE:
+            case DIAMOND_CHESTPLATE:
+            case DIAMOND_HELMET:
+            case LEATHER_HELMET:
+            case CHAINMAIL_HELMET:
+            case GOLDEN_HELMET:
+            case IRON_HELMET:
+            case TURTLE_HELMET:
+            case FISHING_ROD:
+            case ELYTRA:
+            case SHEARS:
+            case FLINT_AND_STEEL:
+                return true;
+            default:
+                return false;
+        }
     }
 
-    private void openEnchantingInterface(Player player){
+    private ItemStack enchantItem(Player player, Block enchantTable, ItemStack item){
+        int qualityFactor = 1;
+
+        // We need to perform a cubic search around the enchantment table to see if we have bookshelves
+        for (int xOffset = -2; xOffset <= 2; xOffset++ ) {
+            for (int yOffset = -2; yOffset <= 2; yOffset++) {
+                for (int zOffset = -2; zOffset <= 2; zOffset++){
+                    if (qualityFactor >= 12) { break; }
+                    Block block = enchantTable.getWorld().getBlockAt(enchantTable.getX() + xOffset, enchantTable.getY() +  yOffset, enchantTable.getZ() +  zOffset);
+                    if (block.getLocation().distance(enchantTable.getLocation()) <= 1){ continue; }
+                    if (block.getType().equals(Material.BOOKSHELF)){ qualityFactor++; }
+                }
+                if (qualityFactor >= 12) { break; }
+            }
+            if (qualityFactor >= 12) { break; }
+        }
+
+        if (qualityFactor > 12) { qualityFactor = 12; }
+
+        EnchantmentCalculator calculator = new EnchantmentCalculator(player.getLevel(), qualityFactor, item);
+        ArrayList<PotentialEnchantment> potentialEnchantments =  calculator.calculateEnchantmentTypes();
+        HashMap<PotentialEnchantment, Integer> enchantLevels = calculator.calculateEnchantmentLevels(potentialEnchantments);
+
+        for (PotentialEnchantment enchantment: enchantLevels.keySet()){
+            if (enchantment.getEnchantType() instanceof Enchantment) {
+                CustomEnchantments.addEnchant(item, (Enchantment) enchantment.getEnchantType(), enchantLevels.get(enchantment));
+            } else if (enchantment.getEnchantType() instanceof CustomEnchantType){
+                CustomEnchantments.addEnchant(item, (CustomEnchantType) enchantment.getEnchantType(), enchantLevels.get(enchantment));
+            } else { throw new IllegalStateException("PotentialEnchantment enchantType was not Enchantment or CustomEnchantType!"); }
+        }
+        return item;
+    }
+
+    private void openEnchantingInterface(Player player, Block enchantTable){
+
+        Block blockLookingAt = player.getTargetBlockExact(10);
+        if (blockLookingAt != null && blockLookingAt.equals(enchantTable)){
+
+        } else { return; }
 
         // Create the GUI
         Inventory gui = plugin.getServer().createInventory(player, 54, INTERFACE_NAME);
@@ -192,7 +286,7 @@ public class EnchantingInterface implements Listener {
         ItemStack notEnoughButton = new ItemStack(Material.CLAY_BALL);
         ItemStack readyButton = new ItemStack(Material.EXPERIENCE_BOTTLE);
 
-        int lapisBeforeClick = gui.getItem(LAPIS_SLOT) != null ?gui.getItem(LAPIS_SLOT).getAmount() : 0;
+        int lapisBeforeClick = gui.getItem(LAPIS_SLOT) != null ? gui.getItem(LAPIS_SLOT).getAmount() : 0;
 
         if (event.getSlot() == LAPIS_SLOT){
 
@@ -239,9 +333,23 @@ public class EnchantingInterface implements Listener {
 
             // In here we are clicking a button, do any necessary logic if so
             if (event.getSlot() == BUTTON_SLOT){
-                System.out.println("ENCHANT IF WE ARE ALLOWED TO");
+                // Do we have things in the slots?
+                if (gui.getItem(EQUIPMENT_SLOT) != null && gui.getItem(LAPIS_SLOT) != null && gui.getItem(LAPIS_SLOT).getType().equals(Material.LAPIS_LAZULI)){
+                    // Do we have enough lapis?
+                    if (gui.getItem(LAPIS_SLOT).getAmount() >= getLapisRequired(player.getLevel())){
+                        // Do we have an enchantable item?
+                        if (canBeEnchanted(gui.getItem(EQUIPMENT_SLOT))){
+                            ItemStack newItem = enchantItem(player, player.getTargetBlockExact(10), gui.getItem(EQUIPMENT_SLOT)); // Enchant
+                            CustomEnchantments.setItemLevel(newItem, player.getLevel());
+                            gui.setItem(EQUIPMENT_SLOT, newItem);
+                            if (lapisBeforeClick <= getLapisRequired(player.getLevel())) {gui.setItem(LAPIS_SLOT, new ItemStack(Material.AIR)); }
+                            else {gui.getItem(LAPIS_SLOT).setAmount(lapisBeforeClick - getLapisRequired(player.getLevel())); }
+                            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1, 1);
+                            doUpdateInventoryTask(player);
+                        }
+                    }
+                }
             }
-
         }
     }
 
@@ -267,7 +375,7 @@ public class EnchantingInterface implements Listener {
 
         // Open the GUI
         event.setCancelled(true);
-        openEnchantingInterface(event.getPlayer());
+        openEnchantingInterface(event.getPlayer(), block);
     }
 
     @EventHandler

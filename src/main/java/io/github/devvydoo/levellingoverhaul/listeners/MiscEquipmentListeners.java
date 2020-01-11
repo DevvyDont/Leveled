@@ -1,5 +1,7 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantment;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
@@ -20,6 +22,9 @@ public class MiscEquipmentListeners implements Listener {
     public MiscEquipmentListeners(){
 
         this.equipmentRequirements = new HashMap<>();
+
+        this.equipmentRequirements.put(Material.SHEARS, 1);
+        this.equipmentRequirements.put(Material.FISHING_ROD, 1);
 
         this.equipmentRequirements.put(Material.ENDER_PEARL, LevelRewards.PRE_ENDER_EQUIPMENT);
         this.equipmentRequirements.put(Material.ENDER_EYE, LevelRewards.PRE_ENDER_EQUIPMENT);
@@ -46,16 +51,7 @@ public class MiscEquipmentListeners implements Listener {
         }
 
         // Do we even need to perform a level check?
-        int highestItem = 1;
-        for(int level: this.equipmentRequirements.values()){
-            if (level > highestItem){
-                highestItem = level;
-            }
-        }
-
-        if (highestItem < player.getLevel()){
-            return;  // The player is a high level, no need to check
-        }
+        if (player.getLevel() >= BaseExperience.LEVEL_CAP) { return; }
 
         // What's in our hand?
         ItemStack itemInHand = event.getPlayer().getInventory().getItemInMainHand();
@@ -71,15 +67,23 @@ public class MiscEquipmentListeners implements Listener {
         }
 
         // We may potentially run into issues, check their main hand first
-        if (mainHandNeedsChecked && player.getLevel() < equipmentRequirements.get(itemInHand.getType())){
-            event.setCancelled(true);
-            BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(itemInHand.getType()) + ChatColor.RED + " to use this item!");
-            player.playSound(player.getLocation(),  this.getSoundFromMaterial(itemInHand.getType()), .3f, .7f);
+        if (mainHandNeedsChecked){
+            int levelRequired = CustomEnchantments.getItemLevel(itemInHand);  // Enchanted?
+            if (levelRequired < equipmentRequirements.get(itemInHand.getType())) { levelRequired = equipmentRequirements.get(itemInHand.getType()); }
+            if (levelRequired > player.getLevel()) {
+                event.setCancelled(true);
+                BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + levelRequired + ChatColor.RED + " to use this item!");
+                player.playSound(player.getLocation(), this.getSoundFromMaterial(itemInHand.getType()), .3f, .7f);
+            }
         // Now check their offhand
-        } else if (offhandNeedsChecked && player.getLevel() < equipmentRequirements.get(itemInOffhand.getType())){
-            event.setCancelled(true);
-            BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(itemInOffhand.getType()) + ChatColor.RED + " to use this item!");
-            player.playSound(player.getLocation(),  this.getSoundFromMaterial(itemInOffhand.getType()), .3f, .7f);
+        } if (offhandNeedsChecked){
+            int levelRequired = CustomEnchantments.getItemLevel(itemInOffhand); // Enchanted?
+            if (levelRequired < equipmentRequirements.get(itemInOffhand.getType())) { levelRequired = equipmentRequirements.get(itemInOffhand.getType()); }
+            if (levelRequired > player.getLevel()) {
+                event.setCancelled(true);
+                BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + levelRequired + ChatColor.RED + " to use this item!");
+                player.playSound(player.getLocation(), this.getSoundFromMaterial(itemInOffhand.getType()), .3f, .7f);
+            }
         } else if (blockClickedNeedsChecked && player.getLevel() < equipmentRequirements.get(event.getClickedBlock().getType())){
             event.setCancelled(true);
             BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(event.getClickedBlock().getType()) + ChatColor.RED + " to interact with this item!");

@@ -2,7 +2,9 @@ package io.github.devvydoo.levellingoverhaul.enchantments;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -79,6 +81,9 @@ public final class CustomEnchantments {
 
     // A color to use for enchantment descriptions, should we use them. Enchantments never start with this color.
     public final static String DESCRIPTION_COLOR = ChatColor.GRAY.toString();
+    public final static String LEVEL_CAPPED_GEAR_COLOR = ChatColor.DARK_PURPLE.toString() + ChatColor.BOLD;
+    public final static String LEVEL_CAPPED_GEAR_STRING = LEVEL_CAPPED_GEAR_COLOR + "Level";
+    public final static String LEVEL_CAPPED_GEAR_STRING_FULL = LEVEL_CAPPED_GEAR_STRING + " %s ";
 
     /**
      * Returns an arraylist of custom enchants on an item stack, we do this by parsing the lore of the item stack
@@ -194,6 +199,59 @@ public final class CustomEnchantments {
     }
 
     /**
+     * Parses the item's title to see if it is level capped
+     *
+     * @param item The ItemStack we want to check for
+     * @return the int level cap of the item, if it isn't capped 0 is returned
+     */
+    public static int getItemLevel(ItemStack item){
+        int level = 0;
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            String name = meta.getDisplayName();
+            if (name.startsWith(LEVEL_CAPPED_GEAR_STRING)){
+                String[] components = name.split(" ");
+                level = Integer.parseInt(components[1]);
+            }
+        }
+        return level;
+    }
+
+    public static void setItemLevel(ItemStack item, int level){
+
+        // Check if we need to remove the old level somehow
+        resetItemLevel(item);
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null){ return; }
+
+        // Now add the level
+        String originalName = meta.hasDisplayName() ? meta.getDisplayName() : WordUtils.capitalizeFully(item.getType().toString().replace("_", " "));
+        String newName = String.format(LEVEL_CAPPED_GEAR_STRING_FULL, level) + ChatColor.LIGHT_PURPLE + originalName;
+        meta.setDisplayName(newName);
+        item.setItemMeta(meta);
+    }
+
+    public static void resetItemLevel(ItemStack itemStack){
+
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null){ return; }
+
+        String originalName = meta.getDisplayName();
+
+        if (originalName.startsWith(LEVEL_CAPPED_GEAR_STRING)){
+            String[] components = originalName.split(" ");
+            ArrayList<String> newComponents = new ArrayList<>();
+            for (int i = 2; i < components.length; i++){
+                newComponents.add(components[i]);
+            }
+            originalName = String.join(" ", newComponents);
+            meta.setDisplayName(originalName);
+            itemStack.setItemMeta(meta);
+        }
+    }
+
+    /**
      * A helper method that parses a line of lore to find a potential enchantment
      *
      * @param loreLine - The string of lore we are reading
@@ -267,7 +325,7 @@ public final class CustomEnchantments {
 
     public static int getEnchantQuality(Enchantment type){
 
-        switch (type.getKey().toString()){
+        switch (type.getKey().toString().replace("minecraft:", "")){
             case "fire_protection":
                 return 4;
             case "sharpness":
@@ -291,6 +349,8 @@ public final class CustomEnchantments {
             case "smite":
             case "respiration":
             case "aqua_affinity":
+            case "frost_walker":
+            case "knockback":
                 return 2;
             case "bane_of_arthropods":
             case "vanishing_curse":
@@ -305,9 +365,6 @@ public final class CustomEnchantments {
             case "multishot":
             case "flame":
                 return 9;
-            case "frost_walker":
-            case "knockback":
-                return 2;
             case "lure":
                 return 7;
 
@@ -319,9 +376,28 @@ public final class CustomEnchantments {
                 return 8;
 
             default:
-                throw new IllegalArgumentException("Received invalid argument for getEnchantQuality: " + type.getKey().toString());
+                throw new IllegalArgumentException("Received invalid argument for getEnchantQuality: " + type.getKey().toString().replace("minecraft:", ""));
         }
     }
+
+    public static boolean canEnchantItem(CustomEnchantType type, ItemStack itemStack){
+        ArrayList<Material> allowedTargets = new ArrayList<>();
+
+        switch (type){
+            case EXPLOSIVE_TOUCH:
+                allowedTargets.add(Material.WOODEN_SHOVEL);
+                allowedTargets.add(Material.STONE_SHOVEL);
+                allowedTargets.add(Material.GOLDEN_SHOVEL);
+                allowedTargets.add(Material.IRON_SHOVEL);
+                allowedTargets.add(Material.DIAMOND_SHOVEL);
+                break;
+            default:
+                throw new IllegalArgumentException("Tried to find EnchantmentTarget for " + type);
+        }
+
+        return allowedTargets.contains(itemStack.getType());
+    }
+
 
     public static ArrayList<Object> getConflictingEnchantTypes(CustomEnchantType type){
         ArrayList<Object> conflictingEnchantments = new ArrayList<>();
@@ -336,7 +412,7 @@ public final class CustomEnchantments {
     public static ArrayList<Object> getConflictingEnchantTypes(Enchantment type){
         ArrayList<Object> conflictingEnchantments = new ArrayList<>();
 
-        switch (type.getKey().toString()){
+        switch (type.getKey().toString().replace("minecraft:", "")){
             case "fire_protection":
                 conflictingEnchantments.add("protection");
                 conflictingEnchantments.add("blast_protection");
@@ -368,37 +444,6 @@ public final class CustomEnchantments {
                 conflictingEnchantments.add("fire_protection");
                 conflictingEnchantments.add("protection");
                 conflictingEnchantments.add("blast_protection");
-                break;
-            case "efficiency":
-            case "mending":
-            case "frost_walker":
-            case "lure":
-            case "looting":
-            case "piercing":
-            case "multishot":
-            case "fire_aspect":
-            case "channeling":
-            case "sweeping":
-            case "thorns":
-            case "respiration":
-            case "riptide":
-            case "silk_touch":
-            case "quick_charge":
-            case "impaling":
-            case "feather_falling":
-            case "power":
-            case "infinity":
-            case "flame":
-            case "aqua_affinity":
-            case "punch":
-            case "loyalty":
-            case "depth_strider":
-            case "vanishing_curse":
-            case "unbreaking":
-            case "knockback":
-            case "luck_of_the_sea":
-            case "binding_curse":
-            case "fortune":
                 break;
             default:
                 break;
