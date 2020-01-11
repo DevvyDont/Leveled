@@ -50,10 +50,7 @@ public class PlayerNametags implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
-    }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event){
+        updatePlayerScoreboard(event.getPlayer(), event.getPlayer().getLevel(), event.getPlayer().getHealth());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
