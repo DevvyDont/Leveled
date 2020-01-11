@@ -85,6 +85,8 @@ public final class CustomEnchantments {
     public final static String LEVEL_CAPPED_GEAR_STRING = LEVEL_CAPPED_GEAR_COLOR + "Level";
     public final static String LEVEL_CAPPED_GEAR_STRING_FULL = LEVEL_CAPPED_GEAR_STRING + " %s ";
 
+    public final static int MAX_ENCHANT_QUALITY_FACTOR = 12;
+
     /**
      * Returns an arraylist of custom enchants on an item stack, we do this by parsing the lore of the item stack
      *

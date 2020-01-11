@@ -167,17 +167,17 @@ public class EnchantingInterface implements Listener {
         for (int xOffset = -2; xOffset <= 2; xOffset++ ) {
             for (int yOffset = -2; yOffset <= 2; yOffset++) {
                 for (int zOffset = -2; zOffset <= 2; zOffset++){
-                    if (qualityFactor >= 12) { break; }
+                    if (qualityFactor >= CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR) { break; }
                     Block block = enchantTable.getWorld().getBlockAt(enchantTable.getX() + xOffset, enchantTable.getY() +  yOffset, enchantTable.getZ() +  zOffset);
                     if (block.getLocation().distance(enchantTable.getLocation()) <= 1){ continue; }
                     if (block.getType().equals(Material.BOOKSHELF)){ qualityFactor++; }
                 }
-                if (qualityFactor >= 12) { break; }
+                if (qualityFactor >= CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR) { break; }
             }
-            if (qualityFactor >= 12) { break; }
+            if (qualityFactor >= CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR) { break; }
         }
 
-        if (qualityFactor > 12) { qualityFactor = 12; }
+        if (qualityFactor > CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR) { qualityFactor = CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR; }
 
         EnchantmentCalculator calculator = new EnchantmentCalculator(player.getLevel(), qualityFactor, item);
         ArrayList<PotentialEnchantment> potentialEnchantments =  calculator.calculateEnchantmentTypes();

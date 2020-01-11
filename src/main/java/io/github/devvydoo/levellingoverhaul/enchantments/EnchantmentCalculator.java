@@ -93,13 +93,13 @@ public class EnchantmentCalculator {
      * Constructs an object used to perform a single enchant event. New object must be made per enchant, no re-use
      *
      * @param playerLevel - The int vanilla experience level of the player when we enchanted
-     * @param qualityFactor - The quality factor of the enchant, must be a num from 1-12
+     * @param qualityFactor - The quality factor of the enchant, must be a num from 1-MAX_ENCHANT_QUALITY_FACTOR
      * @param item - The ItemStack we are attempting to enchant
      */
     public EnchantmentCalculator(int playerLevel, int qualityFactor, ItemStack item) {
 
-        if (qualityFactor < 1 || qualityFactor > 12){
-            throw new IllegalArgumentException("qualityFactor must be an int from 1-12!");
+        if (qualityFactor < 1 || qualityFactor > CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR){
+            throw new IllegalArgumentException("qualityFactor must be an int from 1-" + CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR);
         }
 
         // First initialize our instance variables
