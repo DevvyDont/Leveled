@@ -172,7 +172,7 @@ public abstract class BaseExperience {
      */
     public static int getBaseExperienceFromSmelt(Material materialSmelted, int amount){
 
-        int base;
+        double base;
         switch (materialSmelted){
             case COOKED_BEEF:
             case COOKED_CHICKEN:
@@ -181,22 +181,24 @@ public abstract class BaseExperience {
             case COOKED_PORKCHOP:
             case COOKED_RABBIT:
             case COOKED_SALMON:
+                base = .6;
+                break;
             case DRIED_KELP:
             case BAKED_POTATO:
-                base =  1;
+                base =  .3;
                 break;
             case IRON_INGOT:
-                base = 2;
+                base = 1.5;
                 break;
             case GOLD_INGOT:
-                base = 4;
+                base = 2.5;
                 break;
             default:
                 base = 0;
                 break;
         }
 
-        return base * amount;
+        return (int) (base * amount);
     }
 
     /**
