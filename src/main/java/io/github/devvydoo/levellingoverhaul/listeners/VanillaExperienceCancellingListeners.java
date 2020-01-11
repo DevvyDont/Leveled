@@ -93,9 +93,9 @@ public class VanillaExperienceCancellingListeners implements Listener {
     @EventHandler
     public void onGrindstoneUse(PlayerInteractEvent event){
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-            if (event.getClickedBlock() != null && event.getClickedBlock().getType().equals(Material.GRINDSTONE)) {
+            if (event.getClickedBlock() != null && (event.getClickedBlock().getType().equals(Material.GRINDSTONE) || event.getClickedBlock().getType().equals(Material.ANVIL))) {
                 event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.RED + "Grindstone is currently disabled!");
+                event.getPlayer().sendMessage(ChatColor.RED + "Grindstone and Anvils are currently disabled!");
             }
         }
     }
