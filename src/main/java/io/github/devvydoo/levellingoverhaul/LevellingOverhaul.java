@@ -57,6 +57,7 @@ public final class LevellingOverhaul extends JavaPlugin {
         // Listeners involving mobs
         mobManager = new MobManager(this, getServer().getWorlds());  // Initialize all worlds.
         getServer().getPluginManager().registerEvents(mobManager, this);
+        getServer().getPluginManager().registerEvents(new DamagePopupManager(this), this);
 
         // Register commands
         getCommand("mob").setExecutor(new TestMobCommand(this));
