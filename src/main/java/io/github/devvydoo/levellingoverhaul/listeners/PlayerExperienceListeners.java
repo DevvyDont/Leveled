@@ -4,9 +4,12 @@ import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
+import org.bukkit.GameRule;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 
@@ -85,5 +88,16 @@ public class PlayerExperienceListeners implements Listener {
         event.getPlayer().sendTitle(ChatColor.GREEN + "Level Up!", ChatColor.DARK_GREEN + "You are now Level " + event.getNewLevel() + "!", 10, 70, 20);
         event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, .7f, .7f);
         LevelRewards.playerLeveledUp(event.getPlayer(), event.getOldLevel(), event.getNewLevel());
+    }
+
+    @EventHandler
+    public void onPlayerDeath(EntityDeathEvent event) {
+
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            Boolean rule = player.getWorld().getGameRuleValue(GameRule.KEEP_INVENTORY);
+            if (rule == null || !rule) { return; }  // If keep inventory is off, proceed with expected behavior
+            player.setExp(0);  // If keep inventory is on, set the players exp progress to next level to 0
+        }
     }
 }
