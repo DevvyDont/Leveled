@@ -334,7 +334,6 @@ public final class CustomEnchantments {
             case "protection":
             case "mending":
             case "looting":
-            case "silk_touch":
             case "luck_of_the_sea":
                 return 10;
             case "feather_falling":
@@ -368,6 +367,7 @@ public final class CustomEnchantments {
             case "flame":
                 return 9;
             case "lure":
+            case "silk_touch":
                 return 7;
 
             case "fire_aspect":
@@ -446,6 +446,12 @@ public final class CustomEnchantments {
                 conflictingEnchantments.add("fire_protection");
                 conflictingEnchantments.add("protection");
                 conflictingEnchantments.add("blast_protection");
+                break;
+            case "fortune":
+                conflictingEnchantments.add("silk_touch");
+                break;
+            case "silk_touch":
+                conflictingEnchantments.add("fortune");
                 break;
             default:
                 break;
