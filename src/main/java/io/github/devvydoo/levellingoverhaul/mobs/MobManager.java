@@ -308,6 +308,31 @@ public class MobManager implements Listener {
             case GUARDIAN:
                 level = (int) (Math.random() * 5 + 25);
                 return level;
+            case SLIME:
+                level = getAveragePlayerLevel(entity, 250, true);
+                if (level > 25){
+                    ItemStack s = new ItemStack(Material.STONE_SWORD);
+                    s.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 - 11);
+                    entity.getEquipment().setItemInMainHand(s);
+                    entity.getEquipment().setItemInMainHandDropChance(0);
+                }
+                expectedHP = level / 3. + (Math.random() * 5) + 7;
+                if (((Slime) entity).getSize() > 0) { expectedHP *= ((Slime) entity).getSize(); }
+                if (expectedHP <  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) { entity.setHealth(expectedHP); }
+                else entity.setAbsorptionAmount(expectedHP -  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                return level;
+            case SILVERFISH:
+                level = getAveragePlayerLevel(entity, 250, true);
+                if (level > 20){
+                    ItemStack s = new ItemStack(Material.STONE_SWORD);
+                    s.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 - 11);
+                    entity.getEquipment().setItemInMainHand(s);
+                    entity.getEquipment().setItemInMainHandDropChance(0);
+                }
+                expectedHP = level / 2. + (Math.random() * 5) + 3;
+                if (expectedHP <  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) { entity.setHealth(expectedHP); }
+                else entity.setAbsorptionAmount(expectedHP -  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                return level;
             default:
                 return 1;
         }
