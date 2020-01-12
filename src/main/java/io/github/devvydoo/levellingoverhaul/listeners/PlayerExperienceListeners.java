@@ -3,15 +3,21 @@ package io.github.devvydoo.levellingoverhaul.listeners;
 import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
-import org.bukkit.ChatColor;
-import org.bukkit.GameRule;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.FireworkExplodeEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 
 /**
@@ -24,6 +30,46 @@ public class PlayerExperienceListeners implements Listener {
 
     public PlayerExperienceListeners(LevellingOverhaul plugin){
         this.plugin = plugin;
+    }
+
+    private void playerLeveledUp(Player player, int oldLevel, int newLevel){
+
+        this.plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "" + ChatColor.BOLD +  player.getDisplayName() + ChatColor.GRAY + " is now level " + ChatColor.GREEN + ChatColor.BOLD +  newLevel);
+        if (newLevel == BaseExperience.LEVEL_CAP) { player.sendTitle(ChatColor.RED + "MAX Level!", ChatColor.GOLD + "You are now Level " + BaseExperience.LEVEL_CAP + "!", 10, 140, 20); }
+        else { player.sendTitle(ChatColor.GREEN + "Level Up!", ChatColor.DARK_GREEN + "You are now Level " + newLevel + "!", 10, 70, 20); }
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, .7f, .5f);
+        LevelRewards.playerLeveledUp(player,oldLevel, newLevel);
+        player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+        player.setFoodLevel(20);
+        player.setSaturation(20);
+        for ( int i = 0; i < 3; i++) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    Firework firework = (Firework) player.getWorld().spawnEntity(player.getLocation().add(Math.random() * 2 - 1, 0, Math.random() * 2 - 1), EntityType.FIREWORK);
+                    FireworkMeta meta = firework.getFireworkMeta();
+                    FireworkEffect.Builder effectBuilder = FireworkEffect.builder();
+                    effectBuilder.with(FireworkEffect.Type.BALL_LARGE);
+                    effectBuilder.withColor(Color.GREEN,Color.PURPLE);
+                    meta.addEffect(effectBuilder.build());
+                    firework.setFireworkMeta(meta);
+                }
+            }.runTaskLater(plugin, i * 5);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDamagedByFireworks(EntityDamageByEntityEvent event){
+        if (event.getDamager() instanceof Firework && event.getEntity() instanceof Player) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Firework && event.getEntity() instanceof Player) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -69,10 +115,7 @@ public class PlayerExperienceListeners implements Listener {
         if (event.getNewLevel() >= BaseExperience.LEVEL_CAP){
             event.getPlayer().setExp((float) .9999);
             event.getPlayer().setLevel(BaseExperience.LEVEL_CAP);
-            this.plugin.getServer().broadcastMessage(ChatColor.RED + event.getPlayer().getDisplayName() + ChatColor.GOLD + " is now maxed, level " + ChatColor.RED + BaseExperience.LEVEL_CAP);
-            event.getPlayer().sendTitle(ChatColor.RED + "MAX Level!", ChatColor.GOLD + "You are now Level " + BaseExperience.LEVEL_CAP + "!", 10, 70, 20);
-            event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, .7f, .7f);
-            LevelRewards.playerLeveledUp(event.getPlayer(), event.getOldLevel(), BaseExperience.LEVEL_CAP);
+            playerLeveledUp(event.getPlayer(), event.getOldLevel(), event.getNewLevel());
             return;
         }
 
@@ -84,10 +127,7 @@ public class PlayerExperienceListeners implements Listener {
         }
 
         // At this point we are levelling up, let's tell the server
-        this.plugin.getServer().broadcastMessage(ChatColor.RED + event.getPlayer().getDisplayName() + ChatColor.GOLD + " is now level " + ChatColor.RED + event.getNewLevel());
-        event.getPlayer().sendTitle(ChatColor.GREEN + "Level Up!", ChatColor.DARK_GREEN + "You are now Level " + event.getNewLevel() + "!", 10, 70, 20);
-        event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, .7f, .7f);
-        LevelRewards.playerLeveledUp(event.getPlayer(), event.getOldLevel(), event.getNewLevel());
+        playerLeveledUp(event.getPlayer(), event.getOldLevel(), event.getNewLevel());
     }
 
     @EventHandler
