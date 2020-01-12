@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.enchantments;
 
+import io.github.devvydoo.levellingoverhaul.util.ToolTypeHelpers;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -387,11 +388,7 @@ public final class CustomEnchantments {
 
         switch (type){
             case EXPLOSIVE_TOUCH:
-                allowedTargets.add(Material.WOODEN_SHOVEL);
-                allowedTargets.add(Material.STONE_SHOVEL);
-                allowedTargets.add(Material.GOLDEN_SHOVEL);
-                allowedTargets.add(Material.IRON_SHOVEL);
-                allowedTargets.add(Material.DIAMOND_SHOVEL);
+                ToolTypeHelpers.addShovelsToList(allowedTargets);
                 break;
             default:
                 throw new IllegalArgumentException("Tried to find EnchantmentTarget for " + type);
@@ -405,7 +402,9 @@ public final class CustomEnchantments {
         ArrayList<Object> conflictingEnchantments = new ArrayList<>();
 
         switch (type){
-
+            case EXPLOSIVE_TOUCH:
+                conflictingEnchantments.add("silk_touch");
+                conflictingEnchantments.add("fortune");
         }
 
         return conflictingEnchantments;
@@ -449,9 +448,11 @@ public final class CustomEnchantments {
                 break;
             case "fortune":
                 conflictingEnchantments.add("silk_touch");
+                conflictingEnchantments.add(CustomEnchantType.EXPLOSIVE_TOUCH);
                 break;
             case "silk_touch":
                 conflictingEnchantments.add("fortune");
+                conflictingEnchantments.add(CustomEnchantType.EXPLOSIVE_TOUCH);
                 break;
             default:
                 break;

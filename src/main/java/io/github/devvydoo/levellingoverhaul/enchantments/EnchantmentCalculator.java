@@ -63,10 +63,10 @@ public class EnchantmentCalculator {
         enchs.add(new PotentialEnchantment(Enchantment.ARROW_DAMAGE, 30, BaseExperience.LEVEL_CAP, 12));
         enchs.add(new PotentialEnchantment(Enchantment.ARROW_INFINITE, 30, BaseExperience.LEVEL_CAP, 10));
         enchs.add(new PotentialEnchantment(Enchantment.ARROW_FIRE, 30, BaseExperience.LEVEL_CAP, 7));
-        enchs.add(new PotentialEnchantment(Enchantment.ARROW_KNOCKBACK, 30, BaseExperience.LEVEL_CAP, 7));
+        enchs.add(new PotentialEnchantment(Enchantment.ARROW_KNOCKBACK, 30, BaseExperience.LEVEL_CAP, 5));
         enchs.add(new PotentialEnchantment(Enchantment.IMPALING, 30, BaseExperience.LEVEL_CAP, 7));
         enchs.add(new PotentialEnchantment(Enchantment.QUICK_CHARGE, 30, BaseExperience.LEVEL_CAP, 5));
-        enchs.add(new PotentialEnchantment(Enchantment.MULTISHOT, 30, BaseExperience.LEVEL_CAP, 3));
+        enchs.add(new PotentialEnchantment(Enchantment.MULTISHOT, 30, BaseExperience.LEVEL_CAP, 1));
         enchs.add(new PotentialEnchantment(Enchantment.PIERCING, 30, BaseExperience.LEVEL_CAP, 5));
 
         // Tools
@@ -78,7 +78,7 @@ public class EnchantmentCalculator {
         enchs.add(new PotentialEnchantment(Enchantment.LURE, 30, BaseExperience.LEVEL_CAP, 10));
 
         // Custom
-        enchs.add(new PotentialEnchantment(CustomEnchantType.EXPLOSIVE_TOUCH, 30, BaseExperience.LEVEL_CAP, 12));
+        enchs.add(new PotentialEnchantment(CustomEnchantType.EXPLOSIVE_TOUCH, 30, BaseExperience.LEVEL_CAP, 8));
 
         return new ArrayList<>(enchs);
     }
