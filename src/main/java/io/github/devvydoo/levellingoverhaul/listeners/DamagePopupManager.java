@@ -18,7 +18,7 @@ public class DamagePopupManager implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityGotHit(EntityDamageEvent event){
-        if (event.getFinalDamage() > 0 && event.getEntity() instanceof LivingEntity && !event.isCancelled()){
+        if (event.getDamage() > 0 && event.getEntity() instanceof LivingEntity && !event.isCancelled()){
             new DamagePopup(plugin, event.getFinalDamage(), (LivingEntity) event.getEntity());
         }
     }

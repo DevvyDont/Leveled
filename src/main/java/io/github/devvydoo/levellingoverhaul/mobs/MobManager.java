@@ -187,8 +187,8 @@ public class MobManager implements Listener {
                     entity.getEquipment().setHelmet(new ItemStack(Material.LEATHER_HELMET));
                 }
                 expectedHP = level / 1.3 + (Math.random() * 5) + 7;
-                if (expectedHP <  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) { entity.setHealth(expectedHP); }
-                else entity.setAbsorptionAmount(expectedHP -  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
                 return level;
             case CAVE_SPIDER:
             case SPIDER:
@@ -204,8 +204,8 @@ public class MobManager implements Listener {
                 }
 
                 expectedHP = level / 1.7 + (Math.random() * 5) + 5;
-                if (expectedHP < entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) { entity.setHealth(expectedHP); }
-                else entity.setAbsorptionAmount(expectedHP - entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
                 if (level > 30) { entity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999, level / 30)); }
                 return level;
             case SKELETON:
@@ -219,8 +219,8 @@ public class MobManager implements Listener {
                 }
 
                 expectedHP = level / 1.3 + (Math.random() * 5) + 7;
-                if (expectedHP <  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) { entity.setHealth(expectedHP); }
-                else entity.setAbsorptionAmount(expectedHP -  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
                 return level;
             case CREEPER:
                 Creeper creeper = (Creeper) entity;
@@ -247,8 +247,8 @@ public class MobManager implements Listener {
                     else { level = (int) (Math.random() * 5 + 70); }
                 }
                 expectedHP = level / 1.1 + (Math.random() * 5) + 15;
-                if (expectedHP <  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) { entity.setHealth(expectedHP); }
-                else entity.setAbsorptionAmount(expectedHP -  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
                 ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
                 sword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 + 6);
                 sword.addUnsafeEnchantment(Enchantment.KNOCKBACK, 3);
@@ -270,7 +270,9 @@ public class MobManager implements Listener {
                     level += totalPlayerLevels / numPlayers;
                 }
                 if (level > 60) {
-                    entity.setAbsorptionAmount(5 * (level - 60));
+                    expectedHP = (5 * (level - 60));
+                    entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                    entity.setHealth(expectedHP);
                 }
                 return level;
             case PILLAGER:
@@ -281,8 +283,8 @@ public class MobManager implements Listener {
             case PIG_ZOMBIE:
                 level = getAveragePlayerLevel(entity, 250, false) + ((int) (Math.random() * 6));
                 expectedHP = level / 1.4 + (Math.random() * 5) + 10;
-                if (expectedHP <  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) { entity.setHealth(expectedHP); }
-                else entity.setAbsorptionAmount(expectedHP -  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
                 ItemStack goldSword = new ItemStack(Material.GOLDEN_SWORD);
                 goldSword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 + 1);
                 entity.getEquipment().setItemInMainHand(goldSword);
@@ -292,14 +294,14 @@ public class MobManager implements Listener {
             case BLAZE:
                 level = getAveragePlayerLevel(entity, 250, false) + ((int) (Math.random() * 6));
                 expectedHP = level / 1.2 + (Math.random() * 5) + 8;
-                if (expectedHP <  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) { entity.setHealth(expectedHP); }
-                else entity.setAbsorptionAmount(expectedHP -  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
                 return level;
             case WITHER_SKELETON:
                 level = getAveragePlayerLevel(entity, 250, false) + ((int) (Math.random() * 6));
                 expectedHP = level / .8 + (Math.random() * 5) + 7;
-                if (expectedHP <  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) { entity.setHealth(expectedHP); }
-                else entity.setAbsorptionAmount(expectedHP -  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
                 ItemStack stoneSword = new ItemStack(Material.STONE_SWORD);
                 stoneSword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 + 9);
                 entity.getEquipment().setItemInMainHand(stoneSword);
@@ -318,8 +320,8 @@ public class MobManager implements Listener {
                 }
                 expectedHP = level / 3. + (Math.random() * 5) + 7;
                 if (((Slime) entity).getSize() > 0) { expectedHP *= ((Slime) entity).getSize(); }
-                if (expectedHP <  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) { entity.setHealth(expectedHP); }
-                else entity.setAbsorptionAmount(expectedHP -  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
                 return level;
             case SILVERFISH:
                 level = getAveragePlayerLevel(entity, 250, true);
@@ -330,8 +332,13 @@ public class MobManager implements Listener {
                     entity.getEquipment().setItemInMainHandDropChance(0);
                 }
                 expectedHP = level / 2. + (Math.random() * 5) + 3;
-                if (expectedHP <  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) { entity.setHealth(expectedHP); }
-                else entity.setAbsorptionAmount(expectedHP -  entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
+                return level;
+            case WITCH:
+                expectedHP = Math.random() * 10 + 15 ;
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
                 return level;
             default:
                 return 1;
