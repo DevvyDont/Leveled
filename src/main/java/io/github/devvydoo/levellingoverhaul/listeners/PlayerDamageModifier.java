@@ -27,20 +27,26 @@ public class PlayerDamageModifier implements Listener {
             return;
         }
 
-        // If a player got hit by a living entity, check the levels and see if we should multiply it
-        if (event.getEntity() instanceof Player && event.getDamager() instanceof LivingEntity){
+        // If a LivingEntity got hit by another living entity, check the levels and see if we should multiply it
+        if (event.getEntity() instanceof LivingEntity && event.getDamager() instanceof LivingEntity){
 
             LivingEntity attacker = (LivingEntity) event.getDamager();
-            Player player = (Player) event.getEntity();
+            LivingEntity attacked = (LivingEntity) event.getEntity();
 
             int attackerLevel = this.plugin.getMobManager().getMobLevel(attacker);
-            int playerLevel = player.getLevel();
+            int attackedLevel = this.plugin.getMobManager().getMobLevel(attacked);
 
-            // If attacker is 5 levels higher than player, multiply damage by level difference / 10
-            if (attackerLevel > playerLevel + 5){
-                double damageMultiplier = 1 + ((attackerLevel - playerLevel) / 10.);
+            // If attacker is 5 levels higher than the other, multiply damage by level difference / 10
+            if (attackerLevel > attackedLevel + 5){
+                double damageMultiplier = 1 + ((attackerLevel - attackedLevel) / 10.);
                 event.setDamage(event.getDamage() * damageMultiplier);
             }
+            // If attacker is 5 levels lower than what they are attacking, reduce damage
+            else if (attackerLevel + 5 < attackedLevel) {
+                double damageMultiplier = 1 - ((attackedLevel - attackerLevel) * .01);
+                event.setDamage(event.getDamage() * damageMultiplier);
+            }
+
         }
 
     }
