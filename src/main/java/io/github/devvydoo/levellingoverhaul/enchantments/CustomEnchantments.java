@@ -399,6 +399,7 @@ public final class CustomEnchantments {
                 break;
             case EXPERIENCED:
                 ToolTypeHelpers.addAllToolsToList(allowedTargets);
+                break;
             default:
                 throw new IllegalArgumentException("Tried to find EnchantmentTarget for " + type);
         }

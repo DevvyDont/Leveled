@@ -80,7 +80,7 @@ public class EnchantmentCalculator {
         // Custom
         enchs.add(new PotentialEnchantment(CustomEnchantType.EXPLOSIVE_TOUCH, 30, BaseExperience.LEVEL_CAP, 8));
         enchs.add(new PotentialEnchantment(CustomEnchantType.SATURATION, 45, 75, 3));
-        enchs.add(new PotentialEnchantment(CustomEnchantType.EXPERIENCED, 30, 75, 5));
+        enchs.add(new PotentialEnchantment(CustomEnchantType.EXPERIENCED, 30, 90, 10));
 
         return new ArrayList<>(enchs);
     }

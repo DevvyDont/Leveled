@@ -9,7 +9,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,8 +32,27 @@ public class PlayerExperienceGainListeners implements Listener {
 
     private LevellingOverhaul plugin;
 
-    public PlayerExperienceGainListeners(LevellingOverhaul plugin){
+    public PlayerExperienceGainListeners(LevellingOverhaul plugin) {
         this.plugin = plugin;
+    }
+
+    /**
+     * Helper method that gets double xp chance from the experienced enchant
+     *
+     * @param player         The player that is earning xp
+     * @param doubleXpChance The original xp chance before the enchant modification
+     * @return the new double xp chance
+     */
+    private double getDoubleXpChance(Player player, double doubleXpChance) {
+        ItemStack tool = player.getInventory().getItemInMainHand();
+        if (!tool.getType().equals(Material.AIR)) {
+            for (CustomEnchantment enchantment : CustomEnchantments.getCustomEnchantments(tool)) {
+                if (enchantment.getType().equals(CustomEnchantType.EXPERIENCED)) {
+                    doubleXpChance += enchantment.getLevel() / 33.;
+                }
+            }
+        }
+        return doubleXpChance;
     }
 
 
@@ -41,31 +63,31 @@ public class PlayerExperienceGainListeners implements Listener {
      * @param event - The EntityDamageByEntityEvent event we are listening to
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onPlayerKillEntity(EntityDamageByEntityEvent event){
+    public void onPlayerKillEntity(EntityDamageByEntityEvent event) {
 
         // Was the entity living?
-        if (!(event.getEntity() instanceof LivingEntity)){
+        if (!(event.getEntity() instanceof LivingEntity)) {
             return;
         }
 
         LivingEntity livingEntity = (LivingEntity) event.getEntity();
 
         // Is the entity going to die?
-        if (livingEntity.getHealth() - event.getFinalDamage() > 0){
+        if (livingEntity.getHealth() - event.getFinalDamage() > 0) {
             return;
         }
 
         // Are they dying to a player or an arrow?
-        if (!(event.getDamager() instanceof Player || event.getDamager() instanceof Arrow)){
+        if (!(event.getDamager() instanceof Player || event.getDamager() instanceof Arrow)) {
             return;
         }
         Player player;
         // Are they dying to a player shooting an arrow?
-        if (event.getDamager() instanceof Arrow){
+        if (event.getDamager() instanceof Arrow) {
             Arrow arrow = (Arrow) event.getDamager();
 
             // If a player didn't shoot the arrow, we don't care
-            if (!(arrow.getShooter() instanceof Player)){
+            if (!(arrow.getShooter() instanceof Player)) {
                 return;
             }
 
@@ -77,7 +99,7 @@ public class PlayerExperienceGainListeners implements Listener {
 
 
         // Does the player even need xp? i.e. are they max level
-        if (player.getLevel() >= BaseExperience.LEVEL_CAP){
+        if (player.getLevel() >= BaseExperience.LEVEL_CAP) {
             player.setLevel(BaseExperience.LEVEL_CAP);
             player.setExp((float) .9999);
             return;
@@ -87,25 +109,25 @@ public class PlayerExperienceGainListeners implements Listener {
         int xp = BaseExperience.getBaseExperienceFromMob(livingEntity);
 
         double extraLevelXp = 0;
-        if (!(livingEntity instanceof Player)) { extraLevelXp  =  this.plugin.getMobManager().getMobLevel(livingEntity) / (Math.random() * 20 + 11); }
+        if (!(livingEntity instanceof Player)) {
+            extraLevelXp = this.plugin.getMobManager().getMobLevel(livingEntity) / (Math.random() * 20 + 11);
+        }
         xp += (int) extraLevelXp;
+
+        // 5% chance for double xp :)
+        double doubleXpChance = .05;
 
         // Check the tool in their hand to see if we should give xp
         String bonus = "";
-        ItemStack tool = player.getInventory().getItemInMainHand();
-        if (!tool.getType().equals(Material.AIR)){
-            for (CustomEnchantment enchantment: CustomEnchantments.getCustomEnchantments(tool)){
-                if (enchantment.getType().equals(CustomEnchantType.EXPERIENCED)){
-                    if (Math.random() < enchantment.getLevel() / 10.){
-                        bonus = ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "BONUS! ";
-                        xp *= 2;
-                    }
-                }
-            }
+        doubleXpChance = getDoubleXpChance(player, doubleXpChance);
+
+        if (Math.random() < doubleXpChance) {
+            bonus = ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "BONUS! ";
+            xp *= 2;
         }
 
         // If we have no xp to give don't do anything
-        if (xp <= 0){
+        if (xp <= 0) {
             return;
         }
         player.giveExp(xp); // Gives player exp
@@ -120,21 +142,21 @@ public class PlayerExperienceGainListeners implements Listener {
      * @param event - The EntityDeathEvent we are listening to
      */
     @EventHandler
-    public void onBossDeath(EntityDeathEvent event){
+    public void onBossDeath(EntityDeathEvent event) {
         EntityType enemy = event.getEntity().getType();
 
-        switch (enemy){
+        switch (enemy) {
             case ENDER_DRAGON:
                 // We are going to give all players in the end a bonus
-                for (Player p: event.getEntity().getWorld().getPlayers()){
+                for (Player p : event.getEntity().getWorld().getPlayers()) {
                     p.giveExp(200);
                     p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Ender Dragon" + ChatColor.YELLOW + "! +200XP");
                 }
                 break;
             case WITHER:
                 // All players within 100 block radius from the wither get credit
-                for (Player p: event.getEntity().getWorld().getPlayers()){
-                    if (p.getLocation().distance(event.getEntity().getLocation()) < 100){
+                for (Player p : event.getEntity().getWorld().getPlayers()) {
+                    if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
                         p.giveExp(175);
                         p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Wither" + ChatColor.YELLOW + "! +175XP");
                     }
@@ -142,8 +164,8 @@ public class PlayerExperienceGainListeners implements Listener {
                 break;
             case ELDER_GUARDIAN:
                 // All players within 100 block radius from the guardian get credit
-                for (Player p: event.getEntity().getWorld().getPlayers()){
-                    if (p.getLocation().distance(event.getEntity().getLocation()) < 100){
+                for (Player p : event.getEntity().getWorld().getPlayers()) {
+                    if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
                         p.giveExp(120);
                         p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Elder Guardian" + ChatColor.YELLOW + "! +120XP");
                     }
@@ -158,10 +180,10 @@ public class PlayerExperienceGainListeners implements Listener {
      * @param event - The BlockBreakEvent we are listening for
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onBlockBreak(BlockBreakEvent event){
+    public void onBlockBreak(BlockBreakEvent event) {
 
         // Never ever ever give xp if the block isn't supposed to drop
-        if (!event.isDropItems()){
+        if (!event.isDropItems()) {
             return;
         }
 
@@ -169,40 +191,33 @@ public class PlayerExperienceGainListeners implements Listener {
         int xpGained = BaseExperience.getBaseExperienceFromBlock(event.getBlock());
 
         // Did we even gain experience?
-        if (xpGained <= 0){
+        if (xpGained <= 0) {
             return;
         }
 
         // Never ever ever give someone xp for silk touch breaks
         if (event.getPlayer().getInventory().getItemInMainHand().getItemMeta() != null) {
-            if (event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasEnchant(Enchantment.SILK_TOUCH)){
+            if (event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasEnchant(Enchantment.SILK_TOUCH)) {
                 return;
             }
         }
 
         // Does the player even need experience?
-        if (player.getLevel() >= BaseExperience.LEVEL_CAP){
+        if (player.getLevel() >= BaseExperience.LEVEL_CAP) {
             return;
         }
 
         String xpMessage = ChatColor.BLUE + "+" + xpGained + " XP";
 
-        // 20% chance for double xp :)
-        double doubleXpChance = .2;
+        // 5% chance for double xp :)
+        double doubleXpChance = .05;
 
         // Check if we should increase chance from the tool
-        ItemStack tool = player.getInventory().getItemInMainHand();
-        if (!tool.getType().equals(Material.AIR)){
-            for (CustomEnchantment enchantment: CustomEnchantments.getCustomEnchantments(tool)){
-                if (enchantment.getType().equals(CustomEnchantType.EXPERIENCED)){
-                    doubleXpChance += enchantment.getLevel() / 10.;
-                }
-            }
-        }
+        doubleXpChance = getDoubleXpChance(player, doubleXpChance);
 
-        if (Math.random() <= doubleXpChance){
+        if (Math.random() <= doubleXpChance) {
             xpGained *= 2;
-            xpMessage = ChatColor.LIGHT_PURPLE + "" +  ChatColor.BOLD +  "BONUS! " + ChatColor.BLUE + "+" + xpGained + " XP";
+            xpMessage = ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "BONUS! " + ChatColor.BLUE + "+" + xpGained + " XP";
         }
 
         // Looks good to give them xp
@@ -218,17 +233,17 @@ public class PlayerExperienceGainListeners implements Listener {
      * @param event - the FurnaceExtractEvent we are listening for
      */
     @EventHandler(priority = EventPriority.LOW)
-    public void onSmeltExtract(FurnaceExtractEvent event){
+    public void onSmeltExtract(FurnaceExtractEvent event) {
 
         // Was this event meant to drop xp?
-        if (event.getExpToDrop() <= 0){
+        if (event.getExpToDrop() <= 0) {
             return;
         }
 
         Player player = event.getPlayer();
 
         // Does the player even need xp?
-        if (player.getLevel() >= BaseExperience.LEVEL_CAP){
+        if (player.getLevel() >= BaseExperience.LEVEL_CAP) {
             return;
         }
 
@@ -245,24 +260,24 @@ public class PlayerExperienceGainListeners implements Listener {
      * @param event - The PlayerAdvancementDoneEvent we are listening to
      */
     @EventHandler
-    public void onAdvancementEarn(PlayerAdvancementDoneEvent event){
+    public void onAdvancementEarn(PlayerAdvancementDoneEvent event) {
 
         // We don't care about recipe advancements
-        if (event.getAdvancement().getKey().toString().startsWith("minecraft:recipes")){
+        if (event.getAdvancement().getKey().toString().startsWith("minecraft:recipes")) {
             return;
         }
 
         int xpEarned = BaseExperience.getBaseExperienceFromAdvancement(event.getAdvancement());
 
         // Valid advancement?
-        if (xpEarned <= 0){
+        if (xpEarned <= 0) {
             return;
         }
 
         Player player = event.getPlayer();
 
         // Is the player at the level cap?
-        if (player.getLevel() >= BaseExperience.LEVEL_CAP){
+        if (player.getLevel() >= BaseExperience.LEVEL_CAP) {
             return;
         }
 

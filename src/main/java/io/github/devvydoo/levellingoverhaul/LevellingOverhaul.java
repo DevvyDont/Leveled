@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul;
 
+import io.github.devvydoo.levellingoverhaul.commands.PlayerStatsCommand;
 import io.github.devvydoo.levellingoverhaul.commands.TestMobCommand;
 import io.github.devvydoo.levellingoverhaul.enchantments.AnvilInterface;
 import io.github.devvydoo.levellingoverhaul.enchantments.EnchantingInterface;
@@ -79,6 +80,7 @@ public final class LevellingOverhaul extends JavaPlugin {
 
         // Register commands
         getCommand("mob").setExecutor(new TestMobCommand(this));
+        getCommand("stats").setExecutor(new PlayerStatsCommand());
     }
 
     @Override

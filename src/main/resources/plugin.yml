@@ -6,3 +6,6 @@ commands:
   mob:
     description: Spawns a test mob
     usage: /mob
+  stats:
+    description: See player stats
+    usage: /stats
