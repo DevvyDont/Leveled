@@ -320,6 +320,8 @@ public final class CustomEnchantments {
         switch (type){
             case EXPLOSIVE_TOUCH:
                 return 5;
+            case SATURATION:
+                return 11;
             default:
                 throw new IllegalArgumentException("Received invalid argument for getEnchantQuality: " + type);
         }
@@ -389,6 +391,9 @@ public final class CustomEnchantments {
         switch (type){
             case EXPLOSIVE_TOUCH:
                 ToolTypeHelpers.addShovelsToList(allowedTargets);
+                break;
+            case SATURATION:
+                ToolTypeHelpers.addHelmetsToList(allowedTargets);
                 break;
             default:
                 throw new IllegalArgumentException("Tried to find EnchantmentTarget for " + type);
@@ -471,6 +476,8 @@ public final class CustomEnchantments {
         switch (type){
             case EXPLOSIVE_TOUCH:
                 return "Upon breaking a block, an explosion is created";
+            case SATURATION:
+                return "Food eaten has a higher food saturation bonus";
             default:
                 return "This enchantment doesn't have a description :(";
         }

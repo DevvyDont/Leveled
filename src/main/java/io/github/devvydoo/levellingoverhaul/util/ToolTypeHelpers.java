@@ -59,4 +59,12 @@ public final class ToolTypeHelpers {
 
     }
 
+    public static void addHelmetsToList(ArrayList<Material> list){
+        list.add(Material.LEATHER_HELMET);
+        list.add(Material.IRON_HELMET);
+        list.add(Material.CHAINMAIL_HELMET);
+        list.add(Material.GOLDEN_HELMET);
+        list.add(Material.DIAMOND_HELMET);
+    }
+
 }

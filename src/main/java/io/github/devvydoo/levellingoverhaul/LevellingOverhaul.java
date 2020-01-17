@@ -1,25 +1,42 @@
 package io.github.devvydoo.levellingoverhaul;
 
 import io.github.devvydoo.levellingoverhaul.commands.TestMobCommand;
+import io.github.devvydoo.levellingoverhaul.enchantments.AnvilInterface;
 import io.github.devvydoo.levellingoverhaul.enchantments.EnchantingInterface;
-import io.github.devvydoo.levellingoverhaul.enchantments.ExplosiveTouch;
+import io.github.devvydoo.levellingoverhaul.enchantments.ExplosiveTouchEnchantment;
 import io.github.devvydoo.levellingoverhaul.listeners.*;
 import io.github.devvydoo.levellingoverhaul.mobs.MobManager;
 import io.github.devvydoo.levellingoverhaul.util.Recipes;
+import org.bukkit.advancement.Advancement;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Iterator;
 
 
 public final class LevellingOverhaul extends JavaPlugin {
 
     private MobManager mobManager;
 
+    private Advancement enchantAdvancement;
+
     public MobManager getMobManager(){
         return this.mobManager;
+    }
+
+    public Advancement getEnchantAdvancement() {
+        return enchantAdvancement;
     }
 
     @Override
     public void onEnable() {
         // Plugin startup logic
+
+        // We need this key for later, not sure if there's a better way to do this because i don't really understand NamespacedKeys :(
+        Iterator<Advancement> advanceIterator = getServer().advancementIterator();
+        while (advanceIterator.hasNext()){
+            Advancement advancement = advanceIterator.next();
+            if (advancement.getKey().toString().equals("minecraft:story/enchant_item")) { enchantAdvancement = advancement; break; }
+        }
 
         // Listeners that change how natural progression works
         getServer().getPluginManager().registerEvents(new ProgressionModifyingListeners(), this);
@@ -43,7 +60,8 @@ public final class LevellingOverhaul extends JavaPlugin {
 
         // Listeners involving custom enchantments
         getServer().getPluginManager().registerEvents(new EnchantingInterface(this), this);
-        getServer().getPluginManager().registerEvents(new ExplosiveTouch(), this);
+        getServer().getPluginManager().registerEvents(new AnvilInterface(this), this);
+        getServer().getPluginManager().registerEvents(new ExplosiveTouchEnchantment(), this);
 
         // Listeners involving chat
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);

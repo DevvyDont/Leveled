@@ -16,9 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  *
  * This test enchantment gives whatever is in your hand explosive touch upon breaking a block, pretty useless
  */
-public class ExplosiveTouch implements Listener {
-
-    private int count = 1;
+public class ExplosiveTouchEnchantment implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event){
@@ -45,23 +43,5 @@ public class ExplosiveTouch implements Listener {
         // Boom
         event.getBlock().getWorld().createExplosion(event.getBlock().getLocation(), explosionPower);
     }
-
-//    // Debug event that gives an item with our custom enchantment
-//    @EventHandler
-//    public void onCraftingTableInteract(PlayerInteractEvent event){
-//
-//        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-//            if (event.getClickedBlock().getType().equals(Material.CRAFTING_TABLE)){
-//                ItemStack explosiveShovel = new ItemStack(Material.WOODEN_SHOVEL);
-//                CustomEnchantments.addEnchant(explosiveShovel, CustomEnchantType.EXPLOSIVE_TOUCH, count);
-//                count++;
-//                ItemMeta shovelMeta = explosiveShovel.getItemMeta();
-//                shovelMeta.setDisplayName(ChatColor.RED + "Explosive Shovel");
-//                explosiveShovel.setItemMeta(shovelMeta);
-//                event.getPlayer().getInventory().addItem(explosiveShovel);
-//            }
-//        }
-//
-//    }
 
 }

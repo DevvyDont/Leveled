@@ -165,12 +165,13 @@ public class MobManager implements Listener {
         if (entity instanceof Bee){ return 5; }
         int level = 1;
         double expectedHP;
-        if (!(entity instanceof Monster) && !(entity instanceof Boss)){
+        if (!(entity instanceof Boss) && !(entity instanceof Mob)){
             return level;
         }
 
         switch (entity.getType()){
             case ZOMBIE:
+            case ZOMBIE_VILLAGER:
             case HUSK:
             case DROWNED:
                 level = getAveragePlayerLevel(entity, 250, true);
@@ -290,6 +291,13 @@ public class MobManager implements Listener {
                 entity.getEquipment().setItemInMainHand(goldSword);
                 entity.getEquipment().setItemInMainHandDropChance(0);
                 return level;
+            case MAGMA_CUBE:
+                MagmaCube mc = (MagmaCube) entity;
+                level = getAveragePlayerLevel(entity, 250, false) + ((int) (Math.random() * 6));
+                expectedHP = level / 5. * (Math.random() + 1) * (mc.getSize() /1.5);
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
+                return level;
             case GHAST:
             case BLAZE:
                 level = getAveragePlayerLevel(entity, 250, false) + ((int) (Math.random() * 6));
@@ -336,6 +344,8 @@ public class MobManager implements Listener {
                 entity.setHealth(expectedHP);
                 return level;
             case WITCH:
+            case PHANTOM:
+                level = 15;
                 expectedHP = Math.random() * 10 + 15 ;
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);

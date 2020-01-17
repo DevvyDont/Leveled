@@ -6,7 +6,10 @@ import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
 import org.bukkit.block.EnchantingTable;
 import org.bukkit.enchantments.Enchantment;
@@ -372,6 +375,9 @@ public class EnchantingInterface implements Listener {
         if (event.getPlayer().getLevel() < LevelRewards.ENCHANTING_UNLOCK){
             return;
         }
+
+        // Give them enchanting advancement
+        event.getPlayer().getAdvancementProgress(plugin.getEnchantAdvancement()).awardCriteria("enchanted_item");
 
         // Open the GUI
         event.setCancelled(true);

@@ -83,23 +83,6 @@ public class VanillaExperienceCancellingListeners implements Listener {
         event.setExpToDrop(0);
     }
 
-    /**
-     * So for now, we can't really cancel grind stone events, however later we plan on completely overriding its gui
-     * so we can just cancel it and say its not ready
-     * TODO: make gui and remove this event
-     *
-     * @param event - The PlayerInteractEvent we are listening for
-     */
-    @EventHandler
-    public void onGrindstoneUse(PlayerInteractEvent event){
-        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-            if (event.getClickedBlock() != null && (event.getClickedBlock().getType().equals(Material.GRINDSTONE) || event.getClickedBlock().getType().equals(Material.ANVIL))) {
-                event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.RED + "Grindstone and Anvils are currently disabled!");
-            }
-        }
-    }
-
     @EventHandler
     public void onTrade(InventoryClickEvent event){
 

@@ -5,6 +5,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,28 +28,40 @@ public class PlayerDamageModifier implements Listener {
             return;
         }
 
-        // If a LivingEntity got hit by another living entity, check the levels and see if we should multiply it
-        if (event.getEntity() instanceof LivingEntity && event.getDamager() instanceof LivingEntity){
-
-            LivingEntity attacker = (LivingEntity) event.getDamager();
-            LivingEntity attacked = (LivingEntity) event.getEntity();
-
-            int attackerLevel = this.plugin.getMobManager().getMobLevel(attacker);
-            int attackedLevel = this.plugin.getMobManager().getMobLevel(attacked);
-
-            // If attacker is 5 levels higher than the other, multiply damage by level difference / 10
-            if (attackerLevel > attackedLevel + 5){
-                double damageMultiplier = 1 + ((attackerLevel - attackedLevel) / 10.);
-                event.setDamage(event.getDamage() * damageMultiplier);
-            }
-            // If attacker is 5 levels lower than what they are attacking, reduce damage
-            else if (attackerLevel + 5 < attackedLevel) {
-                double damageMultiplier = 1 - ((attackedLevel - attackerLevel) * .01);
-                event.setDamage(event.getDamage() * damageMultiplier);
-            }
-
+        // If the entity hit wasnt living don't worry
+        if (!(event.getEntity() instanceof LivingEntity)){
+            return;
         }
 
+        // If the entity that attacked wasn't a mob or a projectile don't worry about it
+        if (!(event.getDamager() instanceof LivingEntity || event.getDamager() instanceof Projectile)){
+            return;
+        }
+
+        // Get the level of the entity that was attacked
+        int attackedLevel = plugin.getMobManager().getMobLevel(((LivingEntity) event.getEntity()));
+        int attackerLevel = 1;
+
+        // Now we need to find the level of the attacker
+        if (event.getDamager() instanceof LivingEntity) {  // Case where we get hit normally by melee
+            attackerLevel = plugin.getMobManager().getMobLevel((((LivingEntity) event.getDamager())));
+        } else if (event.getDamager() instanceof Projectile){  // Case where we get hit by a mob's projectile
+            Projectile projectile = (Projectile) event.getDamager();  // Cast to a projectile
+            if (projectile.getShooter() instanceof LivingEntity) {  // Check if the projectiles shooter was living
+                attackerLevel = plugin.getMobManager().getMobLevel((LivingEntity) projectile.getShooter());
+            }
+        }
+
+        // If attacker is 5 levels higher than the other, multiply damage by level difference / 10
+        if (attackerLevel > attackedLevel + 5){
+            double damageMultiplier = 1 + ((attackerLevel - attackedLevel) / 10.);
+            event.setDamage(event.getDamage() * damageMultiplier);
+        }
+        // If attacker is 5 levels lower than what they are attacking, reduce damage
+        else if (attackerLevel + 5 < attackedLevel) {
+            double damageMultiplier = 1 - ((attackedLevel - attackerLevel) * .01);
+            event.setDamage(event.getDamage() * damageMultiplier);
+        }
     }
 
 

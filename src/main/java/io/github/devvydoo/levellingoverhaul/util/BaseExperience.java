@@ -76,7 +76,7 @@ public abstract class BaseExperience {
                 Slime slime = (Slime) mob;
                 int magmaBonus = 0;
                 if (slime instanceof MagmaCube){
-                    magmaBonus = 2;
+                    magmaBonus = 1;
                 }
                 switch (slime.getSize()){
                     case 3:
@@ -84,7 +84,7 @@ public abstract class BaseExperience {
                     case 4:
                         return 5 + magmaBonus;
                     default:
-                        return 1 + magmaBonus;
+                        return 1;
                 }
             case SPIDER:
             case PHANTOM:
@@ -151,7 +151,7 @@ public abstract class BaseExperience {
             case COAL_ORE:
                 return Math.random() < .5 ? 1 : 0;
             case NETHER_QUARTZ_ORE:
-                return (int) (Math.random() * 6 + 2);
+                return (int) (Math.random() * 4 + 2);
             case LAPIS_ORE:
             case REDSTONE_ORE:
                 return 5;
