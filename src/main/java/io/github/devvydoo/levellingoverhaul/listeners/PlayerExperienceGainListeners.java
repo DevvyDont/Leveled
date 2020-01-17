@@ -1,8 +1,12 @@
 package io.github.devvydoo.levellingoverhaul.listeners;
 
 import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantType;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantment;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
@@ -14,6 +18,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Listeners in charge of listening for events where we should earn xp. Not to be confused with PlayerExperienceListeners
@@ -35,13 +40,8 @@ public class PlayerExperienceGainListeners implements Listener {
      *
      * @param event - The EntityDamageByEntityEvent event we are listening to
      */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerKillEntity(EntityDamageByEntityEvent event){
-
-        // Was the event cancelled?
-        if (event.isCancelled()){
-            return;
-        }
 
         // Was the entity living?
         if (!(event.getEntity() instanceof LivingEntity)){
@@ -90,6 +90,20 @@ public class PlayerExperienceGainListeners implements Listener {
         if (!(livingEntity instanceof Player)) { extraLevelXp  =  this.plugin.getMobManager().getMobLevel(livingEntity) / (Math.random() * 20 + 11); }
         xp += (int) extraLevelXp;
 
+        // Check the tool in their hand to see if we should give xp
+        String bonus = "";
+        ItemStack tool = player.getInventory().getItemInMainHand();
+        if (!tool.getType().equals(Material.AIR)){
+            for (CustomEnchantment enchantment: CustomEnchantments.getCustomEnchantments(tool)){
+                if (enchantment.getType().equals(CustomEnchantType.EXPERIENCED)){
+                    if (Math.random() < enchantment.getLevel() / 10.){
+                        bonus = ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "BONUS! ";
+                        xp *= 2;
+                    }
+                }
+            }
+        }
+
         // If we have no xp to give don't do anything
         if (xp <= 0){
             return;
@@ -97,7 +111,7 @@ public class PlayerExperienceGainListeners implements Listener {
         player.giveExp(xp); // Gives player exp
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, (float) .5, 1);
 
-        BaseExperience.displayActionBarText(player, ChatColor.YELLOW + "+" + xp + " XP");
+        BaseExperience.displayActionBarText(player, bonus + ChatColor.YELLOW + "+" + xp + " XP");
     }
 
     /**
@@ -143,13 +157,8 @@ public class PlayerExperienceGainListeners implements Listener {
      *
      * @param event - The BlockBreakEvent we are listening for
      */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event){
-
-        // Did a different event already cancel it? if so we don't need to do anything
-        if (event.isCancelled()){
-            return;
-        }
 
         // Never ever ever give xp if the block isn't supposed to drop
         if (!event.isDropItems()){
@@ -159,16 +168,16 @@ public class PlayerExperienceGainListeners implements Listener {
         Player player = event.getPlayer();
         int xpGained = BaseExperience.getBaseExperienceFromBlock(event.getBlock());
 
+        // Did we even gain experience?
+        if (xpGained <= 0){
+            return;
+        }
+
         // Never ever ever give someone xp for silk touch breaks
         if (event.getPlayer().getInventory().getItemInMainHand().getItemMeta() != null) {
             if (event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasEnchant(Enchantment.SILK_TOUCH)){
                 return;
             }
-        }
-
-        // Did we even gain experience?
-        if (xpGained <= 0){
-            return;
         }
 
         // Does the player even need experience?
@@ -179,7 +188,19 @@ public class PlayerExperienceGainListeners implements Listener {
         String xpMessage = ChatColor.BLUE + "+" + xpGained + " XP";
 
         // 20% chance for double xp :)
-        if (Math.random() <= .2){
+        double doubleXpChance = .2;
+
+        // Check if we should increase chance from the tool
+        ItemStack tool = player.getInventory().getItemInMainHand();
+        if (!tool.getType().equals(Material.AIR)){
+            for (CustomEnchantment enchantment: CustomEnchantments.getCustomEnchantments(tool)){
+                if (enchantment.getType().equals(CustomEnchantType.EXPERIENCED)){
+                    doubleXpChance += enchantment.getLevel() / 10.;
+                }
+            }
+        }
+
+        if (Math.random() <= doubleXpChance){
             xpGained *= 2;
             xpMessage = ChatColor.LIGHT_PURPLE + "" +  ChatColor.BOLD +  "BONUS! " + ChatColor.BLUE + "+" + xpGained + " XP";
         }

@@ -334,10 +334,11 @@ public abstract class BaseExperience {
                 return 30;
             case "husbandry/bred_all_animals":  // Difficult to pull off, should reward a good amount
             case "husbandry/complete_catalogue":  // Difficult to pull off, tame all cat variants
-                return 50;
-            case "husbandry/balanced_diet":  // Eat everything, not easy
-            case "adventure/adventuring_time":  // Visit all the biomss
                 return 100;
+            case "husbandry/balanced_diet":  // Eat everything, not easy
+                return 250;
+            case "adventure/adventuring_time":  // Visit all the biomss
+                return 300;
 
             // Mid-game
             case "nether/find_fortress":  // Capped at level 40

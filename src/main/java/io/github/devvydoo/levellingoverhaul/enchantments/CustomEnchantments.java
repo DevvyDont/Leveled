@@ -322,6 +322,8 @@ public final class CustomEnchantments {
                 return 5;
             case SATURATION:
                 return 11;
+            case EXPERIENCED:
+                return 6;
             default:
                 throw new IllegalArgumentException("Received invalid argument for getEnchantQuality: " + type);
         }
@@ -395,6 +397,8 @@ public final class CustomEnchantments {
             case SATURATION:
                 ToolTypeHelpers.addHelmetsToList(allowedTargets);
                 break;
+            case EXPERIENCED:
+                ToolTypeHelpers.addAllToolsToList(allowedTargets);
             default:
                 throw new IllegalArgumentException("Tried to find EnchantmentTarget for " + type);
         }
@@ -478,6 +482,8 @@ public final class CustomEnchantments {
                 return "Upon breaking a block, an explosion is created";
             case SATURATION:
                 return "Food eaten has a higher food saturation bonus";
+            case EXPERIENCED:
+                return "Increases chance to receive bonus experience from mining and mobs";
             default:
                 return "This enchantment doesn't have a description :(";
         }
@@ -498,7 +504,7 @@ public final class CustomEnchantments {
             case "flame":
                 return "Enemies shot will get ignited";
             case "aqua_affinity":
-                return "See better underwater";
+                return "Underwater block breaking speeds are increased";
             case "punch":
                 return "Enemies hit by arrows get knocked back further";
             case "loyalty":
