@@ -414,6 +414,10 @@ public final class CustomEnchantments {
             case EXPLOSIVE_TOUCH:
                 conflictingEnchantments.add("silk_touch");
                 conflictingEnchantments.add("fortune");
+                conflictingEnchantments.add(CustomEnchantType.EXPERIENCED);
+            case EXPERIENCED:
+                conflictingEnchantments.add("silk_touch");
+                conflictingEnchantments.add(CustomEnchantType.EXPLOSIVE_TOUCH);
         }
 
         return conflictingEnchantments;
