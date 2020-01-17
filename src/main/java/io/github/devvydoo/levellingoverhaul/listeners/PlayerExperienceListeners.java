@@ -39,7 +39,10 @@ public class PlayerExperienceListeners implements Listener {
         else { player.sendTitle(ChatColor.GREEN + "Level Up!", ChatColor.DARK_GREEN + "You are now Level " + newLevel + "!", 10, 70, 20); }
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, .7f, .5f);
         LevelRewards.playerLeveledUp(player,oldLevel, newLevel);
+        double newMaxHp = this.plugin.getHpManager().calculatePlayerExpectedHealth(player, newLevel);
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(newMaxHp);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+        player.setHealthScale(20);
         player.setFoodLevel(20);
         player.setSaturation(20);
         for ( int i = 0; i < 3; i++) {

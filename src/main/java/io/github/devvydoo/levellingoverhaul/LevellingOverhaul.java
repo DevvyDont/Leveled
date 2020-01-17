@@ -6,6 +6,8 @@ import io.github.devvydoo.levellingoverhaul.enchantments.EnchantingInterface;
 import io.github.devvydoo.levellingoverhaul.enchantments.ExplosiveTouchEnchantment;
 import io.github.devvydoo.levellingoverhaul.enchantments.SaturatedEnchantment;
 import io.github.devvydoo.levellingoverhaul.listeners.*;
+import io.github.devvydoo.levellingoverhaul.managers.GlobalDamageManager;
+import io.github.devvydoo.levellingoverhaul.managers.PlayerHealthManager;
 import io.github.devvydoo.levellingoverhaul.mobs.MobManager;
 import io.github.devvydoo.levellingoverhaul.util.Recipes;
 import org.bukkit.advancement.Advancement;
@@ -17,11 +19,21 @@ import java.util.Iterator;
 public final class LevellingOverhaul extends JavaPlugin {
 
     private MobManager mobManager;
+    private PlayerHealthManager hpManager;
+    private GlobalDamageManager damageManager;
 
     private Advancement enchantAdvancement;
 
     public MobManager getMobManager(){
         return this.mobManager;
+    }
+
+    public PlayerHealthManager getHpManager() {
+        return hpManager;
+    }
+
+    public GlobalDamageManager getDamageManager() {
+        return damageManager;
     }
 
     public Advancement getEnchantAdvancement() {
@@ -39,9 +51,14 @@ public final class LevellingOverhaul extends JavaPlugin {
             if (advancement.getKey().toString().equals("minecraft:story/enchant_item")) { enchantAdvancement = advancement; break; }
         }
 
+        hpManager = new PlayerHealthManager();
+        damageManager = new GlobalDamageManager();
+
         // Listeners that change how natural progression works
         getServer().getPluginManager().registerEvents(new ProgressionModifyingListeners(), this);
         getServer().getPluginManager().registerEvents(new PlayerDamageModifier(this), this);
+        getServer().getPluginManager().registerEvents(hpManager, this);
+        getServer().getPluginManager().registerEvents(damageManager, this);
 
         // Register listeners regarding experience
         getServer().getPluginManager().registerEvents(new PlayerJoinListeners(), this);
