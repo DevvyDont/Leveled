@@ -1,7 +1,8 @@
-package io.github.devvydoo.levellingoverhaul.mobs;
+package io.github.devvydoo.levellingoverhaul.managers;
 
 import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
-import io.github.devvydoo.levellingoverhaul.listeners.PlayerNametags;
+import io.github.devvydoo.levellingoverhaul.listeners.monitors.PlayerNametags;
+import io.github.devvydoo.levellingoverhaul.util.MobStatistics;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;

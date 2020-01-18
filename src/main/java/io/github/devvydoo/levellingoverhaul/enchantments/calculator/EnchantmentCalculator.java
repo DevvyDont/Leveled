@@ -1,5 +1,7 @@
-package io.github.devvydoo.levellingoverhaul.enchantments;
+package io.github.devvydoo.levellingoverhaul.enchantments.calculator;
 
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantType;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;

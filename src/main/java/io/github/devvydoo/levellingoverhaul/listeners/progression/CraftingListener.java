@@ -1,4 +1,4 @@
-package io.github.devvydoo.levellingoverhaul.listeners;
+package io.github.devvydoo.levellingoverhaul.listeners.progression;
 
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;

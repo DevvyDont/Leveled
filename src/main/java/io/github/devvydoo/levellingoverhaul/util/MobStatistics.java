@@ -1,4 +1,4 @@
-package io.github.devvydoo.levellingoverhaul.mobs;
+package io.github.devvydoo.levellingoverhaul.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;

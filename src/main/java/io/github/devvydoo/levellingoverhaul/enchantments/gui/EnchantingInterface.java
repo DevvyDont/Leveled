@@ -1,17 +1,16 @@
-package io.github.devvydoo.levellingoverhaul.enchantments;
+package io.github.devvydoo.levellingoverhaul.enchantments.gui;
 
 import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantType;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
+import io.github.devvydoo.levellingoverhaul.enchantments.calculator.EnchantmentCalculator;
+import io.github.devvydoo.levellingoverhaul.enchantments.calculator.PotentialEnchantment;
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
-import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
-import org.bukkit.advancement.Advancement;
-import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
-import org.bukkit.block.EnchantingTable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

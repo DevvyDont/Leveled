@@ -1,5 +1,7 @@
-package io.github.devvydoo.levellingoverhaul.enchantments;
+package io.github.devvydoo.levellingoverhaul.enchantments.enchants;
 
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantType;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;

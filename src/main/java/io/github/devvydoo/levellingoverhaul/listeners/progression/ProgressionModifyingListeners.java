@@ -1,4 +1,4 @@
-package io.github.devvydoo.levellingoverhaul.listeners;
+package io.github.devvydoo.levellingoverhaul.listeners.progression;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;

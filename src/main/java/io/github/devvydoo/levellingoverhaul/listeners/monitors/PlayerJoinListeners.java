@@ -1,4 +1,4 @@
-package io.github.devvydoo.levellingoverhaul.listeners;
+package io.github.devvydoo.levellingoverhaul.listeners.monitors;
 
 import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
 import org.bukkit.ChatColor;
