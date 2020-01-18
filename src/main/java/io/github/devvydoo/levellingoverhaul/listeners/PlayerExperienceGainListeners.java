@@ -62,7 +62,7 @@ public class PlayerExperienceGainListeners implements Listener {
      *
      * @param event - The EntityDamageByEntityEvent event we are listening to
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerKillEntity(EntityDamageByEntityEvent event) {
 
         // Was the entity living?
@@ -133,7 +133,7 @@ public class PlayerExperienceGainListeners implements Listener {
         player.giveExp(xp); // Gives player exp
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, (float) .5, 1);
 
-        BaseExperience.displayActionBarText(player, bonus + ChatColor.YELLOW + "+" + xp + " XP");
+        plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, bonus + ChatColor.YELLOW + "+" + xp + " XP");
     }
 
     /**
@@ -223,7 +223,7 @@ public class PlayerExperienceGainListeners implements Listener {
         // Looks good to give them xp
         player.giveExp(xpGained);
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .5f, 1);
-        BaseExperience.displayActionBarText(player, xpMessage);
+        plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, xpMessage);
     }
 
     /**
@@ -250,8 +250,8 @@ public class PlayerExperienceGainListeners implements Listener {
         // We should be good to give xp
         int xpGained = BaseExperience.getBaseExperienceFromSmelt(event.getItemType(), event.getItemAmount());
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .5f, 1);
-        BaseExperience.displayActionBarText(player, ChatColor.GOLD + "+" + xpGained + " XP");
         player.giveExp(xpGained);
+        plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.GOLD + "+" + xpGained + " XP");
     }
 
     /**
@@ -283,7 +283,7 @@ public class PlayerExperienceGainListeners implements Listener {
 
         // Gib xp
         player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, .5f, 1);
-        BaseExperience.displayActionBarText(player, ChatColor.GREEN + "Challenge Completed! " + ChatColor.LIGHT_PURPLE + "+" + xpEarned + " XP");
         player.giveExp(xpEarned);
+        plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.GREEN + "Challenge Completed! " + ChatColor.LIGHT_PURPLE + "+" + xpEarned + " XP");
     }
 }

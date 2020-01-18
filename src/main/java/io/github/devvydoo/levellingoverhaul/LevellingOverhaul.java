@@ -24,6 +24,7 @@ public final class LevellingOverhaul extends JavaPlugin {
     private MobManager mobManager;
     private PlayerHealthManager hpManager;
     private GlobalDamageManager damageManager;
+    private ActionBarManager actionBarManager;
 
     private Advancement enchantAdvancement;
 
@@ -37,6 +38,10 @@ public final class LevellingOverhaul extends JavaPlugin {
 
     public GlobalDamageManager getDamageManager() {
         return damageManager;
+    }
+
+    public ActionBarManager getActionBarManager() {
+        return actionBarManager;
     }
 
     public Advancement getEnchantAdvancement() {
@@ -56,6 +61,7 @@ public final class LevellingOverhaul extends JavaPlugin {
 
         hpManager = new PlayerHealthManager(this);
         damageManager = new GlobalDamageManager();
+        actionBarManager = new ActionBarManager(this);
 
         // Listeners that change how natural progression works
         getServer().getPluginManager().registerEvents(new ProgressionModifyingListeners(), this);
@@ -90,6 +96,7 @@ public final class LevellingOverhaul extends JavaPlugin {
 
         // Listeners involving the scoreboard
         getServer().getPluginManager().registerEvents(new PlayerNametags(this), this);
+        getServer().getPluginManager().registerEvents(actionBarManager, this);
 
         // Register custom recipes
         Recipes.registerRecipes(this);
