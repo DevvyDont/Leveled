@@ -52,7 +52,7 @@ public final class LevellingOverhaul extends JavaPlugin {
             if (advancement.getKey().toString().equals("minecraft:story/enchant_item")) { enchantAdvancement = advancement; break; }
         }
 
-        hpManager = new PlayerHealthManager();
+        hpManager = new PlayerHealthManager(this);
         damageManager = new GlobalDamageManager();
 
         // Listeners that change how natural progression works

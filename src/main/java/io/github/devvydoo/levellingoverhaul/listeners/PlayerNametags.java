@@ -101,7 +101,9 @@ public class PlayerNametags implements Listener {
 
         if (event.getEntity() instanceof Player){
             Player player = (Player) event.getEntity();
-            updatePlayerScoreboard(player, player.getLevel(), player.getHealth() + event.getAmount());
+            double hpToDisplay = player.getHealth() + event.getAmount();
+            if (hpToDisplay > player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) { hpToDisplay = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(); }
+            updatePlayerScoreboard(player, player.getLevel(), hpToDisplay);
         }
     }
 

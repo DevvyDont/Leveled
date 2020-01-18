@@ -178,7 +178,22 @@ public class AnvilInterface implements Listener {
 
     private void openAnvilInterface(Player player){
         Inventory gui = plugin.getServer().createInventory(player, 54, ANVIL_INTERFACE_NAME);
-        for (int i = 0; i < 54; i++){ gui.setItem(i, setItemLore(new ItemStack(Material.BLACK_STAINED_GLASS_PANE), " ")); }
+        for (int i = 0; i < 54; i++){
+            switch (i){
+                case 10:
+                case 11:
+                case 19:
+                    gui.setItem(i, setItemLore(new ItemStack(Material.RED_STAINED_GLASS_PANE), " "));
+                    break;
+                case 15:
+                case 16:
+                case 25:
+                    gui.setItem(i, setItemLore(new ItemStack(Material.GREEN_STAINED_GLASS_PANE), " "));
+                    break;
+                default:
+                    gui.setItem(i, setItemLore(new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE), " "));
+            }
+        }
         gui.setItem(ANVIL_INPUT_SLOT, new ItemStack(Material.AIR));
         gui.setItem(ANVIL_INPUT_SLOT + 9, setItemLore(new ItemStack(Material.ANVIL), ChatColor.RED + "Scrap Equipment"));
         gui.setItem(ANVIL_OUTPUT_SLOT, new ItemStack(Material.AIR));
@@ -188,7 +203,22 @@ public class AnvilInterface implements Listener {
 
     private void openGrindstoneInterface(Player player){
         Inventory gui = plugin.getServer().createInventory(player, 54, GRINDSTONE_INTERFACE_NAME);
-        for (int i = 0; i < 54; i++){ gui.setItem(i, setItemLore(new ItemStack(Material.BLACK_STAINED_GLASS_PANE), " ")); }
+        for (int i = 0; i < 54; i++){
+            switch (i){
+                case 10:
+                case 11:
+                case 19:
+                    gui.setItem(i, setItemLore(new ItemStack(Material.RED_STAINED_GLASS_PANE), " "));
+                    break;
+                case 15:
+                case 16:
+                case 25:
+                    gui.setItem(i, setItemLore(new ItemStack(Material.GREEN_STAINED_GLASS_PANE), " "));
+                    break;
+                default:
+                    gui.setItem(i, setItemLore(new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE), " "));
+            }
+        }
         gui.setItem(ANVIL_INPUT_SLOT, new ItemStack(Material.AIR));
         gui.setItem(ANVIL_INPUT_SLOT + 9, setItemLore(new ItemStack(Material.GRINDSTONE), ChatColor.RED + "Scrap Equipment"));
         gui.setItem(ANVIL_OUTPUT_SLOT, new ItemStack(Material.AIR));
