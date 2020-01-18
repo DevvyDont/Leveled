@@ -47,21 +47,21 @@ public abstract class BaseExperience {
             case GHAST:
             case RAVAGER:
             case ILLUSIONER:
+            case ENDERMAN:
                 return 10;
             case EVOKER:
             case VINDICATOR:
-            case ENDERMAN:
             case PILLAGER:
             case SHULKER:
             case GUARDIAN:
-                return 7;
+                return 3;
             case PIG_ZOMBIE:
             case BLAZE:
-                return 5;
+                return 4;
             case ZOMBIE_VILLAGER:
             case CREEPER:
             case ENDERMITE:
-                return 4;
+                return 2;
             case ZOMBIE:
             case SKELETON:
             case HUSK:
@@ -70,7 +70,7 @@ public abstract class BaseExperience {
             case DROWNED:
             case CAVE_SPIDER:
             case IRON_GOLEM:
-                return 3;
+                return 1;
             case SLIME:
             case MAGMA_CUBE:
                 Slime slime = (Slime) mob;
@@ -80,11 +80,11 @@ public abstract class BaseExperience {
                 }
                 switch (slime.getSize()){
                     case 3:
-                        return 3 + magmaBonus;
+                        return 1 + magmaBonus;
                     case 4:
-                        return 5 + magmaBonus;
+                        return 3 + magmaBonus;
                     default:
-                        return 1;
+                        return 0;
                 }
             case SPIDER:
             case PHANTOM:
@@ -92,7 +92,7 @@ public abstract class BaseExperience {
             case SILVERFISH:
             case SKELETON_HORSE:
             case ZOMBIE_HORSE:
-                return 2;
+                return 1;
             case CHICKEN:
             case DOLPHIN:
             case BAT:
@@ -118,7 +118,7 @@ public abstract class BaseExperience {
             case MUSHROOM_COW:
             case TURTLE:
             case POLAR_BEAR:
-                return 1;
+                return 0;
             case PLAYER:
                 // In the event a player kills another player, we are just going to give their xp to them
                 Player deadPlayer = (Player) mob;
@@ -151,14 +151,14 @@ public abstract class BaseExperience {
             case COAL_ORE:
                 return Math.random() < .5 ? 1 : 0;
             case NETHER_QUARTZ_ORE:
-                return (int) (Math.random() * 4 + 2);
+                return (int) (Math.random() * 3 + 2);
             case LAPIS_ORE:
             case REDSTONE_ORE:
-                return 5;
+                return 2 + (Math.random() < .5 ? 1 : 0);
             case DIAMOND_ORE:
-                return 12;
+                return 8;
             case EMERALD_ORE:
-                return 30;
+                return 20;
             default:
                 return 0;
         }

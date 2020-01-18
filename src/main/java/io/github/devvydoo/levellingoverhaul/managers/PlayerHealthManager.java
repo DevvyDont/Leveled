@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerHealthManager implements Listener {
 
@@ -36,7 +37,13 @@ public class PlayerHealthManager implements Listener {
         event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(calculatePlayerExpectedHealth(event.getPlayer()));
         event.getPlayer().setHealth(hpToSet);
         // Always no matter what display 10 hearts no matter the HP
-        event.getPlayer().setHealthScale(20);
+        new BukkitRunnable() {
+            public void run(){
+                event.getPlayer().setHealthScale(20);
+            }
+
+        }.runTaskLater(plugin, 10);
+
     }
 
     @EventHandler

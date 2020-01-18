@@ -9,3 +9,6 @@ commands:
   stats:
     description: See player stats
     usage: /stats
+  leveldebug:
+    description: Used to modify player progression for debug purposes
+    usage: /debug < reset | level | tp > [ CONFIRM / < new level > / [x, y, z] ]

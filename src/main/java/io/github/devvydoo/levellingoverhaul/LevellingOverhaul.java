@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul;
 
+import io.github.devvydoo.levellingoverhaul.commands.DebugLevelSetter;
 import io.github.devvydoo.levellingoverhaul.commands.PlayerStatsCommand;
 import io.github.devvydoo.levellingoverhaul.commands.TestMobCommand;
 import io.github.devvydoo.levellingoverhaul.enchantments.AnvilInterface;
@@ -7,6 +8,7 @@ import io.github.devvydoo.levellingoverhaul.enchantments.EnchantingInterface;
 import io.github.devvydoo.levellingoverhaul.enchantments.ExplosiveTouchEnchantment;
 import io.github.devvydoo.levellingoverhaul.enchantments.SaturatedEnchantment;
 import io.github.devvydoo.levellingoverhaul.listeners.*;
+import io.github.devvydoo.levellingoverhaul.managers.ActionBarManager;
 import io.github.devvydoo.levellingoverhaul.managers.GlobalDamageManager;
 import io.github.devvydoo.levellingoverhaul.managers.PlayerHealthManager;
 import io.github.devvydoo.levellingoverhaul.mobs.MobManager;
@@ -100,6 +102,7 @@ public final class LevellingOverhaul extends JavaPlugin {
         // Register commands
         getCommand("mob").setExecutor(new TestMobCommand(this));
         getCommand("stats").setExecutor(new PlayerStatsCommand());
+        getCommand("leveldebug").setExecutor(new DebugLevelSetter(this));
     }
 
     @Override

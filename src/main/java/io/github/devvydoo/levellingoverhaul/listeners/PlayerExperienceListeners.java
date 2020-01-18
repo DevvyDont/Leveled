@@ -69,13 +69,6 @@ public class PlayerExperienceListeners implements Listener {
     }
 
     @EventHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Firework && event.getEntity() instanceof Player) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
     public void onPlayerExpChange(PlayerExpChangeEvent event){
 
         // If we are max level, or over max level, we should go to the max

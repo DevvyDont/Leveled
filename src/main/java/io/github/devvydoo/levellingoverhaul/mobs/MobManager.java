@@ -33,7 +33,7 @@ public class MobManager implements Listener {
 
     private LevellingOverhaul plugin;
     private HashMap<LivingEntity, MobStatistics> entityToLevelMap = new HashMap<>();
-    private int MOB_CLEANUP_DELAY = 20 * 60;
+    private int MOB_CLEANUP_DELAY = 20 * 60 * 5;
 
     /**
      * We need to make our plugin able to recover on a world that already has entities setup.
@@ -63,7 +63,7 @@ public class MobManager implements Listener {
                 int initialAmount = entityToLevelMap.size();
                 System.out.println("[Mob Manager] Cleaning up " + initialAmount + " mobs...");
                 for (LivingEntity e: new ArrayList<>(entityToLevelMap.keySet())){
-                    if (e.isDead() || entityToLevelMap.get(e).getLevel() == 1){
+                    if (e.isDead() || entityToLevelMap.get(e).getLevel() == 1 || (e.getType().equals(EntityType.ARMOR_STAND) && e.isCustomNameVisible())){
                         entityToLevelMap.remove(e);
                     }
                 }
@@ -362,11 +362,25 @@ public class MobManager implements Listener {
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 return level;
-            default:
-                expectedHP = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() * 5;
+            case CHICKEN:
+            case SALMON:
+            case RABBIT:
+                expectedHP = 30;
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 return 1;
+            default:
+                expectedHP = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue() * 2.5;
+                if (expectedHP > 10000) {
+                    System.out.println(ChatColor.RED + "WTF SOMETHING IS OVER 100000");
+                    System.out.println(expectedHP);
+                    System.out.println(entity);
+                    System.out.println(entity.getLocation());
+                    expectedHP = 10000;
+                }
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
+                return Math.random() < .5 ? 2 : 3;
         }
     }
 
