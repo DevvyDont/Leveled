@@ -10,6 +10,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.function.Consumer;
+
 public class DamagePopup {
 
     public static class ArmorStandRemovalTask extends BukkitRunnable {
@@ -32,14 +34,16 @@ public class DamagePopup {
         if (amount <= 0){
             return;
         }
-        ArmorStand armorStand = (ArmorStand) entityHit.getWorld().spawnEntity(entityHit.getLocation().add(0, -100, 0), EntityType.ARMOR_STAND);
-        armorStand.setVisible(false);
-        armorStand.teleport(entityHit.getLocation());
-        armorStand.setInvulnerable(true);
-        armorStand.setCustomName(ChatColor.RED + "" + ChatColor.BOLD +  "-" + (int) Math.ceil(amount));
-        armorStand.setCustomNameVisible(true);
-        armorStand.setVelocity(new Vector((Math.random() - .5) / 10, Math.random() / 10, (Math.random() - .5) / 10));
-        armorStand.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 40, 1, false, false, false));
+//        ArmorStand armorStand = (ArmorStand) entityHit.getWorld().spawnEntity(entityHit.getLocation().add(Math.random() * 2 - 1, 2.55, Math.random() * 2 - 1), EntityType.ARMOR_STAND);
+        ArmorStand armorStand = entityHit.getWorld().spawn(
+                entityHit.getLocation().add(Math.random() - .5, 2.55, Math.random() - .5),
+                ArmorStand.class,
+                (ArmorStand a) -> {
+            a.setVisible(false);
+            a.setMarker(true);
+            a.setCustomName(ChatColor.RED + "" + ChatColor.BOLD +  "-" + (int) Math.ceil(amount));
+            a.setCustomNameVisible(true);
+        });
         ArmorStandRemovalTask removalTask = new ArmorStandRemovalTask(armorStand);
         removalTask.runTaskLater(plugin, 20);
     }

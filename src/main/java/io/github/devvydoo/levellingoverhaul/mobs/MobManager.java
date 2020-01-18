@@ -387,6 +387,11 @@ public class MobManager implements Listener {
     @EventHandler
     public void onEntitySpawn(EntitySpawnEvent event){
 
+        // This can happen?
+        if (event.getEntityType().equals(EntityType.ARMOR_STAND)){
+            return;
+        }
+
         // We only care about living entities
         if (!(event.getEntity() instanceof LivingEntity)){
             return;
