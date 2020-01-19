@@ -282,8 +282,7 @@ public class MobManager implements Listener {
                     level += totalPlayerLevels / numPlayers;
                 }
                 if (level > 60) {
-                    expectedHP = (5 * (level - 60));
-                    expectedHP *= 5;
+                    expectedHP = plugin.getBossManager().calculateEnderDragonHealth(level);
                     entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                     entity.setHealth(expectedHP);
                 }

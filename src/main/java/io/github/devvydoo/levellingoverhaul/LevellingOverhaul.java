@@ -13,10 +13,7 @@ import io.github.devvydoo.levellingoverhaul.listeners.monitors.PlayerChatListene
 import io.github.devvydoo.levellingoverhaul.listeners.monitors.PlayerJoinListeners;
 import io.github.devvydoo.levellingoverhaul.listeners.monitors.PlayerNametags;
 import io.github.devvydoo.levellingoverhaul.listeners.progression.*;
-import io.github.devvydoo.levellingoverhaul.managers.ActionBarManager;
-import io.github.devvydoo.levellingoverhaul.managers.GlobalDamageManager;
-import io.github.devvydoo.levellingoverhaul.managers.PlayerHealthManager;
-import io.github.devvydoo.levellingoverhaul.managers.MobManager;
+import io.github.devvydoo.levellingoverhaul.managers.*;
 import io.github.devvydoo.levellingoverhaul.util.Recipes;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -30,6 +27,7 @@ public final class LevellingOverhaul extends JavaPlugin {
     private PlayerHealthManager hpManager;
     private GlobalDamageManager damageManager;
     private ActionBarManager actionBarManager;
+    private BossManager bossManager;
 
     private Advancement enchantAdvancement;
 
@@ -49,6 +47,8 @@ public final class LevellingOverhaul extends JavaPlugin {
         return actionBarManager;
     }
 
+    public BossManager getBossManager() { return bossManager; }
+
     public Advancement getEnchantAdvancement() {
         return enchantAdvancement;
     }
@@ -67,6 +67,7 @@ public final class LevellingOverhaul extends JavaPlugin {
         hpManager = new PlayerHealthManager(this);
         damageManager = new GlobalDamageManager(this);
         actionBarManager = new ActionBarManager(this);
+        bossManager = new BossManager();
 
         // Listeners that change how natural progression works
         getServer().getPluginManager().registerEvents(new ProgressionModifyingListeners(), this);
