@@ -15,9 +15,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+
+import java.util.HashMap;
 
 /**
  * A class used to do any necessary calculations for damage calculations BEFORE our plugin modifies anything whether it
@@ -29,6 +32,7 @@ public class GlobalDamageManager implements Listener {
     private LevellingOverhaul plugin;
     private String ARROW_DMG_METANAME = "base_damage";
     private String ARROW_SNIPE_ENCHANT_METANAME = "snipe_enchant_level";
+    private HashMap<Player, Long> playerMeleeCooldownMap = new HashMap<>();
 
     public GlobalDamageManager(LevellingOverhaul plugin) {
         this.plugin = plugin;
@@ -100,6 +104,14 @@ public class GlobalDamageManager implements Listener {
 
         // First let's get a base setup for how much certain weapons should do
         double baseDamage = getMeleeWeaponBaseDamage(tool.getType());
+        if (playerMeleeCooldownMap.containsKey(player)) {
+            if (System.currentTimeMillis() < playerMeleeCooldownMap.get(player)){
+                baseDamage *= (double) (System.currentTimeMillis() / playerMeleeCooldownMap.get(player));
+            }
+        }
+        long cooldownMs = 625;
+        if (tool.getType().equals(Material.DIAMOND_AXE) || tool.getType().equals(Material.IRON_AXE) || tool.getType().equals(Material.GOLDEN_AXE) || tool.getType().equals(Material.STONE_AXE) || tool.getType().equals(Material.WOODEN_AXE)){ cooldownMs += 400; }
+        playerMeleeCooldownMap.put(player, System.currentTimeMillis() + cooldownMs);
         // If baseDamage returns 0, we have something that we don't care to modify
         if (baseDamage <= 0){ return; }
 
@@ -215,6 +227,13 @@ public class GlobalDamageManager implements Listener {
         }
         newDamage *= distanceMultiplier;
         if (newDamage > 0) { event.setDamage(newDamage); }
+    }
+
+    @EventHandler
+    public void onFallingInVoid(PlayerMoveEvent event){
+        if (event.getTo() != null && event.getTo().getY() < -300){
+            event.getPlayer().damage(event.getTo().getY() * -1 / 3);
+        }
     }
 
 }
