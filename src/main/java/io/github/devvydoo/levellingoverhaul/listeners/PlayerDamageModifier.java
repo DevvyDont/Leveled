@@ -154,7 +154,7 @@ public class PlayerDamageModifier implements Listener {
                 event.getCause().equals(EntityDamageEvent.DamageCause.STARVATION) ||
                 event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION)){
             if (event.getDamage() < fivePercentHP) {
-                event.setDamage(fivePercentHP * event.getDamage());
+                event.setDamage(fivePercentHP);
             }
         } else if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID)){
             int blocksFallen = (int)((event.getDamage() / 5) - 3) / 2;

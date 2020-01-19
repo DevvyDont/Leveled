@@ -65,7 +65,7 @@ public final class LevellingOverhaul extends JavaPlugin {
         }
 
         hpManager = new PlayerHealthManager(this);
-        damageManager = new GlobalDamageManager();
+        damageManager = new GlobalDamageManager(this);
         actionBarManager = new ActionBarManager(this);
 
         // Listeners that change how natural progression works
