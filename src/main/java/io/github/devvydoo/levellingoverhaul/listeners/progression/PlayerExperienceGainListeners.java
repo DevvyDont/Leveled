@@ -128,6 +128,13 @@ public class PlayerExperienceGainListeners implements Listener {
         }
 
         // If we have no xp to give don't do anything
+        if (!(livingEntity instanceof Player)){
+            int mobLevel = plugin.getMobManager().getMobLevel(livingEntity);
+            if (mobLevel < player.getLevel()){
+                xp *= (1 - .04 * (player.getLevel() - mobLevel));
+            }
+        }
+
         if (xp <= 0) {
             return;
         }
@@ -150,6 +157,7 @@ public class PlayerExperienceGainListeners implements Listener {
             case ENDER_DRAGON:
                 // We are going to give all players in the end a bonus
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
+                    if (p.getLevel() == BaseExperience.LEVEL_CAP) { continue; }
                     p.giveExp(200);
                     p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Ender Dragon" + ChatColor.YELLOW + "! +200XP");
                 }
@@ -158,6 +166,7 @@ public class PlayerExperienceGainListeners implements Listener {
                 // All players within 100 block radius from the wither get credit
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
                     if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
+                        if (p.getLevel() == BaseExperience.LEVEL_CAP) { continue; }
                         p.giveExp(175);
                         p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Wither" + ChatColor.YELLOW + "! +175XP");
                     }
@@ -167,6 +176,7 @@ public class PlayerExperienceGainListeners implements Listener {
                 // All players within 100 block radius from the guardian get credit
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
                     if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
+                        if (p.getLevel() == BaseExperience.LEVEL_CAP) { continue; }
                         p.giveExp(120);
                         p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Elder Guardian" + ChatColor.YELLOW + "! +120XP");
                     }
