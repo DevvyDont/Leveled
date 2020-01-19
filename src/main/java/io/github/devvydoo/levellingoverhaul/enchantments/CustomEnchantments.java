@@ -601,7 +601,7 @@ public final class CustomEnchantments {
             case "power":
                 return "Increases the damage done for arrows shot by this bow";
             case "infinity":
-                return "Arrows are never depleted upon shooting";
+                return "Arrows have a chance to not deplete upon shooting";
             default:
                 System.out.println("[Enchanting] Unknown enchantment " + enchantment.getKey().toString());
                 return "This enchantment doesn't have a description :(";
