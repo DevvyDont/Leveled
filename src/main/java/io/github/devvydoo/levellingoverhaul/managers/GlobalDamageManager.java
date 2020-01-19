@@ -148,7 +148,7 @@ public class GlobalDamageManager implements Listener {
             if (powerLevel > 0) { damage *= powerLevel; }
 
             // 20% chance to crit for double damage
-            if (Math.random() < 2) { damage *= 2;
+            if (Math.random() < .2) { damage *= 2;
             event.getEntity().getWorld().spawnParticle(Particle.CRIT_MAGIC, event.getEntity().getLocation().add(0, 1.6, 0), 50);
             event.getEntity().getWorld().playSound(event.getEntity().getLocation().add(0, 1.6, 0), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, .3f, .6f);
             }

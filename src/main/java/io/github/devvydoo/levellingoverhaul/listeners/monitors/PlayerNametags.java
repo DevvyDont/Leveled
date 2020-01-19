@@ -64,14 +64,8 @@ public class PlayerNametags implements Listener {
                 new BukkitRunnable(){
                     @Override
                     public void run(){
-
-                        if (player.isDead()){
-                            this.runTaskLater(plugin, 20 * 5);
-                            return;
-                        }
-
                         if (player.getHealth() >= 0) {
-                            updatePlayerScoreboard(player, player.getLevel(), player.getHealth());
+                            updatePlayerScoreboard(player, player.getLevel(), player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
                         }
                     }
                 }.runTaskLater(this.plugin, 20 * 5);
@@ -87,12 +81,8 @@ public class PlayerNametags implements Listener {
         updatePlayerScoreboard(event.getPlayer(), event.getNewLevel(), event.getPlayer().getHealth());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerHealthRegen(EntityRegainHealthEvent event){
-
-        if (event.isCancelled()){
-            return;
-        }
 
         if (event.getEntity() instanceof Player){
             Player player = (Player) event.getEntity();

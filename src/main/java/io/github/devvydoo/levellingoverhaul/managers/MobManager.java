@@ -414,13 +414,8 @@ public class MobManager implements Listener {
         this.setEntityNametag(entity);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event){
-
-        // We don't care if the event was cancelled
-        if (event.isCancelled()){
-            return;
-        }
 
         // We only care about living entities
         if (!(event.getEntity() instanceof  LivingEntity)){
