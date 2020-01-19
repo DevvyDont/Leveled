@@ -8,6 +8,7 @@ import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
@@ -188,7 +189,33 @@ public class PlayerExperienceGainListeners implements Listener {
         }
 
         Player player = event.getPlayer();
-        int xpGained = BaseExperience.getBaseExperienceFromBlock(event.getBlock());
+        Block block = event.getBlock();
+
+        ItemStack tool = player.getInventory().getItemInMainHand();
+        int xpGained = 0;
+
+        // Special case, if we mined iron ore gold ore...
+        if (block.getType().equals(Material.GOLD_ORE) || block.getType().equals(Material.IRON_ORE)){
+            // If their tool has smelting touch...
+            if ( CustomEnchantments.hasEnchant(tool, CustomEnchantType.SMELTING_TOUCH)){
+                event.setDropItems(false);
+                int numDrop = 1;
+                int fortuneLevel = tool.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
+                if (fortuneLevel > 0) { numDrop += Math.floor(fortuneLevel / 1.5) + (Math.random() < .5 ? 1 : 0); }
+                // We know we have either iron or gold, so set type to be equal to the block mined
+                Material dropType = block.getType().equals(Material.IRON_ORE) ? Material.IRON_INGOT : Material.GOLD_INGOT;
+                ItemStack drop = new ItemStack(dropType, numDrop);
+                block.getWorld().dropItemNaturally(block.getLocation(), drop);
+                xpGained = block.getType().equals(Material.IRON_ORE) ? 1 : 3;
+            }
+        } else if (block.getType().equals(Material.STONE)) {
+            if (CustomEnchantments.hasEnchant(tool, CustomEnchantType.SMELTING_TOUCH)){
+                event.setDropItems(false);
+                block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.STONE));
+            }
+        } else {
+            xpGained = BaseExperience.getBaseExperienceFromBlock(event.getBlock());
+        }
 
         // Did we even gain experience?
         if (xpGained <= 0) {
@@ -281,9 +308,18 @@ public class PlayerExperienceGainListeners implements Listener {
             return;
         }
 
+        // Smarty pants?
+        double multiplier = 1;
+        String message = ChatColor.GREEN + "Challenge Completed! " + ChatColor.LIGHT_PURPLE + "+" + xpEarned + " XP";
+        try { multiplier += CustomEnchantments.getEnchantLevel(player.getInventory().getLeggings(), CustomEnchantType.SMARTY_PANTS) * .15; } catch (NullPointerException | IllegalArgumentException ignored) {}
+        if (multiplier > 1) {
+            xpEarned *= multiplier;
+            message = ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "BONUS! " + message;
+        }
+
         // Gib xp
         player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, .5f, 1);
         player.giveExp(xpEarned);
-        plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.GREEN + "Challenge Completed! " + ChatColor.LIGHT_PURPLE + "+" + xpEarned + " XP");
+        plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, message);
     }
 }

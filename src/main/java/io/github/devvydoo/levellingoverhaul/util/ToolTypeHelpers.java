@@ -13,6 +13,13 @@ public final class ToolTypeHelpers {
         addHoesToList(list);
     }
 
+    public static void addAllArmorToList(ArrayList<Material> list){
+        addHelmetsToList(list);
+        addChestplatesToList(list);
+        addLeggingsToList(list);
+        addBootsToList(list);
+    }
+
     public static void addMeleeWeaponsToList(ArrayList<Material> list) {
 
         list.add(Material.WOODEN_SWORD);
@@ -66,5 +73,30 @@ public final class ToolTypeHelpers {
         list.add(Material.GOLDEN_HELMET);
         list.add(Material.DIAMOND_HELMET);
     }
+
+    public static void addChestplatesToList(ArrayList<Material> list){
+        list.add(Material.LEATHER_CHESTPLATE);
+        list.add(Material.IRON_CHESTPLATE);
+        list.add(Material.CHAINMAIL_CHESTPLATE);
+        list.add(Material.GOLDEN_CHESTPLATE);
+        list.add(Material.DIAMOND_CHESTPLATE);
+    }
+
+    public static void addLeggingsToList(ArrayList<Material> list){
+        list.add(Material.LEATHER_LEGGINGS);
+        list.add(Material.IRON_LEGGINGS);
+        list.add(Material.CHAINMAIL_LEGGINGS);
+        list.add(Material.GOLDEN_LEGGINGS);
+        list.add(Material.DIAMOND_LEGGINGS);
+    }
+
+    public static void addBootsToList(ArrayList<Material> list){
+        list.add(Material.LEATHER_BOOTS);
+        list.add(Material.IRON_BOOTS);
+        list.add(Material.CHAINMAIL_BOOTS);
+        list.add(Material.GOLDEN_BOOTS);
+        list.add(Material.DIAMOND_BOOTS);
+    }
+
 
 }

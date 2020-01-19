@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -59,6 +60,7 @@ public class DebugLevelSetter implements CommandExecutor {
             player.setLevel(level);
             player.setExp(0);
         }
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(plugin.getHpManager().calculatePlayerExpectedHealth(player, level));
     }
 
     @Override

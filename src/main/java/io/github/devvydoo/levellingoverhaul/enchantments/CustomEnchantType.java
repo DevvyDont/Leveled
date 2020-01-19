@@ -4,4 +4,7 @@ public enum CustomEnchantType {
     EXPLOSIVE_TOUCH,
     SATURATION,
     EXPERIENCED,
+    GROWTH,
+    SMARTY_PANTS,
+    SMELTING_TOUCH,
 }

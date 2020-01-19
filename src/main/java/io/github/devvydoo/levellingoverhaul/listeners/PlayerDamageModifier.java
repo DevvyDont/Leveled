@@ -123,7 +123,7 @@ public class PlayerDamageModifier implements Listener {
         if (!(source instanceof Player)){
             attackerLevel = plugin.getMobManager().getMobLevel(source);
             damageMultiplier += attackerLevel / (Math.random() * 3. + 6);  // lvl 15 does double dmg basically
-            System.out.println("[" + source.getName() + "] Base: " + event.getDamage() + " dmg. x" + damageMultiplier + " Final -> " + event.getDamage() * damageMultiplier);
+            System.out.println("[" + source.getName() + "] Base: " + event.getDamage() + " dmg. x" + (Math.round(damageMultiplier * 1000) / 1000.) + " Final -> " + (Math.round(event.getDamage() * damageMultiplier)));
         } else if (!(event.getEntity() instanceof Player)){  // We already know we have a player here
             attackerLevel = ((Player) source).getLevel();
             int attackedLevel = plugin.getMobManager().getMobLevel(source);
@@ -157,7 +157,8 @@ public class PlayerDamageModifier implements Listener {
                 event.setDamage(fivePercentHP * event.getDamage());
             }
         } else if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID)){
-            int blocksFallen = (int)(event.getDamage() / 5) - 3;
+            int blocksFallen = (int)((event.getDamage() / 5) - 3) / 2;
+            if (blocksFallen <= 0) { event.setCancelled(true); return; }
             event.setDamage(blocksFallen * fivePercentHP);
         } else {
 
@@ -165,13 +166,19 @@ public class PlayerDamageModifier implements Listener {
             // Every armor has a base % value to subtract off of the total damage, prot will be flat dmg reduction
             double percentResisted = getPlayerDamageResist(player);
             event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
+            System.out.println(ChatColor.AQUA + "[DEBUG] " + player.getName() + " was hit, armor resist: " + Math.round(percentResisted * 100) + "% before: " + Math.round(event.getDamage()) + " after: " + (Math.round(event.getDamage() * (1 - percentResisted))));
             event.setDamage(event.getDamage() * (1 - percentResisted));
 
         }
 
     }
 
-
+    /**
+     * Overkill protection mechanic, if we are hit by a blow that is supposed to kill a player but they have 50% hp
+     * keep them at 1 hp
+     *
+     * @param event The EntityDamageEvent we are listening to
+     */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerGotHit(EntityDamageEvent event){
 

@@ -324,6 +324,11 @@ public final class CustomEnchantments {
                 return 11;
             case EXPERIENCED:
                 return 6;
+            case GROWTH:
+            case SMELTING_TOUCH:
+                return 9;
+            case SMARTY_PANTS:
+                return 4;
             default:
                 throw new IllegalArgumentException("Received invalid argument for getEnchantQuality: " + type);
         }
@@ -400,6 +405,15 @@ public final class CustomEnchantments {
             case EXPERIENCED:
                 ToolTypeHelpers.addAllToolsToList(allowedTargets);
                 break;
+            case GROWTH:
+                ToolTypeHelpers.addAllArmorToList(allowedTargets);
+                break;
+            case SMARTY_PANTS:
+                ToolTypeHelpers.addLeggingsToList(allowedTargets);
+                break;
+            case SMELTING_TOUCH:
+                ToolTypeHelpers.addPickaxesToList(allowedTargets);
+                break;
             default:
                 throw new IllegalArgumentException("Tried to find EnchantmentTarget for " + type);
         }
@@ -416,9 +430,14 @@ public final class CustomEnchantments {
                 conflictingEnchantments.add("silk_touch");
                 conflictingEnchantments.add("fortune");
                 conflictingEnchantments.add(CustomEnchantType.EXPERIENCED);
+                break;
             case EXPERIENCED:
                 conflictingEnchantments.add("silk_touch");
                 conflictingEnchantments.add(CustomEnchantType.EXPLOSIVE_TOUCH);
+                break;
+            case SMELTING_TOUCH:
+                conflictingEnchantments.add("silk_touch");
+                break;
         }
 
         return conflictingEnchantments;
@@ -467,6 +486,7 @@ public final class CustomEnchantments {
             case "silk_touch":
                 conflictingEnchantments.add("fortune");
                 conflictingEnchantments.add(CustomEnchantType.EXPLOSIVE_TOUCH);
+                conflictingEnchantments.add(CustomEnchantType.SMELTING_TOUCH);
                 break;
             default:
                 break;
@@ -489,6 +509,12 @@ public final class CustomEnchantments {
                 return "Food eaten has a higher food saturation bonus";
             case EXPERIENCED:
                 return "Increases chance to receive bonus experience from mining and mobs";
+            case GROWTH:
+                return "Increases Max HP";
+            case SMARTY_PANTS:
+                return "Increases XP gained from advancements";
+            case SMELTING_TOUCH:
+                return "Automatically smelts blocks broken";
             default:
                 return "This enchantment doesn't have a description :(";
         }

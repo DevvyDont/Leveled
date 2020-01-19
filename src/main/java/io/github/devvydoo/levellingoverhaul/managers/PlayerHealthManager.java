@@ -1,12 +1,15 @@
 package io.github.devvydoo.levellingoverhaul.managers;
 
 import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantType;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerHealthManager implements Listener {
@@ -24,8 +27,26 @@ public class PlayerHealthManager implements Listener {
             double expectedHP = calculatePlayerExpectedHealth(p);
             p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
             p.setHealth(expectedHP);
-            p.setHealthScale(20);
         }
+    }
+
+    /**
+     * Method used to calculate any bonus HP a player should have (Growth enchant etc.)
+     *
+     * @param player The player we are calculating bonus hp for
+     * @return a double representing bonus HP
+     */
+    private double getBonusHealth(Player player){
+        double growthFactor = 0;
+        PlayerInventory inventory = player.getInventory();
+        // Attempt to grab the Growth enchant level for all gear, if we get a nullptr, they don't have a helmet, if we get an illegalarg, they dont have growth
+        try { growthFactor += CustomEnchantments.getEnchantLevel(inventory.getHelmet(), CustomEnchantType.GROWTH); } catch (IllegalArgumentException | NullPointerException ignored) { }
+        try { growthFactor += CustomEnchantments.getEnchantLevel(inventory.getChestplate(), CustomEnchantType.GROWTH); } catch (IllegalArgumentException | NullPointerException ignored) { }
+        try { growthFactor += CustomEnchantments.getEnchantLevel(inventory.getLeggings(), CustomEnchantType.GROWTH); } catch (IllegalArgumentException | NullPointerException ignored) { }
+        try { growthFactor += CustomEnchantments.getEnchantLevel(inventory.getBoots(), CustomEnchantType.GROWTH); } catch (IllegalArgumentException | NullPointerException ignored) { }
+        // Best growth currently is Growth 5 x 4, so best HP we can have is 20 * 15 which equals 300 extra HP
+        player.setHealthScale(20 + growthFactor);
+        return growthFactor * 15;
     }
 
     @EventHandler
@@ -65,7 +86,7 @@ public class PlayerHealthManager implements Listener {
      * @return a double amount representing how much hp the player should have
      */
     public double calculatePlayerExpectedHealth(Player player) {
-        return calculateBaseHealth(player.getLevel());
+        return calculatePlayerExpectedHealth(player, player.getLevel());
     }
 
     /**
@@ -77,8 +98,8 @@ public class PlayerHealthManager implements Listener {
      * @return a double amount representing how much hp the player should have
      */
     public double calculatePlayerExpectedHealth(Player player, int levelOverride){
-        // TODO: Implementation for any other hp modifying factors
-        return calculateBaseHealth(levelOverride);
+        double extraHP = getBonusHealth(player);
+        return calculateBaseHealth(levelOverride) + extraHP;
     }
 
     /**

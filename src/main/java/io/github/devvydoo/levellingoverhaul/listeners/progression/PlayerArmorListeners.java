@@ -1,11 +1,14 @@
 package io.github.devvydoo.levellingoverhaul.listeners.progression;
 
+import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,6 +18,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 
@@ -23,10 +27,14 @@ import java.util.HashMap;
  */
 public class PlayerArmorListeners implements Listener {
 
+    private LevellingOverhaul plugin;
+
     // A map from item type, to its level cap
     private HashMap<Material, Integer> materialLevelCaps;
 
-    public PlayerArmorListeners(){
+    public PlayerArmorListeners(LevellingOverhaul plugin){
+
+        this.plugin = plugin;
 
         materialLevelCaps = new HashMap<>();
 
@@ -58,6 +66,24 @@ public class PlayerArmorListeners implements Listener {
 
 
         materialLevelCaps.put(Material.ELYTRA, LevelRewards.POST_ENDER_EQUIPMENT);
+    }
+
+    /**
+     * Because we don't have a 'post event' system we will just have to correct a players health later if armor has growth
+     *
+     * @param player The player to correct health for
+     */
+    private void correctPlayerHealthLater(Player player){
+        new BukkitRunnable() {
+
+            public void run(){
+                double HP = plugin.getHpManager().calculatePlayerExpectedHealth(player);
+                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(HP);
+                if (player.getHealth() > HP) { player.setHealth(HP); }
+                plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, "");
+            }
+
+        }.runTaskLater(plugin, 10);
     }
 
     /**
@@ -94,6 +120,10 @@ public class PlayerArmorListeners implements Listener {
             BaseExperience.displayActionBarText(event.getPlayer(), ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
         }
 
+        // See if we have growth, if not return else correct the players hp later
+        try { CustomEnchantments.getEnchantLevel(event.getItem(), CustomEnchantType.GROWTH); } catch (IllegalArgumentException ignored) { return; }
+        correctPlayerHealthLater(event.getPlayer());
+
     }
 
     /**
@@ -111,6 +141,7 @@ public class PlayerArmorListeners implements Listener {
         }
 
         Player player = (Player) event.getWhoClicked();
+        correctPlayerHealthLater(player);
 
         // Do we even need to check them?
         if (player.getLevel() >= BaseExperience.LEVEL_CAP){
