@@ -327,6 +327,7 @@ public final class CustomEnchantments {
             case SNIPE:
                 return 10;
             case EXPERIENCED:
+            case GOLDEN_DIET:
                 return 6;
             case GROWTH:
             case SMELTING_TOUCH:
@@ -425,6 +426,9 @@ public final class CustomEnchantments {
                 break;
             case CRITICAL_STRIKE:
                 ToolTypeHelpers.addMeleeWeaponsToList(allowedTargets);
+                break;
+            case GOLDEN_DIET:
+                ToolTypeHelpers.addChestplatesToList(allowedTargets);
                 break;
             default:
                 throw new IllegalArgumentException("Tried to find EnchantmentTarget for " + type);
@@ -533,6 +537,8 @@ public final class CustomEnchantments {
                 return "Increases critical damage";
             case SNIPE:
                 return "Increases arrow damage based on distance travelled";
+            case GOLDEN_DIET:
+                return "Food eaten provides instant healing but reduces hunger satisfied";
             default:
                 return "This enchantment doesn't have a description :(";
         }

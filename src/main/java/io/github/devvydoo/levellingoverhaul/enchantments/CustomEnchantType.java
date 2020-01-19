@@ -9,5 +9,6 @@ public enum CustomEnchantType {
     SMELTING_TOUCH,
     CRITICAL_SHOT,
     CRITICAL_STRIKE,
-    SNIPE
+    SNIPE,
+    GOLDEN_DIET
 }

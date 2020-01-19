@@ -7,7 +7,7 @@ import io.github.devvydoo.levellingoverhaul.enchantments.enchants.Infinity;
 import io.github.devvydoo.levellingoverhaul.enchantments.gui.AnvilInterface;
 import io.github.devvydoo.levellingoverhaul.enchantments.gui.EnchantingInterface;
 import io.github.devvydoo.levellingoverhaul.enchantments.enchants.ExplosiveTouchEnchantment;
-import io.github.devvydoo.levellingoverhaul.enchantments.enchants.SaturatedEnchantment;
+import io.github.devvydoo.levellingoverhaul.enchantments.enchants.FoodEnchantments;
 import io.github.devvydoo.levellingoverhaul.listeners.*;
 import io.github.devvydoo.levellingoverhaul.listeners.monitors.PlayerChatListener;
 import io.github.devvydoo.levellingoverhaul.listeners.monitors.PlayerJoinListeners;
@@ -94,7 +94,7 @@ public final class LevellingOverhaul extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EnchantingInterface(this), this);
         getServer().getPluginManager().registerEvents(new AnvilInterface(this), this);
         getServer().getPluginManager().registerEvents(new ExplosiveTouchEnchantment(), this);
-        getServer().getPluginManager().registerEvents(new SaturatedEnchantment(), this);
+        getServer().getPluginManager().registerEvents(new FoodEnchantments(), this);
         getServer().getPluginManager().registerEvents(new Infinity(), this);
 
         // Listeners involving chat
