@@ -4,6 +4,7 @@ import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
 import io.github.devvydoo.levellingoverhaul.listeners.monitors.PlayerNametags;
 import io.github.devvydoo.levellingoverhaul.util.MobStatistics;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
@@ -76,10 +77,11 @@ public class MobManager implements Listener {
         return entityToLevelMap;
     }
 
-    private int getAveragePlayerLevel(LivingEntity entity, int distance, boolean wantYModifier){
+    private int getAveragePlayerLevel(LivingEntity entity, int distance, boolean wantYModifier, int levelCap){
         int totalLevels = 1;
         int numPlayers = 0;
         for (Player p: entity.getWorld().getPlayers()){
+            if (p.getGameMode().equals(GameMode.SPECTATOR) || p.getGameMode().equals(GameMode.CREATIVE)) {continue;}
             if (p.getLocation().distance(entity.getLocation()) < distance){
                 numPlayers++;
                 totalLevels += p.getLevel();
@@ -87,9 +89,10 @@ public class MobManager implements Listener {
         }
         int yModifier = wantYModifier && entity.getLocation().getY() < 50 ? (int) (12 - entity.getLocation().getY() / 7) : 0;
         if (numPlayers > 0){
-            return (int) (totalLevels / numPlayers / 1.2 + (Math.random() * 5 + yModifier));
+            int level = (int) (totalLevels / numPlayers / 1.2 + (Math.random() * 5 + yModifier));
+            return Math.min(level, levelCap);
         }
-        return (int) (Math.random() * 5 + yModifier);
+        return Math.min((int) (Math.random() * 5 + yModifier), levelCap);
     }
 
 
@@ -175,7 +178,7 @@ public class MobManager implements Listener {
             case ZOMBIE_VILLAGER:
             case HUSK:
             case DROWNED:
-                level = getAveragePlayerLevel(entity, 250, true);
+                level = getAveragePlayerLevel(entity, 250, true, 80);
 
                 if (level <= 25) { }
                 else if (level <= 30){ entity.getEquipment().setItemInMainHand(new ItemStack(Material.STONE_SWORD)); }
@@ -195,7 +198,7 @@ public class MobManager implements Listener {
                 return level;
             case CAVE_SPIDER:
             case SPIDER:
-                level = getAveragePlayerLevel(entity, 250, true);
+                level = getAveragePlayerLevel(entity, 250, true, 80);
                 if (level <= 30){ entity.getEquipment().setItemInMainHand(new ItemStack(Material.STONE_SWORD)); }
                 else if (level <= 35){ entity.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD)); }
                 else if (level <= 40){ entity.getEquipment().setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD)); }
@@ -213,7 +216,7 @@ public class MobManager implements Listener {
                 if (level > 30) { entity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999, level / 30)); }
                 return level;
             case SKELETON:
-                level = getAveragePlayerLevel(entity, 250, true);
+                level = getAveragePlayerLevel(entity, 250, true, 80);
                 if (level > 25){
                     ItemStack bow = new ItemStack(Material.BOW);
                     bow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, level / 2 - 11);
@@ -229,7 +232,7 @@ public class MobManager implements Listener {
                 return level;
             case CREEPER:
                 Creeper creeper = (Creeper) entity;
-                level = getAveragePlayerLevel(creeper, 250, true);
+                level = getAveragePlayerLevel(creeper, 250, true, 80);
                 if (level > 30 && level < 60){
                     if (Math.random() < level / 100.){
                         creeper.setPowered(true);
@@ -291,7 +294,7 @@ public class MobManager implements Listener {
             case RAVAGER:
                 return (int) (Math.random() * 5 + 30);
             case PIG_ZOMBIE:
-                level = getAveragePlayerLevel(entity, 250, false) + ((int) (Math.random() * 6));
+                level = getAveragePlayerLevel(entity, 250, false, 60) + ((int) (Math.random() * 6));
                 expectedHP = level / 1.4 + (Math.random() * 5) + 10;
                 expectedHP *= 5;
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
@@ -303,7 +306,7 @@ public class MobManager implements Listener {
                 return level;
             case MAGMA_CUBE:
                 MagmaCube mc = (MagmaCube) entity;
-                level = getAveragePlayerLevel(entity, 250, false) + ((int) (Math.random() * 6));
+                level = getAveragePlayerLevel(entity, 250, false, 60) + ((int) (Math.random() * 6));
                 expectedHP = level / 5. * (Math.random() + 1) * (mc.getSize() /1.5);
                 expectedHP *= 5;
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
@@ -311,14 +314,14 @@ public class MobManager implements Listener {
                 return level;
             case GHAST:
             case BLAZE:
-                level = getAveragePlayerLevel(entity, 250, false) + ((int) (Math.random() * 6));
+                level = getAveragePlayerLevel(entity, 250, false, 60) + ((int) (Math.random() * 6));
                 expectedHP = level / 1.2 + (Math.random() * 5) + 8;
                 expectedHP *= 5;
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 return level;
             case WITHER_SKELETON:
-                level = getAveragePlayerLevel(entity, 250, false) + ((int) (Math.random() * 6));
+                level = getAveragePlayerLevel(entity, 250, false, 70) + ((int) (Math.random() * 6));
                 expectedHP = level / .8 + (Math.random() * 5) + 7;
                 expectedHP *= 5;
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
@@ -332,7 +335,7 @@ public class MobManager implements Listener {
                 level = (int) (Math.random() * 5 + 25);
                 return level;
             case SLIME:
-                level = getAveragePlayerLevel(entity, 250, true);
+                level = getAveragePlayerLevel(entity, 250, true, 80);
                 if (level > 25){
                     ItemStack s = new ItemStack(Material.STONE_SWORD);
                     s.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 - 11);
@@ -346,7 +349,7 @@ public class MobManager implements Listener {
                 entity.setHealth(expectedHP);
                 return level;
             case SILVERFISH:
-                level = getAveragePlayerLevel(entity, 250, true);
+                level = getAveragePlayerLevel(entity, 250, true, 80);
                 if (level > 20){
                     ItemStack s = new ItemStack(Material.STONE_SWORD);
                     s.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 - 11);
