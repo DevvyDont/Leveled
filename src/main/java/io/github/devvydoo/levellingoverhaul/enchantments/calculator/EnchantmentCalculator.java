@@ -132,8 +132,8 @@ public class EnchantmentCalculator {
         // Let's make a new list that determines the enchantments we are going to return
         ArrayList<PotentialEnchantment> enchantmentsToApply = new ArrayList<>();
 
-        // Calculate the number of enchantments we want, it is just (level - 30) / 10 with a chance to get one more
-        int numEnchants = (this.playerLevel - 20) / 8 + (  Math.random() < .5 ? 1 : 0  );
+        // Calculate the number of enchantments we want, it is just (level - 15) / 15 with a chance to get one more
+        int numEnchants = (this.playerLevel - 15) / 15 + (  Math.random() < .5 ? 1 : 0  );
 
         // Infinitely loop through the enchantments and add them until we have enough, or we tried this 30 times
         int attempts = 0;
