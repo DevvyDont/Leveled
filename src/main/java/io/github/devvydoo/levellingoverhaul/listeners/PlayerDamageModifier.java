@@ -33,20 +33,20 @@ public class PlayerDamageModifier implements Listener {
     private double getArmorDamageResistPercent(ItemStack armor){
         switch (armor.getType()){
             case DIAMOND_CHESTPLATE:
-                return .19;
+                return .16;
             case DIAMOND_LEGGINGS:
-                return .17;
-            case DIAMOND_HELMET:
-            case IRON_CHESTPLATE:
                 return .14;
+            case IRON_CHESTPLATE:
+                return .13;
+            case DIAMOND_HELMET:
+                return .12;
             case IRON_LEGGINGS:
-                return .11;
-            case DIAMOND_BOOTS:
                 return .10;
-            case IRON_HELMET:
+            case DIAMOND_BOOTS:
             case CHAINMAIL_CHESTPLATE:
                 return .09;
             case CHAINMAIL_LEGGINGS:
+            case IRON_HELMET:
                 return .08;
             case CHAINMAIL_HELMET:
             case GOLDEN_CHESTPLATE:
@@ -88,20 +88,20 @@ public class PlayerDamageModifier implements Listener {
         return damageResist;
     }
 
-    private double getPlayerProtectionDamageReduction(Player player, boolean checkProjectile){
+    private double getPlayerProtectionResist(Player player, boolean checkProjectile){
         PlayerInventory inventory = player.getInventory();
-        double protFactor = 0;
-        if (inventory.getHelmet() != null) {protFactor += Math.pow(inventory.getHelmet().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL), 2); }
-        if (inventory.getChestplate() != null) {protFactor += Math.pow(inventory.getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL), 2); }
-        if (inventory.getLeggings() != null) {protFactor +=Math.pow(inventory.getLeggings().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL), 2); }
-        if (inventory.getBoots() != null) {protFactor += Math.pow(inventory.getBoots().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL), 2); }
+        double resist = 0;
+        if (inventory.getHelmet() != null) {resist += .55 * inventory.getHelmet().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL); }
+        if (inventory.getChestplate() != null) {resist += .55 * inventory.getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL); }
+        if (inventory.getLeggings() != null) {resist += .55 * inventory.getLeggings().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL); }
+        if (inventory.getBoots() != null) {resist += .55 * inventory.getBoots().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL); }
         if (checkProjectile) {
-            if (inventory.getHelmet() != null) {protFactor += inventory.getHelmet().getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE); }
-            if (inventory.getChestplate() != null) {protFactor += inventory.getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE); }
-            if (inventory.getLeggings() != null) {protFactor += inventory.getLeggings().getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE); }
-            if (inventory.getBoots() != null) {protFactor += inventory.getBoots().getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE); }
+            if (inventory.getHelmet() != null) {resist += .2 * inventory.getHelmet().getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE); }
+            if (inventory.getChestplate() != null) {resist += .2 * inventory.getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE); }
+            if (inventory.getLeggings() != null) {resist += .2 * inventory.getLeggings().getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE); }
+            if (inventory.getBoots() != null) {resist += .2 * inventory.getBoots().getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE); }
         }
-        return protFactor;
+        return resist / 100.;
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -169,6 +169,9 @@ public class PlayerDamageModifier implements Listener {
                 event.getCause().equals(EntityDamageEvent.DamageCause.CRAMMING) ||
                 event.getCause().equals(EntityDamageEvent.DamageCause.DROWNING) ||
                 event.getCause().equals(EntityDamageEvent.DamageCause.STARVATION) ||
+                event.getCause().equals(EntityDamageEvent.DamageCause.FIRE) ||
+                event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) ||
+                event.getCause().equals(EntityDamageEvent.DamageCause.LAVA) ||
                 event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION)){
             if (event.getDamage() < fivePercentHP) {
                 event.setDamage(fivePercentHP);
@@ -178,15 +181,14 @@ public class PlayerDamageModifier implements Listener {
             if (blocksFallen <= 0) { event.setCancelled(true); return; }
             event.setDamage(blocksFallen * fivePercentHP);
         } else {
-
             // Here the player is being hit by things that armor should resist, here's how armor works:
             // Every armor has a base % value to subtract off of the total damage, prot will be flat dmg reduction
             double percentResisted = getPlayerDamageResist(player);
-            double flatAmountResisted = getPlayerProtectionDamageReduction(player, event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE));
-            double newDamage = event.getDamage() * (1 - percentResisted) - flatAmountResisted;
+            double percentProtResist = getPlayerProtectionResist(player, event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE));
+            double newDamage = event.getDamage() * (1 - percentResisted - percentProtResist);
             if (newDamage < 1) { newDamage = 1; }
             event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
-            System.out.println(ChatColor.AQUA + "[DEBUG] " + player.getName() + " was hit, armor resist: " + Math.round(percentResisted * 100) + "%. Prot Enchant Resist: -" + Math.round(flatAmountResisted) + " RESULT: " + Math.round(event.getDamage()) + " ---> " + Math.round(newDamage));
+            System.out.println(ChatColor.AQUA + "[DEBUG] " + player.getName() + " was hit, armor resist: -" + Math.round(percentResisted * 100) + "%. Prot Enchant Resist: -" + Math.round(percentProtResist * 100) / 100. + "% RESULT: " + Math.round(event.getDamage()) + " ---> " + Math.round(newDamage));
             event.setDamage(newDamage);
 
         }
