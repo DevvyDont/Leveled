@@ -86,6 +86,9 @@ public class EnchantmentCalculator {
         enchs.add(new PotentialEnchantment(CustomEnchantType.GROWTH, 30, BaseExperience.LEVEL_CAP, 5));
         enchs.add(new PotentialEnchantment(CustomEnchantType.SMARTY_PANTS, 30, 50, 2));
         enchs.add(new PotentialEnchantment(CustomEnchantType.SMELTING_TOUCH, 30, 30, 1));
+        enchs.add(new PotentialEnchantment(CustomEnchantType.CRITICAL_SHOT, 50, 80, 3));
+        enchs.add(new PotentialEnchantment(CustomEnchantType.CRITICAL_STRIKE, 50, BaseExperience.LEVEL_CAP, 5));
+        enchs.add(new PotentialEnchantment(CustomEnchantType.SNIPE, 60, 90, 3));
 
         return new ArrayList<>(enchs);
     }

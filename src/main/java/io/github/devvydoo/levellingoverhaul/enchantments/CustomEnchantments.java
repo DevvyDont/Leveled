@@ -321,7 +321,11 @@ public final class CustomEnchantments {
             case EXPLOSIVE_TOUCH:
                 return 5;
             case SATURATION:
+            case CRITICAL_SHOT:
+            case CRITICAL_STRIKE:
                 return 11;
+            case SNIPE:
+                return 10;
             case EXPERIENCED:
                 return 6;
             case GROWTH:
@@ -413,6 +417,14 @@ public final class CustomEnchantments {
                 break;
             case SMELTING_TOUCH:
                 ToolTypeHelpers.addPickaxesToList(allowedTargets);
+                break;
+            case CRITICAL_SHOT:
+            case SNIPE:
+                allowedTargets.add(Material.BOW);
+                allowedTargets.add(Material.CROSSBOW);
+                break;
+            case CRITICAL_STRIKE:
+                ToolTypeHelpers.addMeleeWeaponsToList(allowedTargets);
                 break;
             default:
                 throw new IllegalArgumentException("Tried to find EnchantmentTarget for " + type);
@@ -515,6 +527,12 @@ public final class CustomEnchantments {
                 return "Increases XP gained from advancements";
             case SMELTING_TOUCH:
                 return "Automatically smelts blocks broken";
+            case CRITICAL_SHOT:
+                return "Increases chance to shoot a critical arrow";
+            case CRITICAL_STRIKE:
+                return "Increases critical damage";
+            case SNIPE:
+                return "Increases arrow damage based on distance travelled";
             default:
                 return "This enchantment doesn't have a description :(";
         }

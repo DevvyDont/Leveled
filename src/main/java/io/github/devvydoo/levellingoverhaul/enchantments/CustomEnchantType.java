@@ -7,4 +7,7 @@ public enum CustomEnchantType {
     GROWTH,
     SMARTY_PANTS,
     SMELTING_TOUCH,
+    CRITICAL_SHOT,
+    CRITICAL_STRIKE,
+    SNIPE
 }

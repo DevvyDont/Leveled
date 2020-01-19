@@ -1,6 +1,8 @@
 package io.github.devvydoo.levellingoverhaul.managers;
 
 import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantType;
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import org.bukkit.EntityEffect;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -26,6 +28,7 @@ public class GlobalDamageManager implements Listener {
 
     private LevellingOverhaul plugin;
     private String ARROW_DMG_METANAME = "base_damage";
+    private String ARROW_SNIPE_ENCHANT_METANAME = "snipe_enchant_level";
 
     public GlobalDamageManager(LevellingOverhaul plugin) {
         this.plugin = plugin;
@@ -116,10 +119,21 @@ public class GlobalDamageManager implements Listener {
         }
 
         // Lastly, see if we should give a 50% bonus for crits
-        if (!player.isOnGround() && player.getVelocity().getY() < 0) { newDamage *= 1.5; }
+        if (!player.isOnGround() && player.getVelocity().getY() < 0) {
+            int critLevel = 0;
+            try { critLevel = CustomEnchantments.getEnchantLevel(tool, CustomEnchantType.CRITICAL_STRIKE); } catch (IllegalArgumentException ignored) { }
+            newDamage *= 1.5 + (critLevel * .15);
+        }
 
         // Give it a 5% variance
         newDamage *= 1 + ((Math.random() - .5) / 10.);
+
+        // Sweeping edge needs to have reduced damage
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)){
+            int sweepLevel = tool.getEnchantmentLevel(Enchantment.SWEEPING_EDGE);
+            if (sweepLevel > 0) { newDamage *= (sweepLevel) / 11.;}
+            else { newDamage *= .03; }
+        }
 
         // Now set the damage, good to go
         event.setDamage(newDamage);
@@ -148,7 +162,10 @@ public class GlobalDamageManager implements Listener {
             if (powerLevel > 0) { damage *= powerLevel; }
 
             // 20% chance to crit for double damage
-            if (Math.random() < .2) { damage *= 2;
+            double critPercent = .2;
+            // crit enchant level * 10% chance bonus
+            try { critPercent += CustomEnchantments.getEnchantLevel(bow, CustomEnchantType.CRITICAL_SHOT) / 10.; } catch (IllegalArgumentException ignored) { }
+            if (Math.random() < critPercent) { damage *= 2;
             event.getEntity().getWorld().spawnParticle(Particle.CRIT_MAGIC, event.getEntity().getLocation().add(0, 1.6, 0), 50);
             event.getEntity().getWorld().playSound(event.getEntity().getLocation().add(0, 1.6, 0), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, .3f, .6f);
             }
@@ -158,6 +175,8 @@ public class GlobalDamageManager implements Listener {
 
             // Now we can put this value on the arrow to modify later in a different event
             event.getProjectile().setMetadata(ARROW_DMG_METANAME, new FixedMetadataValue(plugin, damage));
+            // Attempts to put the snipe level on the arrow if it exists, if it fails then no biggie
+            try { event.getProjectile().setMetadata(ARROW_SNIPE_ENCHANT_METANAME, new FixedMetadataValue(plugin, CustomEnchantments.getEnchantLevel(bow, CustomEnchantType.SNIPE))); } catch (IllegalArgumentException ignored) { }
         }
     }
 
@@ -182,6 +201,19 @@ public class GlobalDamageManager implements Listener {
             }
         }
 
+        // Our plugin adds a metadata value on the arrow entity that says how much snipe damage bonus we should have
+        double distanceMultiplier = 1;
+        if (arrow.hasMetadata(ARROW_SNIPE_ENCHANT_METANAME)){
+            for (MetadataValue metadataValue : arrow.getMetadata(ARROW_SNIPE_ENCHANT_METANAME)){
+                if (metadataValue.getOwningPlugin() == null) { continue; }
+                if (metadataValue.getOwningPlugin().equals(plugin)) {
+                    double distance = event.getEntity().getLocation().distance(((Player) arrow.getShooter()).getLocation());
+                    if (distance > 20) { distanceMultiplier += metadataValue.asInt() * (distance / 100.); }
+                    break;
+                }
+            }
+        }
+        newDamage *= distanceMultiplier;
         if (newDamage > 0) { event.setDamage(newDamage); }
     }
 

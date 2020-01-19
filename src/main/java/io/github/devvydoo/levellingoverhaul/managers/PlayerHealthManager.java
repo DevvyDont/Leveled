@@ -30,13 +30,7 @@ public class PlayerHealthManager implements Listener {
         }
     }
 
-    /**
-     * Method used to calculate any bonus HP a player should have (Growth enchant etc.)
-     *
-     * @param player The player we are calculating bonus hp for
-     * @return a double representing bonus HP
-     */
-    private double getBonusHealth(Player player){
+    public double calculateGrowthFactor(Player player){
         double growthFactor = 0;
         PlayerInventory inventory = player.getInventory();
         // Attempt to grab the Growth enchant level for all gear, if we get a nullptr, they don't have a helmet, if we get an illegalarg, they dont have growth
@@ -44,6 +38,17 @@ public class PlayerHealthManager implements Listener {
         try { growthFactor += CustomEnchantments.getEnchantLevel(inventory.getChestplate(), CustomEnchantType.GROWTH); } catch (IllegalArgumentException | NullPointerException ignored) { }
         try { growthFactor += CustomEnchantments.getEnchantLevel(inventory.getLeggings(), CustomEnchantType.GROWTH); } catch (IllegalArgumentException | NullPointerException ignored) { }
         try { growthFactor += CustomEnchantments.getEnchantLevel(inventory.getBoots(), CustomEnchantType.GROWTH); } catch (IllegalArgumentException | NullPointerException ignored) { }
+        return growthFactor;
+    }
+
+    /**
+     * Method used to calculate any bonus HP a player should have (Growth enchant etc.)
+     *
+     * @param player The player we are calculating bonus hp for
+     * @return a double representing bonus HP
+     */
+    private double getBonusHealth(Player player){
+        double growthFactor = calculateGrowthFactor(player);
         // Best growth currently is Growth 5 x 4, so best HP we can have is 20 * 15 which equals 300 extra HP
         player.setHealthScale(20 + growthFactor);
         return growthFactor * 15;
@@ -53,6 +58,8 @@ public class PlayerHealthManager implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event){
 
         // Figure out what the player should have and set that
+        event.getPlayer().setHealthScale(20);
+        event.getPlayer().setHealthScaled(false);
         double percentBeforeJoin = event.getPlayer().getHealth() / event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
         double hpToSet = event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() * percentBeforeJoin;
         event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(calculatePlayerExpectedHealth(event.getPlayer()));
@@ -60,7 +67,7 @@ public class PlayerHealthManager implements Listener {
         // Always no matter what display 10 hearts no matter the HP
         new BukkitRunnable() {
             public void run(){
-                event.getPlayer().setHealthScale(20);
+                event.getPlayer().setHealthScale(20 + calculateGrowthFactor(event.getPlayer()));
             }
 
         }.runTaskLater(plugin, 10);
