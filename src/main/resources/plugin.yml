@@ -12,3 +12,6 @@ commands:
   leveldebug:
     description: Used to modify player progression for debug purposes
     usage: /debug < reset | level | tp > [ CONFIRM / < new level > / [x, y, z] ]
+  enchantdebug:
+    description: Used to enchant the item in your hand for debug purposes
+    usage: /enchantdebug < level enchant > < quality >

@@ -42,7 +42,7 @@ public class PlayerExperienceListeners implements Listener {
         double newMaxHp = this.plugin.getHpManager().calculatePlayerExpectedHealth(player, newLevel);
         player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(newMaxHp);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-        player.setHealthScale(20);
+        player.setHealthScale(20 + plugin.getHpManager().calculateGrowthFactor(player));
         player.setFoodLevel(20);
         player.setSaturation(20);
         for ( int i = 0; i < 3; i++) {

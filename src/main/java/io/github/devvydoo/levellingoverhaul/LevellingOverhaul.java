@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul;
 
+import io.github.devvydoo.levellingoverhaul.commands.DebugEnchant;
 import io.github.devvydoo.levellingoverhaul.commands.DebugLevelSetter;
 import io.github.devvydoo.levellingoverhaul.commands.PlayerStatsCommand;
 import io.github.devvydoo.levellingoverhaul.commands.TestMobCommand;
@@ -117,6 +118,7 @@ public final class LevellingOverhaul extends JavaPlugin {
         getCommand("mob").setExecutor(new TestMobCommand(this));
         getCommand("stats").setExecutor(new PlayerStatsCommand());
         getCommand("leveldebug").setExecutor(new DebugLevelSetter(this));
+        getCommand("enchantdebug").setExecutor(new DebugEnchant());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package io.github.devvydoo.levellingoverhaul.managers;
 
 import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
+import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -35,8 +36,9 @@ public class ActionBarManager implements Listener {
     private void displayActionBarText(Player player, int currentHP, int maxHP, String extra){
         int xpTotal = player.getExpToLevel();
         int xpProgress = (int)  getTotalExpAccumulated(player.getExp(), xpTotal);
-        String message = ChatColor.RED + "" + currentHP + "/" + maxHP + ChatColor.DARK_RED + " ❤   " +
-                ChatColor.GREEN + "" + xpProgress + ChatColor.GRAY + "/" + ChatColor.DARK_GREEN + "" + xpTotal + ChatColor.GRAY + " XP   " + extra;
+        String xpPortion = ChatColor.GREEN + "" + xpProgress + ChatColor.GRAY + "/" + ChatColor.DARK_GREEN + "" + xpTotal + ChatColor.GRAY + " XP   ";
+        if (player.getLevel() == BaseExperience.LEVEL_CAP) { xpPortion = ChatColor.GREEN + "" + ChatColor.BOLD + "MAXED" + ChatColor.GRAY + " XP   "; }
+        String message = ChatColor.RED + "" + currentHP + "/" + maxHP + ChatColor.DARK_RED + " ❤   " + xpPortion + extra;
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR,  TextComponent.fromLegacyText(message));
     }
 
