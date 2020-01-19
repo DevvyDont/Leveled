@@ -11,7 +11,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 
@@ -53,12 +52,8 @@ public class PlayerNametags implements Listener {
         updatePlayerScoreboard(event.getPlayer(), event.getPlayer().getLevel(), event.getPlayer().getHealth());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDamage(EntityDamageEvent event){
-
-        if (event.isCancelled()){
-            return;
-        }
 
         if (event.getEntity() instanceof Player){
             Player player = (Player) event.getEntity();
@@ -84,7 +79,7 @@ public class PlayerNametags implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onLevelChange(PlayerLevelChangeEvent event){
         if (event.getNewLevel() < event.getOldLevel()){
             return;
@@ -92,7 +87,7 @@ public class PlayerNametags implements Listener {
         updatePlayerScoreboard(event.getPlayer(), event.getNewLevel(), event.getPlayer().getHealth());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerHealthRegen(EntityRegainHealthEvent event){
 
         if (event.isCancelled()){
@@ -102,7 +97,7 @@ public class PlayerNametags implements Listener {
         if (event.getEntity() instanceof Player){
             Player player = (Player) event.getEntity();
             double hpToDisplay = player.getHealth() + event.getAmount();
-            if (hpToDisplay > player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) { hpToDisplay = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(); }
+            if (hpToDisplay >= player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) { hpToDisplay = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(); }
             updatePlayerScoreboard(player, player.getLevel(), hpToDisplay);
         }
     }

@@ -46,8 +46,10 @@ public class ActionBarManager implements Listener {
         if (event.getEntity() instanceof Player){
             Player player = (Player) event.getEntity();
             int hpToDisplay = (int) (player.getHealth() - event.getFinalDamage());
+            int maxHP = (int) player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
             if (hpToDisplay < 0) { hpToDisplay = 0; }
-            displayActionBarText(player, hpToDisplay, (int) player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), "");
+            else if (hpToDisplay > maxHP) {hpToDisplay = maxHP; }
+            displayActionBarText(player, hpToDisplay, maxHP, "");
         }
 
     }
