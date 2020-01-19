@@ -239,7 +239,6 @@ public class MobManager implements Listener {
                 }
                 creeper.setMaxFuseTicks((int) (level > 80 ? 2 : 40 - level / 3.));
                 expectedHP = 100 + (level * 2);
-                expectedHP *= 5;
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 return level;
