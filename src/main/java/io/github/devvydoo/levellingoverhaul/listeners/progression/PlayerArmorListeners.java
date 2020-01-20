@@ -114,11 +114,8 @@ public class PlayerArmorListeners implements Listener {
         }
 
         // Does our player have the required level to equip this?
-        int requiredLevel = CustomEnchantments.getItemLevel(event.getItem());
-        if (requiredLevel < materialLevelCaps.get(event.getItem().getType())) {
-            requiredLevel = materialLevelCaps.get(event.getItem().getType());
-        }
 
+        int requiredLevel = Math.max(CustomEnchantments.getItemLevel(event.getItem()), materialLevelCaps.get(event.getItem().getType()));
 
         if (event.getPlayer().getLevel() < requiredLevel) {
             event.setCancelled(true);
@@ -165,11 +162,13 @@ public class PlayerArmorListeners implements Listener {
             ItemStack itemHeld = event.getCursor();
 
             // Sanity check, do they somehow have armor already equipped theyre not supposed to?
-            if (itemClicked != null) {
+            if (itemClicked != null && !itemClicked.getType().equals(Material.AIR)) {
                 if (materialLevelCaps.containsKey(itemClicked.getType())) {
                     if (event.getWhoClicked() instanceof Player) {
-                        if (((Player) event.getWhoClicked()).getLevel() < materialLevelCaps.get(itemClicked.getType())) {
-                            event.getWhoClicked().getInventory().setItem(event.getSlot(), null);
+                        int cap = Math.max(materialLevelCaps.get(itemClicked.getType()), CustomEnchantments.getItemLevel(itemClicked));
+                        if (((Player) event.getWhoClicked()).getLevel() < cap) {
+                            event.getWhoClicked().getWorld().dropItemNaturally(event.getWhoClicked().getLocation(), itemClicked);
+                            event.getWhoClicked().getInventory().setItem(event.getSlot(), new ItemStack(Material.AIR));
                         }
                     }
                 }

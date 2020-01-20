@@ -243,14 +243,14 @@ public class AnvilInterface implements Listener {
         Block block = event.getClickedBlock();
 
         // Did the player right click an anvil?
-        if (!block.getType().equals(Material.ANVIL) && !block.getType().equals(Material.GRINDSTONE)) {
+        if (!block.getType().equals(Material.ANVIL) && !block.getType().equals(Material.CHIPPED_ANVIL) && !block.getType().equals(Material.DAMAGED_ANVIL) && !block.getType().equals(Material.GRINDSTONE)) {
             return;
         }
 
         event.setCancelled(true);
 
         // Open the interface
-        if (block.getType().equals(Material.ANVIL)) {
+        if (block.getType().equals(Material.ANVIL) || block.getType().equals(Material.CHIPPED_ANVIL) || block.getType().equals(Material.DAMAGED_ANVIL)) {
             openAnvilInterface(event.getPlayer());
         }
         if (block.getType().equals(Material.GRINDSTONE)) {

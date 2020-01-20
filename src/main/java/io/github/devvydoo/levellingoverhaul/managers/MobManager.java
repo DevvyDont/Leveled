@@ -51,6 +51,10 @@ public class MobManager implements Listener {
         for (World w : worlds) {
             // Loop through all the entities
             for (LivingEntity e : w.getEntitiesByClass(LivingEntity.class)) {
+                if (e instanceof ArmorStand){
+                    ArmorStand armorStand = (ArmorStand) e;
+                    if (armorStand.isMarker() && armorStand.isCustomNameVisible()){ e.remove(); continue; }
+                }
                 times++;
                 this.entityToLevelMap.put(e, getMobStatistics(e));
             }

@@ -1,5 +1,6 @@
 package io.github.devvydoo.levellingoverhaul.listeners.progression;
 
+import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantment;
 import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import io.github.devvydoo.levellingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levellingoverhaul.util.LevelRewards;
@@ -37,7 +38,32 @@ public class MiscEquipmentListeners implements Listener {
         this.equipmentRequirements.put(Material.SHIELD, LevelRewards.SHIELD_UNLOCK);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    private boolean isShulker(Material material){
+        switch (material){
+            case SHULKER_BOX:
+            case BLACK_SHULKER_BOX:
+            case BLUE_SHULKER_BOX:
+            case BROWN_SHULKER_BOX:
+            case CYAN_SHULKER_BOX:
+            case GRAY_SHULKER_BOX:
+            case LIGHT_BLUE_SHULKER_BOX:
+            case LIME_SHULKER_BOX:
+            case GREEN_SHULKER_BOX:
+            case MAGENTA_SHULKER_BOX:
+            case ORANGE_SHULKER_BOX:
+            case PINK_SHULKER_BOX:
+            case LIGHT_GRAY_SHULKER_BOX:
+            case PURPLE_SHULKER_BOX:
+            case RED_SHULKER_BOX:
+            case WHITE_SHULKER_BOX:
+            case YELLOW_SHULKER_BOX:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @EventHandler(ignoreCancelled = false)
     public void onItemInteract(PlayerInteractEvent event) {
 
 
@@ -62,17 +88,14 @@ public class MiscEquipmentListeners implements Listener {
         boolean mainHandNeedsChecked = equipmentRequirements.containsKey(itemInHand.getType());
         boolean offhandNeedsChecked = equipmentRequirements.containsKey(itemInOffhand.getType());
         boolean blockClickedNeedsChecked = action.equals(Action.RIGHT_CLICK_BLOCK) &&
-                event.getClickedBlock() != null && equipmentRequirements.containsKey(event.getClickedBlock().getType());
+                event.getClickedBlock() != null && (equipmentRequirements.containsKey(event.getClickedBlock().getType()) || isShulker(event.getClickedBlock().getType()));
         if (!(mainHandNeedsChecked || offhandNeedsChecked || blockClickedNeedsChecked)) {
             return;
         }
 
         // We may potentially run into issues, check their main hand first
         if (mainHandNeedsChecked) {
-            int levelRequired = CustomEnchantments.getItemLevel(itemInHand);  // Enchanted?
-            if (levelRequired < equipmentRequirements.get(itemInHand.getType())) {
-                levelRequired = equipmentRequirements.get(itemInHand.getType());
-            }
+            int levelRequired = Math.max(CustomEnchantments.getItemLevel(itemInHand), equipmentRequirements.get(itemInHand.getType()));
             if (levelRequired > player.getLevel()) {
                 event.setCancelled(true);
                 BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + levelRequired + ChatColor.RED + " to use this item!");
@@ -81,19 +104,27 @@ public class MiscEquipmentListeners implements Listener {
             // Now check their offhand
         }
         if (offhandNeedsChecked) {
-            int levelRequired = CustomEnchantments.getItemLevel(itemInOffhand); // Enchanted?
-            if (levelRequired < equipmentRequirements.get(itemInOffhand.getType())) {
-                levelRequired = equipmentRequirements.get(itemInOffhand.getType());
-            }
+            int levelRequired = Math.max(CustomEnchantments.getItemLevel(itemInOffhand), equipmentRequirements.get(itemInOffhand.getType()));
             if (levelRequired > player.getLevel()) {
                 event.setCancelled(true);
                 BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + levelRequired + ChatColor.RED + " to use this item!");
                 player.playSound(player.getLocation(), this.getSoundFromMaterial(itemInOffhand.getType()), .3f, .7f);
             }
-        } else if (blockClickedNeedsChecked && player.getLevel() < equipmentRequirements.get(event.getClickedBlock().getType())) {
-            event.setCancelled(true);
-            BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(event.getClickedBlock().getType()) + ChatColor.RED + " to interact with this item!");
-            player.playSound(player.getLocation(), this.getSoundFromMaterial(event.getClickedBlock().getType()), .3f, .7f);
+        } else if (blockClickedNeedsChecked) {
+            if (isShulker(event.getClickedBlock().getType())) {
+                if (player.getLevel() < equipmentRequirements.get(Material.SHULKER_BOX)) {
+                    event.setCancelled(true);
+                    BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(Material.SHULKER_BOX) + ChatColor.RED + " to interact with this item!");
+                    player.playSound(player.getLocation(), this.getSoundFromMaterial(Material.SHULKER_BOX), .3f, .7f);
+                }
+            } else {
+                if (player.getLevel() < equipmentRequirements.get(event.getClickedBlock().getType())){
+                    event.setCancelled(true);
+                    BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(event.getClickedBlock().getType()) + ChatColor.RED + " to interact with this item!");
+                    player.playSound(player.getLocation(), this.getSoundFromMaterial(event.getClickedBlock().getType()), .3f, .7f);
+                }
+            }
+
         }
 
     }
