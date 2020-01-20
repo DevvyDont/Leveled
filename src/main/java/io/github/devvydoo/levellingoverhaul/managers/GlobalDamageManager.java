@@ -82,10 +82,6 @@ public class GlobalDamageManager implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityDamaged(EntityDamageEvent event) {
-
-        if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0) {
-            return;
-        }
         event.setDamage(event.getDamage() * 5);
     }
 
@@ -272,6 +268,21 @@ public class GlobalDamageManager implements Listener {
             event.setDamage(newDamage);
         }
     }
+
+    @EventHandler(ignoreCancelled = true)
+        public void onMobHitByThorns(EntityDamageByEntityEvent event){
+
+            // Player vs Player thorns is handled elsewhere
+            if (event.getEntity() instanceof Player){ return; }
+
+            // If something other than a player is getting hit my thorns
+            if (event.getCause().equals(EntityDamageEvent.DamageCause.THORNS)) {
+                int level;
+                try { level = plugin.getMobManager().getMobLevel((LivingEntity) event.getDamager()); } catch (ClassCastException ignored) { return; }
+                event.setDamage(level * (Math.random() - .5));
+            }
+        }
+
 
     @EventHandler
     public void onFallingInVoid(PlayerMoveEvent event) {

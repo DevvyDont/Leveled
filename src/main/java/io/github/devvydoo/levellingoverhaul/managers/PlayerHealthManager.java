@@ -97,8 +97,12 @@ public class PlayerHealthManager implements Listener {
         // This is basically just natural regen
         if (event.getEntity() instanceof Player && event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.SATIATED)) {
             Player player = (Player) event.getEntity();
-            double halfHeartAmount = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() / 20.;
-            event.setAmount(halfHeartAmount);
+            double maxHP = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+            double halfHeartAmount = maxHP / 20.;
+            double amountToRegen;
+            if (maxHP / 2 > player.getHealth()) {amountToRegen = halfHeartAmount * 1.33; }
+            else { amountToRegen = halfHeartAmount * .35; }
+            event.setAmount(amountToRegen);
         }
     }
 

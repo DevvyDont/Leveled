@@ -240,7 +240,7 @@ public class PlayerDamageModifier implements Listener {
                 double newDamage = level * 10;
 
                 double percentResisted = getPlayerDamageResist(player);
-                double percentProtResist = getPlayerProtectionResist(player, event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE));
+                double percentProtResist = getPlayerProtectionResist(player, false);
                 newDamage = newDamage * (1 - percentResisted - percentProtResist);
                 if (newDamage < 1) { newDamage = 1; }
                 event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
