@@ -13,8 +13,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class FoodEnchantments implements Listener {
 
-    private int getNutrition(ItemStack itemStack){
-        switch (itemStack.getType()){
+    private int getNutrition(ItemStack itemStack) {
+        switch (itemStack.getType()) {
             case RABBIT_STEW:
                 return 10;
             case COOKED_PORKCHOP:
@@ -67,15 +67,15 @@ public class FoodEnchantments implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onFoodEat(PlayerItemConsumeEvent event){
+    public void onFoodEat(PlayerItemConsumeEvent event) {
 
         // Does the player have a helmet?
         ItemStack helmet = event.getPlayer().getInventory().getHelmet();
-        if (helmet != null && !helmet.getType().equals(Material.AIR)){
+        if (helmet != null && !helmet.getType().equals(Material.AIR)) {
 
             // Is the helmet enchanted with Saturation?
-            for (CustomEnchantment enchantment: CustomEnchantments.getCustomEnchantments(helmet)){
-                if (enchantment.getType().equals(CustomEnchantType.SATURATION)){
+            for (CustomEnchantment enchantment : CustomEnchantments.getCustomEnchantments(helmet)) {
+                if (enchantment.getType().equals(CustomEnchantType.SATURATION)) {
                     event.getPlayer().setSaturation(event.getPlayer().getSaturation() + enchantment.getLevel() * 3);
                     event.getPlayer().setFoodLevel(event.getPlayer().getFoodLevel() + enchantment.getLevel());
                 }
@@ -84,16 +84,16 @@ public class FoodEnchantments implements Listener {
 
         // Does the player have a chestplate? also don't do golden diet stuff if they are basically starving
         ItemStack chestplate = event.getPlayer().getInventory().getChestplate();
-        if (event.getPlayer().getFoodLevel() > 10 && chestplate != null && !chestplate.getType().equals(Material.AIR)){
+        if (event.getPlayer().getFoodLevel() > 10 && chestplate != null && !chestplate.getType().equals(Material.AIR)) {
 
             // Golden Diet?
-            if (CustomEnchantments.hasEnchant(chestplate, CustomEnchantType.GOLDEN_DIET)){
+            if (CustomEnchantments.hasEnchant(chestplate, CustomEnchantType.GOLDEN_DIET)) {
                 // "take away" half of the hunger bois that the food is going to give
                 int hungerTaken = getNutrition(event.getItem()) / 2;
                 event.getPlayer().setFoodLevel(event.getPlayer().getFoodLevel() - hungerTaken);
                 try {
                     event.getPlayer().setHealth(event.getPlayer().getHealth() + (100 * hungerTaken));
-                } catch (IllegalArgumentException ignored){
+                } catch (IllegalArgumentException ignored) {
                     event.getPlayer().setHealth(event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
                 }
 

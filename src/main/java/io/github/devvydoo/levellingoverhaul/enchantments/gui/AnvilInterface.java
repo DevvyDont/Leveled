@@ -34,7 +34,7 @@ public class AnvilInterface implements Listener {
         this.plugin = plugin;
     }
 
-    private void forceUpdateInventory(Player player){
+    private void forceUpdateInventory(Player player) {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -43,21 +43,23 @@ public class AnvilInterface implements Listener {
         }.runTaskLater(plugin, 1);
     }
 
-    private ItemStack setItemLore(ItemStack itemStack, String itemTitle){
+    private ItemStack setItemLore(ItemStack itemStack, String itemTitle) {
 
         ItemMeta meta = itemStack.getItemMeta();
-        if (meta == null) { throw new IllegalArgumentException("Item Meta was null"); }
+        if (meta == null) {
+            throw new IllegalArgumentException("Item Meta was null");
+        }
         meta.setDisplayName(itemTitle);
         itemStack.setItemMeta(meta);
         return itemStack;
     }
 
-    private int getMaterialRefundAmount(ItemStack item, String viewTitle) throws IllegalArgumentException{
-        if (viewTitle.equals(GRINDSTONE_INTERFACE_NAME)){
+    private int getMaterialRefundAmount(ItemStack item, String viewTitle) throws IllegalArgumentException {
+        if (viewTitle.equals(GRINDSTONE_INTERFACE_NAME)) {
             int itemLevel = CustomEnchantments.getItemLevel(item);
             return itemLevel / 3;
         }
-        switch (item.getType()){
+        switch (item.getType()) {
             case DIAMOND_CHESTPLATE:
             case IRON_CHESTPLATE:
             case GOLDEN_CHESTPLATE:
@@ -117,9 +119,11 @@ public class AnvilInterface implements Listener {
         throw new IllegalArgumentException("Invalid material " + item.getType());
     }
 
-    private Material getMaterialRefundType(ItemStack item, String viewTitle) throws IllegalArgumentException{
-        if (viewTitle.equals(GRINDSTONE_INTERFACE_NAME)) { return Material.LAPIS_LAZULI; }
-        switch (item.getType()){
+    private Material getMaterialRefundType(ItemStack item, String viewTitle) throws IllegalArgumentException {
+        if (viewTitle.equals(GRINDSTONE_INTERFACE_NAME)) {
+            return Material.LAPIS_LAZULI;
+        }
+        switch (item.getType()) {
             case DIAMOND_CHESTPLATE:
             case DIAMOND_HELMET:
             case DIAMOND_LEGGINGS:
@@ -177,10 +181,10 @@ public class AnvilInterface implements Listener {
         throw new IllegalArgumentException("Invalid material " + item.getType());
     }
 
-    private void openAnvilInterface(Player player){
+    private void openAnvilInterface(Player player) {
         Inventory gui = plugin.getServer().createInventory(player, 54, ANVIL_INTERFACE_NAME);
-        for (int i = 0; i < 54; i++){
-            switch (i){
+        for (int i = 0; i < 54; i++) {
+            switch (i) {
                 case 10:
                 case 11:
                 case 19:
@@ -202,10 +206,10 @@ public class AnvilInterface implements Listener {
         player.openInventory(gui);
     }
 
-    private void openGrindstoneInterface(Player player){
+    private void openGrindstoneInterface(Player player) {
         Inventory gui = plugin.getServer().createInventory(player, 54, GRINDSTONE_INTERFACE_NAME);
-        for (int i = 0; i < 54; i++){
-            switch (i){
+        for (int i = 0; i < 54; i++) {
+            switch (i) {
                 case 10:
                 case 11:
                 case 19:
@@ -229,32 +233,36 @@ public class AnvilInterface implements Listener {
 
 
     @EventHandler
-    public void onAnvilInteract(PlayerInteractEvent event){
+    public void onAnvilInteract(PlayerInteractEvent event) {
 
         // Did the player right click?
-        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
+        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
 
         Block block = event.getClickedBlock();
 
         // Did the player right click an anvil?
-        if (!block.getType().equals(Material.ANVIL) && !block.getType().equals(Material.GRINDSTONE)){
+        if (!block.getType().equals(Material.ANVIL) && !block.getType().equals(Material.GRINDSTONE)) {
             return;
         }
 
         event.setCancelled(true);
 
         // Open the interface
-        if (block.getType().equals(Material.ANVIL)) { openAnvilInterface(event.getPlayer()); }
-        if (block.getType().equals(Material.GRINDSTONE)) { openGrindstoneInterface(event.getPlayer()); }
+        if (block.getType().equals(Material.ANVIL)) {
+            openAnvilInterface(event.getPlayer());
+        }
+        if (block.getType().equals(Material.GRINDSTONE)) {
+            openGrindstoneInterface(event.getPlayer());
+        }
     }
 
     @EventHandler
-    public void onAnvilInterfaceClick(InventoryClickEvent event){
+    public void onAnvilInterfaceClick(InventoryClickEvent event) {
 
         // Do we have the anvil interface open?
-        if (!event.getView().getTitle().equals(ANVIL_INTERFACE_NAME) && !event.getView().getTitle().equals(GRINDSTONE_INTERFACE_NAME)){
+        if (!event.getView().getTitle().equals(ANVIL_INTERFACE_NAME) && !event.getView().getTitle().equals(GRINDSTONE_INTERFACE_NAME)) {
             return;
         }
 
@@ -262,20 +270,20 @@ public class AnvilInterface implements Listener {
         event.setCancelled(true);
 
         // In the case that we clicked the input slot, don't do anything
-        if (!(event.getClickedInventory() instanceof PlayerInventory) && event.getSlot() == ANVIL_INPUT_SLOT){
+        if (!(event.getClickedInventory() instanceof PlayerInventory) && event.getSlot() == ANVIL_INPUT_SLOT) {
             // Check if we should update the output
-            if (!event.getCursor().getType().equals(Material.AIR)){
+            if (!event.getCursor().getType().equals(Material.AIR)) {
                 ItemStack cursor = event.getCursor();
-                if (cursor.getEnchantments().size() != 0 || CustomEnchantments.getCustomEnchantments(cursor).size() != 0){
+                if (cursor.getEnchantments().size() != 0 || CustomEnchantments.getCustomEnchantments(cursor).size() != 0) {
                     try {
                         String viewTitle = event.getView().getTitle();
                         event.getClickedInventory().setItem(ANVIL_OUTPUT_SLOT, new ItemStack(getMaterialRefundType(cursor, viewTitle), getMaterialRefundAmount(cursor, viewTitle)));
-                    } catch (IllegalArgumentException e){
+                    } catch (IllegalArgumentException e) {
                         // we were given an illegal item, no need to do anything
                         System.out.println(ChatColor.YELLOW + "[Anvils] Illegal Argument " + cursor.getType() + ", this may be an error as it was enchanted.");
                     }
                 }
-            // If there was nothing in the cursor just clear the output
+                // If there was nothing in the cursor just clear the output
             } else {
                 event.getClickedInventory().setItem(ANVIL_OUTPUT_SLOT, new ItemStack(Material.AIR));
             }
@@ -284,9 +292,9 @@ public class AnvilInterface implements Listener {
             return;
         }
         // In the case that we clicked the output slot, check if we have an item, let them grab it, and clear the input
-        else if (!(event.getClickedInventory() instanceof PlayerInventory) && event.getSlot() == ANVIL_OUTPUT_SLOT){
-            if (event.getCursor() == null || event.getCursor().getType().equals(Material.AIR)){
-                if (event.getCurrentItem() != null && !event.getCurrentItem().getType().equals(Material.AIR)){
+        else if (!(event.getClickedInventory() instanceof PlayerInventory) && event.getSlot() == ANVIL_OUTPUT_SLOT) {
+            if (event.getCursor() == null || event.getCursor().getType().equals(Material.AIR)) {
+                if (event.getCurrentItem() != null && !event.getCurrentItem().getType().equals(Material.AIR)) {
                     event.getWhoClicked().getWorld().playSound(event.getWhoClicked().getLocation(), Sound.BLOCK_ANVIL_USE, .8f, 1);
                     event.setCancelled(false);
                     event.getClickedInventory().setItem(ANVIL_INPUT_SLOT, new ItemStack(Material.AIR));
@@ -296,26 +304,26 @@ public class AnvilInterface implements Listener {
             }
         }
         // In the case that we click our inventory and it wasn't a shift click, don't cancel it
-        else if (!event.getClick().equals(ClickType.SHIFT_LEFT) && !event.getClick().equals(ClickType.SHIFT_RIGHT) && event.getClickedInventory() instanceof PlayerInventory){
+        else if (!event.getClick().equals(ClickType.SHIFT_LEFT) && !event.getClick().equals(ClickType.SHIFT_RIGHT) && event.getClickedInventory() instanceof PlayerInventory) {
             event.setCancelled(false);
         }
 
     }
 
     @EventHandler
-    public void onAnvilInterfaceClose(InventoryCloseEvent event){
+    public void onAnvilInterfaceClose(InventoryCloseEvent event) {
 
         // Was our anvil interface open?
-        if (!event.getView().getTitle().equals(ANVIL_INTERFACE_NAME) && !event.getView().getTitle().equals(GRINDSTONE_INTERFACE_NAME)){
+        if (!event.getView().getTitle().equals(ANVIL_INTERFACE_NAME) && !event.getView().getTitle().equals(GRINDSTONE_INTERFACE_NAME)) {
             return;
         }
 
         // Is there an item in the input slot?
-        if (event.getInventory().getItem(ANVIL_INPUT_SLOT) != null && !event.getInventory().getItem(ANVIL_INPUT_SLOT).getType().equals(Material.AIR)){
+        if (event.getInventory().getItem(ANVIL_INPUT_SLOT) != null && !event.getInventory().getItem(ANVIL_INPUT_SLOT).getType().equals(Material.AIR)) {
             // Give them the item, just in case their inventory was full keep track of the overflow
             Collection<ItemStack> overflow = event.getPlayer().getInventory().addItem(event.getInventory().getItem(ANVIL_INPUT_SLOT)).values();
             // If there was overflow, drop the item
-            if (overflow.size() != 0){
+            if (overflow.size() != 0) {
                 overflow.forEach(itemStack -> event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), itemStack));
             }
         }

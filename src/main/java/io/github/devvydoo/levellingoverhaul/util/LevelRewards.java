@@ -35,16 +35,16 @@ public abstract class LevelRewards {
     /**
      * Call this method every time a player levels up, this will tell them their unlocks
      *
-     * @param player - The Player that leveled up
+     * @param player   - The Player that leveled up
      * @param oldLevel - Their old level
      * @param newLevel - Their new level
      */
-    public static void playerLeveledUp(Player player, int oldLevel, int newLevel){
+    public static void playerLeveledUp(Player player, int oldLevel, int newLevel) {
 
         // Loop through all the levels and send a message if needed
-        for (int i = oldLevel + 1; i <= newLevel; i++){
+        for (int i = oldLevel + 1; i <= newLevel; i++) {
             String message = getPlayerRewardInfo(i);
-            if (!message.equals("") ){
+            if (!message.equals("")) {
                 player.sendMessage(ChatColor.LIGHT_PURPLE + "Level " + i + " unlocks: " + ChatColor.AQUA + message);
             }
         }
@@ -55,8 +55,8 @@ public abstract class LevelRewards {
      *
      * @param level - The int we should check
      */
-    private static String getPlayerRewardInfo(int level){
-        switch (level){
+    private static String getPlayerRewardInfo(int level) {
+        switch (level) {
             case STONE_TOOLS_UNLOCK:
                 return "You may now use Stone Tools!";
             case LEATHER_ARMOR_UNLOCK:

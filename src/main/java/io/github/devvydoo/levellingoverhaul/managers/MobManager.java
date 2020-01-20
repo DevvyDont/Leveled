@@ -42,15 +42,15 @@ public class MobManager implements Listener {
      *
      * @param worlds - A list of World objects that are currently on the server
      */
-    public MobManager(LevellingOverhaul plugin, List<World> worlds){
+    public MobManager(LevellingOverhaul plugin, List<World> worlds) {
         this.plugin = plugin;
         // Loop through all the worlds
         System.out.println("[Mob Manager] Starting MobManager...");
         int times = 0;
         long start = System.currentTimeMillis();
-        for (World w: worlds){
+        for (World w : worlds) {
             // Loop through all the entities
-            for (LivingEntity e: w.getEntitiesByClass(LivingEntity.class)){
+            for (LivingEntity e : w.getEntitiesByClass(LivingEntity.class)) {
                 times++;
                 this.entityToLevelMap.put(e, getMobStatistics(e));
             }
@@ -59,13 +59,13 @@ public class MobManager implements Listener {
         System.out.println("[Mob Manager] Finished! " + times + " mobs successfully checked: " + (System.currentTimeMillis() - start) + "ms");
 
         // Make a task that runs every minute that cleans up mobs
-        new BukkitRunnable(){
+        new BukkitRunnable() {
             @Override
-            public void run(){
+            public void run() {
                 int initialAmount = entityToLevelMap.size();
                 System.out.println("[Mob Manager] Cleaning up " + initialAmount + " mobs...");
-                for (LivingEntity e: new ArrayList<>(entityToLevelMap.keySet())){
-                    if (e.isDead() || entityToLevelMap.get(e).getLevel() == 1 || (e.getType().equals(EntityType.ARMOR_STAND) && e.isCustomNameVisible())){
+                for (LivingEntity e : new ArrayList<>(entityToLevelMap.keySet())) {
+                    if (e.isDead() || entityToLevelMap.get(e).getLevel() == 1 || (e.getType().equals(EntityType.ARMOR_STAND) && e.isCustomNameVisible())) {
                         entityToLevelMap.remove(e);
                     }
                 }
@@ -73,22 +73,24 @@ public class MobManager implements Listener {
         }.runTaskTimerAsynchronously(this.plugin, MOB_CLEANUP_DELAY, MOB_CLEANUP_DELAY);
     }
 
-    public HashMap<LivingEntity, MobStatistics> getEntityToLevelMap(){
+    public HashMap<LivingEntity, MobStatistics> getEntityToLevelMap() {
         return entityToLevelMap;
     }
 
-    private int getAveragePlayerLevel(LivingEntity entity, int distance, boolean wantYModifier, int levelCap){
+    private int getAveragePlayerLevel(LivingEntity entity, int distance, boolean wantYModifier, int levelCap) {
         int totalLevels = 1;
         int numPlayers = 0;
-        for (Player p: entity.getWorld().getPlayers()){
-            if (p.getGameMode().equals(GameMode.SPECTATOR) || p.getGameMode().equals(GameMode.CREATIVE)) {continue;}
-            if (p.getLocation().distance(entity.getLocation()) < distance){
+        for (Player p : entity.getWorld().getPlayers()) {
+            if (p.getGameMode().equals(GameMode.SPECTATOR) || p.getGameMode().equals(GameMode.CREATIVE)) {
+                continue;
+            }
+            if (p.getLocation().distance(entity.getLocation()) < distance) {
                 numPlayers++;
                 totalLevels += p.getLevel();
             }
         }
         int yModifier = wantYModifier && entity.getLocation().getY() < 50 ? (int) (12 - entity.getLocation().getY() / 7) : 0;
-        if (numPlayers > 0){
+        if (numPlayers > 0) {
             int level = (int) (totalLevels / numPlayers / 1.2 + (Math.random() * 5 + yModifier));
             return Math.min(level, levelCap);
         }
@@ -96,11 +98,11 @@ public class MobManager implements Listener {
     }
 
 
-    private MobStatistics getMobStatistics(LivingEntity entity){
+    private MobStatistics getMobStatistics(LivingEntity entity) {
         MobStatistics stats;
         try {
             stats = new MobStatistics(entity);
-        } catch (NullPointerException | NumberFormatException | ArrayIndexOutOfBoundsException error){
+        } catch (NullPointerException | NumberFormatException | ArrayIndexOutOfBoundsException error) {
             stats = new MobStatistics(entity, this.calculateEntityLevel(entity), entity.getName());
         }
         return stats;
@@ -111,80 +113,93 @@ public class MobManager implements Listener {
      *
      * @param entity - LivingEntity to give a name to
      */
-    private void setEntityNametag(LivingEntity entity){
+    private void setEntityNametag(LivingEntity entity) {
         this.setEntityNametag(entity, 0);
     }
 
     /**
      * Pass in an entity and how much their HP is changing by. This will update their nametag to what is should be
      *
-     * @param entity - LivingEntity to give a name to
+     * @param entity         - LivingEntity to give a name to
      * @param hpModification - Some cases we need do modify how much HP the entity has, so this is an adjustment
      */
-    private void setEntityNametag(LivingEntity entity,  double hpModification){
+    private void setEntityNametag(LivingEntity entity, double hpModification) {
 
         // Try to retrieve the entity, if we fail, it means the entity is not registered
         int level;
         try {
             level = this.entityToLevelMap.get(entity).getLevel();  // Get the entities level
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             this.entityToLevelMap.put(entity, this.getMobStatistics(entity));
             level = this.entityToLevelMap.get(entity).getLevel();
         }
 
         // In the chance our entity doesn't exist in the hashmap, set their level to 1 in case
-        if (level == 0){
+        if (level == 0) {
             level = 1;
         }
 
         // Now we need to see if our nametag should be white or red determining if they're hostile
         String nametagColor;
-        if (entity instanceof Boss){ nametagColor = BOSS_MOB_COLOR; }
-        else if (entity instanceof Monster){ nametagColor = HOSTILE_MOB_COLOR; }
-        else { nametagColor = NEUTRAL_MOB_COLOR; }
+        if (entity instanceof Boss) {
+            nametagColor = BOSS_MOB_COLOR;
+        } else if (entity instanceof Monster) {
+            nametagColor = HOSTILE_MOB_COLOR;
+        } else {
+            nametagColor = NEUTRAL_MOB_COLOR;
+        }
 
 
         // Do we need to make an hp modification?
         double entityHP = entity.getHealth() + entity.getAbsorptionAmount();
-        if (hpModification != 0){
+        if (hpModification != 0) {
             entityHP += hpModification;
         }
 
         String hpTextColor;
-        if (entityHP <= 0){
+        if (entityHP <= 0) {
             entityHP = 0;
         }
         hpTextColor = PlayerNametags.getChatColorFromHealth(entityHP);
 
         // We should be good to set their name
         entity.setCustomName(null);
-        entity.setCustomName(LEVEL_COLOR + "Lv. " + level + " "+ nametagColor + entity.getName() + " " +  ChatColor.DARK_RED + "❤" + hpTextColor + (int) entityHP);
+        entity.setCustomName(LEVEL_COLOR + "Lv. " + level + " " + nametagColor + entity.getName() + " " + ChatColor.DARK_RED + "❤" + hpTextColor + (int) entityHP);
     }
 
-    private int calculateEntityLevel(LivingEntity entity){
+    private int calculateEntityLevel(LivingEntity entity) {
 
         // Set some weird edge cases first
-        if (entity instanceof IronGolem){ return 35; }
-        if (entity instanceof Wolf){ return 10; }
-        if (entity instanceof Bee){ return 5; }
+        if (entity instanceof IronGolem) {
+            return 35;
+        }
+        if (entity instanceof Wolf) {
+            return 10;
+        }
+        if (entity instanceof Bee) {
+            return 5;
+        }
         int level = 1;
         double expectedHP;
-        if (!(entity instanceof Boss) && !(entity instanceof Mob)){
+        if (!(entity instanceof Boss) && !(entity instanceof Mob)) {
             return level;
         }
 
-        switch (entity.getType()){
+        switch (entity.getType()) {
             case ZOMBIE:
             case ZOMBIE_VILLAGER:
             case HUSK:
             case DROWNED:
                 level = getAveragePlayerLevel(entity, 250, true, 80);
 
-                if (level <= 25) { }
-                else if (level <= 30){ entity.getEquipment().setItemInMainHand(new ItemStack(Material.STONE_SWORD)); }
-                else if (level <= 35){ entity.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD)); }
-                else if (level <= 40){ entity.getEquipment().setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD)); }
-                else {
+                if (level <= 25) {
+                } else if (level <= 30) {
+                    entity.getEquipment().setItemInMainHand(new ItemStack(Material.STONE_SWORD));
+                } else if (level <= 35) {
+                    entity.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD));
+                } else if (level <= 40) {
+                    entity.getEquipment().setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD));
+                } else {
                     ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
                     sword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 - 15);
                     entity.getEquipment().setItemInMainHand(sword);
@@ -199,10 +214,13 @@ public class MobManager implements Listener {
             case CAVE_SPIDER:
             case SPIDER:
                 level = getAveragePlayerLevel(entity, 250, true, 80);
-                if (level <= 30){ entity.getEquipment().setItemInMainHand(new ItemStack(Material.STONE_SWORD)); }
-                else if (level <= 35){ entity.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD)); }
-                else if (level <= 40){ entity.getEquipment().setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD)); }
-                else {
+                if (level <= 30) {
+                    entity.getEquipment().setItemInMainHand(new ItemStack(Material.STONE_SWORD));
+                } else if (level <= 35) {
+                    entity.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD));
+                } else if (level <= 40) {
+                    entity.getEquipment().setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD));
+                } else {
                     ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
                     sword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 - 15);
                     entity.getEquipment().setItemInMainHand(sword);
@@ -213,11 +231,13 @@ public class MobManager implements Listener {
                 expectedHP *= 5;
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
-                if (level > 30) { entity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999, level / 30)); }
+                if (level > 30) {
+                    entity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999, level / 30));
+                }
                 return level;
             case SKELETON:
                 level = getAveragePlayerLevel(entity, 250, true, 80);
-                if (level > 25){
+                if (level > 25) {
                     ItemStack bow = new ItemStack(Material.BOW);
                     bow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, level / 2 - 11);
                     entity.getEquipment().setItemInMainHand(bow);
@@ -233,11 +253,11 @@ public class MobManager implements Listener {
             case CREEPER:
                 Creeper creeper = (Creeper) entity;
                 level = getAveragePlayerLevel(creeper, 250, true, 80);
-                if (level > 30 && level < 60){
-                    if (Math.random() < level / 100.){
+                if (level > 30 && level < 60) {
+                    if (Math.random() < level / 100.) {
                         creeper.setPowered(true);
                     }
-                } else if (level >= 60){
+                } else if (level >= 60) {
                     creeper.setPowered(true);
                 }
                 creeper.setMaxFuseTicks((int) (level > 80 ? 2 : 40 - level / 3.));
@@ -246,16 +266,21 @@ public class MobManager implements Listener {
                 entity.setHealth(expectedHP);
                 return level;
             case ENDERMAN:
-                if (entity.getWorld().getEnvironment().equals(World.Environment.NORMAL)){
+                if (entity.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
                     level = (int) (Math.random() * 16 + 40);  // ~ 40 - 55 in overworld
-                } else if (entity.getWorld().getEnvironment().equals(World.Environment.NETHER)){
+                } else if (entity.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
                     level = (int) (Math.random() * 25 + 45);  // ~ 45 - 70 in nether
                 } else {
                     Biome biome = entity.getLocation().getBlock().getBiome();
-                    if (biome.equals(Biome.THE_END)) { level = (int) (Math.random() * 5 + 58); }
-                    else if (biome.equals(Biome.END_HIGHLANDS)) { level = (int) (Math.random() * 5 + 67); }
-                    else if (biome.equals(Biome.END_MIDLANDS)) { level = (int) (Math.random() * 5 + 63); }
-                    else { level = (int) (Math.random() * 5 + 70); }
+                    if (biome.equals(Biome.THE_END)) {
+                        level = (int) (Math.random() * 5 + 58);
+                    } else if (biome.equals(Biome.END_HIGHLANDS)) {
+                        level = (int) (Math.random() * 5 + 67);
+                    } else if (biome.equals(Biome.END_MIDLANDS)) {
+                        level = (int) (Math.random() * 5 + 63);
+                    } else {
+                        level = (int) (Math.random() * 5 + 70);
+                    }
                 }
                 expectedHP = level / 1.1 + (Math.random() * 5) + 15;
                 expectedHP *= 5;
@@ -275,7 +300,7 @@ public class MobManager implements Listener {
                 level = 2;
                 int totalPlayerLevels = 0;
                 int numPlayers = entity.getWorld().getPlayers().size();
-                for (Player p: entity.getWorld().getPlayers()){
+                for (Player p : entity.getWorld().getPlayers()) {
                     totalPlayerLevels += p.getLevel();
                 }
                 if (numPlayers > 0) {
@@ -306,7 +331,7 @@ public class MobManager implements Listener {
             case MAGMA_CUBE:
                 MagmaCube mc = (MagmaCube) entity;
                 level = getAveragePlayerLevel(entity, 250, false, 60) + ((int) (Math.random() * 6));
-                expectedHP = level / 5. * (Math.random() + 1) * (mc.getSize() /1.5);
+                expectedHP = level / 5. * (Math.random() + 1) * (mc.getSize() / 1.5);
                 expectedHP *= 5;
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
@@ -335,7 +360,7 @@ public class MobManager implements Listener {
                 return level;
             case SLIME:
                 level = getAveragePlayerLevel(entity, 250, true, 80);
-                if (level > 25){
+                if (level > 25) {
                     ItemStack s = new ItemStack(Material.STONE_SWORD);
                     s.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 - 11);
                     entity.getEquipment().setItemInMainHand(s);
@@ -343,13 +368,15 @@ public class MobManager implements Listener {
                 }
                 expectedHP = level / 3. + (Math.random() * 5) + 7;
                 expectedHP *= 5;
-                if (((Slime) entity).getSize() > 0) { expectedHP *= ((Slime) entity).getSize(); }
+                if (((Slime) entity).getSize() > 0) {
+                    expectedHP *= ((Slime) entity).getSize();
+                }
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 return level;
             case SILVERFISH:
                 level = getAveragePlayerLevel(entity, 250, true, 80);
-                if (level > 20){
+                if (level > 20) {
                     ItemStack s = new ItemStack(Material.STONE_SWORD);
                     s.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 - 11);
                     entity.getEquipment().setItemInMainHand(s);
@@ -363,7 +390,7 @@ public class MobManager implements Listener {
             case WITCH:
             case PHANTOM:
                 level = 15;
-                expectedHP = Math.random() * 10 + 15 ;
+                expectedHP = Math.random() * 10 + 15;
                 expectedHP *= 5;
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
@@ -391,20 +418,20 @@ public class MobManager implements Listener {
     }
 
     @EventHandler
-    public void onEntitySpawn(EntitySpawnEvent event){
+    public void onEntitySpawn(EntitySpawnEvent event) {
 
         // This can happen?
-        if (event.getEntityType().equals(EntityType.ARMOR_STAND)){
+        if (event.getEntityType().equals(EntityType.ARMOR_STAND)) {
             return;
         }
 
         // We only care about living entities
-        if (!(event.getEntity() instanceof LivingEntity)){
+        if (!(event.getEntity() instanceof LivingEntity)) {
             return;
         }
 
         // We don't care about players
-        if (event.getEntity() instanceof Player){
+        if (event.getEntity() instanceof Player) {
             return;
         }
 
@@ -416,15 +443,15 @@ public class MobManager implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityDamage(EntityDamageEvent event){
+    public void onEntityDamage(EntityDamageEvent event) {
 
         // We only care about living entities
-        if (!(event.getEntity() instanceof  LivingEntity)){
+        if (!(event.getEntity() instanceof LivingEntity)) {
             return;
         }
 
         // We don't care about Players
-        if (event.getEntity() instanceof Player){
+        if (event.getEntity() instanceof Player) {
             return;
         }
 
@@ -437,18 +464,18 @@ public class MobManager implements Listener {
     }
 
     @EventHandler
-    public void onEntityDeath(EntityDeathEvent event){
+    public void onEntityDeath(EntityDeathEvent event) {
         // Remove the entity from our map if needed.
         this.entityToLevelMap.remove(event.getEntity());
     }
 
-    public int getMobLevel(LivingEntity mob){
-        if (mob instanceof Player){
+    public int getMobLevel(LivingEntity mob) {
+        if (mob instanceof Player) {
             return ((Player) mob).getLevel();
         }
         try {
             return this.entityToLevelMap.get(mob).getLevel();
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             MobStatistics stats = getMobStatistics(mob);
             this.entityToLevelMap.put(mob, stats);
             return stats.getLevel();

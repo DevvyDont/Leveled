@@ -4,13 +4,13 @@ import io.github.devvydoo.levellingoverhaul.commands.DebugEnchant;
 import io.github.devvydoo.levellingoverhaul.commands.DebugLevelSetter;
 import io.github.devvydoo.levellingoverhaul.commands.PlayerStatsCommand;
 import io.github.devvydoo.levellingoverhaul.commands.TestMobCommand;
+import io.github.devvydoo.levellingoverhaul.enchantments.enchants.ExplosiveTouchEnchantment;
+import io.github.devvydoo.levellingoverhaul.enchantments.enchants.FoodEnchantments;
 import io.github.devvydoo.levellingoverhaul.enchantments.enchants.HomingArrows;
 import io.github.devvydoo.levellingoverhaul.enchantments.enchants.Infinity;
 import io.github.devvydoo.levellingoverhaul.enchantments.gui.AnvilInterface;
 import io.github.devvydoo.levellingoverhaul.enchantments.gui.EnchantingInterface;
-import io.github.devvydoo.levellingoverhaul.enchantments.enchants.ExplosiveTouchEnchantment;
-import io.github.devvydoo.levellingoverhaul.enchantments.enchants.FoodEnchantments;
-import io.github.devvydoo.levellingoverhaul.listeners.*;
+import io.github.devvydoo.levellingoverhaul.listeners.PlayerDamageModifier;
 import io.github.devvydoo.levellingoverhaul.listeners.monitors.PlayerChatListener;
 import io.github.devvydoo.levellingoverhaul.listeners.monitors.PlayerJoinListeners;
 import io.github.devvydoo.levellingoverhaul.listeners.monitors.PlayerNametags;
@@ -33,7 +33,7 @@ public final class LevellingOverhaul extends JavaPlugin {
 
     private Advancement enchantAdvancement;
 
-    public MobManager getMobManager(){
+    public MobManager getMobManager() {
         return this.mobManager;
     }
 
@@ -49,7 +49,9 @@ public final class LevellingOverhaul extends JavaPlugin {
         return actionBarManager;
     }
 
-    public BossManager getBossManager() { return bossManager; }
+    public BossManager getBossManager() {
+        return bossManager;
+    }
 
     public Advancement getEnchantAdvancement() {
         return enchantAdvancement;
@@ -61,9 +63,12 @@ public final class LevellingOverhaul extends JavaPlugin {
 
         // We need this key for later, not sure if there's a better way to do this because i don't really understand NamespacedKeys :(
         Iterator<Advancement> advanceIterator = getServer().advancementIterator();
-        while (advanceIterator.hasNext()){
+        while (advanceIterator.hasNext()) {
             Advancement advancement = advanceIterator.next();
-            if (advancement.getKey().toString().equals("minecraft:story/enchant_item")) { enchantAdvancement = advancement; break; }
+            if (advancement.getKey().toString().equals("minecraft:story/enchant_item")) {
+                enchantAdvancement = advancement;
+                break;
+            }
         }
 
         hpManager = new PlayerHealthManager(this);

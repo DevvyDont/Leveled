@@ -12,12 +12,40 @@ import java.util.HashMap;
 
 public class EnchantmentCalculator {
 
+    private ArrayList<PotentialEnchantment> potentialEnchantments;  // A list of enchantments we can have when init'd
+    private int playerLevel;  // The player level that we are calculating enchants for
+    private int qualityFactor;  // The quality of the enchants to factor in when calculating types
+    /**
+     * Constructs an object used to perform a single enchant event. New object must be made per enchant, no re-use
+     *
+     * @param playerLevel   - The int vanilla experience level of the player when we enchanted
+     * @param qualityFactor - The quality factor of the enchant, must be a num from 1-MAX_ENCHANT_QUALITY_FACTOR
+     * @param item          - The ItemStack we are attempting to enchant
+     */
+    public EnchantmentCalculator(int playerLevel, int qualityFactor, ItemStack item) {
+
+        if (qualityFactor < 1 || qualityFactor > CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR) {
+            throw new IllegalArgumentException("qualityFactor must be an int from 1-" + CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR);
+        }
+
+        // First initialize our instance variables
+        this.playerLevel = playerLevel;
+        this.qualityFactor = qualityFactor;
+
+        // Register the enchantments
+        potentialEnchantments = getRegisteredPotentialEnchantments();
+
+        // Loop through and see which ones are allowed
+        potentialEnchantments.removeIf(enchantment -> playerLevel < enchantment.getMinPlayerLevelRequired());
+        potentialEnchantments.removeIf(enchantment -> !enchantment.canBeAppliedTo(item));
+    }
+
     /**
      * A static method used to get a list of all registered Enchantments on the server
      *
      * @return - A copy of an array list that contains all enchantments registered on the server
      */
-    public static ArrayList<PotentialEnchantment> getRegisteredPotentialEnchantments(){
+    public static ArrayList<PotentialEnchantment> getRegisteredPotentialEnchantments() {
         ArrayList<PotentialEnchantment> enchs = new ArrayList<>();
 
         /**
@@ -95,50 +123,19 @@ public class EnchantmentCalculator {
         return new ArrayList<>(enchs);
     }
 
-
-    private ArrayList<PotentialEnchantment> potentialEnchantments;  // A list of enchantments we can have when init'd
-
-    private int playerLevel;  // The player level that we are calculating enchants for
-    private int qualityFactor;  // The quality of the enchants to factor in when calculating types
-
-    /**
-     * Constructs an object used to perform a single enchant event. New object must be made per enchant, no re-use
-     *
-     * @param playerLevel - The int vanilla experience level of the player when we enchanted
-     * @param qualityFactor - The quality factor of the enchant, must be a num from 1-MAX_ENCHANT_QUALITY_FACTOR
-     * @param item - The ItemStack we are attempting to enchant
-     */
-    public EnchantmentCalculator(int playerLevel, int qualityFactor, ItemStack item) {
-
-        if (qualityFactor < 1 || qualityFactor > CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR){
-            throw new IllegalArgumentException("qualityFactor must be an int from 1-" + CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR);
-        }
-
-        // First initialize our instance variables
-        this.playerLevel = playerLevel;
-        this.qualityFactor = qualityFactor;
-
-        // Register the enchantments
-        potentialEnchantments = getRegisteredPotentialEnchantments();
-
-        // Loop through and see which ones are allowed
-        potentialEnchantments.removeIf(enchantment -> playerLevel < enchantment.getMinPlayerLevelRequired());
-        potentialEnchantments.removeIf(enchantment -> !enchantment.canBeAppliedTo(item));
-    }
-
     /**
      * Performs the enchantment type calculation
      *
      * @return - Returns a list of potential enchantments we should add to the item to be handled
      */
-    public ArrayList<PotentialEnchantment> calculateEnchantmentTypes(){
+    public ArrayList<PotentialEnchantment> calculateEnchantmentTypes() {
 
         // Now we are going to continuously loop through this list and roll some dice until we have our # of enchants we want
         // Let's make a new list that determines the enchantments we are going to return
         ArrayList<PotentialEnchantment> enchantmentsToApply = new ArrayList<>();
 
         // Calculate the number of enchantments we want, it is just (level - 15) / 15 with a chance to get one more
-        int numEnchants = (this.playerLevel - 15) / 15 + (  Math.random() < .5 ? 1 : 0  );
+        int numEnchants = (this.playerLevel - 15) / 15 + (Math.random() < .5 ? 1 : 0);
 
         // Infinitely loop through the enchantments and add them until we have enough, or we tried this 30 times
         int attempts = 0;
@@ -147,7 +144,9 @@ public class EnchantmentCalculator {
             Collections.shuffle(potentialEnchantments);  // Shuffle the enchantments
             for (PotentialEnchantment enchantment : potentialEnchantments) {
 
-                if (enchantmentsToApply.contains(enchantment)) { continue; }
+                if (enchantmentsToApply.contains(enchantment)) {
+                    continue;
+                }
 
                 boolean conflicts = false;
                 // Make sure we don't have a conflicting enchantment
@@ -159,7 +158,9 @@ public class EnchantmentCalculator {
                 }
 
                 // If we had a conflicting enchantment go to the next one
-                if (conflicts) { continue; }
+                if (conflicts) {
+                    continue;
+                }
 
                 // Calculate % chance we are applying this enchantment.
                 int qualityDifferenceFactor = Math.abs(enchantment.getQuality() - qualityFactor);
@@ -172,9 +173,13 @@ public class EnchantmentCalculator {
                 }
 
                 // Check if we have enough
-                if (enchantmentsToApply.size() >= numEnchants) { break; }
+                if (enchantmentsToApply.size() >= numEnchants) {
+                    break;
+                }
             }
-            if (enchantmentsToApply.size() >= numEnchants) { break; }
+            if (enchantmentsToApply.size() >= numEnchants) {
+                break;
+            }
         }
         return enchantmentsToApply;
     }
@@ -185,18 +190,21 @@ public class EnchantmentCalculator {
      * @param enchantmentsToAdd - An ArrayList of PotentialEnchantments calculated from calculateEnchantmentTypes
      * @return - A HashMap that maps PotentialEnchantments to their respective level that we are going to apply
      */
-    public HashMap<PotentialEnchantment, Integer> calculateEnchantmentLevels(ArrayList<PotentialEnchantment> enchantmentsToAdd){
+    public HashMap<PotentialEnchantment, Integer> calculateEnchantmentLevels(ArrayList<PotentialEnchantment> enchantmentsToAdd) {
 
         HashMap<PotentialEnchantment, Integer> enchantmentToLevel = new HashMap<>();
 
-        for (PotentialEnchantment enchantment: enchantmentsToAdd){
+        for (PotentialEnchantment enchantment : enchantmentsToAdd) {
 
             // Establish our enchantment level bounds
             int lowerBound = 1;
             int upperBound = enchantment.getMaxEnchantLevel();
 
             // If we have an enchantment that can only have one level, insert I level and go to next enchant
-            if (lowerBound == upperBound) { enchantmentToLevel.put(enchantment, lowerBound); continue; }
+            if (lowerBound == upperBound) {
+                enchantmentToLevel.put(enchantment, lowerBound);
+                continue;
+            }
 
             // Retrieve the player level bounds for this enchantment
             int levelLowerBound = enchantment.getMinPlayerLevelRequired();
@@ -207,18 +215,29 @@ public class EnchantmentCalculator {
             int levelsPastRequirement = this.playerLevel - levelLowerBound;
 
             // Sanity check
-            if (levelsPastRequirement < 0) { levelsPastRequirement = 0; }
+            if (levelsPastRequirement < 0) {
+                levelsPastRequirement = 0;
+            }
 
             // Get the percentage of completion from min level to max level
             double percentageToMax = levelsPastRequirement * 1.0 / range;
             // Translate this percentage
             int levelToGive = (int) Math.round(percentageToMax * upperBound);
-            if (levelToGive <= 0) { levelToGive = 1; }
-            if (levelToGive > 1) {levelToGive += (int) (Math.random() * 4 - 2); }
-            else { levelToGive += Math.random() < .4 ? 1 : 0; }
+            if (levelToGive <= 0) {
+                levelToGive = 1;
+            }
+            if (levelToGive > 1) {
+                levelToGive += (int) (Math.random() * 4 - 2);
+            } else {
+                levelToGive += Math.random() < .4 ? 1 : 0;
+            }
 
-            if (levelToGive < lowerBound) { levelToGive = lowerBound; }
-            if (levelToGive > upperBound) { levelToGive = upperBound; }
+            if (levelToGive < lowerBound) {
+                levelToGive = lowerBound;
+            }
+            if (levelToGive > upperBound) {
+                levelToGive = upperBound;
+            }
 
             enchantmentToLevel.put(enchantment, levelToGive);
         }

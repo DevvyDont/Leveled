@@ -1,6 +1,5 @@
 package io.github.devvydoo.levellingoverhaul.util;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 
@@ -16,10 +15,10 @@ public class MobStatistics {
      * Invoke when we are creating a new entity, we calculate the level and such somewhere else
      *
      * @param entity - The LivingEntity that was just created
-     * @param level - The level that the entity will be considered to be
-     * @param name - The name of the entity if it is a 'custom' entity
+     * @param level  - The level that the entity will be considered to be
+     * @param name   - The name of the entity if it is a 'custom' entity
      */
-    public MobStatistics(LivingEntity entity, int level, String name){
+    public MobStatistics(LivingEntity entity, int level, String name) {
         this.entity = entity;
         this.level = level;
         this.name = name;
@@ -48,7 +47,7 @@ public class MobStatistics {
         return entity;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 }

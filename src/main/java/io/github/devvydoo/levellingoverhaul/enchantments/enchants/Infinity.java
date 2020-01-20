@@ -15,23 +15,27 @@ import org.bukkit.inventory.ItemStack;
 public class Infinity implements Listener {
 
     @EventHandler
-    public void onArrowShotByPlayer(EntityShootBowEvent event){
+    public void onArrowShotByPlayer(EntityShootBowEvent event) {
 
         // Did a player shoot the arrow?
-        if (!(event.getEntity() instanceof Player)){
+        if (!(event.getEntity() instanceof Player)) {
             return;
         }
 
         Player player = (Player) event.getEntity();
-        if (player.getGameMode().equals(GameMode.CREATIVE)) { return; }
+        if (player.getGameMode().equals(GameMode.CREATIVE)) {
+            return;
+        }
         ItemStack bow = event.getBow();
-        if (bow == null) { return; }
+        if (bow == null) {
+            return;
+        }
 
         // if we have infinity, do some rng
         int infinityLevel = bow.getEnchantmentLevel(Enchantment.ARROW_INFINITE);
         if (infinityLevel > 0) {
             // If we roll above, take an arrow from the player
-            if (Math.random() > infinityLevel / 10.){
+            if (Math.random() > infinityLevel / 10.) {
                 player.getInventory().removeItem(new ItemStack(Material.ARROW, 1));
             }
         }

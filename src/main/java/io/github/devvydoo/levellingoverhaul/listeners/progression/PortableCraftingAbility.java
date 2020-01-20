@@ -11,28 +11,28 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class PortableCraftingAbility implements Listener {
 
     @EventHandler
-    public void onInteract(PlayerInteractEvent event){
+    public void onInteract(PlayerInteractEvent event) {
 
         Player player = event.getPlayer();
         // Are we a high enough level?
-        if (player.getLevel() < LevelRewards.UNIVERSAL_CRAFTING_ABILITY_UNLOCK){
+        if (player.getLevel() < LevelRewards.UNIVERSAL_CRAFTING_ABILITY_UNLOCK) {
             return;
         }
 
         Action action = event.getAction();
 
         // Did we right click?
-        if (!(action.equals(Action.RIGHT_CLICK_BLOCK) || action.equals(Action.RIGHT_CLICK_AIR))){
+        if (!(action.equals(Action.RIGHT_CLICK_BLOCK) || action.equals(Action.RIGHT_CLICK_AIR))) {
             return;
         }
 
         // Are we sneaking?
-        if (!player.isSneaking()){
+        if (!player.isSneaking()) {
             return;
         }
 
         // Are we holding nothing in our hand?
-        if (!player.getInventory().getItemInMainHand().getType().equals(Material.AIR)){
+        if (!player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
             return;
         }
 

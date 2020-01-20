@@ -10,7 +10,7 @@ public class XPOrbKillerTask extends BukkitRunnable {
     private int times;
     private int currentIteration = 0;
 
-    public XPOrbKillerTask(World world, int times){
+    public XPOrbKillerTask(World world, int times) {
         this.world = world;
         this.times = times;
     }
@@ -21,13 +21,13 @@ public class XPOrbKillerTask extends BukkitRunnable {
      */
     @Override
     public void run() {
-        for (ExperienceOrb e: world.getEntitiesByClass(ExperienceOrb.class)){
-            if (e != null){
+        for (ExperienceOrb e : world.getEntitiesByClass(ExperienceOrb.class)) {
+            if (e != null) {
                 e.remove();
             }
         }
         currentIteration++;
-        if (currentIteration >= times){
+        if (currentIteration >= times) {
             this.cancel();
         }
     }

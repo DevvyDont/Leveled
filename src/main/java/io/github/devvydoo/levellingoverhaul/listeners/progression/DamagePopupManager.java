@@ -12,13 +12,13 @@ public class DamagePopupManager implements Listener {
 
     private LevellingOverhaul plugin;
 
-    public DamagePopupManager(LevellingOverhaul plugin){
+    public DamagePopupManager(LevellingOverhaul plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityGotHit(EntityDamageEvent event){
-        if (event.getDamage() > 0 && event.getEntity() instanceof LivingEntity){
+    public void onEntityGotHit(EntityDamageEvent event) {
+        if (event.getDamage() > 0 && event.getEntity() instanceof LivingEntity) {
             new DamagePopup(plugin, event.getFinalDamage(), (LivingEntity) event.getEntity());
         }
     }

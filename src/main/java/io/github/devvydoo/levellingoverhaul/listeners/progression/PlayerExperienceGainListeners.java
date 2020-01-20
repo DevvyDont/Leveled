@@ -128,9 +128,9 @@ public class PlayerExperienceGainListeners implements Listener {
         }
 
         // If we have no xp to give don't do anything
-        if (!(livingEntity instanceof Player)){
+        if (!(livingEntity instanceof Player)) {
             int mobLevel = plugin.getMobManager().getMobLevel(livingEntity);
-            if (mobLevel < player.getLevel()){
+            if (mobLevel < player.getLevel()) {
                 xp *= (1 - .04 * (player.getLevel() - mobLevel));
             }
         }
@@ -157,7 +157,9 @@ public class PlayerExperienceGainListeners implements Listener {
             case ENDER_DRAGON:
                 // We are going to give all players in the end a bonus
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
-                    if (p.getLevel() == BaseExperience.LEVEL_CAP) { continue; }
+                    if (p.getLevel() == BaseExperience.LEVEL_CAP) {
+                        continue;
+                    }
                     p.giveExp(200);
                     p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Ender Dragon" + ChatColor.YELLOW + "! +200XP");
                 }
@@ -166,7 +168,9 @@ public class PlayerExperienceGainListeners implements Listener {
                 // All players within 100 block radius from the wither get credit
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
                     if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
-                        if (p.getLevel() == BaseExperience.LEVEL_CAP) { continue; }
+                        if (p.getLevel() == BaseExperience.LEVEL_CAP) {
+                            continue;
+                        }
                         p.giveExp(175);
                         p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Wither" + ChatColor.YELLOW + "! +175XP");
                     }
@@ -176,7 +180,9 @@ public class PlayerExperienceGainListeners implements Listener {
                 // All players within 100 block radius from the guardian get credit
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
                     if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
-                        if (p.getLevel() == BaseExperience.LEVEL_CAP) { continue; }
+                        if (p.getLevel() == BaseExperience.LEVEL_CAP) {
+                            continue;
+                        }
                         p.giveExp(120);
                         p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Elder Guardian" + ChatColor.YELLOW + "! +120XP");
                     }
@@ -205,13 +211,15 @@ public class PlayerExperienceGainListeners implements Listener {
         int xpGained = 0;
 
         // Special case, if we mined iron ore gold ore...
-        if (block.getType().equals(Material.GOLD_ORE) || block.getType().equals(Material.IRON_ORE)){
+        if (block.getType().equals(Material.GOLD_ORE) || block.getType().equals(Material.IRON_ORE)) {
             // If their tool has smelting touch...
-            if ( CustomEnchantments.hasEnchant(tool, CustomEnchantType.SMELTING_TOUCH)){
+            if (CustomEnchantments.hasEnchant(tool, CustomEnchantType.SMELTING_TOUCH)) {
                 event.setDropItems(false);
                 int numDrop = 1;
                 int fortuneLevel = tool.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
-                if (fortuneLevel > 0) { numDrop += Math.floor(fortuneLevel / 1.5) + (Math.random() < .5 ? 1 : 0); }
+                if (fortuneLevel > 0) {
+                    numDrop += Math.floor(fortuneLevel / 1.5) + (Math.random() < .5 ? 1 : 0);
+                }
                 // We know we have either iron or gold, so set type to be equal to the block mined
                 Material dropType = block.getType().equals(Material.IRON_ORE) ? Material.IRON_INGOT : Material.GOLD_INGOT;
                 ItemStack drop = new ItemStack(dropType, numDrop);
@@ -219,7 +227,7 @@ public class PlayerExperienceGainListeners implements Listener {
                 xpGained = block.getType().equals(Material.IRON_ORE) ? 1 : 3;
             }
         } else if (block.getType().equals(Material.STONE)) {
-            if (CustomEnchantments.hasEnchant(tool, CustomEnchantType.SMELTING_TOUCH)){
+            if (CustomEnchantments.hasEnchant(tool, CustomEnchantType.SMELTING_TOUCH)) {
                 event.setDropItems(false);
                 block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.STONE));
             }
@@ -321,7 +329,10 @@ public class PlayerExperienceGainListeners implements Listener {
         // Smarty pants?
         double multiplier = 1;
         String message = ChatColor.GREEN + "Challenge Completed! " + ChatColor.LIGHT_PURPLE + "+" + xpEarned + " XP";
-        try { multiplier += CustomEnchantments.getEnchantLevel(player.getInventory().getLeggings(), CustomEnchantType.SMARTY_PANTS) * .15; } catch (NullPointerException | IllegalArgumentException ignored) {}
+        try {
+            multiplier += CustomEnchantments.getEnchantLevel(player.getInventory().getLeggings(), CustomEnchantType.SMARTY_PANTS) * .15;
+        } catch (NullPointerException | IllegalArgumentException ignored) {
+        }
         if (multiplier > 1) {
             xpEarned *= multiplier;
             message = ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "BONUS! " + message;

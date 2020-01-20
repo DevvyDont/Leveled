@@ -1,6 +1,5 @@
 package io.github.devvydoo.levellingoverhaul.listeners.monitors;
 
-import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,10 +16,10 @@ public class PlayerJoinListeners implements Listener {
      * @param event - The PlayerJoinEvent we are listening for
      */
     @EventHandler
-    public void onPlayerFirstJoin(PlayerJoinEvent event){
+    public void onPlayerFirstJoin(PlayerJoinEvent event) {
 
         // Is the player a newcomer?  TODO: Make the messages config-able
-        if (!event.getPlayer().hasPlayedBefore()){
+        if (!event.getPlayer().hasPlayedBefore()) {
             event.getPlayer().setLevel(1);  // Set their level to 1
             event.setJoinMessage(ChatColor.LIGHT_PURPLE + event.getPlayer().getDisplayName() +
                     ChatColor.GOLD + " has joined for the first time!");

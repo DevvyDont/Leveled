@@ -20,13 +20,13 @@ public class DebugEnchant implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        if (!(sender instanceof Player)){
+        if (!(sender instanceof Player)) {
             System.out.println("only players can use");
             return true;
         }
 
         Player player = (Player) sender;
-        if (args.length != 2){
+        if (args.length != 2) {
             player.sendMessage(ChatColor.RED + "Provide 2 args please, level enchant and quality of enchant");
         }
         ItemStack hand = player.getInventory().getItemInMainHand();
@@ -34,23 +34,23 @@ public class DebugEnchant implements CommandExecutor {
         EnchantmentCalculator calculator;
         try {
             calculator = new EnchantmentCalculator(Integer.parseInt(args[0]), Integer.parseInt(args[1]), hand);
-        } catch (NumberFormatException ignored){
+        } catch (NumberFormatException ignored) {
             player.sendMessage(ChatColor.RED + "Please provide numbers.");
             return true;
         }
         ArrayList<PotentialEnchantment> types = calculator.calculateEnchantmentTypes();
         HashMap<PotentialEnchantment, Integer> lvls = calculator.calculateEnchantmentLevels(types);
 
-        if (types.size() == 0){
+        if (types.size() == 0) {
             player.sendMessage(ChatColor.RED + "Couldn't add any enchants, perhaps this item cant be enchanted.");
             return true;
         }
 
-        for (PotentialEnchantment type: lvls.keySet()){
+        for (PotentialEnchantment type : lvls.keySet()) {
             if (type.getEnchantType() instanceof Enchantment) {
-                CustomEnchantments.addEnchant(hand, (Enchantment)type.getEnchantType(), lvls.get(type));
+                CustomEnchantments.addEnchant(hand, (Enchantment) type.getEnchantType(), lvls.get(type));
             } else if (type.getEnchantType() instanceof CustomEnchantType) {
-                CustomEnchantments.addEnchant(hand, (CustomEnchantType)type.getEnchantType(), lvls.get(type));
+                CustomEnchantments.addEnchant(hand, (CustomEnchantType) type.getEnchantType(), lvls.get(type));
             }
         }
         CustomEnchantments.setItemLevel(hand, Integer.parseInt(args[0]));

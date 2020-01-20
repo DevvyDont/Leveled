@@ -5,7 +5,10 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.MagmaCube;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
 
 
 public abstract class BaseExperience {
@@ -22,10 +25,10 @@ public abstract class BaseExperience {
     /**
      * Helper method to display stuff on the action bar, mainly when xp is gained
      *
-     * @param player - The Player that we want to display text to
+     * @param player  - The Player that we want to display text to
      * @param message - The message we want to display
      */
-    public static void displayActionBarText(Player player, String message){
+    public static void displayActionBarText(Player player, String message) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
     }
 
@@ -36,8 +39,8 @@ public abstract class BaseExperience {
      * @param mob - The Entity object that was killed
      * @return the int base amount of XP that we should earn
      */
-    public static int getBaseExperienceFromMob(LivingEntity mob){
-        switch (mob.getType()){
+    public static int getBaseExperienceFromMob(LivingEntity mob) {
+        switch (mob.getType()) {
 
             case WITHER_SKELETON:
                 return 13;
@@ -75,10 +78,10 @@ public abstract class BaseExperience {
             case MAGMA_CUBE:
                 Slime slime = (Slime) mob;
                 int magmaBonus = 0;
-                if (slime instanceof MagmaCube){
+                if (slime instanceof MagmaCube) {
                     magmaBonus = 1;
                 }
-                switch (slime.getSize()){
+                switch (slime.getSize()) {
                     case 3:
                         return 1 + magmaBonus;
                     case 4:
@@ -123,12 +126,12 @@ public abstract class BaseExperience {
                 // In the event a player kills another player, we are just going to give their xp to them
                 Player deadPlayer = (Player) mob;
                 // Maxed players don't drop xp
-                if (deadPlayer.getLevel() >= BaseExperience.LEVEL_CAP){
+                if (deadPlayer.getLevel() >= BaseExperience.LEVEL_CAP) {
                     return 0;
                 }
                 // Super edge case where if we killed a player that had a full xp bar
-                if (deadPlayer.getExp() == 1){
-                        deadPlayer.setExp(.9999f);
+                if (deadPlayer.getExp() == 1) {
+                    deadPlayer.setExp(.9999f);
                 }
                 // Math yay
                 return (int) (deadPlayer.getExpToLevel() * deadPlayer.getExp());
@@ -146,8 +149,8 @@ public abstract class BaseExperience {
      * @param block - The Block we mined
      * @return the int amount of xp to give
      */
-    public static int getBaseExperienceFromBlock(Block block){
-        switch (block.getType()){
+    public static int getBaseExperienceFromBlock(Block block) {
+        switch (block.getType()) {
             case COAL_ORE:
                 return Math.random() < .5 ? 1 : 0;
             case NETHER_QUARTZ_ORE:
@@ -170,10 +173,10 @@ public abstract class BaseExperience {
      * @param materialSmelted - The items smelted
      * @return the int amount of xp we should give
      */
-    public static int getBaseExperienceFromSmelt(Material materialSmelted, int amount){
+    public static int getBaseExperienceFromSmelt(Material materialSmelted, int amount) {
 
         double base;
-        switch (materialSmelted){
+        switch (materialSmelted) {
             case COOKED_BEEF:
             case COOKED_CHICKEN:
             case COOKED_COD:
@@ -185,7 +188,7 @@ public abstract class BaseExperience {
                 break;
             case DRIED_KELP:
             case BAKED_POTATO:
-                base =  .3;
+                base = .3;
                 break;
             case IRON_INGOT:
                 base = 1.5;
@@ -208,7 +211,7 @@ public abstract class BaseExperience {
      * The way our progression is forced on the player, we should give balanced amounts of xp for example:
      * The End achievements should be giving decent xp for level 60-75 players,
      * The Nether achievements should be giving decent xp for level 40-55 players
-     *
+     * <p>
      * story/obtain_armor
      * story/lava_bucket
      * story/deflect_arrow
@@ -225,7 +228,7 @@ public abstract class BaseExperience {
      * story/mine_diamond
      * story/root
      * story/enter_the_end
-     *
+     * <p>
      * husbandry/tame_an_animal
      * husbandry/fishy_business
      * husbandry/bred_all_animals
@@ -238,7 +241,7 @@ public abstract class BaseExperience {
      * husbandry/safely_harvest_honey
      * husbandry/breed_an_animal
      * husbandry/complete_catalogue
-     *
+     * <p>
      * adventure/very_very_frightening
      * adventure/sniper_duel
      * adventure/two_birds_one_arrow
@@ -258,7 +261,7 @@ public abstract class BaseExperience {
      * adventure/throw_trident
      * adventure/honey_block_slide
      * adventure/ol_betsy
-     *
+     * <p>
      * nether/all_potions
      * nether/create_beacon
      * nether/brew_potion
@@ -272,7 +275,7 @@ public abstract class BaseExperience {
      * nether/fast_travel
      * nether/uneasy_alliance
      * nether/find_fortress
-     *
+     * <p>
      * end/kill_dragon
      * end/dragon_egg
      * end/levitate
@@ -286,11 +289,11 @@ public abstract class BaseExperience {
      * @param advancement - the Advancement object the player earned
      * @return an int representing the amount of xp earned
      */
-    public static int getBaseExperienceFromAdvancement(Advancement advancement){
+    public static int getBaseExperienceFromAdvancement(Advancement advancement) {
 
         String advancementKey = advancement.getKey().toString().replaceAll("minecraft:", "");
 
-        switch (advancementKey){
+        switch (advancementKey) {
 
             // Early-game
             case "story/mine_stone":

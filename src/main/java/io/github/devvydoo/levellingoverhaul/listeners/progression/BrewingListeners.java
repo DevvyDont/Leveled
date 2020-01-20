@@ -16,29 +16,28 @@ import org.bukkit.inventory.ItemStack;
 public class BrewingListeners implements Listener {
 
     @EventHandler
-    public void onBrewingStandInteract(PlayerInteractEvent event){
-
+    public void onBrewingStandInteract(PlayerInteractEvent event) {
 
 
         Player player = event.getPlayer();
         Action action = event.getAction();
 
         // Did we right click a block?
-        if (!action.equals(Action.RIGHT_CLICK_BLOCK)){
+        if (!action.equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
 
-        if (event.getClickedBlock() == null){
+        if (event.getClickedBlock() == null) {
             return;
         }
 
         // Did we right click a brewing stand?
-        if (!event.getClickedBlock().getType().equals(Material.BREWING_STAND)){
+        if (!event.getClickedBlock().getType().equals(Material.BREWING_STAND)) {
             return;
         }
 
         // Are we a high enough level?
-        if (player.getLevel() < LevelRewards.BREWING_UNLOCK){
+        if (player.getLevel() < LevelRewards.BREWING_UNLOCK) {
             event.setCancelled(true);
             BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to brew potions!");
             player.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, .3f, .7f);
@@ -46,17 +45,17 @@ public class BrewingListeners implements Listener {
     }
 
     @EventHandler
-    public void onPotionDrink(PlayerItemConsumeEvent event){
+    public void onPotionDrink(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         ItemStack itemDrank = event.getItem();
 
         // Are we drinking a potion?
-        if (!itemDrank.getType().equals(Material.POTION)){
+        if (!itemDrank.getType().equals(Material.POTION)) {
             return;
         }
 
         // Are we high enough level?
-        if (player.getLevel() < LevelRewards.BREWING_UNLOCK){
+        if (player.getLevel() < LevelRewards.BREWING_UNLOCK) {
             event.setCancelled(true);
             BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to drink potions!");
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, .3f, .7f);

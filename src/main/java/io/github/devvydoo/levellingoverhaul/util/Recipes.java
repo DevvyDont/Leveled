@@ -8,7 +8,7 @@ import org.bukkit.inventory.ShapedRecipe;
 
 public abstract class Recipes {
 
-    public static void registerRecipes(LevellingOverhaul plugin){
+    public static void registerRecipes(LevellingOverhaul plugin) {
 
         ItemStack chainHelmet = new ItemStack(Material.CHAINMAIL_HELMET);
         ItemStack chainChest = new ItemStack(Material.CHAINMAIL_CHESTPLATE);

@@ -13,27 +13,27 @@ import org.bukkit.event.inventory.CraftItemEvent;
 public class CraftingListener implements Listener {
 
     @EventHandler
-    public void onCraftAttempt(CraftItemEvent event){
+    public void onCraftAttempt(CraftItemEvent event) {
 
         // Sanity check
-        if (event.getCurrentItem() == null){
+        if (event.getCurrentItem() == null) {
             return;
         }
 
         // Is a wither skull in the result?
-        if (!event.getCurrentItem().getType().equals(Material.WITHER_SKELETON_SKULL)){
+        if (!event.getCurrentItem().getType().equals(Material.WITHER_SKELETON_SKULL)) {
             return;
         }
 
         // Are we a Player?
-        if (!(event.getWhoClicked() instanceof Player)){
+        if (!(event.getWhoClicked() instanceof Player)) {
             return;
         }
 
         Player player = (Player) event.getWhoClicked();
 
         // Are we a high enough level to craft it?
-        if (player.getLevel() < LevelRewards.CRAFT_WITHER_SKULLS_UNLOCK){
+        if (player.getLevel() < LevelRewards.CRAFT_WITHER_SKULLS_UNLOCK) {
             event.setCancelled(true);
             BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.CRAFT_WITHER_SKULLS_UNLOCK + ChatColor.RED + " to craft this item!");
             player.playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, .3f, .7f);

@@ -6,7 +6,7 @@ import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-public class PotentialEnchantment  {
+public class PotentialEnchantment {
 
     private Object enchantType;
     private int minPlayerLevelRequired;  // The minimum level required to obtain this enchantment
@@ -36,11 +36,11 @@ public class PotentialEnchantment  {
         return maxEnchantLevel;
     }
 
-    public int getQuality(){
+    public int getQuality() {
 
-        if (enchantType instanceof Enchantment){
+        if (enchantType instanceof Enchantment) {
             return CustomEnchantments.getEnchantQuality((Enchantment) enchantType);
-        } else if (enchantType instanceof CustomEnchantType){
+        } else if (enchantType instanceof CustomEnchantType) {
             return CustomEnchantments.getEnchantQuality((CustomEnchantType) enchantType);
         }
         throw new IllegalStateException("enchantType was not Enchantment or CustomEnchantType!");
@@ -73,11 +73,11 @@ public class PotentialEnchantment  {
     }
 
 
-    public boolean canBeAppliedTo(ItemStack itemStack){
-        if (enchantType instanceof Enchantment){
+    public boolean canBeAppliedTo(ItemStack itemStack) {
+        if (enchantType instanceof Enchantment) {
             Enchantment enchant = (Enchantment) enchantType;
             return enchant.canEnchantItem(itemStack);
-        } else if (enchantType instanceof CustomEnchantType){
+        } else if (enchantType instanceof CustomEnchantType) {
             CustomEnchantType type = (CustomEnchantType) enchantType;
             return CustomEnchantments.canEnchantItem(type, itemStack);
         }

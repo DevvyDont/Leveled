@@ -5,7 +5,6 @@ import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -17,66 +16,66 @@ import java.util.Map;
 
 /**
  * Here's a quick overview on how our enchantment system works and how to add an enchantment:
- *
+ * <p>
  * First off, We have 3 main classes.
- *  - CustomEnchantments
- *  - CustomEnchantment
- *  - CustomEnchantType
- *
- *  CustomEnchantments (This class) are static methods and globals that we can use throughout the plugin to make
- *  adding enchantments, testing for enchantments, getting information, etc. easier. Think of it as a helper/controller
- *  class, or a middleman between our complicated enchantment system and the rest of the plugin
- *
- *  CustomEnchantment is my attempt at making the lore based enchantment approach be brought into a more OOP friendly
- *  implementation, to be more similar to extending from the Enchantment class bukkit/spigot provides. By doing this,
- *  we can then use methods such as getType() and getName() when iterating through a list of enchantments that an item
- *  has, similar to vanilla enchantments. This means when listening for events, instead of doing some crazy ass lore
- *  parsing inside of an already hectic enough event, we simply can just do
- *      if (CustomEnchantments.hasEnchant(event.getItem(), CustomEnchantType.EXPLOSIVE_TOUCH)){ do something }
- *  which is a lot more consistent with how spigot handles things.
- *
- *  CustomEnchantType is just all the enums of the custom enchants that we should add, which brings up the question:
- *
- *  How do we add/register enchantments?
- *
- *  First, add your Enchantment to the CustomEnchantType enum, following normal java etiquette, this simply tells
- *  this class here that your enchantment is valid when parsing through lore.
- *
- *  Second, you should add a description that matches your new type to a String case in the getEnchantmentDescription()
- *  method. This is technically optional, but we should give our enchantments descriptions.
- *
- *  Lastly, if we are to follow the current format of things, we should make a new class inside the same directory
- *  that is the name of your enchantment, but Camel-Cased. Inside of this class will be all events that are responsible
- *  for making your enchantment do its thing by listening to events and modifying them (The level of the enchantment
- *  is also available when getting the enchantments using enchantment.getLevel()). DO NOT FORGET TO REGISTER THE
- *  CLASS AS A LISTENER IN THE MAIN PLUGIN CLASS
- *
- *  A quick example of doing this:
- *
- *  Let's say we want to make an enchantment that multiplies damage done for every level (OP i know...)
- *  1. Add SUPER_SHARPNESS as an enum in CustomEnchantType
- *  2. Add case SUPER_SHARPNESS: "Multiply your damage output for every level of enchantment" to the description method
- *  3. Make a new class called SuperSharpness in this package that implements Listener, and listen for an
- *  EntityDamageEntityEvent, do checks to make sure the attacker is the player etc etc. and finally we want to simply do
- *  this.
- *      if (CustomEnchantments.hasEnchant(player.getInventory.getItemInMainHand(), CustomEnchantTypes.SUPER_SHARPNESS){
- *          event.setFinalDamage(event.getFinalDamage() * CustomEnchantments.getEnchantLevel(player.getInventory.getItemInMainHand(), CustomEnchantTypes.SUPER_SHARPNESS));
- *      }
- *
- *  OR
- *
- *      ArrayList<CustomEnchantment> customEnchants = CustomEnchantments.getCustomEnchantments(player.getInventory.getItemInMainHand());
- *      for (CustomEnchantment e: customEnchants){
- *          if (e.getType().equals(CustomEnchantType.SUPER_SHARPNESS)){
- *              event.setFinalDamage(event.getFinalDamage() * e.getLevel());
- *          }
- *      }
- *
- *  Then don't forget to register the listener in the main LevellingOverhaul class by adding this line:
- *      getServer().getPluginManager().registerEvents(new SuperSharpness(), this);
- *
- *  For the time being this is all we need to worry about, as the base system automates everything else with simple
- *  string manipulation using the name of the enum we defined itself
+ * - CustomEnchantments
+ * - CustomEnchantment
+ * - CustomEnchantType
+ * <p>
+ * CustomEnchantments (This class) are static methods and globals that we can use throughout the plugin to make
+ * adding enchantments, testing for enchantments, getting information, etc. easier. Think of it as a helper/controller
+ * class, or a middleman between our complicated enchantment system and the rest of the plugin
+ * <p>
+ * CustomEnchantment is my attempt at making the lore based enchantment approach be brought into a more OOP friendly
+ * implementation, to be more similar to extending from the Enchantment class bukkit/spigot provides. By doing this,
+ * we can then use methods such as getType() and getName() when iterating through a list of enchantments that an item
+ * has, similar to vanilla enchantments. This means when listening for events, instead of doing some crazy ass lore
+ * parsing inside of an already hectic enough event, we simply can just do
+ * if (CustomEnchantments.hasEnchant(event.getItem(), CustomEnchantType.EXPLOSIVE_TOUCH)){ do something }
+ * which is a lot more consistent with how spigot handles things.
+ * <p>
+ * CustomEnchantType is just all the enums of the custom enchants that we should add, which brings up the question:
+ * <p>
+ * How do we add/register enchantments?
+ * <p>
+ * First, add your Enchantment to the CustomEnchantType enum, following normal java etiquette, this simply tells
+ * this class here that your enchantment is valid when parsing through lore.
+ * <p>
+ * Second, you should add a description that matches your new type to a String case in the getEnchantmentDescription()
+ * method. This is technically optional, but we should give our enchantments descriptions.
+ * <p>
+ * Lastly, if we are to follow the current format of things, we should make a new class inside the same directory
+ * that is the name of your enchantment, but Camel-Cased. Inside of this class will be all events that are responsible
+ * for making your enchantment do its thing by listening to events and modifying them (The level of the enchantment
+ * is also available when getting the enchantments using enchantment.getLevel()). DO NOT FORGET TO REGISTER THE
+ * CLASS AS A LISTENER IN THE MAIN PLUGIN CLASS
+ * <p>
+ * A quick example of doing this:
+ * <p>
+ * Let's say we want to make an enchantment that multiplies damage done for every level (OP i know...)
+ * 1. Add SUPER_SHARPNESS as an enum in CustomEnchantType
+ * 2. Add case SUPER_SHARPNESS: "Multiply your damage output for every level of enchantment" to the description method
+ * 3. Make a new class called SuperSharpness in this package that implements Listener, and listen for an
+ * EntityDamageEntityEvent, do checks to make sure the attacker is the player etc etc. and finally we want to simply do
+ * this.
+ * if (CustomEnchantments.hasEnchant(player.getInventory.getItemInMainHand(), CustomEnchantTypes.SUPER_SHARPNESS){
+ * event.setFinalDamage(event.getFinalDamage() * CustomEnchantments.getEnchantLevel(player.getInventory.getItemInMainHand(), CustomEnchantTypes.SUPER_SHARPNESS));
+ * }
+ * <p>
+ * OR
+ * <p>
+ * ArrayList<CustomEnchantment> customEnchants = CustomEnchantments.getCustomEnchantments(player.getInventory.getItemInMainHand());
+ * for (CustomEnchantment e: customEnchants){
+ * if (e.getType().equals(CustomEnchantType.SUPER_SHARPNESS)){
+ * event.setFinalDamage(event.getFinalDamage() * e.getLevel());
+ * }
+ * }
+ * <p>
+ * Then don't forget to register the listener in the main LevellingOverhaul class by adding this line:
+ * getServer().getPluginManager().registerEvents(new SuperSharpness(), this);
+ * <p>
+ * For the time being this is all we need to worry about, as the base system automates everything else with simple
+ * string manipulation using the name of the enum we defined itself
  */
 public final class CustomEnchantments {
 
@@ -94,20 +93,20 @@ public final class CustomEnchantments {
      * @param item - The ItemStack that we are checking the lore for
      * @return an arraylist of CustomEnchantment objects on the item stack
      */
-    public static ArrayList<CustomEnchantment> getCustomEnchantments(ItemStack item){
+    public static ArrayList<CustomEnchantment> getCustomEnchantments(ItemStack item) {
 
         ArrayList<CustomEnchantment> enchantments = new ArrayList<>();
 
         // Apparently this is possible... check just in case
-        if (item.getItemMeta() == null || item.getItemMeta().getLore() == null){
+        if (item.getItemMeta() == null || item.getItemMeta().getLore() == null) {
             return enchantments;  // Returns an empty list, no biggie
         }
 
-        for (String lore: item.getItemMeta().getLore()){
+        for (String lore : item.getItemMeta().getLore()) {
             // Add the enchantment if it's not a description AND it's not null
-            if (!lore.startsWith(DESCRIPTION_COLOR)){
+            if (!lore.startsWith(DESCRIPTION_COLOR)) {
                 CustomEnchantment newEnchant = getEnchantmentFromLore(lore);
-                if (newEnchant != null){
+                if (newEnchant != null) {
                     enchantments.add(newEnchant);
                 }
             }
@@ -119,20 +118,20 @@ public final class CustomEnchantments {
      * Used to add an enchantment to an item stack if it doesn't already have it, we do this simply by adding lore
      * to the item stack
      *
-     * @param item - The ItemStack that we want to enchant
+     * @param item        - The ItemStack that we want to enchant
      * @param enchantment - The enchantment that we want to test for, use the constants defined in this class
      */
-    public static void addEnchant(ItemStack item, CustomEnchantType enchantment, int level){
+    public static void addEnchant(ItemStack item, CustomEnchantType enchantment, int level) {
 
         ItemMeta meta = item.getItemMeta();
 
         // Again, this is possible, don't know when or why or how, but check them just in case
-        if (meta == null){
+        if (meta == null) {
             return;
         }
 
         // Sanity check, don't add an enchantment if we already have it
-        if (hasEnchant(item, enchantment)){
+        if (hasEnchant(item, enchantment)) {
             fixItemLore(item);
             return;
         }
@@ -157,14 +156,14 @@ public final class CustomEnchantments {
     /**
      * Since we have lore that explains enchantments, we need to keep it in sync with vanilla enchantments as well
      *
-     * @param item - The ItemStack we are enchanting
+     * @param item        - The ItemStack we are enchanting
      * @param enchantment - The vanilla Enchantment we are adding
-     * @param level - The level of the enchantment
+     * @param level       - The level of the enchantment
      */
-    public static void addEnchant(ItemStack item, Enchantment enchantment, int level){
+    public static void addEnchant(ItemStack item, Enchantment enchantment, int level) {
 
         // Don't enchant it twice
-        if (item.containsEnchantment(enchantment)){
+        if (item.containsEnchantment(enchantment)) {
             return;
         }
 
@@ -175,26 +174,26 @@ public final class CustomEnchantments {
     /**
      * Used to check whether or not an item has a certain enchantment, we do this by parsing the lore of the item
      *
-     * @param item - The ItemStack we are checking against
+     * @param item        - The ItemStack we are checking against
      * @param enchantment - The CustomEnchantment we are looking for
      * @return a boolean representing whether or not the item has the enchantment
      */
-    public static boolean hasEnchant(ItemStack item, CustomEnchantType enchantment){
+    public static boolean hasEnchant(ItemStack item, CustomEnchantType enchantment) {
 
         // Loop through all the enchantments on the item, if it has the enchantment we are looking for, return true
-        for (CustomEnchantment e: getCustomEnchantments(item)){
-            if (e.getType().equals(enchantment)){
+        for (CustomEnchantment e : getCustomEnchantments(item)) {
+            if (e.getType().equals(enchantment)) {
                 return true;
             }
         }
         return false;  // Didn't find it, return false
     }
 
-    public static int getEnchantLevel(ItemStack item, CustomEnchantType enchantment){
+    public static int getEnchantLevel(ItemStack item, CustomEnchantType enchantment) {
 
         // Loop through all the enchantments on the item, if it has the enchantment we are looking for, return the level
-        for (CustomEnchantment e: getCustomEnchantments(item)){
-            if (e.getType().equals(enchantment)){
+        for (CustomEnchantment e : getCustomEnchantments(item)) {
+            if (e.getType().equals(enchantment)) {
                 return e.getLevel();
             }
         }
@@ -207,12 +206,12 @@ public final class CustomEnchantments {
      * @param item The ItemStack we want to check for
      * @return the int level cap of the item, if it isn't capped 0 is returned
      */
-    public static int getItemLevel(ItemStack item){
+    public static int getItemLevel(ItemStack item) {
         int level = 0;
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             String name = meta.getDisplayName();
-            if (name.startsWith(LEVEL_CAPPED_GEAR_STRING)){
+            if (name.startsWith(LEVEL_CAPPED_GEAR_STRING)) {
                 String[] components = name.split(" ");
                 level = Integer.parseInt(components[1]);
             }
@@ -220,13 +219,15 @@ public final class CustomEnchantments {
         return level;
     }
 
-    public static void setItemLevel(ItemStack item, int level){
+    public static void setItemLevel(ItemStack item, int level) {
 
         // Check if we need to remove the old level somehow
         resetItemLevel(item);
 
         ItemMeta meta = item.getItemMeta();
-        if (meta == null){ return; }
+        if (meta == null) {
+            return;
+        }
 
         // Now add the level
         String originalName = meta.hasDisplayName() ? meta.getDisplayName() : WordUtils.capitalizeFully(item.getType().toString().replace("_", " "));
@@ -235,17 +236,19 @@ public final class CustomEnchantments {
         item.setItemMeta(meta);
     }
 
-    public static void resetItemLevel(ItemStack itemStack){
+    public static void resetItemLevel(ItemStack itemStack) {
 
         ItemMeta meta = itemStack.getItemMeta();
-        if (meta == null){ return; }
+        if (meta == null) {
+            return;
+        }
 
         String originalName = meta.getDisplayName();
 
-        if (originalName.startsWith(LEVEL_CAPPED_GEAR_STRING)){
+        if (originalName.startsWith(LEVEL_CAPPED_GEAR_STRING)) {
             String[] components = originalName.split(" ");
             ArrayList<String> newComponents = new ArrayList<>();
-            for (int i = 2; i < components.length; i++){
+            for (int i = 2; i < components.length; i++) {
                 newComponents.add(components[i]);
             }
             originalName = String.join(" ", newComponents);
@@ -260,18 +263,18 @@ public final class CustomEnchantments {
      * @param loreLine - The string of lore we are reading
      * @return a potential CustomEnchantment parsed from the line, can be null
      */
-    private static CustomEnchantment getEnchantmentFromLore(String loreLine){
+    private static CustomEnchantment getEnchantmentFromLore(String loreLine) {
 
         // This is a description line, we can't do anything with it
-        if (loreLine.startsWith(DESCRIPTION_COLOR)){
+        if (loreLine.startsWith(DESCRIPTION_COLOR)) {
             return null;
         }
         // Clean the color from the line, we want to read the raw text
         String cleanLine = ChatColor.stripColor(loreLine);
         // Loop through all the possible types and see if we can find our enchantment
-        for (CustomEnchantType type: CustomEnchantType.values()){
+        for (CustomEnchantType type : CustomEnchantType.values()) {
             // If the Enchantment matches the enum type, we found a match.
-            if (cleanLine.toUpperCase().replace(' ', '_').startsWith(type.toString().toUpperCase())){
+            if (cleanLine.toUpperCase().replace(' ', '_').startsWith(type.toString().toUpperCase())) {
                 // We are going to split the String by the space that separates the title and the level
                 int level = Integer.parseInt(cleanLine.substring(cleanLine.lastIndexOf(' ') + 1));
                 // Hopefully nothing went wrong...
@@ -285,7 +288,7 @@ public final class CustomEnchantments {
     /**
      * Simple method that will format an ItemStack to display enchantments properly
      */
-    public static void fixItemLore(ItemStack itemStack){
+    public static void fixItemLore(ItemStack itemStack) {
 
         // First we need to get the custom enchantment objects on the item
         List<CustomEnchantment> customEnchantments = getCustomEnchantments(itemStack);
@@ -298,13 +301,13 @@ public final class CustomEnchantments {
         ArrayList<String> newLore = new ArrayList<>();
 
         // Now add the new lore
-        for (CustomEnchantment enchantment: customEnchantments){
+        for (CustomEnchantment enchantment : customEnchantments) {
             newLore.add("");  // Basically a newline
             newLore.add(CustomEnchantment.getLoreContent(enchantment.getType(), enchantment.getLevel()));
             newLore.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment.getType()));
         }
 
-        for (Enchantment enchantment: vanillaEnchantments.keySet()){
+        for (Enchantment enchantment : vanillaEnchantments.keySet()) {
             newLore.add("");  // Basically a newline
             newLore.add(String.format(ChatColor.BLUE + "%s %d", WordUtils.capitalize(enchantment.getKey().toString().replace("minecraft:", "").replace('_', ' ')), vanillaEnchantments.get(enchantment)));
             newLore.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment));
@@ -315,9 +318,9 @@ public final class CustomEnchantments {
 
     }
 
-    public static int getEnchantQuality(CustomEnchantType type){
+    public static int getEnchantQuality(CustomEnchantType type) {
 
-        switch (type){
+        switch (type) {
             case EXPLOSIVE_TOUCH:
                 return 5;
             case SATURATION:
@@ -341,9 +344,9 @@ public final class CustomEnchantments {
 
     }
 
-    public static int getEnchantQuality(Enchantment type){
+    public static int getEnchantQuality(Enchantment type) {
 
-        switch (type.getKey().toString().replace("minecraft:", "")){
+        switch (type.getKey().toString().replace("minecraft:", "")) {
             case "fire_protection":
                 return 4;
             case "sharpness":
@@ -398,10 +401,10 @@ public final class CustomEnchantments {
         }
     }
 
-    public static boolean canEnchantItem(CustomEnchantType type, ItemStack itemStack){
+    public static boolean canEnchantItem(CustomEnchantType type, ItemStack itemStack) {
         ArrayList<Material> allowedTargets = new ArrayList<>();
 
-        switch (type){
+        switch (type) {
             case EXPLOSIVE_TOUCH:
                 ToolTypeHelpers.addShovelsToList(allowedTargets);
                 break;
@@ -440,10 +443,10 @@ public final class CustomEnchantments {
     }
 
 
-    public static ArrayList<Object> getConflictingEnchantTypes(CustomEnchantType type){
+    public static ArrayList<Object> getConflictingEnchantTypes(CustomEnchantType type) {
         ArrayList<Object> conflictingEnchantments = new ArrayList<>();
 
-        switch (type){
+        switch (type) {
             case EXPLOSIVE_TOUCH:
                 conflictingEnchantments.add("silk_touch");
                 conflictingEnchantments.add("fortune");
@@ -461,10 +464,10 @@ public final class CustomEnchantments {
         return conflictingEnchantments;
     }
 
-    public static ArrayList<Object> getConflictingEnchantTypes(Enchantment type){
+    public static ArrayList<Object> getConflictingEnchantTypes(Enchantment type) {
         ArrayList<Object> conflictingEnchantments = new ArrayList<>();
 
-        switch (type.getKey().toString().replace("minecraft:", "")){
+        switch (type.getKey().toString().replace("minecraft:", "")) {
             case "fire_protection":
                 conflictingEnchantments.add("protection");
                 conflictingEnchantments.add("blast_protection");
@@ -519,8 +522,8 @@ public final class CustomEnchantments {
      * @param type - The CustomEnchantType we want to check
      * @return a string of the description of that type
      */
-    public static String getEnchantmentDescription(CustomEnchantType type){
-        switch (type){
+    public static String getEnchantmentDescription(CustomEnchantType type) {
+        switch (type) {
             case EXPLOSIVE_TOUCH:
                 return "Upon breaking a block, an explosion is created";
             case SATURATION:
@@ -554,8 +557,8 @@ public final class CustomEnchantments {
      * @param enchantment - The Enchantment we want to check
      * @return a string of the description of that type
      */
-    public static String getEnchantmentDescription(Enchantment enchantment){
-        switch (enchantment.getKey().toString().replace("minecraft:", "")){
+    public static String getEnchantmentDescription(Enchantment enchantment) {
+        switch (enchantment.getKey().toString().replace("minecraft:", "")) {
             case "fire_protection":
                 return "Damage caused by fire is reduced";
             case "sharpness":

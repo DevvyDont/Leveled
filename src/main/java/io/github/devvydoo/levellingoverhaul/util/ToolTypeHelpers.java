@@ -13,7 +13,7 @@ public final class ToolTypeHelpers {
         addHoesToList(list);
     }
 
-    public static void addAllArmorToList(ArrayList<Material> list){
+    public static void addAllArmorToList(ArrayList<Material> list) {
         addHelmetsToList(list);
         addChestplatesToList(list);
         addLeggingsToList(list);
@@ -36,7 +36,7 @@ public final class ToolTypeHelpers {
 
     }
 
-    public static void addShovelsToList(ArrayList<Material> list){
+    public static void addShovelsToList(ArrayList<Material> list) {
 
         list.add(Material.WOODEN_SHOVEL);
         list.add(Material.STONE_SHOVEL);
@@ -56,7 +56,7 @@ public final class ToolTypeHelpers {
 
     }
 
-    public static void addHoesToList(ArrayList<Material> list){
+    public static void addHoesToList(ArrayList<Material> list) {
 
         list.add(Material.WOODEN_HOE);
         list.add(Material.STONE_HOE);
@@ -66,7 +66,7 @@ public final class ToolTypeHelpers {
 
     }
 
-    public static void addHelmetsToList(ArrayList<Material> list){
+    public static void addHelmetsToList(ArrayList<Material> list) {
         list.add(Material.LEATHER_HELMET);
         list.add(Material.IRON_HELMET);
         list.add(Material.CHAINMAIL_HELMET);
@@ -74,7 +74,7 @@ public final class ToolTypeHelpers {
         list.add(Material.DIAMOND_HELMET);
     }
 
-    public static void addChestplatesToList(ArrayList<Material> list){
+    public static void addChestplatesToList(ArrayList<Material> list) {
         list.add(Material.LEATHER_CHESTPLATE);
         list.add(Material.IRON_CHESTPLATE);
         list.add(Material.CHAINMAIL_CHESTPLATE);
@@ -82,7 +82,7 @@ public final class ToolTypeHelpers {
         list.add(Material.DIAMOND_CHESTPLATE);
     }
 
-    public static void addLeggingsToList(ArrayList<Material> list){
+    public static void addLeggingsToList(ArrayList<Material> list) {
         list.add(Material.LEATHER_LEGGINGS);
         list.add(Material.IRON_LEGGINGS);
         list.add(Material.CHAINMAIL_LEGGINGS);
@@ -90,7 +90,7 @@ public final class ToolTypeHelpers {
         list.add(Material.DIAMOND_LEGGINGS);
     }
 
-    public static void addBootsToList(ArrayList<Material> list){
+    public static void addBootsToList(ArrayList<Material> list) {
         list.add(Material.LEATHER_BOOTS);
         list.add(Material.IRON_BOOTS);
         list.add(Material.CHAINMAIL_BOOTS);

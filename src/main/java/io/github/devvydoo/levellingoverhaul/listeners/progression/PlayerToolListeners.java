@@ -19,7 +19,7 @@ public class PlayerToolListeners implements Listener {
 
     private HashMap<Material, Integer> toolLevelRequirements;
 
-    public PlayerToolListeners(){
+    public PlayerToolListeners() {
         toolLevelRequirements = new HashMap<>();
 
         toolLevelRequirements.put(Material.WOODEN_PICKAXE, 1);
@@ -55,7 +55,7 @@ public class PlayerToolListeners implements Listener {
         toolLevelRequirements.put(Material.DIAMOND_SWORD, LevelRewards.DIAMOND_TOOLS_UNLOCK);
     }
 
-    private void cancelEquipmentUse(Player player, int requiredLevel){
+    private void cancelEquipmentUse(Player player, int requiredLevel) {
         BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to use that item!");
         player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
     }
@@ -66,15 +66,17 @@ public class PlayerToolListeners implements Listener {
      * @param event - The BlockBreakEvent we are listening to
      */
     @EventHandler
-    public void onBlockBreakWithTool(BlockBreakEvent event){
+    public void onBlockBreakWithTool(BlockBreakEvent event) {
 
         Player player = event.getPlayer();
         ItemStack toolUsed = player.getInventory().getItemInMainHand();
 
-        if (toolLevelRequirements.containsKey(toolUsed.getType())){
+        if (toolLevelRequirements.containsKey(toolUsed.getType())) {
             int requiredLevel = CustomEnchantments.getItemLevel(toolUsed);
-            if (requiredLevel < toolLevelRequirements.get(toolUsed.getType()))  { requiredLevel =  toolLevelRequirements.get(toolUsed.getType()); }
-            if (requiredLevel > player.getLevel()){
+            if (requiredLevel < toolLevelRequirements.get(toolUsed.getType())) {
+                requiredLevel = toolLevelRequirements.get(toolUsed.getType());
+            }
+            if (requiredLevel > player.getLevel()) {
                 event.setCancelled(true);
                 this.cancelEquipmentUse(player, requiredLevel);
             }
@@ -87,19 +89,21 @@ public class PlayerToolListeners implements Listener {
      * @param event - The EntityDamageByEntityEvent we are listening to
      */
     @EventHandler
-    public void onPlayerAttackEntity(EntityDamageByEntityEvent event){
+    public void onPlayerAttackEntity(EntityDamageByEntityEvent event) {
 
-        if (!(event.getDamager() instanceof Player)){
+        if (!(event.getDamager() instanceof Player)) {
             return;
         }
 
         Player player = (Player) event.getDamager();
         ItemStack toolUsed = player.getInventory().getItemInMainHand();
 
-        if (toolLevelRequirements.containsKey(toolUsed.getType())){
+        if (toolLevelRequirements.containsKey(toolUsed.getType())) {
             int requiredLevel = CustomEnchantments.getItemLevel(toolUsed);
-            if (requiredLevel < toolLevelRequirements.get(toolUsed.getType())) { requiredLevel = toolLevelRequirements.get(toolUsed.getType()); }
-            if (requiredLevel > player.getLevel()){
+            if (requiredLevel < toolLevelRequirements.get(toolUsed.getType())) {
+                requiredLevel = toolLevelRequirements.get(toolUsed.getType());
+            }
+            if (requiredLevel > player.getLevel()) {
                 event.setCancelled(true);
                 this.cancelEquipmentUse(player, requiredLevel);
             }

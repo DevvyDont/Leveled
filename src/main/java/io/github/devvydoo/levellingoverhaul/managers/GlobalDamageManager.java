@@ -3,7 +3,6 @@ package io.github.devvydoo.levellingoverhaul.managers;
 import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
 import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
-import org.bukkit.EntityEffect;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -38,8 +37,8 @@ public class GlobalDamageManager implements Listener {
         this.plugin = plugin;
     }
 
-    private double getRangedWeaponBaseDamage(Material tool){
-        switch (tool){
+    private double getRangedWeaponBaseDamage(Material tool) {
+        switch (tool) {
             case BOW:
                 return 20;
             case CROSSBOW:
@@ -49,8 +48,8 @@ public class GlobalDamageManager implements Listener {
         }
     }
 
-    private double getMeleeWeaponBaseDamage(Material tool){
-        switch (tool){
+    private double getMeleeWeaponBaseDamage(Material tool) {
+        switch (tool) {
 
             case DIAMOND_AXE:
                 return 140;
@@ -82,7 +81,7 @@ public class GlobalDamageManager implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onEntityDamaged(EntityDamageEvent event){
+    public void onEntityDamaged(EntityDamageEvent event) {
         event.setDamage(event.getDamage() * 5);
     }
 
@@ -92,10 +91,10 @@ public class GlobalDamageManager implements Listener {
      * @param event The event in which any entity is damaged by another one
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onPlayerMeleeAttack(EntityDamageByEntityEvent event){
+    public void onPlayerMeleeAttack(EntityDamageByEntityEvent event) {
 
         // Make sure a player is attacking
-        if (!(event.getDamager() instanceof Player)){
+        if (!(event.getDamager() instanceof Player)) {
             return;
         }
 
@@ -105,35 +104,48 @@ public class GlobalDamageManager implements Listener {
         // First let's get a base setup for how much certain weapons should do
         double baseDamage = getMeleeWeaponBaseDamage(tool.getType());
         if (playerMeleeCooldownMap.containsKey(player)) {
-            if (System.currentTimeMillis() < playerMeleeCooldownMap.get(player)){
+            if (System.currentTimeMillis() < playerMeleeCooldownMap.get(player)) {
                 baseDamage *= (double) (System.currentTimeMillis() / playerMeleeCooldownMap.get(player));
             }
         }
         long cooldownMs = 625;
-        if (tool.getType().equals(Material.DIAMOND_AXE) || tool.getType().equals(Material.IRON_AXE) || tool.getType().equals(Material.GOLDEN_AXE) || tool.getType().equals(Material.STONE_AXE) || tool.getType().equals(Material.WOODEN_AXE)){ cooldownMs += 400; }
+        if (tool.getType().equals(Material.DIAMOND_AXE) || tool.getType().equals(Material.IRON_AXE) || tool.getType().equals(Material.GOLDEN_AXE) || tool.getType().equals(Material.STONE_AXE) || tool.getType().equals(Material.WOODEN_AXE)) {
+            cooldownMs += 400;
+        }
         playerMeleeCooldownMap.put(player, System.currentTimeMillis() + cooldownMs);
         // If baseDamage returns 0, we have something that we don't care to modify
-        if (baseDamage <= 0){ return; }
+        if (baseDamage <= 0) {
+            return;
+        }
 
         double newDamage = baseDamage;
         int sharpnessLevel = tool.getEnchantmentLevel(Enchantment.DAMAGE_ALL);
         // In the case we have sharpness, we should increase raw damage
-        if (sharpnessLevel > 0) { newDamage *= 1 + sharpnessLevel / 10.;  }
+        if (sharpnessLevel > 0) {
+            newDamage *= 1 + sharpnessLevel / 10.;
+        }
         // In the case we have smite, we should increase damage against certain entities
-        else if (event.getEntity() instanceof Zombie || event.getEntity() instanceof Skeleton || event.getEntity() instanceof Phantom || event.getEntity() instanceof Wither || event.getEntity() instanceof SkeletonHorse){
+        else if (event.getEntity() instanceof Zombie || event.getEntity() instanceof Skeleton || event.getEntity() instanceof Phantom || event.getEntity() instanceof Wither || event.getEntity() instanceof SkeletonHorse) {
             int smiteLevel = tool.getEnchantmentLevel(Enchantment.DAMAGE_UNDEAD);
-            if (smiteLevel > 0) { newDamage *= 1 + smiteLevel / 15.; }
+            if (smiteLevel > 0) {
+                newDamage *= 1 + smiteLevel / 15.;
+            }
         }
         // In the case we have bane of artho, we should increase against certain entities
-        else if (event.getEntity() instanceof Spider || event.getEntity() instanceof Bee || event.getEntity() instanceof Silverfish || event.getEntity() instanceof Endermite){
+        else if (event.getEntity() instanceof Spider || event.getEntity() instanceof Bee || event.getEntity() instanceof Silverfish || event.getEntity() instanceof Endermite) {
             int baneLevel = tool.getEnchantmentLevel(Enchantment.DAMAGE_ARTHROPODS);
-            if (baneLevel > 0) { newDamage *= 1 + baneLevel / 15.; }
+            if (baneLevel > 0) {
+                newDamage *= 1 + baneLevel / 15.;
+            }
         }
 
         // Lastly, see if we should give a 50% bonus for crits
         if (!player.isOnGround() && player.getVelocity().getY() < 0) {
             int critLevel = 0;
-            try { critLevel = CustomEnchantments.getEnchantLevel(tool, CustomEnchantType.CRITICAL_STRIKE); } catch (IllegalArgumentException ignored) { }
+            try {
+                critLevel = CustomEnchantments.getEnchantLevel(tool, CustomEnchantType.CRITICAL_STRIKE);
+            } catch (IllegalArgumentException ignored) {
+            }
             newDamage *= 1.5 + (critLevel * .15);
         }
 
@@ -141,10 +153,13 @@ public class GlobalDamageManager implements Listener {
         newDamage *= 1 + ((Math.random() - .5) / 10.);
 
         // Sweeping edge needs to have reduced damage
-        if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)){
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)) {
             int sweepLevel = tool.getEnchantmentLevel(Enchantment.SWEEPING_EDGE);
-            if (sweepLevel > 0) { newDamage *= (sweepLevel) / 11.;}
-            else { newDamage *= .03; }
+            if (sweepLevel > 0) {
+                newDamage *= (sweepLevel) / 11.;
+            } else {
+                newDamage *= .03;
+            }
         }
 
         // Now set the damage, good to go
@@ -159,27 +174,37 @@ public class GlobalDamageManager implements Listener {
      * @param event The EntityShootBowEvent we are listening to
      */
     @EventHandler
-    public void onPlayerShotBow(EntityShootBowEvent event){
-        if (event.getEntity() instanceof Player){
+    public void onPlayerShotBow(EntityShootBowEvent event) {
+        if (event.getEntity() instanceof Player) {
             ItemStack bow = event.getBow();
-            if (bow == null){ return; }  // Don't care if we dont have a bow
+            if (bow == null) {
+                return;
+            }  // Don't care if we dont have a bow
             double damage = getRangedWeaponBaseDamage(event.getBow().getType());
-            if (damage <= 0) { return; }  // Don't care if we don't have any damage to apply
+            if (damage <= 0) {
+                return;
+            }  // Don't care if we don't have any damage to apply
 
             // Now we take into account force the bow shot with
             damage *= event.getForce();
 
             // And then we calculate damage increased from the power enchantment
             int powerLevel = bow.getEnchantmentLevel(Enchantment.ARROW_DAMAGE);
-            if (powerLevel > 0) { damage *= powerLevel; }
+            if (powerLevel > 0) {
+                damage *= powerLevel;
+            }
 
             // 20% chance to crit for double damage
             double critPercent = .2;
             // crit enchant level * 10% chance bonus
-            try { critPercent += CustomEnchantments.getEnchantLevel(bow, CustomEnchantType.CRITICAL_SHOT) / 10.; } catch (IllegalArgumentException ignored) { }
-            if (Math.random() < critPercent) { damage *= 2;
-            event.getEntity().getWorld().spawnParticle(Particle.CRIT_MAGIC, event.getEntity().getLocation().add(0, 1.6, 0), 50);
-            event.getEntity().getWorld().playSound(event.getEntity().getLocation().add(0, 1.6, 0), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, .3f, .6f);
+            try {
+                critPercent += CustomEnchantments.getEnchantLevel(bow, CustomEnchantType.CRITICAL_SHOT) / 10.;
+            } catch (IllegalArgumentException ignored) {
+            }
+            if (Math.random() < critPercent) {
+                damage *= 2;
+                event.getEntity().getWorld().spawnParticle(Particle.CRIT_MAGIC, event.getEntity().getLocation().add(0, 1.6, 0), 50);
+                event.getEntity().getWorld().playSound(event.getEntity().getLocation().add(0, 1.6, 0), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, .3f, .6f);
             }
 
             // 5% variance
@@ -188,24 +213,33 @@ public class GlobalDamageManager implements Listener {
             // Now we can put this value on the arrow to modify later in a different event
             event.getProjectile().setMetadata(ARROW_DMG_METANAME, new FixedMetadataValue(plugin, damage));
             // Attempts to put the snipe level on the arrow if it exists, if it fails then no biggie
-            try { event.getProjectile().setMetadata(ARROW_SNIPE_ENCHANT_METANAME, new FixedMetadataValue(plugin, CustomEnchantments.getEnchantLevel(bow, CustomEnchantType.SNIPE))); } catch (IllegalArgumentException ignored) { }
+            try {
+                event.getProjectile().setMetadata(ARROW_SNIPE_ENCHANT_METANAME, new FixedMetadataValue(plugin, CustomEnchantments.getEnchantLevel(bow, CustomEnchantType.SNIPE)));
+            } catch (IllegalArgumentException ignored) {
+            }
         }
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onEntityHitByBow(EntityDamageByEntityEvent event){
+    public void onEntityHitByBow(EntityDamageByEntityEvent event) {
 
         // Make sure we are dealing with arrows and arrows being shot by players here
-        if (!(event.getDamager() instanceof Arrow)){ return; }
+        if (!(event.getDamager() instanceof Arrow)) {
+            return;
+        }
         Arrow arrow = (Arrow) event.getDamager();
-        if (!(arrow.getShooter() instanceof Player)) { return; }
+        if (!(arrow.getShooter() instanceof Player)) {
+            return;
+        }
 
         double newDamage = 0;
 
         // Our plugin adds a metadata value on the arrow entity that says how much damage it should do, override if it exists
-        if (arrow.hasMetadata(ARROW_DMG_METANAME)){
-            for (MetadataValue metadataValue : arrow.getMetadata(ARROW_DMG_METANAME)){
-                if (metadataValue.getOwningPlugin() == null) { continue; }
+        if (arrow.hasMetadata(ARROW_DMG_METANAME)) {
+            for (MetadataValue metadataValue : arrow.getMetadata(ARROW_DMG_METANAME)) {
+                if (metadataValue.getOwningPlugin() == null) {
+                    continue;
+                }
                 if (metadataValue.getOwningPlugin().equals(plugin)) {
                     newDamage = metadataValue.asDouble();
                     break;
@@ -215,23 +249,29 @@ public class GlobalDamageManager implements Listener {
 
         // Our plugin adds a metadata value on the arrow entity that says how much snipe damage bonus we should have
         double distanceMultiplier = 1;
-        if (arrow.hasMetadata(ARROW_SNIPE_ENCHANT_METANAME)){
-            for (MetadataValue metadataValue : arrow.getMetadata(ARROW_SNIPE_ENCHANT_METANAME)){
-                if (metadataValue.getOwningPlugin() == null) { continue; }
+        if (arrow.hasMetadata(ARROW_SNIPE_ENCHANT_METANAME)) {
+            for (MetadataValue metadataValue : arrow.getMetadata(ARROW_SNIPE_ENCHANT_METANAME)) {
+                if (metadataValue.getOwningPlugin() == null) {
+                    continue;
+                }
                 if (metadataValue.getOwningPlugin().equals(plugin)) {
                     double distance = event.getEntity().getLocation().distance(((Player) arrow.getShooter()).getLocation());
-                    if (distance > 20) { distanceMultiplier += metadataValue.asInt() * (distance / 100.); }
+                    if (distance > 20) {
+                        distanceMultiplier += metadataValue.asInt() * (distance / 100.);
+                    }
                     break;
                 }
             }
         }
         newDamage *= distanceMultiplier;
-        if (newDamage > 0) { event.setDamage(newDamage); }
+        if (newDamage > 0) {
+            event.setDamage(newDamage);
+        }
     }
 
     @EventHandler
-    public void onFallingInVoid(PlayerMoveEvent event){
-        if (event.getTo() != null && event.getTo().getY() < -300){
+    public void onFallingInVoid(PlayerMoveEvent event) {
+        if (event.getTo() != null && event.getTo().getY() < -300) {
             event.getPlayer().damage(event.getTo().getY() * -1 / 3);
         }
     }

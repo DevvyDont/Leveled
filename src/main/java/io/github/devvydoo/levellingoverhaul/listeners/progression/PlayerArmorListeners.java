@@ -13,7 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -32,7 +34,7 @@ public class PlayerArmorListeners implements Listener {
     // A map from item type, to its level cap
     private HashMap<Material, Integer> materialLevelCaps;
 
-    public PlayerArmorListeners(LevellingOverhaul plugin){
+    public PlayerArmorListeners(LevellingOverhaul plugin) {
 
         this.plugin = plugin;
 
@@ -73,13 +75,15 @@ public class PlayerArmorListeners implements Listener {
      *
      * @param player The player to correct health for
      */
-    private void correctPlayerHealthLater(Player player){
+    private void correctPlayerHealthLater(Player player) {
         new BukkitRunnable() {
 
-            public void run(){
+            public void run() {
                 double HP = plugin.getHpManager().calculatePlayerExpectedHealth(player);
                 player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(HP);
-                if (player.getHealth() > HP) { player.setHealth(HP); }
+                if (player.getHealth() > HP) {
+                    player.setHealth(HP);
+                }
                 plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, "");
             }
 
@@ -92,36 +96,42 @@ public class PlayerArmorListeners implements Listener {
      * @param event - The PlayerInteractEvent we are listening to
      */
     @EventHandler
-    public void onArmorRightClick(PlayerInteractEvent event){
+    public void onArmorRightClick(PlayerInteractEvent event) {
 
 
         // Was it a right click?
-        if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK)){
+        if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
             return;
         }
 
         // Is our player holding armor?
-        if (event.getItem() == null){
+        if (event.getItem() == null) {
             return;
         }
 
-        if (!materialLevelCaps.containsKey(event.getItem().getType())){
+        if (!materialLevelCaps.containsKey(event.getItem().getType())) {
             return;
         }
 
         // Does our player have the required level to equip this?
         int requiredLevel = CustomEnchantments.getItemLevel(event.getItem());
-        if (requiredLevel < materialLevelCaps.get(event.getItem().getType())) { requiredLevel = materialLevelCaps.get(event.getItem().getType()); }
+        if (requiredLevel < materialLevelCaps.get(event.getItem().getType())) {
+            requiredLevel = materialLevelCaps.get(event.getItem().getType());
+        }
 
 
-        if (event.getPlayer().getLevel() < requiredLevel ){
+        if (event.getPlayer().getLevel() < requiredLevel) {
             event.setCancelled(true);
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
             BaseExperience.displayActionBarText(event.getPlayer(), ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
         }
 
         // See if we have growth, if not return else correct the players hp later
-        try { CustomEnchantments.getEnchantLevel(event.getItem(), CustomEnchantType.GROWTH); } catch (IllegalArgumentException ignored) { return; }
+        try {
+            CustomEnchantments.getEnchantLevel(event.getItem(), CustomEnchantType.GROWTH);
+        } catch (IllegalArgumentException ignored) {
+            return;
+        }
         correctPlayerHealthLater(event.getPlayer());
 
     }
@@ -133,7 +143,7 @@ public class PlayerArmorListeners implements Listener {
      * @param event - The InventoryClickEvent we are listening to
      */
     @EventHandler
-    public void onArmorInteract(InventoryClickEvent event){
+    public void onArmorInteract(InventoryClickEvent event) {
 
         // Do we have a player?
         if (!(event.getWhoClicked() instanceof Player)) {
@@ -144,7 +154,7 @@ public class PlayerArmorListeners implements Listener {
         correctPlayerHealthLater(player);
 
         // Do we even need to check them?
-        if (player.getLevel() >= BaseExperience.LEVEL_CAP){
+        if (player.getLevel() >= BaseExperience.LEVEL_CAP) {
             return;
         }
 
@@ -176,7 +186,9 @@ public class PlayerArmorListeners implements Listener {
             }
 
             int requiredLevel = CustomEnchantments.getItemLevel(itemHeld);
-            if (requiredLevel < materialLevelCaps.get(itemHeld.getType())) { requiredLevel = materialLevelCaps.get(itemHeld.getType()); }
+            if (requiredLevel < materialLevelCaps.get(itemHeld.getType())) {
+                requiredLevel = materialLevelCaps.get(itemHeld.getType());
+            }
 
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel) {
@@ -185,24 +197,26 @@ public class PlayerArmorListeners implements Listener {
                 event.setCancelled(true);
             }
 
-        // Did they shift click?
-        } else if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)){
+            // Did they shift click?
+        } else if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
 
             ItemStack itemClicked = event.getCurrentItem();
 
             // Did they shift click something?
-            if (itemClicked == null){
+            if (itemClicked == null) {
                 return;
             }
 
             // Did they shift click armor?
-            if (!materialLevelCaps.containsKey(itemClicked.getType())){
+            if (!materialLevelCaps.containsKey(itemClicked.getType())) {
                 return;
             }
 
             // Are they a high enough level to equip it?
             int requiredLevel = CustomEnchantments.getItemLevel(itemClicked);
-            if (requiredLevel < materialLevelCaps.get(itemClicked.getType())) { requiredLevel = materialLevelCaps.get(itemClicked.getType()); }
+            if (requiredLevel < materialLevelCaps.get(itemClicked.getType())) {
+                requiredLevel = materialLevelCaps.get(itemClicked.getType());
+            }
 
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel) {
@@ -214,12 +228,14 @@ public class PlayerArmorListeners implements Listener {
     }
 
     @EventHandler
-    public void onArmorClick(InventoryClickEvent event){
+    public void onArmorClick(InventoryClickEvent event) {
 
         // Was armor clicked? Armor in our plugin is unbreakable so make sure it can't break
-        if (event.getCurrentItem() != null && materialLevelCaps.containsKey(event.getCurrentItem().getType())){
+        if (event.getCurrentItem() != null && materialLevelCaps.containsKey(event.getCurrentItem().getType())) {
             ItemMeta meta = event.getCurrentItem().getItemMeta();
-            if (meta == null) {return; }
+            if (meta == null) {
+                return;
+            }
             meta.setUnbreakable(true);
             meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
             event.getCurrentItem().setItemMeta(meta);
