@@ -148,6 +148,7 @@ public class EnchantingInterface implements Listener {
             case LEATHER_CHESTPLATE:
             case GOLDEN_CHESTPLATE:
             case DIAMOND_CHESTPLATE:
+            case CHAINMAIL_CHESTPLATE:
             case DIAMOND_HELMET:
             case LEATHER_HELMET:
             case CHAINMAIL_HELMET:

@@ -10,7 +10,7 @@ import java.util.Iterator;
 
 public class TipAnnounceManager {
 
-    private final int TIP_TICK_DELAY = 20 * 60 * 5;
+    private final int TIP_TICK_DELAY = 20 * 60 * 10;
 
     public class AnnounceTipTask extends BukkitRunnable {
 

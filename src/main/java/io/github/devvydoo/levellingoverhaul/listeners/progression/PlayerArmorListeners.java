@@ -11,8 +11,10 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -70,6 +72,35 @@ public class PlayerArmorListeners implements Listener {
         materialLevelCaps.put(Material.ELYTRA, LevelRewards.POST_ENDER_EQUIPMENT);
     }
 
+    private void equippedArmorSanityCheck(Player player){
+
+        ItemStack helmet = player.getInventory().getHelmet();
+        ItemStack chestplate = player.getInventory().getChestplate();
+        ItemStack leggings = player.getInventory().getLeggings();
+        ItemStack boots = player.getInventory().getBoots();
+
+        if (helmet != null && !helmet.getType().equals(Material.AIR) && Math.max(CustomEnchantments.getItemLevel(helmet), materialLevelCaps.get(helmet.getType())) > player.getLevel()){
+            player.getWorld().dropItemNaturally(player.getLocation(), helmet);
+            player.getInventory().setHelmet(new ItemStack(Material.AIR));
+        }
+
+        if (chestplate != null && !chestplate.getType().equals(Material.AIR) && Math.max(CustomEnchantments.getItemLevel(chestplate), materialLevelCaps.get(chestplate.getType())) > player.getLevel()){
+            player.getWorld().dropItemNaturally(player.getLocation(), chestplate);
+            player.getInventory().setChestplate(new ItemStack(Material.AIR));
+        }
+
+        if (leggings != null && !leggings.getType().equals(Material.AIR) && Math.max(CustomEnchantments.getItemLevel(leggings), materialLevelCaps.get(leggings.getType())) > player.getLevel()){
+            player.getWorld().dropItemNaturally(player.getLocation(), leggings);
+            player.getInventory().setLeggings(new ItemStack(Material.AIR));
+        }
+
+        if (boots != null && !boots.getType().equals(Material.AIR) && Math.max(CustomEnchantments.getItemLevel(boots), materialLevelCaps.get(boots.getType())) > player.getLevel()){
+            player.getWorld().dropItemNaturally(player.getLocation(), boots);
+            player.getInventory().setBoots(new ItemStack(Material.AIR));
+        }
+
+    }
+
     /**
      * Because we don't have a 'post event' system we will just have to correct a players health later if armor has growth
      *
@@ -95,7 +126,7 @@ public class PlayerArmorListeners implements Listener {
      *
      * @param event - The PlayerInteractEvent we are listening to
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = false)
     public void onArmorRightClick(PlayerInteractEvent event) {
 
 
@@ -226,7 +257,7 @@ public class PlayerArmorListeners implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = false)
     public void onArmorClick(InventoryClickEvent event) {
 
         // Was armor clicked? Armor in our plugin is unbreakable so make sure it can't break
@@ -240,6 +271,13 @@ public class PlayerArmorListeners implements Listener {
             event.getCurrentItem().setItemMeta(meta);
         }
 
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerHit(EntityDamageEvent event){
+        if (event.getEntity() instanceof Player){
+            equippedArmorSanityCheck((Player)event.getEntity());
+        }
     }
 
 }

@@ -110,7 +110,7 @@ public class MiscEquipmentListeners implements Listener {
                 BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + levelRequired + ChatColor.RED + " to use this item!");
                 player.playSound(player.getLocation(), this.getSoundFromMaterial(itemInOffhand.getType()), .3f, .7f);
             }
-        } else if (blockClickedNeedsChecked) {
+        } if (blockClickedNeedsChecked) {
             if (isShulker(event.getClickedBlock().getType())) {
                 if (player.getLevel() < equipmentRequirements.get(Material.SHULKER_BOX)) {
                     event.setCancelled(true);
