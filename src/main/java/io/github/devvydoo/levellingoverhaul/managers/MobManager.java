@@ -62,8 +62,6 @@ public class MobManager implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                int initialAmount = entityToLevelMap.size();
-                System.out.println("[Mob Manager] Cleaning up " + initialAmount + " mobs...");
                 for (LivingEntity e : new ArrayList<>(entityToLevelMap.keySet())) {
                     if (e.isDead() || entityToLevelMap.get(e).getLevel() == 1 || (e.getType().equals(EntityType.ARMOR_STAND) && e.isCustomNameVisible())) {
                         entityToLevelMap.remove(e);

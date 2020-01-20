@@ -72,6 +72,10 @@ public class DebugLevelSetter implements CommandExecutor {
         }
 
         Player player = (Player) sender;
+        if (!player.isOp()){
+            player.sendMessage(ChatColor.RED + "You don't have permission to use that command!");
+            return true;
+        }
 
         // Simply just spits usage back at them
         if (args.length == 0) {

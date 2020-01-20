@@ -166,7 +166,6 @@ public class PlayerDamageModifier implements Listener {
         if (!(source instanceof Player)) {
             attackerLevel = plugin.getMobManager().getMobLevel(source);
             damageMultiplier += attackerLevel / (Math.random() * 3. + 6);  // lvl 15 does double dmg basically
-            System.out.println("[" + source.getName() + "] Base: " + event.getDamage() + " dmg. x" + (Math.round(damageMultiplier * 1000) / 1000.) + " ---> " + (Math.round(event.getDamage() * damageMultiplier)));
         } else if (!(event.getEntity() instanceof Player)) {  // We already know we have a player here
             attackerLevel = ((Player) source).getLevel();
             int attackedLevel = plugin.getMobManager().getMobLevel(source);
@@ -221,7 +220,6 @@ public class PlayerDamageModifier implements Listener {
                 newDamage = 1;
             }
             event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
-            System.out.println(ChatColor.AQUA + "[DEBUG] " + player.getName() + " was hit, armor resist: -" + Math.round(percentResisted * 100) + "%. Prot Enchant Resist: -" + Math.round(percentProtResist * 100) / 100. + "% RESULT: " + Math.round(event.getDamage()) + " ---> " + Math.round(newDamage));
             event.setDamage(newDamage);
 
         }

@@ -26,6 +26,11 @@ public class DebugEnchant implements CommandExecutor {
         }
 
         Player player = (Player) sender;
+        if (!player.isOp()) {
+            player.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
+            return true;
+        }
+
         if (args.length != 2) {
             player.sendMessage(ChatColor.RED + "Provide 2 args please, level enchant and quality of enchant");
         }

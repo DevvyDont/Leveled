@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 public class TestMobCommand implements CommandExecutor {
 
@@ -18,6 +19,11 @@ public class TestMobCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+        if (!sender.isOp()){
+            sender.sendMessage(ChatColor.RED + "You don't have permission to use that command!");
+            return true;
+        }
 
         int numAlive = 0;
         int total = plugin.getMobManager().getEntityToLevelMap().size();
