@@ -95,7 +95,7 @@ public class PlayerArmorListeners implements Listener {
      *
      * @param event - The PlayerInteractEvent we are listening to
      */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onArmorRightClick(PlayerInteractEvent event) {
 
 
@@ -142,7 +142,7 @@ public class PlayerArmorListeners implements Listener {
      *
      * @param event - The InventoryClickEvent we are listening to
      */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onArmorInteract(InventoryClickEvent event) {
 
         // Do we have a player?
@@ -227,7 +227,7 @@ public class PlayerArmorListeners implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onArmorClick(InventoryClickEvent event) {
 
         // Was armor clicked? Armor in our plugin is unbreakable so make sure it can't break

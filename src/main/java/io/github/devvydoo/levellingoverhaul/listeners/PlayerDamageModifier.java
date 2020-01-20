@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -33,39 +34,51 @@ public class PlayerDamageModifier implements Listener {
     private double getArmorDamageResistPercent(ItemStack armor) {
         switch (armor.getType()) {
             case DIAMOND_CHESTPLATE:
-                return .16;
-            case DIAMOND_LEGGINGS:
-                return .14;
-            case IRON_CHESTPLATE:
                 return .13;
-            case DIAMOND_HELMET:
+            case DIAMOND_LEGGINGS:
                 return .12;
-            case IRON_LEGGINGS:
-                return .10;
-            case DIAMOND_BOOTS:
-            case CHAINMAIL_CHESTPLATE:
+            case DIAMOND_HELMET:
                 return .09;
-            case CHAINMAIL_LEGGINGS:
-            case IRON_HELMET:
+            case DIAMOND_BOOTS:
                 return .08;
+
+            case IRON_CHESTPLATE:
+                return .10;
+            case IRON_LEGGINGS:
+                return .09;
+            case IRON_HELMET:
+                return .07;
+            case IRON_BOOTS:
+                return .06;
+
+            case CHAINMAIL_CHESTPLATE:
+                return .08;
+            case CHAINMAIL_LEGGINGS:
+                return .07;
             case CHAINMAIL_HELMET:
+                return .06;
+            case CHAINMAIL_BOOTS:
+                return .04;
+
+
             case GOLDEN_CHESTPLATE:
                 return .07;
             case GOLDEN_LEGGINGS:
-            case IRON_BOOTS:
-                return .06;
-            case LEATHER_CHESTPLATE:
                 return .05;
-            case CHAINMAIL_BOOTS:
             case GOLDEN_HELMET:
-            case LEATHER_LEGGINGS:
                 return .04;
+            case GOLDEN_BOOTS:
+                return .02;
+
+            case LEATHER_CHESTPLATE:
+                return .04;
+            case LEATHER_LEGGINGS:
+                return .03;
             case LEATHER_HELMET:
             case TURTLE_HELMET:
-            case GOLDEN_BOOTS:
-                return .03;
-            case LEATHER_BOOTS:
                 return .02;
+            case LEATHER_BOOTS:
+                return .01;
             default:
                 return 0;
         }
@@ -133,6 +146,10 @@ public class PlayerDamageModifier implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerGotHitByMob(EntityDamageByEntityEvent event) {
 
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0) {
+            return;
+        }
+
         // If the entity hit wasnt living don't worry
         if (!(event.getEntity() instanceof LivingEntity)) {
             return;
@@ -181,10 +198,15 @@ public class PlayerDamageModifier implements Listener {
         event.setDamage(event.getDamage() * damageMultiplier);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void playerHitByMiscSource(EntityDamageEvent event) {
 
+
         if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0) {
             return;
         }
 
@@ -196,34 +218,47 @@ public class PlayerDamageModifier implements Listener {
                 event.getCause().equals(EntityDamageEvent.DamageCause.CRAMMING) ||
                 event.getCause().equals(EntityDamageEvent.DamageCause.DROWNING) ||
                 event.getCause().equals(EntityDamageEvent.DamageCause.STARVATION) ||
-                event.getCause().equals(EntityDamageEvent.DamageCause.FIRE) ||
                 event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) ||
-                event.getCause().equals(EntityDamageEvent.DamageCause.LAVA) ||
                 event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION)) {
             if (event.getDamage() < fivePercentHP) {
                 event.setDamage(fivePercentHP);
             }
-        } else if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
+        } else if (event.getCause().equals(EntityDamageEvent.DamageCause.FIRE)) { event.setDamage(fivePercentHP * 3); }
+        else if (event.getCause().equals(EntityDamageEvent.DamageCause.LAVA)) { event.setDamage(fivePercentHP * 5); }
+        else if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
             int blocksFallen = (int) ((event.getDamage() / 5) - 3) / 2;
             if (blocksFallen <= 0) {
                 event.setCancelled(true);
                 return;
             }
             event.setDamage(blocksFallen * fivePercentHP);
+        } else if (event.getCause().equals(EntityDamageEvent.DamageCause.THORNS) && event instanceof EntityDamageByEntityEvent) {
+
+            Entity thornsOwner = ((EntityDamageByEntityEvent) event).getDamager();
+            if (thornsOwner instanceof LivingEntity){
+                int level = plugin.getMobManager().getMobLevel((LivingEntity) thornsOwner);
+                double newDamage = level * 10;
+
+                double percentResisted = getPlayerDamageResist(player);
+                double percentProtResist = getPlayerProtectionResist(player, event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE));
+                newDamage = newDamage * (1 - percentResisted - percentProtResist);
+                if (newDamage < 1) { newDamage = 1; }
+                event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
+                event.setDamage(EntityDamageEvent.DamageModifier.MAGIC, 0);
+                event.setDamage(newDamage);
+            }
         } else {
             // Here the player is being hit by things that armor should resist, here's how armor works:
             // Every armor has a base % value to subtract off of the total damage, prot will be flat dmg reduction
+//            event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
+//            event.setDamage(EntityDamageEvent.DamageModifier.MAGIC, 0);
             double percentResisted = getPlayerDamageResist(player);
             double percentProtResist = getPlayerProtectionResist(player, event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE));
             double newDamage = event.getDamage() * (1 - percentResisted - percentProtResist);
-            if (newDamage < 1) {
-                newDamage = 1;
-            }
-            event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
+            if (newDamage < 1) { newDamage = 1; }
+
             event.setDamage(newDamage);
-
         }
-
     }
 
     /**
@@ -235,12 +270,17 @@ public class PlayerDamageModifier implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerGotHit(EntityDamageEvent event) {
 
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0) {
+            return;
+        }
+
         // Is a player being hit?
         if (!(event.getEntity() instanceof Player)) {
             return;
         }
 
         Player player = (Player) event.getEntity();
+        if (player.getHealth() <= 0) { player.damage(2000000000); }
 
         // Is the player supposed to die?
         if (player.getHealth() + player.getAbsorptionAmount() - event.getFinalDamage() > 0) {
@@ -256,6 +296,12 @@ public class PlayerDamageModifier implements Listener {
         }
 
         // At this point a player is due to die, but has > 50% of their hp, leave them at 1/2 a heart
+        event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
+        event.setDamage(EntityDamageEvent.DamageModifier.MAGIC, 0);
+        event.setDamage(EntityDamageEvent.DamageModifier.BLOCKING, 0);
+        event.setDamage(EntityDamageEvent.DamageModifier.ABSORPTION, 0);
+        event.setDamage(EntityDamageEvent.DamageModifier.BASE, 0);
+        event.setDamage(EntityDamageEvent.DamageModifier.RESISTANCE, 0);
         event.setDamage(0);
         player.setAbsorptionAmount(0);
         player.setHealth(1);

@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class BrewingListeners implements Listener {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBrewingStandInteract(PlayerInteractEvent event) {
 
 
@@ -44,7 +44,7 @@ public class BrewingListeners implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPotionDrink(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         ItemStack itemDrank = event.getItem();

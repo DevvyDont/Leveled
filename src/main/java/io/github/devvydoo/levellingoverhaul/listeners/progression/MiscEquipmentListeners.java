@@ -37,7 +37,7 @@ public class MiscEquipmentListeners implements Listener {
         this.equipmentRequirements.put(Material.SHIELD, LevelRewards.SHIELD_UNLOCK);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onItemInteract(PlayerInteractEvent event) {
 
 

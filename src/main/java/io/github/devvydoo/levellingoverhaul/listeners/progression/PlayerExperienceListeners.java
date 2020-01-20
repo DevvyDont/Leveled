@@ -62,7 +62,7 @@ public class PlayerExperienceListeners implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerDamagedByFireworks(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Firework && event.getEntity() instanceof Player) {
             event.setCancelled(true);

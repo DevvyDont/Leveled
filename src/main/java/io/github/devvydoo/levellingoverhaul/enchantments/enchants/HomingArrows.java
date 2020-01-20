@@ -37,7 +37,7 @@ public class HomingArrows implements Listener {
             if (tickFrequency <= 0) {
                 tickFrequency = 1;
             }
-            new HomingArrowTask((Arrow) event.getProjectile(), homingLevel).runTaskTimer(plugin, Math.round(event.getForce() * 12), tickFrequency);
+            new HomingArrowTask((Arrow) event.getProjectile(), homingLevel).runTaskTimer(plugin, Math.max(1, Math.round(event.getForce() * 12)), tickFrequency);
         }
 
     }
@@ -89,7 +89,7 @@ public class HomingArrows implements Listener {
             } else {
                 // Loop through nearby entities
                 for (Entity entity : arrow.getWorld().getNearbyEntities(arrow.getLocation(), aggression * 9, aggression * 9, aggression * 9)) {
-                    if (target instanceof Boss) {
+                    if (entity instanceof Boss) {
                         target = (LivingEntity) entity;
                         break;
                     }  // Prioritize bosses
@@ -109,10 +109,7 @@ public class HomingArrows implements Listener {
                     }
                     if (target == null && ((LivingEntity) entity).hasLineOfSight(arrow)) {
                         target = (LivingEntity) entity;
-                    } else if (target == null) {
-                    } else if (!entity.equals(arrow.getShooter())
-                            && entity.getLocation().distance(arrow.getLocation()) < target.getLocation().distance(arrow.getLocation())
-                            && ((LivingEntity) entity).hasLineOfSight(arrow)) {
+                    } else if (target != null && entity.getLocation().distance(arrow.getLocation()) < target.getLocation().distance(arrow.getLocation()) && ((LivingEntity) entity).hasLineOfSight(arrow)) {
                         target = (LivingEntity) entity;
                     }
                 }

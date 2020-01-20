@@ -63,7 +63,7 @@ public class PlayerExperienceGainListeners implements Listener {
      *
      * @param event - The EntityDamageByEntityEvent event we are listening to
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerKillEntity(EntityDamageByEntityEvent event) {
 
         // Was the entity living?
@@ -196,7 +196,7 @@ public class PlayerExperienceGainListeners implements Listener {
      *
      * @param event - The BlockBreakEvent we are listening for
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
 
         // Never ever ever give xp if the block isn't supposed to drop

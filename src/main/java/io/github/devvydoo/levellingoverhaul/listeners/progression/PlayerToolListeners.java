@@ -65,7 +65,7 @@ public class PlayerToolListeners implements Listener {
      *
      * @param event - The BlockBreakEvent we are listening to
      */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBreakWithTool(BlockBreakEvent event) {
 
         Player player = event.getPlayer();
@@ -88,7 +88,7 @@ public class PlayerToolListeners implements Listener {
      *
      * @param event - The EntityDamageByEntityEvent we are listening to
      */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerAttackEntity(EntityDamageByEntityEvent event) {
 
         if (!(event.getDamager() instanceof Player)) {

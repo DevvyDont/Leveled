@@ -232,7 +232,7 @@ public class AnvilInterface implements Listener {
     }
 
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onAnvilInteract(PlayerInteractEvent event) {
 
         // Did the player right click?
@@ -258,7 +258,7 @@ public class AnvilInterface implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onAnvilInterfaceClick(InventoryClickEvent event) {
 
         // Do we have the anvil interface open?

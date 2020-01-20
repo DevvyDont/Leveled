@@ -80,8 +80,12 @@ public class GlobalDamageManager implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityDamaged(EntityDamageEvent event) {
+
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0) {
+            return;
+        }
         event.setDamage(event.getDamage() * 5);
     }
 
@@ -173,7 +177,7 @@ public class GlobalDamageManager implements Listener {
      *
      * @param event The EntityShootBowEvent we are listening to
      */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerShotBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player) {
             ItemStack bow = event.getBow();
@@ -220,7 +224,7 @@ public class GlobalDamageManager implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW)
     public void onEntityHitByBow(EntityDamageByEntityEvent event) {
 
         // Make sure we are dealing with arrows and arrows being shot by players here

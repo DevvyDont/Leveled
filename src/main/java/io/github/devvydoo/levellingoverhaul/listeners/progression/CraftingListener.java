@@ -12,7 +12,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 
 public class CraftingListener implements Listener {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onCraftAttempt(CraftItemEvent event) {
 
         // Sanity check

@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class EnchantmentListeners implements Listener {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onEnchantmentTableInteract(PlayerInteractEvent event) {
 
         // Are we right clicking a block

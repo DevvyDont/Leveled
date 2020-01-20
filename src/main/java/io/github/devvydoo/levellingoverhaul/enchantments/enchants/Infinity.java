@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class Infinity implements Listener {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onArrowShotByPlayer(EntityShootBowEvent event) {
 
         // Did a player shoot the arrow?

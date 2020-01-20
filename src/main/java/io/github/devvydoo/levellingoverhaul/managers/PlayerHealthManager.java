@@ -4,6 +4,7 @@ import io.github.devvydoo.levellingoverhaul.LevellingOverhaul;
 import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -86,8 +87,12 @@ public class PlayerHealthManager implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerRegen(EntityRegainHealthEvent event) {
+
+        if (event.getEntity() instanceof LivingEntity){
+            if (((LivingEntity) event.getEntity()).getHealth() < 1) { event.setCancelled(true); return; }
+        }
 
         // This is basically just natural regen
         if (event.getEntity() instanceof Player && event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.SATIATED)) {

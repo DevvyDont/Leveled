@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PortableCraftingAbility implements Listener {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
 
         Player player = event.getPlayer();

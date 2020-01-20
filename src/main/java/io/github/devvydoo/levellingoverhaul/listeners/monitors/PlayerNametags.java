@@ -78,7 +78,7 @@ public class PlayerNametags implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onLevelChange(PlayerLevelChangeEvent event) {
         if (event.getNewLevel() < event.getOldLevel()) {
             return;

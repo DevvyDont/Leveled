@@ -16,13 +16,8 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ExplosiveTouchEnchantment implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-
-        // Is the event cancelled already?
-        if (event.isCancelled()) {
-            return;
-        }
 
         // Are we even holding a tool?
         if (event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
