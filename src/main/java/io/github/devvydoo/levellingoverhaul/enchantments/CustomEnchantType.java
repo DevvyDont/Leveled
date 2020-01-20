@@ -10,5 +10,6 @@ public enum CustomEnchantType {
     CRITICAL_SHOT,
     CRITICAL_STRIKE,
     SNIPE,
-    GOLDEN_DIET
+    GOLDEN_DIET,
+    HOMING
 }

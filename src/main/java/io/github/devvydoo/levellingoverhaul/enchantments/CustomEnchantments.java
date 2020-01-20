@@ -325,6 +325,7 @@ public final class CustomEnchantments {
             case CRITICAL_STRIKE:
                 return 11;
             case SNIPE:
+            case HOMING:
                 return 10;
             case EXPERIENCED:
             case GOLDEN_DIET:
@@ -421,6 +422,7 @@ public final class CustomEnchantments {
                 break;
             case CRITICAL_SHOT:
             case SNIPE:
+            case HOMING:
                 allowedTargets.add(Material.BOW);
                 allowedTargets.add(Material.CROSSBOW);
                 break;
@@ -539,6 +541,8 @@ public final class CustomEnchantments {
                 return "Increases arrow damage based on distance travelled";
             case GOLDEN_DIET:
                 return "Food eaten provides instant healing but reduces hunger satisfied";
+            case HOMING:
+                return "Arrows home onto the nearest target";
             default:
                 return "This enchantment doesn't have a description :(";
         }

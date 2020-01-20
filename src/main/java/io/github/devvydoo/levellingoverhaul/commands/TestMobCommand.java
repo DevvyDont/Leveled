@@ -37,14 +37,6 @@ public class TestMobCommand implements CommandExecutor {
             }
         }
 
-        if (sender instanceof Player){
-            Player player = (Player) sender;
-            ItemStack itemStack = player.getInventory().getItemInMainHand();
-            if (itemStack.getType() != Material.AIR){
-                CustomEnchantments.addEnchant(itemStack, CustomEnchantType.EXPLOSIVE_TOUCH, 10);
-            }
-        }
-
         sender.sendMessage(ChatColor.YELLOW + "Finished in " + (System.currentTimeMillis() - start) + "ms. " + numAlive + "/" + total + " mobs are alive.");
         return true;
     }

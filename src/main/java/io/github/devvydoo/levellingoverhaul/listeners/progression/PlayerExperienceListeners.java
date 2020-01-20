@@ -131,6 +131,7 @@ public class PlayerExperienceListeners implements Listener {
 
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
+            if (player.getLevel() == BaseExperience.LEVEL_CAP) { return; }
             Boolean rule = player.getWorld().getGameRuleValue(GameRule.KEEP_INVENTORY);
             if (rule == null || !rule) { return; }  // If keep inventory is off, proceed with expected behavior
             player.setExp(0);  // If keep inventory is on, set the players exp progress to next level to 0
