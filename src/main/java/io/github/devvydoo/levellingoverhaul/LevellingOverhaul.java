@@ -30,6 +30,7 @@ public final class LevellingOverhaul extends JavaPlugin {
     private GlobalDamageManager damageManager;
     private ActionBarManager actionBarManager;
     private BossManager bossManager;
+    private TipAnnounceManager tipManager;
 
     private Advancement enchantAdvancement;
 
@@ -75,6 +76,7 @@ public final class LevellingOverhaul extends JavaPlugin {
         damageManager = new GlobalDamageManager(this);
         actionBarManager = new ActionBarManager(this);
         bossManager = new BossManager();
+        tipManager = new TipAnnounceManager(this);
 
         // Listeners that change how natural progression works
         getServer().getPluginManager().registerEvents(new ProgressionModifyingListeners(), this);
