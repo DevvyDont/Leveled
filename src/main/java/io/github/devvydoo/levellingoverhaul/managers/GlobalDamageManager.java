@@ -18,6 +18,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
 
@@ -42,7 +44,7 @@ public class GlobalDamageManager implements Listener {
             case BOW:
                 return 20;
             case CROSSBOW:
-                return 60;
+                return 30;
             default:
                 return 0;
         }
@@ -122,20 +124,20 @@ public class GlobalDamageManager implements Listener {
         int sharpnessLevel = tool.getEnchantmentLevel(Enchantment.DAMAGE_ALL);
         // In the case we have sharpness, we should increase raw damage
         if (sharpnessLevel > 0) {
-            newDamage *= 1 + sharpnessLevel / 10.;
+            newDamage *= (1 + ((5 * sharpnessLevel) * (3 + sharpnessLevel) / 100. ));  // adds 5x^2 + 15x % damage
         }
         // In the case we have smite, we should increase damage against certain entities
         else if (event.getEntity() instanceof Zombie || event.getEntity() instanceof Skeleton || event.getEntity() instanceof Phantom || event.getEntity() instanceof Wither || event.getEntity() instanceof SkeletonHorse) {
             int smiteLevel = tool.getEnchantmentLevel(Enchantment.DAMAGE_UNDEAD);
             if (smiteLevel > 0) {
-                newDamage *= 1 + smiteLevel / 15.;
+                newDamage *= (1 + ((7 * smiteLevel) * (5 + smiteLevel) / 100. ));  // adds 7x^2 + 35x % damage
             }
         }
         // In the case we have bane of artho, we should increase against certain entities
         else if (event.getEntity() instanceof Spider || event.getEntity() instanceof Bee || event.getEntity() instanceof Silverfish || event.getEntity() instanceof Endermite) {
             int baneLevel = tool.getEnchantmentLevel(Enchantment.DAMAGE_ARTHROPODS);
             if (baneLevel > 0) {
-                newDamage *= 1 + baneLevel / 15.;
+                newDamage *= (1 + ((7 * baneLevel) * (5 + baneLevel) / 100. ));  // adds 7x^2 + 35x % damage
             }
         }
 
@@ -149,8 +151,14 @@ public class GlobalDamageManager implements Listener {
             newDamage *= 1.5 + (critLevel * .15);
         }
 
+        for (PotionEffect pot: player.getActivePotionEffects()){
+            if (pot.getType().equals(PotionEffectType.INCREASE_DAMAGE)){
+                newDamage *= (pot.getAmplifier() * 1.3);
+            }
+        }
+
         // Give it a 5% variance
-        newDamage *= 1 + ((Math.random() - .5) / 10.);
+        newDamage *= (1 + ((Math.random() - .5) / 10.));
 
         // Sweeping edge needs to have reduced damage
         if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)) {
@@ -191,7 +199,7 @@ public class GlobalDamageManager implements Listener {
             // And then we calculate damage increased from the power enchantment
             int powerLevel = bow.getEnchantmentLevel(Enchantment.ARROW_DAMAGE);
             if (powerLevel > 0) {
-                damage *= powerLevel;
+                damage *= (1 + Math.pow(powerLevel, 1.641));
             }
 
             // 20% chance to crit for double damage
@@ -207,8 +215,14 @@ public class GlobalDamageManager implements Listener {
                 event.getEntity().getWorld().playSound(event.getEntity().getLocation().add(0, 1.6, 0), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, .3f, .6f);
             }
 
+            for (PotionEffect pot: event.getEntity().getActivePotionEffects()){
+                if (pot.getType().equals(PotionEffectType.INCREASE_DAMAGE)){
+                    damage *= (pot.getAmplifier() * 1.3);
+                }
+            }
+
             // 5% variance
-            damage *= 1 + ((Math.random() - .5) / 10.);
+            damage *= (1 + ((Math.random() - .5) / 10.));
 
             // Now we can put this value on the arrow to modify later in a different event
             event.getProjectile().setMetadata(ARROW_DMG_METANAME, new FixedMetadataValue(plugin, damage));
@@ -287,7 +301,7 @@ public class GlobalDamageManager implements Listener {
     @EventHandler
     public void onFallingInVoid(PlayerMoveEvent event) {
         if (event.getTo() != null && event.getTo().getY() < -300) {
-            event.getPlayer().damage(event.getTo().getY() * -1 / 3);
+            event.getPlayer().damage(event.getTo().getY() * -1);
         }
     }
 

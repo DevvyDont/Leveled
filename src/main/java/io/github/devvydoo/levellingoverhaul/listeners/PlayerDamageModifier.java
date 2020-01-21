@@ -5,10 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -23,6 +20,115 @@ public class PlayerDamageModifier implements Listener {
 
     public PlayerDamageModifier(LevellingOverhaul plugin) {
         this.plugin = plugin;
+    }
+
+    private double calculateEntityDamage(LivingEntity entity, EntityDamageEvent.DamageCause cause){
+
+        int mobLevel = plugin.getMobManager().getMobLevel(entity);
+        double onLevelPlayerMaxHP = plugin.getHpManager().calculateBaseHealth(mobLevel);
+        double damagePercent;
+        switch (entity.getType()){
+            case HUSK:
+            case ZOMBIE:
+            case ZOMBIE_VILLAGER:
+            case DROWNED:
+            case EVOKER:
+            case STRAY:
+                damagePercent = .25;
+                break;
+            case SKELETON:
+                damagePercent = .15;
+                break;
+            case SPIDER:
+            case CAVE_SPIDER:
+            case SHULKER:
+            case SHULKER_BULLET:
+            case BLAZE:
+                damagePercent = .10;
+                break;
+            case CREEPER:
+                // TODO: Make scale based on distance
+                damagePercent = .6;
+                if (((Creeper) entity).isPowered()) { damagePercent += .2; }
+                break;
+            case ENDERMAN:
+            case ILLUSIONER:
+                damagePercent = .30;
+                break;
+            case SILVERFISH:
+            case BEE:
+                damagePercent = .05;
+                break;
+            case PHANTOM:
+                damagePercent = .08;
+                break;
+            case SLIME:
+            case MAGMA_CUBE:
+                Slime s = (Slime) entity;
+                damagePercent = .02;
+                if (s instanceof MagmaCube) { damagePercent *= 2; }
+                damagePercent *= (s.getSize() + 1);
+                break;
+            case WITHER_SKELETON:
+                damagePercent = .2;
+                break;
+            case PIG_ZOMBIE:
+                damagePercent = .23;
+                break;
+            case GHAST:
+                damagePercent = .40;
+                break;
+            case RAVAGER:
+                damagePercent = .85;
+                break;
+            case VINDICATOR:
+                damagePercent = .80;
+                break;
+            case PILLAGER:
+                damagePercent = .25;
+                break;
+            case GUARDIAN:
+                damagePercent = .18;
+                break;
+            case VEX:
+                damagePercent = .70;
+                break;
+            case POLAR_BEAR:
+            case PANDA:
+                damagePercent = .35;
+                break;
+            case FOX:
+            case WOLF:
+                damagePercent = .03;
+                break;
+            case LLAMA:
+                damagePercent = .02;
+                break;
+            case ENDERMITE:
+                damagePercent = .07;
+                break;
+            case IRON_GOLEM:
+                damagePercent = .60;
+                break;
+            case PUFFERFISH:
+                damagePercent = .01;
+                break;
+            case ENDER_DRAGON:
+            case WITHER:
+            case ELDER_GUARDIAN:
+                damagePercent = .5;
+                break;
+            default:
+                System.out.println("[PlayerDamageModifer] Came across unknown entity to calculate damage for: " + entity.getType());
+                damagePercent = .005;
+                break;
+        }
+
+        double damage = damagePercent * onLevelPlayerMaxHP;
+        double expectedResist = mobLevel / 200.;
+        damage *= (1 + ((Math.random() - .5) / 10));
+        damage *= (1 + expectedResist);
+        return damage;
     }
 
     /**
@@ -160,6 +266,8 @@ public class PlayerDamageModifier implements Listener {
             return;
         }
 
+
+
         // Find the source, if we don't have living entity or projectile, we don't care
         LivingEntity source;
         if (event.getDamager() instanceof LivingEntity) {
@@ -170,32 +278,20 @@ public class PlayerDamageModifier implements Listener {
             return;
         }
 
-        // PVP will be handled somewhere else
-        if (event.getEntity() instanceof Player && source instanceof Player) {
+        // We don't care for players doing damage
+        if (source instanceof Player){
             return;
         }
 
         // Get the level of the attacker
-        int attackerLevel;
-        double damageMultiplier = 1;
+        double newDamage;
 
-        // We will increase damage for mobs based on level, and decrease damage done on mobs by players that are underleveled and thats it
-        if (!(source instanceof Player)) {
-            attackerLevel = plugin.getMobManager().getMobLevel(source);
-            damageMultiplier += attackerLevel / (Math.random() * 3. + 6);  // lvl 15 does double dmg basically
-        } else if (!(event.getEntity() instanceof Player)) {  // We already know we have a player here
-            attackerLevel = ((Player) source).getLevel();
-            int attackedLevel = plugin.getMobManager().getMobLevel(source);
-            if (attackerLevel < attackedLevel) {  // If a player attacked a mob higher then them
-                damageMultiplier -= (attackedLevel - attackerLevel) * .01;  // Take lvlDiff % off damage
-            }
-        }
+        // Calculates damage based on damage type, and the entity doing the damage, generally, the damage will be the % of a players max HP at the same level of the mob i.e. zombie does 15% damage to player on level
+        newDamage = calculateEntityDamage(source, event.getCause());
 
         // Sanity check
-        if (damageMultiplier < .01) {
-            damageMultiplier = .01;
-        }
-        event.setDamage(event.getDamage() * damageMultiplier);
+        if (newDamage < 0) { newDamage = 0; }
+        event.setDamage(newDamage);
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -237,7 +333,7 @@ public class PlayerDamageModifier implements Listener {
             Entity thornsOwner = ((EntityDamageByEntityEvent) event).getDamager();
             if (thornsOwner instanceof LivingEntity){
                 int level = plugin.getMobManager().getMobLevel((LivingEntity) thornsOwner);
-                double newDamage = level * 10;
+                double newDamage = level * 2;
 
                 double percentResisted = getPlayerDamageResist(player);
                 double percentProtResist = getPlayerProtectionResist(player, false);
@@ -250,13 +346,12 @@ public class PlayerDamageModifier implements Listener {
         } else {
             // Here the player is being hit by things that armor should resist, here's how armor works:
             // Every armor has a base % value to subtract off of the total damage, prot will be flat dmg reduction
-//            event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
-//            event.setDamage(EntityDamageEvent.DamageModifier.MAGIC, 0);
+            event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
+            event.setDamage(EntityDamageEvent.DamageModifier.MAGIC, 0);
             double percentResisted = getPlayerDamageResist(player);
             double percentProtResist = getPlayerProtectionResist(player, event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE));
             double newDamage = event.getDamage() * (1 - percentResisted - percentProtResist);
             if (newDamage < 1) { newDamage = 1; }
-
             event.setDamage(newDamage);
         }
     }

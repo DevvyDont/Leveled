@@ -542,7 +542,7 @@ public final class CustomEnchantments {
             case EXPERIENCED:
                 return "Increases chance to receive bonus experience from mining and mobs";
             case GROWTH:
-                return "Increases Max HP";
+                return "Increases Max HP by a percentage";
             case SMARTY_PANTS:
                 return "Increases XP gained from advancements";
             case SMELTING_TOUCH:

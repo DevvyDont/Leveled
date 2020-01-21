@@ -64,7 +64,7 @@ public class PlayerHealthManager implements Listener {
         double growthFactor = calculateGrowthFactor(player);
         // Best growth currently is Growth 5 x 4, so best HP we can have is 20 * 15 which equals 300 extra HP
         player.setHealthScale(20 + growthFactor);
-        return growthFactor * 15;
+        return growthFactor * .005 * calculateBaseHealth(player.getLevel());
     }
 
     @EventHandler
@@ -137,6 +137,7 @@ public class PlayerHealthManager implements Listener {
      * @return a double amount representing how much base hp a level should have
      */
     public double calculateBaseHealth(int level) {
-        return baseHP + ((level - 1) * 12);  // 100 + 12x where x is level - 1
+        if (level == 1) { return 100; }
+        return baseHP + (Math.floor(Math.pow(level, 1.845142)));  // 100 + 12x where x is level - 1
     }
 }

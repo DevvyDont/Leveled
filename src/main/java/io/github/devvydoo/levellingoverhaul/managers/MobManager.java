@@ -79,6 +79,92 @@ public class MobManager implements Listener {
         return entityToLevelMap;
     }
 
+    private double calculateEntityHealth(LivingEntity entity, int level){
+
+        double baseHP = 50;
+
+        if (level < 5) {  }
+        else if (level < 15) { baseHP = 80; }
+        else if (level < 25) { baseHP = 120; }
+        else if (level < 30) { baseHP = 200; }
+        else if (level < 36) { baseHP = 265; }
+        else if (level < 40) { baseHP = 350; }
+        else { baseHP = Math.pow(level, 2) - Math.pow(level, 1.9205); }
+
+        double multiplier;
+
+        switch (entity.getType()) {
+
+
+
+            // Babies
+            case SILVERFISH:
+            case BEE:
+            case VEX:
+            case ENDERMITE:
+            case PUFFERFISH:
+                multiplier = .5;
+                break;
+
+            // Small tier
+            case CREEPER:
+            case EVOKER:
+            case SPIDER:
+            case CAVE_SPIDER:
+            case SHULKER:
+            case PHANTOM:
+            case GHAST:
+            case POLAR_BEAR:
+            case PANDA:
+            case FOX:
+            case WOLF:
+            case LLAMA:
+                multiplier = .75;
+                break;
+
+
+            // Mid tier
+            case HUSK:
+            case ZOMBIE:
+            case ZOMBIE_VILLAGER:
+            case DROWNED:
+            case SKELETON:
+            case STRAY:
+            case BLAZE:
+            case ILLUSIONER:
+            case PIG_ZOMBIE:
+            case VINDICATOR:
+            case PILLAGER:
+            case GUARDIAN:
+            case WITCH:
+                multiplier = 1;
+                break;
+
+            // High tier
+            case ENDERMAN:
+            case WITHER_SKELETON:
+            case RAVAGER:
+            case IRON_GOLEM:
+                multiplier = 1.35;
+                break;
+
+            // Special cases
+            case SLIME:
+            case MAGMA_CUBE:
+                int size = ((Slime) entity).getSize() + 1;
+                multiplier = .2 + size * 2;
+                break;
+
+            default:
+                System.out.println(ChatColor.YELLOW + "[MobManager] Came across unexpected entity for HP calculation: " + entity.getType());
+                multiplier = 1;
+                break;
+        }
+
+        multiplier += ((Math.random() - .5) / 10.);
+        return baseHP * multiplier;
+    }
+
     private int getAveragePlayerLevel(LivingEntity entity, int distance, boolean wantYModifier, int levelCap) {
         int totalLevels = 1;
         int numPlayers = 0;
@@ -194,61 +280,39 @@ public class MobManager implements Listener {
             case DROWNED:
                 level = getAveragePlayerLevel(entity, 250, true, 80);
 
-                if (level <= 25) {
-                } else if (level <= 30) {
-                    entity.getEquipment().setItemInMainHand(new ItemStack(Material.STONE_SWORD));
-                } else if (level <= 35) {
-                    entity.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD));
-                } else if (level <= 40) {
-                    entity.getEquipment().setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD));
-                } else {
+                if (level <= 25) { }
+                else if (level <= 30) { entity.getEquipment().setItemInMainHand(new ItemStack(Material.STONE_SWORD)); }
+                else if (level <= 35) { entity.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD)); }
+                else if (level <= 40) { entity.getEquipment().setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD)); }
+                else {
                     ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
-                    sword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 - 15);
+                    sword.addEnchantment(Enchantment.DURABILITY, 1);
                     entity.getEquipment().setItemInMainHand(sword);
-                    entity.getEquipment().setItemInMainHandDropChance(0);  // NEVER ALLOW IT TO DROP
                     entity.getEquipment().setHelmet(new ItemStack(Material.LEATHER_HELMET));
                 }
-                expectedHP = level / 1.3 + (Math.random() * 5) + 7;
-                expectedHP *= 5;
+                entity.getEquipment().setItemInMainHandDropChance(0);  // NEVER ALLOW IT TO DROP
+                expectedHP = calculateEntityHealth(entity, level);
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 return level;
             case CAVE_SPIDER:
             case SPIDER:
                 level = getAveragePlayerLevel(entity, 250, true, 80);
-                if (level <= 30) {
-                    entity.getEquipment().setItemInMainHand(new ItemStack(Material.STONE_SWORD));
-                } else if (level <= 35) {
-                    entity.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD));
-                } else if (level <= 40) {
-                    entity.getEquipment().setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD));
-                } else {
-                    ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
-                    sword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 - 15);
-                    entity.getEquipment().setItemInMainHand(sword);
-                    entity.getEquipment().setItemInMainHandDropChance(0);  // NEVER ALLOW IT TO DROP
-                }
-
-                expectedHP = level / 1.7 + (Math.random() * 5) + 5;
-                expectedHP *= 5;
+                expectedHP = calculateEntityHealth(entity, level);
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
-                if (level > 30) {
-                    entity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999, level / 30));
-                }
+                if (level > 30) { entity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999, level / 30)); }
                 return level;
             case SKELETON:
                 level = getAveragePlayerLevel(entity, 250, true, 80);
                 if (level > 25) {
                     ItemStack bow = new ItemStack(Material.BOW);
-                    bow.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, level / 2 - 11);
+                    bow.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
                     entity.getEquipment().setItemInMainHand(bow);
                     entity.getEquipment().setItemInMainHandDropChance(0);
                     entity.getEquipment().setHelmet(new ItemStack(Material.LEATHER_HELMET));
                 }
-
-                expectedHP = level / 1.3 + (Math.random() * 5) + 7;
-                expectedHP *= 5;
+                expectedHP = calculateEntityHealth(entity, level);
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 return level;
@@ -263,39 +327,34 @@ public class MobManager implements Listener {
                     creeper.setPowered(true);
                 }
                 creeper.setMaxFuseTicks((int) (level > 80 ? 2 : 40 - level / 3.));
-                expectedHP = 100 + (level * 2);
+                expectedHP = calculateEntityHealth(entity, level);
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 return level;
             case ENDERMAN:
-                if (entity.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
-                    level = (int) (Math.random() * 16 + 40);  // ~ 40 - 55 in overworld
-                } else if (entity.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
-                    level = (int) (Math.random() * 25 + 45);  // ~ 45 - 70 in nether
-                } else {
+                if (entity.getWorld().getEnvironment().equals(World.Environment.NORMAL)) { level = (int) (Math.random() * 16 + 40); }  // ~ 40 - 55 in overworld
+                else if (entity.getWorld().getEnvironment().equals(World.Environment.NETHER)) { level = (int) (Math.random() * 25 + 45); } // ~ 45 - 70 in nether
+                else {
                     Biome biome = entity.getLocation().getBlock().getBiome();
-                    if (biome.equals(Biome.THE_END)) {
-                        level = (int) (Math.random() * 5 + 58);
-                    } else if (biome.equals(Biome.END_HIGHLANDS)) {
-                        level = (int) (Math.random() * 5 + 67);
-                    } else if (biome.equals(Biome.END_MIDLANDS)) {
-                        level = (int) (Math.random() * 5 + 63);
-                    } else {
-                        level = (int) (Math.random() * 5 + 70);
-                    }
+                    if (biome.equals(Biome.THE_END)) { level = (int) (Math.random() * 5 + 58); }
+                    else if (biome.equals(Biome.END_HIGHLANDS)) { level = (int) (Math.random() * 5 + 67); }
+                    else if (biome.equals(Biome.END_MIDLANDS)) { level = (int) (Math.random() * 5 + 63); }
+                    else { level = (int) (Math.random() * 5 + 70); }
                 }
-                expectedHP = level / 1.1 + (Math.random() * 5) + 15;
-                expectedHP *= 5;
+                expectedHP = calculateEntityHealth(entity, level);
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
-                sword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 + 6);
                 sword.addUnsafeEnchantment(Enchantment.KNOCKBACK, 3);
                 entity.getEquipment().setItemInMainHand(sword);
                 entity.getEquipment().setItemInMainHandDropChance(0);
                 return level;
             case SHULKER:
-                return (int) (Math.random() * 6 + 60);
+                level = (int) (Math.random() * 6 + 60);
+                expectedHP = calculateEntityHealth(entity, level);
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
+                return level;
             case ENDER_DRAGON:
             case WITHER:
             case ELDER_GUARDIAN:
@@ -315,95 +374,69 @@ public class MobManager implements Listener {
                 }
                 return level;
             case PILLAGER:
-                return (int) (Math.random() * 5 + 25);
+            case GUARDIAN:
+                level = (int) (Math.random() * 5 + 25);
+                expectedHP = calculateEntityHealth(entity, level);
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
+                return level;
             case VINDICATOR:
             case RAVAGER:
-                return (int) (Math.random() * 5 + 30);
+                level = (int) (Math.random() * 5 + 30);
+                expectedHP = calculateEntityHealth(entity, level);
+                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+                entity.setHealth(expectedHP);
+                return level;
             case PIG_ZOMBIE:
                 level = getAveragePlayerLevel(entity, 250, false, 60) + ((int) (Math.random() * 6));
-                expectedHP = level / 1.4 + (Math.random() * 5) + 10;
-                expectedHP *= 5;
+                expectedHP = calculateEntityHealth(entity, level);
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 ItemStack goldSword = new ItemStack(Material.GOLDEN_SWORD);
-                goldSword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 + 1);
+                goldSword.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
                 entity.getEquipment().setItemInMainHand(goldSword);
                 entity.getEquipment().setItemInMainHandDropChance(0);
                 return level;
             case MAGMA_CUBE:
-                MagmaCube mc = (MagmaCube) entity;
-                level = getAveragePlayerLevel(entity, 250, false, 60) + ((int) (Math.random() * 6));
-                expectedHP = level / 5. * (Math.random() + 1) * (mc.getSize() / 1.5);
-                expectedHP *= 5;
-                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
-                entity.setHealth(expectedHP);
-                return level;
             case GHAST:
             case BLAZE:
                 level = getAveragePlayerLevel(entity, 250, false, 60) + ((int) (Math.random() * 6));
-                expectedHP = level / 1.2 + (Math.random() * 5) + 8;
-                expectedHP *= 5;
+                expectedHP = calculateEntityHealth(entity, level);
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 return level;
             case WITHER_SKELETON:
                 level = getAveragePlayerLevel(entity, 250, false, 70) + ((int) (Math.random() * 6));
-                expectedHP = level / .8 + (Math.random() * 5) + 7;
-                expectedHP *= 5;
+                expectedHP = calculateEntityHealth(entity, level);
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 ItemStack stoneSword = new ItemStack(Material.STONE_SWORD);
-                stoneSword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 + 9);
+                stoneSword.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
                 entity.getEquipment().setItemInMainHand(stoneSword);
                 entity.getEquipment().setItemInMainHandDropChance(0);
                 return level;
-            case GUARDIAN:
-                level = (int) (Math.random() * 5 + 25);
-                return level;
             case SLIME:
-                level = getAveragePlayerLevel(entity, 250, true, 80);
-                if (level > 25) {
-                    ItemStack s = new ItemStack(Material.STONE_SWORD);
-                    s.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 - 11);
-                    entity.getEquipment().setItemInMainHand(s);
-                    entity.getEquipment().setItemInMainHandDropChance(0);
-                }
-                expectedHP = level / 3. + (Math.random() * 5) + 7;
-                expectedHP *= 5;
-                if (((Slime) entity).getSize() > 0) {
-                    expectedHP *= ((Slime) entity).getSize();
-                }
-                entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
-                entity.setHealth(expectedHP);
-                return level;
             case SILVERFISH:
                 level = getAveragePlayerLevel(entity, 250, true, 80);
-                if (level > 20) {
-                    ItemStack s = new ItemStack(Material.STONE_SWORD);
-                    s.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, level / 2 - 11);
-                    entity.getEquipment().setItemInMainHand(s);
-                    entity.getEquipment().setItemInMainHandDropChance(0);
-                }
-                expectedHP = level / 2. + (Math.random() * 5) + 3;
-                expectedHP *= 5;
+                expectedHP = calculateEntityHealth(entity, level);
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 return level;
             case WITCH:
             case PHANTOM:
-                level = 15;
-                expectedHP = Math.random() * 10 + 15;
-                expectedHP *= 5;
+                level = 15;  // TODO: Make scale on target
+                expectedHP = calculateEntityHealth(entity, level);
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 return level;
             case CHICKEN:
             case SALMON:
             case RABBIT:
-                expectedHP = 30;
+                level = 1;
+                expectedHP = 5 * Math.random() + 15;
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
-                return 1;
+                return level;
             default:
                 expectedHP = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue() * 2.5;
                 if (expectedHP > 10000) {
