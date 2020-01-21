@@ -156,7 +156,7 @@ public class EnchantingInterface implements Listener {
             case IRON_HELMET:
             case TURTLE_HELMET:
             case FISHING_ROD:
-            case ELYTRA:
+//            case ELYTRA:  // TODO: Add enchants for elytra
             case SHEARS:
             case FLINT_AND_STEEL:
                 return true;
@@ -199,6 +199,10 @@ public class EnchantingInterface implements Listener {
         EnchantmentCalculator calculator = new EnchantmentCalculator(player.getLevel(), qualityFactor, item);
         ArrayList<PotentialEnchantment> potentialEnchantments = calculator.calculateEnchantmentTypes();
         HashMap<PotentialEnchantment, Integer> enchantLevels = calculator.calculateEnchantmentLevels(potentialEnchantments);
+
+        if (enchantLevels.isEmpty()) {
+            System.out.println(ChatColor.RED + "[Enchanting] ERROR: Enchanting interface attempted to enchant item: " + item.getType() + " and didn't roll any enchantments!");
+        }
 
         for (PotentialEnchantment enchantment : enchantLevels.keySet()) {
             if (enchantment.getEnchantType() instanceof Enchantment) {
@@ -361,6 +365,7 @@ public class EnchantingInterface implements Listener {
                         // Do we have an enchantable item?
                         if (canBeEnchanted(gui.getItem(EQUIPMENT_SLOT))) {
                             ItemStack newItem = enchantItem(player, player.getTargetBlockExact(10), gui.getItem(EQUIPMENT_SLOT)); // Enchant
+                            if (newItem.getEnchantments().isEmpty() && CustomEnchantments.getCustomEnchantments(newItem).isEmpty()){ return; }
                             CustomEnchantments.setItemLevel(newItem, player.getLevel());
                             gui.setItem(EQUIPMENT_SLOT, newItem);
                             if (lapisBeforeClick <= getLapisRequired(player.getLevel())) {

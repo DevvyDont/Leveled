@@ -103,7 +103,7 @@ public class EnchantmentCalculator {
         enchs.add(new PotentialEnchantment(Enchantment.DIG_SPEED, 30, BaseExperience.LEVEL_CAP, 15));
         enchs.add(new PotentialEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 30, BaseExperience.LEVEL_CAP, 10));
         enchs.add(new PotentialEnchantment(Enchantment.SILK_TOUCH, 30, BaseExperience.LEVEL_CAP, 1));
-        enchs.add(new PotentialEnchantment(Enchantment.DURABILITY, 30, BaseExperience.LEVEL_CAP, 15));
+        enchs.add(new PotentialEnchantment(Enchantment.DURABILITY, 30, BaseExperience.LEVEL_CAP, 14));
         enchs.add(new PotentialEnchantment(Enchantment.LUCK, 30, BaseExperience.LEVEL_CAP, 10));
         enchs.add(new PotentialEnchantment(Enchantment.LURE, 30, BaseExperience.LEVEL_CAP, 10));
 
@@ -237,6 +237,17 @@ public class EnchantmentCalculator {
             }
             if (levelToGive > upperBound) {
                 levelToGive = upperBound;
+            }
+
+            // Kinda hacky because im too lazy to register a custom child enchant class to force enchant glint, so instead
+            // unbreaking 1 is considered default enchanted gear, we are going to display unbreaking - 1 tho on the lore
+
+            // If we actually did roll unbreaking though, give them +1 of the actual level
+            if (enchantment.getEnchantType() instanceof Enchantment){
+                Enchantment e = (Enchantment) enchantment.getEnchantType();
+                if (e.getKey().toString().equals("minecraft:unbreaking")){
+                    levelToGive++;
+                }
             }
 
             enchantmentToLevel.put(enchantment, levelToGive);

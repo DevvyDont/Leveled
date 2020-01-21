@@ -125,6 +125,11 @@ public final class CustomEnchantments {
 
         ItemMeta meta = item.getItemMeta();
 
+        // This is a way to display the glint, by default we aren't going to display level 1 unbreaking
+        if (item.getEnchantmentLevel(Enchantment.DURABILITY) == 0){
+            item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+        }
+
         // Again, this is possible, don't know when or why or how, but check them just in case
         if (meta == null) {
             return;
@@ -300,17 +305,23 @@ public final class CustomEnchantments {
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         ArrayList<String> newLore = new ArrayList<>();
 
+        for (Enchantment enchantment : vanillaEnchantments.keySet()) {
+            int levelDisplay = vanillaEnchantments.get(enchantment);
+            // Since unbreaking 1 is a 'fake' enchantment, skip over it if applicable, otherwise subtract one from display
+            if (enchantment.getKey().toString().equals("minecraft:unbreaking")) {
+                if (vanillaEnchantments.get(enchantment) == 1) { continue; }
+                levelDisplay--;
+            }
+            newLore.add("");  // Basically a newline
+            newLore.add(String.format(ChatColor.BLUE + "%s %d", WordUtils.capitalize(enchantment.getKey().toString().replace("minecraft:", "").replace('_', ' ')), levelDisplay));
+            newLore.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment));
+        }
+
         // Now add the new lore
         for (CustomEnchantment enchantment : customEnchantments) {
             newLore.add("");  // Basically a newline
             newLore.add(CustomEnchantment.getLoreContent(enchantment.getType(), enchantment.getLevel()));
             newLore.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment.getType()));
-        }
-
-        for (Enchantment enchantment : vanillaEnchantments.keySet()) {
-            newLore.add("");  // Basically a newline
-            newLore.add(String.format(ChatColor.BLUE + "%s %d", WordUtils.capitalize(enchantment.getKey().toString().replace("minecraft:", "").replace('_', ' ')), vanillaEnchantments.get(enchantment)));
-            newLore.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment));
         }
 
         meta.setLore(newLore);

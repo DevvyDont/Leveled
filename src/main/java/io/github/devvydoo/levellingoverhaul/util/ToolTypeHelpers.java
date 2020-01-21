@@ -1,6 +1,7 @@
 package io.github.devvydoo.levellingoverhaul.util;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 
@@ -96,6 +97,38 @@ public final class ToolTypeHelpers {
         list.add(Material.CHAINMAIL_BOOTS);
         list.add(Material.GOLDEN_BOOTS);
         list.add(Material.DIAMOND_BOOTS);
+    }
+
+    public static boolean isArmor(ItemStack itemStack){
+
+        switch (itemStack.getType()){
+            case DIAMOND_CHESTPLATE:
+            case DIAMOND_LEGGINGS:
+            case DIAMOND_HELMET:
+            case DIAMOND_BOOTS:
+            case IRON_CHESTPLATE:
+            case IRON_LEGGINGS:
+            case IRON_HELMET:
+            case IRON_BOOTS:
+            case CHAINMAIL_CHESTPLATE:
+            case CHAINMAIL_LEGGINGS:
+            case CHAINMAIL_HELMET:
+            case CHAINMAIL_BOOTS:
+            case GOLDEN_CHESTPLATE:
+            case GOLDEN_LEGGINGS:
+            case GOLDEN_HELMET:
+            case GOLDEN_BOOTS:
+            case LEATHER_CHESTPLATE:
+            case LEATHER_LEGGINGS:
+            case LEATHER_HELMET:
+            case TURTLE_HELMET:
+            case LEATHER_BOOTS:
+            case ELYTRA:
+                return true;
+            default:
+                return false;
+        }
+
     }
 
 
