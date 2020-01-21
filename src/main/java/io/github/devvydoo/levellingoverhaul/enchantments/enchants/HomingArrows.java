@@ -12,9 +12,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashMap;
+
 public class HomingArrows implements Listener {
 
     private LevellingOverhaul plugin;
+    private HashMap<Player, Long> homingArrowCooldown = new HashMap<>();
 
     public HomingArrows(LevellingOverhaul plugin) {
         this.plugin = plugin;
@@ -24,7 +27,14 @@ public class HomingArrows implements Listener {
     public void onArrowShoot(EntityShootBowEvent event) {
 
         if (event.getEntity() instanceof Player && event.getProjectile() instanceof Arrow) {
+
             Player player = (Player) event.getEntity();
+
+            if (homingArrowCooldown.containsKey(player)) {
+                if (homingArrowCooldown.get(player) > System.currentTimeMillis()){
+                    return;
+                }
+            }
 
             int homingLevel;
             try {
@@ -32,6 +42,8 @@ public class HomingArrows implements Listener {
             } catch (IllegalArgumentException ignored) {
                 return;
             }
+
+            homingArrowCooldown.put(player, System.currentTimeMillis() + 2000);
 
             int tickFrequency = 4 - homingLevel;
             if (tickFrequency <= 0) {
