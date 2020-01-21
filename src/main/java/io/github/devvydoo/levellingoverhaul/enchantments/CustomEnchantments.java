@@ -125,11 +125,6 @@ public final class CustomEnchantments {
 
         ItemMeta meta = item.getItemMeta();
 
-        // This is a way to display the glint, by default we aren't going to display level 1 unbreaking
-        if (item.getEnchantmentLevel(Enchantment.DURABILITY) == 0){
-            item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-        }
-
         // Again, this is possible, don't know when or why or how, but check them just in case
         if (meta == null) {
             return;

@@ -4,6 +4,7 @@ package io.github.devvydoo.levellingoverhaul.enchantments.calculator;
 import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levellingoverhaul.enchantments.CustomEnchantments;
 import io.github.devvydoo.levellingoverhaul.util.ToolTypeHelpers;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
@@ -79,6 +80,7 @@ public class PotentialEnchantment {
             Enchantment enchant = (Enchantment) enchantType;
             // Override armor to not be able to receive unbreaking. armor in this plugin is unbreakable.
             if (ToolTypeHelpers.isArmor(itemStack) && enchant.getKey().toString().equals("minecraft:unbreaking")) { return false; }
+            if ((itemStack.getType().equals(Material.BOW) || itemStack.getType().equals(Material.CROSSBOW)) && enchant.getKey().toString().equals("minecraft:unbreaking")) { return true; }
             return enchant.canEnchantItem(itemStack);
         } else if (enchantType instanceof CustomEnchantType) {
             CustomEnchantType type = (CustomEnchantType) enchantType;

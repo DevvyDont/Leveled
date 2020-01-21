@@ -367,6 +367,7 @@ public class EnchantingInterface implements Listener {
                             ItemStack newItem = enchantItem(player, player.getTargetBlockExact(10), gui.getItem(EQUIPMENT_SLOT)); // Enchant
                             if (newItem.getEnchantments().isEmpty() && CustomEnchantments.getCustomEnchantments(newItem).isEmpty()){ return; }
                             CustomEnchantments.setItemLevel(newItem, player.getLevel());
+                            if (newItem.getEnchantmentLevel(Enchantment.DURABILITY) < 1) { newItem.addEnchantment(Enchantment.DURABILITY, 1); }
                             gui.setItem(EQUIPMENT_SLOT, newItem);
                             if (lapisBeforeClick <= getLapisRequired(player.getLevel())) {
                                 gui.setItem(LAPIS_SLOT, new ItemStack(Material.AIR));
