@@ -68,6 +68,7 @@ public class TipAnnounceManager {
         tips.add(String.format("Pickaxes with %sSilk Touch %scannot gain experience, however pickaxes with %sSmelting Touch %scan gain experience from Iron Ore and Gold Ore!", ChatColor.LIGHT_PURPLE, ChatColor.GRAY, ChatColor.LIGHT_PURPLE, ChatColor.GRAY));
         tips.add(String.format("Higher level %screepers%s explode much quicker and have a chance to %sspawn charged%s. Be careful!", ChatColor.DARK_GREEN, ChatColor.GRAY, ChatColor.AQUA, ChatColor.GRAY));
         tips.add(String.format("Some mobs spawn in at a fixed level, such as %sEndermen%s. If you are a %slow level%s, it would probably be smart to not mess with the Endermen yet...", ChatColor.DARK_PURPLE, ChatColor.GRAY, ChatColor.RED, ChatColor.GRAY));
+        tips.add(String.format("%sWant to make a change or see how the plugin works? See the %ssource code %sat:%s https://github.com/DevvyDoo/Leveling-Overhaul", ChatColor.GRAY, ChatColor.GREEN, ChatColor.GRAY, ChatColor.BLUE));
         new AnnounceTipTask(tips).runTaskTimerAsynchronously(plugin, TIP_TICK_DELAY, TIP_TICK_DELAY);
     }
 

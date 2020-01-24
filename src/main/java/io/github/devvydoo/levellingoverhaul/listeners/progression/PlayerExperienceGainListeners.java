@@ -64,40 +64,13 @@ public class PlayerExperienceGainListeners implements Listener {
      * @param event - The EntityDamageByEntityEvent event we are listening to
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerKillEntity(EntityDamageByEntityEvent event) {
+    public void onPlayerKillEntity(EntityDeathEvent event) {
 
-        // Was the entity living?
-        if (!(event.getEntity() instanceof LivingEntity)) {
-            return;
-        }
+        // Did the entity have a killer?
+        if (event.getEntity().getKiller() == null){ return; }
 
-        LivingEntity livingEntity = (LivingEntity) event.getEntity();
-
-        // Is the entity going to die?
-        if (livingEntity.getHealth() - event.getFinalDamage() > 0) {
-            return;
-        }
-
-        // Are they dying to a player or an arrow?
-        if (!(event.getDamager() instanceof Player || event.getDamager() instanceof Arrow)) {
-            return;
-        }
-        Player player;
-        // Are they dying to a player shooting an arrow?
-        if (event.getDamager() instanceof Arrow) {
-            Arrow arrow = (Arrow) event.getDamager();
-
-            // If a player didn't shoot the arrow, we don't care
-            if (!(arrow.getShooter() instanceof Player)) {
-                return;
-            }
-
-            player = (Player) arrow.getShooter();
-        } else {
-            // We know that we are dying straight from a player.
-            player = (Player) event.getDamager();
-        }
-
+        Player player = event.getEntity().getKiller();
+        LivingEntity livingEntity = event.getEntity();
 
         // Does the player even need xp? i.e. are they max level
         if (player.getLevel() >= BaseExperience.LEVEL_CAP) {

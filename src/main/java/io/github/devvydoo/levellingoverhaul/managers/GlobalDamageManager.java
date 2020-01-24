@@ -106,8 +106,10 @@ public class GlobalDamageManager implements Listener {
         // First let's get a base setup for how much certain weapons should do
         double baseDamage = getMeleeWeaponBaseDamage(tool.getType());
         if (playerMeleeCooldownMap.containsKey(player)) {
-            if (System.currentTimeMillis() < playerMeleeCooldownMap.get(player)) {
-                baseDamage *= (double) (System.currentTimeMillis() / playerMeleeCooldownMap.get(player));
+            long msLeft = playerMeleeCooldownMap.get(player) - System.currentTimeMillis();
+            if (msLeft > 0) {
+                double dmgMultiplier = msLeft / 1000.;
+                baseDamage *= dmgMultiplier;
             }
         }
         long cooldownMs = 625;

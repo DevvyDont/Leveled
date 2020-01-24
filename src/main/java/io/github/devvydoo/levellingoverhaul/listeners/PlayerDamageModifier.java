@@ -249,6 +249,22 @@ public class PlayerDamageModifier implements Listener {
         return resist / 100.;
     }
 
+    /**
+     * Calculates the % resist a player should resist from fire and lava damage
+     *
+     * @param player The player we are calculating fire resistance for
+     */
+    private double getPlayerFireResistancePercent(Player player){
+
+        PlayerInventory inventory = player.getInventory();
+        double resist = 0;
+        if (inventory.getHelmet() != null) { resist += .015 * inventory.getHelmet().getEnchantmentLevel(Enchantment.PROTECTION_FIRE); }
+        if (inventory.getChestplate() != null) { resist += .015 * inventory.getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_FIRE); }
+        if (inventory.getLeggings() != null) { resist += .015 * inventory.getLeggings().getEnchantmentLevel(Enchantment.PROTECTION_FIRE); }
+        if (inventory.getBoots() != null) { resist += .015 * inventory.getBoots().getEnchantmentLevel(Enchantment.PROTECTION_FIRE); }
+        return resist;
+    }
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerGotHitByMob(EntityDamageByEntityEvent event) {
 
@@ -319,8 +335,8 @@ public class PlayerDamageModifier implements Listener {
             if (event.getDamage() < fivePercentHP) {
                 event.setDamage(fivePercentHP);
             }
-        } else if (event.getCause().equals(EntityDamageEvent.DamageCause.FIRE)) { event.setDamage(fivePercentHP * 3); }
-        else if (event.getCause().equals(EntityDamageEvent.DamageCause.LAVA)) { event.setDamage(fivePercentHP * 5); }
+        } else if (event.getCause().equals(EntityDamageEvent.DamageCause.FIRE)) { event.setDamage((1 - getPlayerFireResistancePercent(player)) * fivePercentHP * 3); }
+        else if (event.getCause().equals(EntityDamageEvent.DamageCause.LAVA)) { event.setDamage((1 - getPlayerFireResistancePercent(player)) * fivePercentHP * 5); }
         else if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
             int blocksFallen = (int) ((event.getDamage() / 5) - 3) / 2;
             if (blocksFallen <= 0) {
