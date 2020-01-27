@@ -73,9 +73,9 @@ public class PlayerHealthManager implements Listener {
         // Figure out what the player should have and set that
         event.getPlayer().setHealthScale(20);
         event.getPlayer().setHealthScaled(false);
-        double percentBeforeJoin = event.getPlayer().getHealth() / event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
-        double hpToSet = event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() * percentBeforeJoin;
+        double percentBeforeJoin = event.getPlayer().getHealth() / event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
         event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(calculatePlayerExpectedHealth(event.getPlayer()));
+        double hpToSet = event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * percentBeforeJoin;
         event.getPlayer().setHealth(hpToSet);
         // Always no matter what display 10 hearts no matter the HP
         new BukkitRunnable() {
