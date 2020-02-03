@@ -6,4 +6,12 @@ public class BossManager {
         return (Math.pow(level, 4) / 156.5) + (Math.pow(level, 3) / 5.) - 102083.082;
     }
 
+    public double calculateWitherHealth(int level){
+        return calculateEnderDragonHealth(level);
+    }
+
+    public double calculateElderGuardianHealth(int level){
+        return calculateEnderDragonHealth(level);
+    }
+
 }

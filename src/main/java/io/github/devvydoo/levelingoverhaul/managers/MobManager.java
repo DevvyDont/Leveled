@@ -355,9 +355,9 @@ public class MobManager implements Listener {
                 entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
                 entity.setHealth(expectedHP);
                 return level;
+            case WITHER:  // TODO: Give custom logic
+            case ELDER_GUARDIAN: // TODO: Give custom logic
             case ENDER_DRAGON:
-            case WITHER:
-            case ELDER_GUARDIAN:
                 level = 2;
                 int totalPlayerLevels = 0;
                 int numPlayers = entity.getWorld().getPlayers().size();
