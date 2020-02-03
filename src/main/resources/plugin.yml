@@ -1,6 +1,6 @@
 name: LevellingOverhaul
 version: ${project.version}
-main: io.github.devvydoo.levellingoverhaul.LevellingOverhaul
+main: io.github.devvydoo.levelingoverhaul.LevelingOverhaul
 api-version: 1.13
 commands:
   mob:
