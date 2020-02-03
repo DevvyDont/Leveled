@@ -21,6 +21,7 @@ public class PlayerHealthManager implements Listener {
     public PlayerHealthManager(LevelingOverhaul plugin) {
         this.plugin = plugin;
         for (Player p : plugin.getServer().getOnlinePlayers()) {
+            p.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(128);
             double expectedHP = calculatePlayerExpectedHealth(p);
             p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
             p.setHealth(expectedHP);
@@ -69,6 +70,9 @@ public class PlayerHealthManager implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+
+        // Disable attack speed cooldown for them
+        event.getPlayer().getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(128);
 
         // Figure out what the player should have and set that
         event.getPlayer().setHealthScale(20);

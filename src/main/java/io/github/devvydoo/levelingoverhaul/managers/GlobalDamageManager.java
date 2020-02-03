@@ -33,7 +33,6 @@ public class GlobalDamageManager implements Listener {
     private LevelingOverhaul plugin;
     private String ARROW_DMG_METANAME = "base_damage";
     private String ARROW_SNIPE_ENCHANT_METANAME = "snipe_enchant_level";
-    private HashMap<Player, Long> playerMeleeCooldownMap = new HashMap<>();
 
     public GlobalDamageManager(LevelingOverhaul plugin) {
         this.plugin = plugin;
@@ -105,22 +104,11 @@ public class GlobalDamageManager implements Listener {
 
         // First let's get a base setup for how much certain weapons should do
         double baseDamage = getMeleeWeaponBaseDamage(tool.getType());
-        if (playerMeleeCooldownMap.containsKey(player)) {
-            long msLeft = playerMeleeCooldownMap.get(player) - System.currentTimeMillis();
-            if (msLeft > 0) {
-                double dmgMultiplier = msLeft / 1000.;
-                baseDamage *= dmgMultiplier;
-            }
-        }
-        long cooldownMs = 625;
-        if (tool.getType().equals(Material.DIAMOND_AXE) || tool.getType().equals(Material.IRON_AXE) || tool.getType().equals(Material.GOLDEN_AXE) || tool.getType().equals(Material.STONE_AXE) || tool.getType().equals(Material.WOODEN_AXE)) {
-            cooldownMs += 400;
-        }
-        playerMeleeCooldownMap.put(player, System.currentTimeMillis() + cooldownMs);
+
         // If baseDamage returns 0, we have something that we don't care to modify
         if (baseDamage <= 0) {
             return;
-        }
+    }
 
         double newDamage = baseDamage;
         int sharpnessLevel = tool.getEnchantmentLevel(Enchantment.DAMAGE_ALL);
