@@ -23,17 +23,6 @@ public abstract class BaseExperience {
     public static final int DEBUG_LEVEL = 77777777;
 
     /**
-     * Helper method to display stuff on the action bar, mainly when xp is gained
-     *
-     * @param player  - The Player that we want to display text to
-     * @param message - The message we want to display
-     */
-    public static void displayActionBarText(Player player, String message) {
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
-    }
-
-
-    /**
      * A helper method that returns the amount of xp we should receive when killing a mob
      *
      * @param mob - The Entity object that was killed

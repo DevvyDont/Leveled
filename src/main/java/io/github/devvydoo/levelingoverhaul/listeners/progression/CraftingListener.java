@@ -35,7 +35,7 @@ public class CraftingListener implements Listener {
         // Are we a high enough level to craft it?
         if (player.getLevel() < LevelRewards.CRAFT_WITHER_SKULLS_UNLOCK) {
             event.setCancelled(true);
-            BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.CRAFT_WITHER_SKULLS_UNLOCK + ChatColor.RED + " to craft this item!");
+            player.sendActionBar(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.CRAFT_WITHER_SKULLS_UNLOCK + ChatColor.RED + " to craft this item!");
             player.playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, .3f, .7f);
         }
 

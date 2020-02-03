@@ -2,7 +2,7 @@ package io.github.devvydoo.levelingoverhaul.enchantments.enchants;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
+import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
@@ -38,7 +38,7 @@ public class HomingArrows implements Listener {
 
             int homingLevel;
             try {
-                homingLevel = CustomEnchantments.getEnchantLevel(player.getInventory().getItemInMainHand(), CustomEnchantType.HOMING);
+                homingLevel = plugin.getEnchantmentManager().getEnchantLevel(player.getInventory().getItemInMainHand(), CustomEnchantType.HOMING);
             } catch (IllegalArgumentException ignored) {
                 return;
             }

@@ -1,7 +1,8 @@
 package io.github.devvydoo.levelingoverhaul.enchantments.enchants;
 
+import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
+import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,6 +17,12 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ExplosiveTouchEnchantment implements Listener {
 
+    private LevelingOverhaul plugin;
+
+    public ExplosiveTouchEnchantment(LevelingOverhaul plugin) {
+        this.plugin = plugin;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
 
@@ -26,12 +33,12 @@ public class ExplosiveTouchEnchantment implements Listener {
 
         // Is the tool enchanted?
         ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
-        if (!CustomEnchantments.hasEnchant(tool, CustomEnchantType.EXPLOSIVE_TOUCH)) {
+        if (!plugin.getEnchantmentManager().hasEnchant(tool, CustomEnchantType.EXPLOSIVE_TOUCH)) {
             return;
         }
 
         // Cool, how big should our explosion be?
-        int explosionPower = 3 * CustomEnchantments.getEnchantLevel(tool, CustomEnchantType.EXPLOSIVE_TOUCH);
+        int explosionPower = 3 * plugin.getEnchantmentManager().getEnchantLevel(tool, CustomEnchantType.EXPLOSIVE_TOUCH);
 
         // Boom
         event.getBlock().getWorld().createExplosion(event.getBlock().getLocation(), explosionPower);

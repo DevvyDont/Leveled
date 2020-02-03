@@ -5,10 +5,12 @@ import org.bukkit.ChatColor;
 
 public class CustomEnchantment {
 
+    private EnchantmentManager enchantmentManager;
     private CustomEnchantType type;
     private int level;
 
-    public CustomEnchantment(CustomEnchantType type, int level) {
+    public CustomEnchantment(EnchantmentManager enchantmentManager, CustomEnchantType type, int level) {
+        this.enchantmentManager = enchantmentManager;
         this.type = type;
         this.level = level;
     }
@@ -34,7 +36,7 @@ public class CustomEnchantment {
     }
 
     public String getDescription() {
-        return CustomEnchantments.getEnchantmentDescription(this.getType());
+        return enchantmentManager.getEnchantmentDescription(this.getType());
     }
 
     public String getLoreContent() {

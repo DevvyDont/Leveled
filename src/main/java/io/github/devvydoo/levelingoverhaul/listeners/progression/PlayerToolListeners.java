@@ -1,6 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
+import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
+import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
@@ -17,9 +18,13 @@ import java.util.HashMap;
 
 public class PlayerToolListeners implements Listener {
 
+    LevelingOverhaul plugin;
     private HashMap<Material, Integer> toolLevelRequirements;
 
-    public PlayerToolListeners() {
+    public PlayerToolListeners(LevelingOverhaul plugin) {
+
+        this.plugin = plugin;
+
         toolLevelRequirements = new HashMap<>();
 
         toolLevelRequirements.put(Material.WOODEN_PICKAXE, 1);
@@ -56,7 +61,7 @@ public class PlayerToolListeners implements Listener {
     }
 
     private void cancelEquipmentUse(Player player, int requiredLevel) {
-        BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to use that item!");
+        player.sendActionBar( ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to use that item!");
         player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
     }
 
@@ -72,7 +77,7 @@ public class PlayerToolListeners implements Listener {
         ItemStack toolUsed = player.getInventory().getItemInMainHand();
 
         if (toolLevelRequirements.containsKey(toolUsed.getType())) {
-            int requiredLevel = CustomEnchantments.getItemLevel(toolUsed);
+            int requiredLevel = plugin.getEnchantmentManager().getItemLevel(toolUsed);
             if (requiredLevel < toolLevelRequirements.get(toolUsed.getType())) {
                 requiredLevel = toolLevelRequirements.get(toolUsed.getType());
             }
@@ -99,7 +104,7 @@ public class PlayerToolListeners implements Listener {
         ItemStack toolUsed = player.getInventory().getItemInMainHand();
 
         if (toolLevelRequirements.containsKey(toolUsed.getType())) {
-            int requiredLevel = CustomEnchantments.getItemLevel(toolUsed);
+            int requiredLevel = plugin.getEnchantmentManager().getItemLevel(toolUsed);
             if (requiredLevel < toolLevelRequirements.get(toolUsed.getType())) {
                 requiredLevel = toolLevelRequirements.get(toolUsed.getType());
             }

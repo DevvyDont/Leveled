@@ -39,7 +39,7 @@ public class BrewingListeners implements Listener {
         // Are we a high enough level?
         if (player.getLevel() < LevelRewards.BREWING_UNLOCK) {
             event.setCancelled(true);
-            BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to brew potions!");
+            player.sendActionBar(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to brew potions!");
             player.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, .3f, .7f);
         }
     }
@@ -57,7 +57,7 @@ public class BrewingListeners implements Listener {
         // Are we high enough level?
         if (player.getLevel() < LevelRewards.BREWING_UNLOCK) {
             event.setCancelled(true);
-            BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to drink potions!");
+            player.sendActionBar(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to drink potions!");
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, .3f, .7f);
         }
     }

@@ -4,6 +4,7 @@ import io.github.devvydoo.levelingoverhaul.commands.DebugEnchant;
 import io.github.devvydoo.levelingoverhaul.commands.DebugLevelSetter;
 import io.github.devvydoo.levelingoverhaul.commands.PlayerStatsCommand;
 import io.github.devvydoo.levelingoverhaul.commands.TestMobCommand;
+import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.ExplosiveTouchEnchantment;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.FoodEnchantments;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.HomingArrows;
@@ -29,6 +30,7 @@ public final class LevelingOverhaul extends JavaPlugin {
     private PlayerHealthManager hpManager;
     private GlobalDamageManager damageManager;
     private ActionBarManager actionBarManager;
+    private EnchantmentManager enchantmentManager;
     private BossManager bossManager;
     private TipAnnounceManager tipManager;
 
@@ -48,6 +50,10 @@ public final class LevelingOverhaul extends JavaPlugin {
 
     public ActionBarManager getActionBarManager() {
         return actionBarManager;
+    }
+
+    public EnchantmentManager getEnchantmentManager() {
+        return enchantmentManager;
     }
 
     public BossManager getBossManager() {
@@ -75,6 +81,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         hpManager = new PlayerHealthManager(this);
         damageManager = new GlobalDamageManager(this);
         actionBarManager = new ActionBarManager(this);
+        enchantmentManager = new EnchantmentManager();
         bossManager = new BossManager();
         tipManager = new TipAnnounceManager(this);
 
@@ -92,19 +99,19 @@ public final class LevelingOverhaul extends JavaPlugin {
 
         // Listeners involving level capped gear
         getServer().getPluginManager().registerEvents(new PlayerArmorListeners(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerToolListeners(), this);
+        getServer().getPluginManager().registerEvents(new PlayerToolListeners(this), this);
         getServer().getPluginManager().registerEvents(new EnchantmentListeners(), this);
         getServer().getPluginManager().registerEvents(new PortalListeners(), this);
         getServer().getPluginManager().registerEvents(new BrewingListeners(), this);
-        getServer().getPluginManager().registerEvents(new MiscEquipmentListeners(), this);
+        getServer().getPluginManager().registerEvents(new MiscEquipmentListeners(this), this);
         getServer().getPluginManager().registerEvents(new PortableCraftingAbility(), this);
         getServer().getPluginManager().registerEvents(new CraftingListener(), this);
 
         // Listeners involving custom enchantments
         getServer().getPluginManager().registerEvents(new EnchantingInterface(this), this);
         getServer().getPluginManager().registerEvents(new AnvilInterface(this), this);
-        getServer().getPluginManager().registerEvents(new ExplosiveTouchEnchantment(), this);
-        getServer().getPluginManager().registerEvents(new FoodEnchantments(), this);
+        getServer().getPluginManager().registerEvents(new ExplosiveTouchEnchantment(this), this);
+        getServer().getPluginManager().registerEvents(new FoodEnchantments(this), this);
         getServer().getPluginManager().registerEvents(new Infinity(), this);
         getServer().getPluginManager().registerEvents(new HomingArrows(this), this);
 
@@ -127,7 +134,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         getCommand("mob").setExecutor(new TestMobCommand(this));
         getCommand("stats").setExecutor(new PlayerStatsCommand());
         getCommand("leveldebug").setExecutor(new DebugLevelSetter(this));
-        getCommand("enchantdebug").setExecutor(new DebugEnchant());
+        getCommand("enchantdebug").setExecutor(new DebugEnchant(this));
     }
 
     @Override

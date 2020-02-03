@@ -44,7 +44,7 @@ public class PortalListeners implements Listener {
 
             if (player.getLevel() < LevelRewards.NETHER_UNLOCK) {
                 event.setCancelled(true);
-                BaseExperience.displayActionBarText(event.getPlayer(), ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.NETHER_UNLOCK + ChatColor.RED + " to use this portal!");
+                player.sendActionBar( ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.NETHER_UNLOCK + ChatColor.RED + " to use this portal!");
                 event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, .3f, .7f);
             }
 
@@ -52,7 +52,7 @@ public class PortalListeners implements Listener {
 
             if (player.getLevel() < LevelRewards.THE_END_UNLOCK) {
                 event.setCancelled(true);
-                BaseExperience.displayActionBarText(event.getPlayer(), ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.THE_END_UNLOCK + ChatColor.RED + " to use this portal!");
+                player.sendActionBar( ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.THE_END_UNLOCK + ChatColor.RED + " to use this portal!");
                 event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, .3f, .7f);
                 event.getPlayer().teleport(findFreeSpot(player.getLocation().add(0, 1, 0)));
             }

@@ -2,7 +2,7 @@ package io.github.devvydoo.levelingoverhaul.managers;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
+import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -37,19 +37,19 @@ public class PlayerHealthManager implements Listener {
         PlayerInventory inventory = player.getInventory();
         // Attempt to grab the Growth enchant level for all gear, if we get a nullptr, they don't have a helmet, if we get an illegalarg, they dont have growth
         try {
-            growthFactor += CustomEnchantments.getEnchantLevel(inventory.getHelmet(), CustomEnchantType.GROWTH);
+            growthFactor += plugin.getEnchantmentManager().getEnchantLevel(inventory.getHelmet(), CustomEnchantType.GROWTH);
         } catch (IllegalArgumentException | NullPointerException ignored) {
         }
         try {
-            growthFactor += CustomEnchantments.getEnchantLevel(inventory.getChestplate(), CustomEnchantType.GROWTH);
+            growthFactor += plugin.getEnchantmentManager().getEnchantLevel(inventory.getChestplate(), CustomEnchantType.GROWTH);
         } catch (IllegalArgumentException | NullPointerException ignored) {
         }
         try {
-            growthFactor += CustomEnchantments.getEnchantLevel(inventory.getLeggings(), CustomEnchantType.GROWTH);
+            growthFactor += plugin.getEnchantmentManager().getEnchantLevel(inventory.getLeggings(), CustomEnchantType.GROWTH);
         } catch (IllegalArgumentException | NullPointerException ignored) {
         }
         try {
-            growthFactor += CustomEnchantments.getEnchantLevel(inventory.getBoots(), CustomEnchantType.GROWTH);
+            growthFactor += plugin.getEnchantmentManager().getEnchantLevel(inventory.getBoots(), CustomEnchantType.GROWTH);
         } catch (IllegalArgumentException | NullPointerException ignored) {
         }
         return growthFactor;

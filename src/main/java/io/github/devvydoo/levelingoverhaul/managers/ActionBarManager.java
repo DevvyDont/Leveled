@@ -41,7 +41,7 @@ public class ActionBarManager implements Listener {
             xpPortion = ChatColor.GREEN + "" + ChatColor.BOLD + "MAXED" + ChatColor.GRAY + " XP   ";
         }
         String message = ChatColor.RED + "" + currentHP + "/" + maxHP + ChatColor.DARK_RED + " ❤   " + xpPortion + extra;
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+        player.sendActionBar(message);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

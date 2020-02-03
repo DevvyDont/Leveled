@@ -18,11 +18,11 @@ import java.util.Map;
  * Here's a quick overview on how our enchantment system works and how to add an enchantment:
  * <p>
  * First off, We have 3 main classes.
- * - CustomEnchantments
+ * - EnchantmentManager
  * - CustomEnchantment
  * - CustomEnchantType
  * <p>
- * CustomEnchantments (This class) are static methods and globals that we can use throughout the plugin to make
+ * EnchantmentManager (This class) is a helper class that we can use throughout the plugin to make
  * adding enchantments, testing for enchantments, getting information, etc. easier. Think of it as a helper/controller
  * class, or a middleman between our complicated enchantment system and the rest of the plugin
  * <p>
@@ -77,15 +77,15 @@ import java.util.Map;
  * For the time being this is all we need to worry about, as the base system automates everything else with simple
  * string manipulation using the name of the enum we defined itself
  */
-public final class CustomEnchantments {
+public class EnchantmentManager {
 
     // A color to use for enchantment descriptions, should we use them. Enchantments never start with this color.
-    public final static String DESCRIPTION_COLOR = ChatColor.GRAY.toString();
-    public final static String LEVEL_CAPPED_GEAR_COLOR = ChatColor.DARK_PURPLE.toString() + ChatColor.BOLD;
-    public final static String LEVEL_CAPPED_GEAR_STRING = LEVEL_CAPPED_GEAR_COLOR + "Level";
-    public final static String LEVEL_CAPPED_GEAR_STRING_FULL = LEVEL_CAPPED_GEAR_STRING + " %s ";
+    public final String DESCRIPTION_COLOR = ChatColor.GRAY.toString();
+    public final String LEVEL_CAPPED_GEAR_COLOR = ChatColor.DARK_PURPLE.toString() + ChatColor.BOLD;
+    public final String LEVEL_CAPPED_GEAR_STRING = LEVEL_CAPPED_GEAR_COLOR + "Level";
+    public final String LEVEL_CAPPED_GEAR_STRING_FULL = LEVEL_CAPPED_GEAR_STRING + " %s ";
 
-    public final static int MAX_ENCHANT_QUALITY_FACTOR = 12;
+    public final int MAX_ENCHANT_QUALITY_FACTOR = 12;
 
     /**
      * Returns an arraylist of custom enchants on an item stack, we do this by parsing the lore of the item stack
@@ -93,7 +93,7 @@ public final class CustomEnchantments {
      * @param item - The ItemStack that we are checking the lore for
      * @return an arraylist of CustomEnchantment objects on the item stack
      */
-    public static ArrayList<CustomEnchantment> getCustomEnchantments(ItemStack item) {
+    public ArrayList<CustomEnchantment> getCustomEnchantments(ItemStack item) {
 
         ArrayList<CustomEnchantment> enchantments = new ArrayList<>();
 
@@ -121,7 +121,7 @@ public final class CustomEnchantments {
      * @param item        - The ItemStack that we want to enchant
      * @param enchantment - The enchantment that we want to test for, use the constants defined in this class
      */
-    public static void addEnchant(ItemStack item, CustomEnchantType enchantment, int level) {
+    public void addEnchant(ItemStack item, CustomEnchantType enchantment, int level) {
 
         ItemMeta meta = item.getItemMeta();
 
@@ -160,7 +160,7 @@ public final class CustomEnchantments {
      * @param enchantment - The vanilla Enchantment we are adding
      * @param level       - The level of the enchantment
      */
-    public static void addEnchant(ItemStack item, Enchantment enchantment, int level) {
+    public void addEnchant(ItemStack item, Enchantment enchantment, int level) {
 
         // Don't enchant it twice
         if (item.containsEnchantment(enchantment)) {
@@ -178,7 +178,7 @@ public final class CustomEnchantments {
      * @param enchantment - The CustomEnchantment we are looking for
      * @return a boolean representing whether or not the item has the enchantment
      */
-    public static boolean hasEnchant(ItemStack item, CustomEnchantType enchantment) {
+    public boolean hasEnchant(ItemStack item, CustomEnchantType enchantment) {
 
         // Loop through all the enchantments on the item, if it has the enchantment we are looking for, return true
         for (CustomEnchantment e : getCustomEnchantments(item)) {
@@ -189,7 +189,7 @@ public final class CustomEnchantments {
         return false;  // Didn't find it, return false
     }
 
-    public static int getEnchantLevel(ItemStack item, CustomEnchantType enchantment) {
+    public int getEnchantLevel(ItemStack item, CustomEnchantType enchantment) {
 
         // Loop through all the enchantments on the item, if it has the enchantment we are looking for, return the level
         for (CustomEnchantment e : getCustomEnchantments(item)) {
@@ -206,7 +206,7 @@ public final class CustomEnchantments {
      * @param item The ItemStack we want to check for
      * @return the int level cap of the item, if it isn't capped 0 is returned
      */
-    public static int getItemLevel(ItemStack item) {
+    public int getItemLevel(ItemStack item) {
         int level = 0;
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -219,7 +219,7 @@ public final class CustomEnchantments {
         return level;
     }
 
-    public static void setItemLevel(ItemStack item, int level) {
+    public void setItemLevel(ItemStack item, int level) {
 
         // Check if we need to remove the old level somehow
         resetItemLevel(item);
@@ -236,7 +236,7 @@ public final class CustomEnchantments {
         item.setItemMeta(meta);
     }
 
-    public static void resetItemLevel(ItemStack itemStack) {
+    public void resetItemLevel(ItemStack itemStack) {
 
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) {
@@ -263,7 +263,7 @@ public final class CustomEnchantments {
      * @param loreLine - The string of lore we are reading
      * @return a potential CustomEnchantment parsed from the line, can be null
      */
-    private static CustomEnchantment getEnchantmentFromLore(String loreLine) {
+    private CustomEnchantment getEnchantmentFromLore(String loreLine) {
 
         // This is a description line, we can't do anything with it
         if (loreLine.startsWith(DESCRIPTION_COLOR)) {
@@ -278,7 +278,7 @@ public final class CustomEnchantments {
                 // We are going to split the String by the space that separates the title and the level
                 int level = Integer.parseInt(cleanLine.substring(cleanLine.lastIndexOf(' ') + 1));
                 // Hopefully nothing went wrong...
-                return new CustomEnchantment(type, level);
+                return new CustomEnchantment(this, type, level);
             }
         }
         // Couldn't find it, usually isn't a big deal
@@ -288,7 +288,7 @@ public final class CustomEnchantments {
     /**
      * Simple method that will format an ItemStack to display enchantments properly
      */
-    public static void fixItemLore(ItemStack itemStack) {
+    public void fixItemLore(ItemStack itemStack) {
 
         // First we need to get the custom enchantment objects on the item
         List<CustomEnchantment> customEnchantments = getCustomEnchantments(itemStack);
@@ -324,7 +324,7 @@ public final class CustomEnchantments {
 
     }
 
-    public static int getEnchantQuality(CustomEnchantType type) {
+    public int getEnchantQuality(CustomEnchantType type) {
 
         switch (type) {
             case EXPLOSIVE_TOUCH:
@@ -350,7 +350,7 @@ public final class CustomEnchantments {
 
     }
 
-    public static int getEnchantQuality(Enchantment type) {
+    public int getEnchantQuality(Enchantment type) {
 
         switch (type.getKey().toString().replace("minecraft:", "")) {
             case "fire_protection":
@@ -407,7 +407,7 @@ public final class CustomEnchantments {
         }
     }
 
-    public static boolean canEnchantItem(CustomEnchantType type, ItemStack itemStack) {
+    public boolean canEnchantItem(CustomEnchantType type, ItemStack itemStack) {
         ArrayList<Material> allowedTargets = new ArrayList<>();
 
         switch (type) {
@@ -449,7 +449,7 @@ public final class CustomEnchantments {
     }
 
 
-    public static ArrayList<Object> getConflictingEnchantTypes(CustomEnchantType type) {
+    public ArrayList<Object> getConflictingEnchantTypes(CustomEnchantType type) {
         ArrayList<Object> conflictingEnchantments = new ArrayList<>();
 
         switch (type) {
@@ -470,7 +470,7 @@ public final class CustomEnchantments {
         return conflictingEnchantments;
     }
 
-    public static ArrayList<Object> getConflictingEnchantTypes(Enchantment type) {
+    public ArrayList<Object> getConflictingEnchantTypes(Enchantment type) {
         ArrayList<Object> conflictingEnchantments = new ArrayList<>();
 
         switch (type.getKey().toString().replace("minecraft:", "")) {
@@ -528,7 +528,7 @@ public final class CustomEnchantments {
      * @param type - The CustomEnchantType we want to check
      * @return a string of the description of that type
      */
-    public static String getEnchantmentDescription(CustomEnchantType type) {
+    public String getEnchantmentDescription(CustomEnchantType type) {
         switch (type) {
             case EXPLOSIVE_TOUCH:
                 return "Upon breaking a block, an explosion is created";
@@ -563,7 +563,7 @@ public final class CustomEnchantments {
      * @param enchantment - The Enchantment we want to check
      * @return a string of the description of that type
      */
-    public static String getEnchantmentDescription(Enchantment enchantment) {
+    public String getEnchantmentDescription(Enchantment enchantment) {
         switch (enchantment.getKey().toString().replace("minecraft:", "")) {
             case "fire_protection":
                 return "Damage caused by fire is reduced";

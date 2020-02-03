@@ -2,7 +2,7 @@ package io.github.devvydoo.levelingoverhaul.managers;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
+import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -20,8 +20,6 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.HashMap;
 
 /**
  * A class used to do any necessary calculations for damage calculations BEFORE our plugin modifies anything whether it
@@ -135,7 +133,7 @@ public class GlobalDamageManager implements Listener {
         if (!player.isOnGround() && player.getVelocity().getY() < 0) {
             int critLevel = 0;
             try {
-                critLevel = CustomEnchantments.getEnchantLevel(tool, CustomEnchantType.CRITICAL_STRIKE);
+                critLevel = plugin.getEnchantmentManager().getEnchantLevel(tool, CustomEnchantType.CRITICAL_STRIKE);
             } catch (IllegalArgumentException ignored) {
             }
             newDamage *= 1.5 + (critLevel * .15);
@@ -196,7 +194,7 @@ public class GlobalDamageManager implements Listener {
             double critPercent = .2;
             // crit enchant level * 10% chance bonus
             try {
-                critPercent += CustomEnchantments.getEnchantLevel(bow, CustomEnchantType.CRITICAL_SHOT) / 10.;
+                critPercent += plugin.getEnchantmentManager().getEnchantLevel(bow, CustomEnchantType.CRITICAL_SHOT) / 10.;
             } catch (IllegalArgumentException ignored) {
             }
             if (Math.random() < critPercent) {
@@ -218,7 +216,7 @@ public class GlobalDamageManager implements Listener {
             event.getProjectile().setMetadata(ARROW_DMG_METANAME, new FixedMetadataValue(plugin, damage));
             // Attempts to put the snipe level on the arrow if it exists, if it fails then no biggie
             try {
-                event.getProjectile().setMetadata(ARROW_SNIPE_ENCHANT_METANAME, new FixedMetadataValue(plugin, CustomEnchantments.getEnchantLevel(bow, CustomEnchantType.SNIPE)));
+                event.getProjectile().setMetadata(ARROW_SNIPE_ENCHANT_METANAME, new FixedMetadataValue(plugin, plugin.getEnchantmentManager().getEnchantLevel(bow, CustomEnchantType.SNIPE)));
             } catch (IllegalArgumentException ignored) {
             }
         }

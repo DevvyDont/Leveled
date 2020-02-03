@@ -1,8 +1,8 @@
 package io.github.devvydoo.levelingoverhaul.enchantments.enchants;
 
+import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantment;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.event.EventHandler;
@@ -12,6 +12,12 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class FoodEnchantments implements Listener {
+
+    private LevelingOverhaul plugin;
+
+    public FoodEnchantments(LevelingOverhaul plugin) {
+        this.plugin = plugin;
+    }
 
     private int getNutrition(ItemStack itemStack) {
         switch (itemStack.getType()) {
@@ -74,7 +80,7 @@ public class FoodEnchantments implements Listener {
         if (helmet != null && !helmet.getType().equals(Material.AIR)) {
 
             // Is the helmet enchanted with Saturation?
-            for (CustomEnchantment enchantment : CustomEnchantments.getCustomEnchantments(helmet)) {
+            for (CustomEnchantment enchantment : plugin.getEnchantmentManager().getCustomEnchantments(helmet)) {
                 if (enchantment.getType().equals(CustomEnchantType.SATURATION)) {
                     event.getPlayer().setSaturation(event.getPlayer().getSaturation() + enchantment.getLevel() * 3);
                     event.getPlayer().setFoodLevel(event.getPlayer().getFoodLevel() + enchantment.getLevel());
@@ -87,7 +93,7 @@ public class FoodEnchantments implements Listener {
         if (event.getPlayer().getFoodLevel() > 10 && chestplate != null && !chestplate.getType().equals(Material.AIR)) {
 
             // Golden Diet?
-            if (CustomEnchantments.hasEnchant(chestplate, CustomEnchantType.GOLDEN_DIET)) {
+            if (plugin.getEnchantmentManager().hasEnchant(chestplate, CustomEnchantType.GOLDEN_DIET)) {
                 // "take away" half of the hunger bois that the food is going to give
                 int hungerTaken = getNutrition(event.getItem()) / 2;
                 event.getPlayer().setFoodLevel(event.getPlayer().getFoodLevel() - hungerTaken);

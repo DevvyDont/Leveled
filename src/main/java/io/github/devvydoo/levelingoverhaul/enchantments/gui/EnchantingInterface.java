@@ -2,7 +2,6 @@ package io.github.devvydoo.levelingoverhaul.enchantments.gui;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.EnchantmentCalculator;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.PotentialEnchantment;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
@@ -106,7 +105,7 @@ public class EnchantingInterface implements Listener {
 
     private boolean canBeEnchanted(ItemStack itemStack) {
         // If it's already enchanted we can't do anything
-        if (CustomEnchantments.getCustomEnchantments(itemStack).size() > 0 || itemStack.getEnchantments().size() > 0) {
+        if (plugin.getEnchantmentManager().getCustomEnchantments(itemStack).size() > 0 || itemStack.getEnchantments().size() > 0) {
             return false;
         }
         // Check if the material type is allowed to be enchanted
@@ -172,7 +171,7 @@ public class EnchantingInterface implements Listener {
         for (int xOffset = -2; xOffset <= 2; xOffset++) {
             for (int yOffset = -2; yOffset <= 2; yOffset++) {
                 for (int zOffset = -2; zOffset <= 2; zOffset++) {
-                    if (qualityFactor >= CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR) {
+                    if (qualityFactor >= plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR) {
                         break;
                     }
                     Block block = enchantTable.getWorld().getBlockAt(enchantTable.getX() + xOffset, enchantTable.getY() + yOffset, enchantTable.getZ() + zOffset);
@@ -183,20 +182,20 @@ public class EnchantingInterface implements Listener {
                         qualityFactor++;
                     }
                 }
-                if (qualityFactor >= CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR) {
+                if (qualityFactor >= plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR) {
                     break;
                 }
             }
-            if (qualityFactor >= CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR) {
+            if (qualityFactor >= plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR) {
                 break;
             }
         }
 
-        if (qualityFactor > CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR) {
-            qualityFactor = CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR;
+        if (qualityFactor > plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR) {
+            qualityFactor = plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR;
         }
 
-        EnchantmentCalculator calculator = new EnchantmentCalculator(player.getLevel(), qualityFactor, item);
+        EnchantmentCalculator calculator = new EnchantmentCalculator(plugin.getEnchantmentManager(), player.getLevel(), qualityFactor, item);
         ArrayList<PotentialEnchantment> potentialEnchantments = calculator.calculateEnchantmentTypes();
         HashMap<PotentialEnchantment, Integer> enchantLevels = calculator.calculateEnchantmentLevels(potentialEnchantments);
 
@@ -206,9 +205,9 @@ public class EnchantingInterface implements Listener {
 
         for (PotentialEnchantment enchantment : enchantLevels.keySet()) {
             if (enchantment.getEnchantType() instanceof Enchantment) {
-                CustomEnchantments.addEnchant(item, (Enchantment) enchantment.getEnchantType(), enchantLevels.get(enchantment));
+                plugin.getEnchantmentManager().addEnchant(item, (Enchantment) enchantment.getEnchantType(), enchantLevels.get(enchantment));
             } else if (enchantment.getEnchantType() instanceof CustomEnchantType) {
-                CustomEnchantments.addEnchant(item, (CustomEnchantType) enchantment.getEnchantType(), enchantLevels.get(enchantment));
+                plugin.getEnchantmentManager().addEnchant(item, (CustomEnchantType) enchantment.getEnchantType(), enchantLevels.get(enchantment));
             } else {
                 throw new IllegalStateException("PotentialEnchantment enchantType was not Enchantment or CustomEnchantType!");
             }
@@ -365,8 +364,8 @@ public class EnchantingInterface implements Listener {
                         // Do we have an enchantable item?
                         if (canBeEnchanted(gui.getItem(EQUIPMENT_SLOT))) {
                             ItemStack newItem = enchantItem(player, player.getTargetBlockExact(10), gui.getItem(EQUIPMENT_SLOT)); // Enchant
-                            if (newItem.getEnchantments().isEmpty() && CustomEnchantments.getCustomEnchantments(newItem).isEmpty()){ return; }
-                            CustomEnchantments.setItemLevel(newItem, player.getLevel());
+                            if (newItem.getEnchantments().isEmpty() && plugin.getEnchantmentManager().getCustomEnchantments(newItem).isEmpty()){ return; }
+                            plugin.getEnchantmentManager().setItemLevel(newItem, player.getLevel());
                             if (newItem.getEnchantmentLevel(Enchantment.DURABILITY) < 1) { newItem.addEnchantment(Enchantment.DURABILITY, 1); }
                             gui.setItem(EQUIPMENT_SLOT, newItem);
                             if (lapisBeforeClick <= getLapisRequired(player.getLevel())) {

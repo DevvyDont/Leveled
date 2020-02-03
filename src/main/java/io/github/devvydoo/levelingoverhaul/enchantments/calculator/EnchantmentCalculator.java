@@ -1,7 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.enchantments.calculator;
 
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
+import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -12,9 +12,11 @@ import java.util.HashMap;
 
 public class EnchantmentCalculator {
 
+    private EnchantmentManager enchantmentManager;
     private ArrayList<PotentialEnchantment> potentialEnchantments;  // A list of enchantments we can have when init'd
     private int playerLevel;  // The player level that we are calculating enchants for
     private int qualityFactor;  // The quality of the enchants to factor in when calculating types
+
     /**
      * Constructs an object used to perform a single enchant event. New object must be made per enchant, no re-use
      *
@@ -22,10 +24,12 @@ public class EnchantmentCalculator {
      * @param qualityFactor - The quality factor of the enchant, must be a num from 1-MAX_ENCHANT_QUALITY_FACTOR
      * @param item          - The ItemStack we are attempting to enchant
      */
-    public EnchantmentCalculator(int playerLevel, int qualityFactor, ItemStack item) {
+    public EnchantmentCalculator(EnchantmentManager enchantmentManager, int playerLevel, int qualityFactor, ItemStack item) {
 
-        if (qualityFactor < 1 || qualityFactor > CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR) {
-            throw new IllegalArgumentException("qualityFactor must be an int from 1-" + CustomEnchantments.MAX_ENCHANT_QUALITY_FACTOR);
+        this.enchantmentManager = enchantmentManager;
+
+        if (qualityFactor < 1 || qualityFactor > enchantmentManager.MAX_ENCHANT_QUALITY_FACTOR) {
+            throw new IllegalArgumentException("qualityFactor must be an int from 1-" + enchantmentManager.MAX_ENCHANT_QUALITY_FACTOR);
         }
 
         // First initialize our instance variables
@@ -45,7 +49,7 @@ public class EnchantmentCalculator {
      *
      * @return - A copy of an array list that contains all enchantments registered on the server
      */
-    public static ArrayList<PotentialEnchantment> getRegisteredPotentialEnchantments() {
+    public ArrayList<PotentialEnchantment> getRegisteredPotentialEnchantments() {
         ArrayList<PotentialEnchantment> enchs = new ArrayList<>();
 
         /**
@@ -60,65 +64,65 @@ public class EnchantmentCalculator {
         // Enchantments not listed: Mending, Curse of Binding
 
         // General Armor
-        enchs.add(new PotentialEnchantment(Enchantment.PROTECTION_FIRE, 30, BaseExperience.LEVEL_CAP, 12));
-        enchs.add(new PotentialEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 30, BaseExperience.LEVEL_CAP, 12));
-        enchs.add(new PotentialEnchantment(Enchantment.PROTECTION_FALL, 30, BaseExperience.LEVEL_CAP, 7));
-        enchs.add(new PotentialEnchantment(Enchantment.PROTECTION_EXPLOSIONS, 30, BaseExperience.LEVEL_CAP, 12));
-        enchs.add(new PotentialEnchantment(Enchantment.PROTECTION_FIRE, 30, BaseExperience.LEVEL_CAP, 12));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.PROTECTION_FIRE, 30, BaseExperience.LEVEL_CAP, 12));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.PROTECTION_ENVIRONMENTAL, 30, BaseExperience.LEVEL_CAP, 12));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.PROTECTION_FALL, 30, BaseExperience.LEVEL_CAP, 7));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.PROTECTION_EXPLOSIONS, 30, BaseExperience.LEVEL_CAP, 12));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.PROTECTION_FIRE, 30, BaseExperience.LEVEL_CAP, 12));
 
         // Extra armor
-        enchs.add(new PotentialEnchantment(Enchantment.FROST_WALKER, 30, BaseExperience.LEVEL_CAP, 2));
-        enchs.add(new PotentialEnchantment(Enchantment.WATER_WORKER, 30, BaseExperience.LEVEL_CAP, 3));
-        enchs.add(new PotentialEnchantment(Enchantment.OXYGEN, 30, BaseExperience.LEVEL_CAP, 5));
-        enchs.add(new PotentialEnchantment(Enchantment.THORNS, 30, BaseExperience.LEVEL_CAP, 12));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.FROST_WALKER, 30, BaseExperience.LEVEL_CAP, 2));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.WATER_WORKER, 30, BaseExperience.LEVEL_CAP, 3));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.OXYGEN, 30, BaseExperience.LEVEL_CAP, 5));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.THORNS, 30, BaseExperience.LEVEL_CAP, 12));
 
 
         // General weapons
-        enchs.add(new PotentialEnchantment(Enchantment.DAMAGE_ALL, 30, BaseExperience.LEVEL_CAP, 12));
-        enchs.add(new PotentialEnchantment(Enchantment.DAMAGE_ARTHROPODS, 30, BaseExperience.LEVEL_CAP, 12));
-        enchs.add(new PotentialEnchantment(Enchantment.DAMAGE_UNDEAD, 30, BaseExperience.LEVEL_CAP, 12));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.DAMAGE_ALL, 30, BaseExperience.LEVEL_CAP, 12));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.DAMAGE_ARTHROPODS, 30, BaseExperience.LEVEL_CAP, 12));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.DAMAGE_UNDEAD, 30, BaseExperience.LEVEL_CAP, 12));
 
         // Extra weapons
-        enchs.add(new PotentialEnchantment(Enchantment.FIRE_ASPECT, 30, BaseExperience.LEVEL_CAP, 7));
-        enchs.add(new PotentialEnchantment(Enchantment.LOOT_BONUS_MOBS, 30, BaseExperience.LEVEL_CAP, 10));
-        enchs.add(new PotentialEnchantment(Enchantment.KNOCKBACK, 30, BaseExperience.LEVEL_CAP, 7));
-        enchs.add(new PotentialEnchantment(Enchantment.SWEEPING_EDGE, 30, BaseExperience.LEVEL_CAP, 10));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.FIRE_ASPECT, 30, BaseExperience.LEVEL_CAP, 7));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.LOOT_BONUS_MOBS, 30, BaseExperience.LEVEL_CAP, 10));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.KNOCKBACK, 30, BaseExperience.LEVEL_CAP, 7));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.SWEEPING_EDGE, 30, BaseExperience.LEVEL_CAP, 10));
 
         // Trident
-        enchs.add(new PotentialEnchantment(Enchantment.LOYALTY, 30, BaseExperience.LEVEL_CAP, 3));
-        enchs.add(new PotentialEnchantment(Enchantment.RIPTIDE, 30, BaseExperience.LEVEL_CAP, 3));
-        enchs.add(new PotentialEnchantment(Enchantment.CHANNELING, 30, BaseExperience.LEVEL_CAP, 3));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.LOYALTY, 30, BaseExperience.LEVEL_CAP, 3));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.RIPTIDE, 30, BaseExperience.LEVEL_CAP, 3));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.CHANNELING, 30, BaseExperience.LEVEL_CAP, 3));
 
         // Bow/Crossbow
-        enchs.add(new PotentialEnchantment(Enchantment.ARROW_DAMAGE, 30, BaseExperience.LEVEL_CAP, 12));
-        enchs.add(new PotentialEnchantment(Enchantment.ARROW_INFINITE, 30, BaseExperience.LEVEL_CAP, 10));
-        enchs.add(new PotentialEnchantment(Enchantment.ARROW_FIRE, 30, BaseExperience.LEVEL_CAP, 7));
-        enchs.add(new PotentialEnchantment(Enchantment.ARROW_KNOCKBACK, 30, BaseExperience.LEVEL_CAP, 5));
-        enchs.add(new PotentialEnchantment(Enchantment.IMPALING, 30, BaseExperience.LEVEL_CAP, 7));
-        enchs.add(new PotentialEnchantment(Enchantment.QUICK_CHARGE, 30, BaseExperience.LEVEL_CAP, 5));
-        enchs.add(new PotentialEnchantment(Enchantment.MULTISHOT, 30, BaseExperience.LEVEL_CAP, 1));
-        enchs.add(new PotentialEnchantment(Enchantment.PIERCING, 30, BaseExperience.LEVEL_CAP, 5));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.ARROW_DAMAGE, 30, BaseExperience.LEVEL_CAP, 12));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.ARROW_INFINITE, 30, BaseExperience.LEVEL_CAP, 10));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.ARROW_FIRE, 30, BaseExperience.LEVEL_CAP, 7));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.ARROW_KNOCKBACK, 30, BaseExperience.LEVEL_CAP, 5));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.IMPALING, 30, BaseExperience.LEVEL_CAP, 7));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.QUICK_CHARGE, 30, BaseExperience.LEVEL_CAP, 5));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.MULTISHOT, 30, BaseExperience.LEVEL_CAP, 1));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.PIERCING, 30, BaseExperience.LEVEL_CAP, 5));
 
         // Tools
-        enchs.add(new PotentialEnchantment(Enchantment.DIG_SPEED, 30, BaseExperience.LEVEL_CAP, 15));
-        enchs.add(new PotentialEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 30, BaseExperience.LEVEL_CAP, 10));
-        enchs.add(new PotentialEnchantment(Enchantment.SILK_TOUCH, 30, BaseExperience.LEVEL_CAP, 1));
-        enchs.add(new PotentialEnchantment(Enchantment.DURABILITY, 30, BaseExperience.LEVEL_CAP, 14));
-        enchs.add(new PotentialEnchantment(Enchantment.LUCK, 30, BaseExperience.LEVEL_CAP, 10));
-        enchs.add(new PotentialEnchantment(Enchantment.LURE, 30, BaseExperience.LEVEL_CAP, 10));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.DIG_SPEED, 30, BaseExperience.LEVEL_CAP, 15));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.LOOT_BONUS_BLOCKS, 30, BaseExperience.LEVEL_CAP, 10));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.SILK_TOUCH, 30, BaseExperience.LEVEL_CAP, 1));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.DURABILITY, 30, BaseExperience.LEVEL_CAP, 14));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.LUCK, 30, BaseExperience.LEVEL_CAP, 10));
+        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.LURE, 30, BaseExperience.LEVEL_CAP, 10));
 
         // Custom
-        enchs.add(new PotentialEnchantment(CustomEnchantType.EXPLOSIVE_TOUCH, 30, BaseExperience.LEVEL_CAP, 8));
-        enchs.add(new PotentialEnchantment(CustomEnchantType.SATURATION, 45, 75, 3));
-        enchs.add(new PotentialEnchantment(CustomEnchantType.EXPERIENCED, 30, 90, 10));
-        enchs.add(new PotentialEnchantment(CustomEnchantType.GROWTH, 30, BaseExperience.LEVEL_CAP, 5));
-        enchs.add(new PotentialEnchantment(CustomEnchantType.SMARTY_PANTS, 30, 50, 2));
-        enchs.add(new PotentialEnchantment(CustomEnchantType.SMELTING_TOUCH, 30, 30, 1));
-        enchs.add(new PotentialEnchantment(CustomEnchantType.CRITICAL_SHOT, 50, 80, 3));
-        enchs.add(new PotentialEnchantment(CustomEnchantType.CRITICAL_STRIKE, 50, BaseExperience.LEVEL_CAP, 5));
-        enchs.add(new PotentialEnchantment(CustomEnchantType.SNIPE, 60, 90, 3));
-        enchs.add(new PotentialEnchantment(CustomEnchantType.GOLDEN_DIET, 75, 75, 1));
-        enchs.add(new PotentialEnchantment(CustomEnchantType.HOMING, 70, BaseExperience.LEVEL_CAP, 3));
+        enchs.add(new PotentialEnchantment(enchantmentManager, CustomEnchantType.EXPLOSIVE_TOUCH, 30, BaseExperience.LEVEL_CAP, 8));
+        enchs.add(new PotentialEnchantment(enchantmentManager, CustomEnchantType.SATURATION, 45, 75, 3));
+        enchs.add(new PotentialEnchantment(enchantmentManager, CustomEnchantType.EXPERIENCED, 30, 90, 10));
+        enchs.add(new PotentialEnchantment(enchantmentManager, CustomEnchantType.GROWTH, 30, BaseExperience.LEVEL_CAP, 5));
+        enchs.add(new PotentialEnchantment(enchantmentManager, CustomEnchantType.SMARTY_PANTS, 30, 50, 2));
+        enchs.add(new PotentialEnchantment(enchantmentManager, CustomEnchantType.SMELTING_TOUCH, 30, 30, 1));
+        enchs.add(new PotentialEnchantment(enchantmentManager, CustomEnchantType.CRITICAL_SHOT, 50, 80, 3));
+        enchs.add(new PotentialEnchantment(enchantmentManager, CustomEnchantType.CRITICAL_STRIKE, 50, BaseExperience.LEVEL_CAP, 5));
+        enchs.add(new PotentialEnchantment(enchantmentManager, CustomEnchantType.SNIPE, 60, 90, 3));
+        enchs.add(new PotentialEnchantment(enchantmentManager, CustomEnchantType.GOLDEN_DIET, 75, 75, 1));
+        enchs.add(new PotentialEnchantment(enchantmentManager, CustomEnchantType.HOMING, 70, BaseExperience.LEVEL_CAP, 3));
 
         return new ArrayList<>(enchs);
     }

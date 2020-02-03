@@ -1,7 +1,6 @@
 package io.github.devvydoo.levelingoverhaul.enchantments.gui;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -56,7 +55,7 @@ public class AnvilInterface implements Listener {
 
     private int getMaterialRefundAmount(ItemStack item, String viewTitle) throws IllegalArgumentException {
         if (viewTitle.equals(GRINDSTONE_INTERFACE_NAME)) {
-            int itemLevel = CustomEnchantments.getItemLevel(item);
+            int itemLevel = plugin.getEnchantmentManager().getItemLevel(item);
             return itemLevel / 3;
         }
         switch (item.getType()) {
@@ -274,7 +273,7 @@ public class AnvilInterface implements Listener {
             // Check if we should update the output
             if (!event.getCursor().getType().equals(Material.AIR)) {
                 ItemStack cursor = event.getCursor();
-                if (cursor.getEnchantments().size() != 0 || CustomEnchantments.getCustomEnchantments(cursor).size() != 0) {
+                if (cursor.getEnchantments().size() != 0 || plugin.getEnchantmentManager().getCustomEnchantments(cursor).size() != 0) {
                     try {
                         String viewTitle = event.getView().getTitle();
                         event.getClickedInventory().setItem(ANVIL_OUTPUT_SLOT, new ItemStack(getMaterialRefundType(cursor, viewTitle), getMaterialRefundAmount(cursor, viewTitle)));

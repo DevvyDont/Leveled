@@ -1,7 +1,8 @@
 package io.github.devvydoo.levelingoverhaul.commands;
 
+import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
+import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.EnchantmentCalculator;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.PotentialEnchantment;
 import org.bukkit.ChatColor;
@@ -16,6 +17,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DebugEnchant implements CommandExecutor {
+
+    private LevelingOverhaul plugin;
+
+    public DebugEnchant(LevelingOverhaul plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -38,7 +45,7 @@ public class DebugEnchant implements CommandExecutor {
 
         EnchantmentCalculator calculator;
         try {
-            calculator = new EnchantmentCalculator(Integer.parseInt(args[0]), Integer.parseInt(args[1]), hand);
+            calculator = new EnchantmentCalculator(plugin.getEnchantmentManager(), Integer.parseInt(args[0]), Integer.parseInt(args[1]), hand);
         } catch (NumberFormatException ignored) {
             player.sendMessage(ChatColor.RED + "Please provide numbers.");
             return true;
@@ -53,12 +60,12 @@ public class DebugEnchant implements CommandExecutor {
 
         for (PotentialEnchantment type : lvls.keySet()) {
             if (type.getEnchantType() instanceof Enchantment) {
-                CustomEnchantments.addEnchant(hand, (Enchantment) type.getEnchantType(), lvls.get(type));
+                plugin.getEnchantmentManager().addEnchant(hand, (Enchantment) type.getEnchantType(), lvls.get(type));
             } else if (type.getEnchantType() instanceof CustomEnchantType) {
-                CustomEnchantments.addEnchant(hand, (CustomEnchantType) type.getEnchantType(), lvls.get(type));
+                plugin.getEnchantmentManager().addEnchant(hand, (CustomEnchantType) type.getEnchantType(), lvls.get(type));
             }
         }
-        CustomEnchantments.setItemLevel(hand, Integer.parseInt(args[0]));
+        plugin.getEnchantmentManager().setItemLevel(hand, Integer.parseInt(args[0]));
 
         return true;
     }

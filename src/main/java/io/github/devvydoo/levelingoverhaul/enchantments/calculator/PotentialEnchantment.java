@@ -2,7 +2,7 @@ package io.github.devvydoo.levelingoverhaul.enchantments.calculator;
 
 
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
+import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.util.ToolTypeHelpers;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -10,12 +10,14 @@ import org.bukkit.inventory.ItemStack;
 
 public class PotentialEnchantment {
 
+    private EnchantmentManager enchantmentManager;
     private Object enchantType;
     private int minPlayerLevelRequired;  // The minimum level required to obtain this enchantment
     private int maxPlayerLevelRequired;  // The maximum player level required to achieve max enchant level if needed
     private int maxEnchantLevel;  // The max enchant level this enchantment can be
 
-    public PotentialEnchantment(Object enchantType, int minimumLevel, int maximumLevel, int maxEnchantLevel) {
+    public PotentialEnchantment(EnchantmentManager enchantmentManager, Object enchantType, int minimumLevel, int maximumLevel, int maxEnchantLevel) {
+        this.enchantmentManager = enchantmentManager;
         this.enchantType = enchantType;
         this.minPlayerLevelRequired = minimumLevel;
         this.maxPlayerLevelRequired = maximumLevel;
@@ -41,9 +43,9 @@ public class PotentialEnchantment {
     public int getQuality() {
 
         if (enchantType instanceof Enchantment) {
-            return CustomEnchantments.getEnchantQuality((Enchantment) enchantType);
+            return enchantmentManager.getEnchantQuality((Enchantment) enchantType);
         } else if (enchantType instanceof CustomEnchantType) {
-            return CustomEnchantments.getEnchantQuality((CustomEnchantType) enchantType);
+            return enchantmentManager.getEnchantQuality((CustomEnchantType) enchantType);
         }
         throw new IllegalStateException("enchantType was not Enchantment or CustomEnchantType!");
 
@@ -55,19 +57,19 @@ public class PotentialEnchantment {
             CustomEnchantType type = (CustomEnchantType) otherEnchant.enchantType;
             if (this.enchantType instanceof CustomEnchantType) {
                 CustomEnchantType query = (CustomEnchantType) this.enchantType;
-                return CustomEnchantments.getConflictingEnchantTypes(type).contains(query);
+                return enchantmentManager.getConflictingEnchantTypes(type).contains(query);
             } else if (this.enchantType instanceof Enchantment) {
                 Enchantment query = (Enchantment) this.enchantType;
-                return CustomEnchantments.getConflictingEnchantTypes(type).contains(query.getKey().toString().replace("minecraft:", ""));
+                return enchantmentManager.getConflictingEnchantTypes(type).contains(query.getKey().toString().replace("minecraft:", ""));
             }
         } else if (otherEnchant.enchantType instanceof Enchantment) {
             Enchantment enchantment = (Enchantment) otherEnchant.enchantType;
             if (this.enchantType instanceof CustomEnchantType) {
                 CustomEnchantType query = (CustomEnchantType) this.enchantType;
-                return CustomEnchantments.getConflictingEnchantTypes(enchantment).contains(query);
+                return enchantmentManager.getConflictingEnchantTypes(enchantment).contains(query);
             } else if (this.enchantType instanceof Enchantment) {
                 Enchantment query = (Enchantment) this.enchantType;
-                return CustomEnchantments.getConflictingEnchantTypes(enchantment).contains(query.getKey().toString().replace("minecraft:", ""));
+                return enchantmentManager.getConflictingEnchantTypes(enchantment).contains(query.getKey().toString().replace("minecraft:", ""));
             }
 
         }
@@ -84,7 +86,7 @@ public class PotentialEnchantment {
             return enchant.canEnchantItem(itemStack);
         } else if (enchantType instanceof CustomEnchantType) {
             CustomEnchantType type = (CustomEnchantType) enchantType;
-            return CustomEnchantments.canEnchantItem(type, itemStack);
+            return enchantmentManager.canEnchantItem(type, itemStack);
         }
         throw new IllegalStateException("enchantType was not of type Enchantment or CustomEnchantType!");
     }

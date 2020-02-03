@@ -2,7 +2,7 @@ package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
+import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
@@ -79,22 +79,22 @@ public class PlayerArmorListeners implements Listener {
         ItemStack leggings = player.getInventory().getLeggings();
         ItemStack boots = player.getInventory().getBoots();
 
-        if (helmet != null && !helmet.getType().equals(Material.AIR) && Math.max(CustomEnchantments.getItemLevel(helmet), materialLevelCaps.get(helmet.getType())) > player.getLevel()){
+        if (helmet != null && !helmet.getType().equals(Material.AIR) && Math.max(plugin.getEnchantmentManager().getItemLevel(helmet), materialLevelCaps.get(helmet.getType())) > player.getLevel()){
             player.getWorld().dropItemNaturally(player.getLocation(), helmet);
             player.getInventory().setHelmet(new ItemStack(Material.AIR));
         }
 
-        if (chestplate != null && !chestplate.getType().equals(Material.AIR) && Math.max(CustomEnchantments.getItemLevel(chestplate), materialLevelCaps.get(chestplate.getType())) > player.getLevel()){
+        if (chestplate != null && !chestplate.getType().equals(Material.AIR) && Math.max(plugin.getEnchantmentManager().getItemLevel(chestplate), materialLevelCaps.get(chestplate.getType())) > player.getLevel()){
             player.getWorld().dropItemNaturally(player.getLocation(), chestplate);
             player.getInventory().setChestplate(new ItemStack(Material.AIR));
         }
 
-        if (leggings != null && !leggings.getType().equals(Material.AIR) && Math.max(CustomEnchantments.getItemLevel(leggings), materialLevelCaps.get(leggings.getType())) > player.getLevel()){
+        if (leggings != null && !leggings.getType().equals(Material.AIR) && Math.max(plugin.getEnchantmentManager().getItemLevel(leggings), materialLevelCaps.get(leggings.getType())) > player.getLevel()){
             player.getWorld().dropItemNaturally(player.getLocation(), leggings);
             player.getInventory().setLeggings(new ItemStack(Material.AIR));
         }
 
-        if (boots != null && !boots.getType().equals(Material.AIR) && Math.max(CustomEnchantments.getItemLevel(boots), materialLevelCaps.get(boots.getType())) > player.getLevel()){
+        if (boots != null && !boots.getType().equals(Material.AIR) && Math.max(plugin.getEnchantmentManager().getItemLevel(boots), materialLevelCaps.get(boots.getType())) > player.getLevel()){
             player.getWorld().dropItemNaturally(player.getLocation(), boots);
             player.getInventory().setBoots(new ItemStack(Material.AIR));
         }
@@ -146,17 +146,17 @@ public class PlayerArmorListeners implements Listener {
 
         // Does our player have the required level to equip this?
 
-        int requiredLevel = Math.max(CustomEnchantments.getItemLevel(event.getItem()), materialLevelCaps.get(event.getItem().getType()));
+        int requiredLevel = Math.max(plugin.getEnchantmentManager().getItemLevel(event.getItem()), materialLevelCaps.get(event.getItem().getType()));
 
         if (event.getPlayer().getLevel() < requiredLevel) {
             event.setCancelled(true);
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
-            BaseExperience.displayActionBarText(event.getPlayer(), ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
+            event.getPlayer().sendActionBar( ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
         }
 
         // See if we have growth, if not return else correct the players hp later
         try {
-            CustomEnchantments.getEnchantLevel(event.getItem(), CustomEnchantType.GROWTH);
+            plugin.getEnchantmentManager().getEnchantLevel(event.getItem(), CustomEnchantType.GROWTH);
         } catch (IllegalArgumentException ignored) {
             return;
         }
@@ -196,7 +196,7 @@ public class PlayerArmorListeners implements Listener {
             if (itemClicked != null && !itemClicked.getType().equals(Material.AIR)) {
                 if (materialLevelCaps.containsKey(itemClicked.getType())) {
                     if (event.getWhoClicked() instanceof Player) {
-                        int cap = Math.max(materialLevelCaps.get(itemClicked.getType()), CustomEnchantments.getItemLevel(itemClicked));
+                        int cap = Math.max(materialLevelCaps.get(itemClicked.getType()), plugin.getEnchantmentManager().getItemLevel(itemClicked));
                         if (((Player) event.getWhoClicked()).getLevel() < cap) {
                             event.getWhoClicked().getWorld().dropItemNaturally(event.getWhoClicked().getLocation(), itemClicked);
                             event.getWhoClicked().getInventory().setItem(event.getSlot(), new ItemStack(Material.AIR));
@@ -215,14 +215,14 @@ public class PlayerArmorListeners implements Listener {
                 return;
             }
 
-            int requiredLevel = CustomEnchantments.getItemLevel(itemHeld);
+            int requiredLevel = plugin.getEnchantmentManager().getItemLevel(itemHeld);
             if (requiredLevel < materialLevelCaps.get(itemHeld.getType())) {
                 requiredLevel = materialLevelCaps.get(itemHeld.getType());
             }
 
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel) {
-                BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
+                player.sendActionBar( ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
                 event.setCancelled(true);
             }
@@ -243,14 +243,14 @@ public class PlayerArmorListeners implements Listener {
             }
 
             // Are they a high enough level to equip it?
-            int requiredLevel = CustomEnchantments.getItemLevel(itemClicked);
+            int requiredLevel = plugin.getEnchantmentManager().getItemLevel(itemClicked);
             if (requiredLevel < materialLevelCaps.get(itemClicked.getType())) {
                 requiredLevel = materialLevelCaps.get(itemClicked.getType());
             }
 
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel) {
-                BaseExperience.displayActionBarText(player, ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
+                player.sendActionBar( ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
                 event.setCancelled(true);
             }

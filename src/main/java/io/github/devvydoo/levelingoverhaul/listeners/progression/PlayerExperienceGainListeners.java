@@ -3,14 +3,12 @@ package io.github.devvydoo.levelingoverhaul.listeners.progression;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantment;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantments;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -18,7 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
@@ -47,7 +44,7 @@ public class PlayerExperienceGainListeners implements Listener {
     private double getDoubleXpChance(Player player, double doubleXpChance) {
         ItemStack tool = player.getInventory().getItemInMainHand();
         if (!tool.getType().equals(Material.AIR)) {
-            for (CustomEnchantment enchantment : CustomEnchantments.getCustomEnchantments(tool)) {
+            for (CustomEnchantment enchantment : plugin.getEnchantmentManager().getCustomEnchantments(tool)) {
                 if (enchantment.getType().equals(CustomEnchantType.EXPERIENCED)) {
                     doubleXpChance += enchantment.getLevel() / 33.;
                 }
@@ -186,7 +183,7 @@ public class PlayerExperienceGainListeners implements Listener {
         // Special case, if we mined iron ore gold ore...
         if (block.getType().equals(Material.GOLD_ORE) || block.getType().equals(Material.IRON_ORE)) {
             // If their tool has smelting touch...
-            if (CustomEnchantments.hasEnchant(tool, CustomEnchantType.SMELTING_TOUCH)) {
+            if (plugin.getEnchantmentManager().hasEnchant(tool, CustomEnchantType.SMELTING_TOUCH)) {
                 event.setDropItems(false);
                 int numDrop = 1;
                 int fortuneLevel = tool.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
@@ -200,7 +197,7 @@ public class PlayerExperienceGainListeners implements Listener {
                 xpGained = block.getType().equals(Material.IRON_ORE) ? 1 : 3;
             }
         } else if (block.getType().equals(Material.STONE)) {
-            if (CustomEnchantments.hasEnchant(tool, CustomEnchantType.SMELTING_TOUCH)) {
+            if (plugin.getEnchantmentManager().hasEnchant(tool, CustomEnchantType.SMELTING_TOUCH)) {
                 event.setDropItems(false);
                 block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.STONE));
             }
@@ -303,7 +300,7 @@ public class PlayerExperienceGainListeners implements Listener {
         double multiplier = 1;
         String message = ChatColor.GREEN + "Challenge Completed! " + ChatColor.LIGHT_PURPLE + "+" + xpEarned + " XP";
         try {
-            multiplier += CustomEnchantments.getEnchantLevel(player.getInventory().getLeggings(), CustomEnchantType.SMARTY_PANTS) * .15;
+            multiplier += plugin.getEnchantmentManager().getEnchantLevel(player.getInventory().getLeggings(), CustomEnchantType.SMARTY_PANTS) * .15;
         } catch (NullPointerException | IllegalArgumentException ignored) {
         }
         if (multiplier > 1) {
