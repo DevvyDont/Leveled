@@ -195,7 +195,7 @@ public class AnvilInterface implements Listener {
                     gui.setItem(i, setItemLore(new ItemStack(Material.GREEN_STAINED_GLASS_PANE), " "));
                     break;
                 default:
-                    gui.setItem(i, setItemLore(new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE), " "));
+                    gui.setItem(i, setItemLore(new ItemStack(Material.GRAY_STAINED_GLASS_PANE), " "));
             }
         }
         gui.setItem(ANVIL_INPUT_SLOT, new ItemStack(Material.AIR));
@@ -220,7 +220,7 @@ public class AnvilInterface implements Listener {
                     gui.setItem(i, setItemLore(new ItemStack(Material.GREEN_STAINED_GLASS_PANE), " "));
                     break;
                 default:
-                    gui.setItem(i, setItemLore(new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE), " "));
+                    gui.setItem(i, setItemLore(new ItemStack(Material.GRAY_STAINED_GLASS_PANE), " "));
             }
         }
         gui.setItem(ANVIL_INPUT_SLOT, new ItemStack(Material.AIR));

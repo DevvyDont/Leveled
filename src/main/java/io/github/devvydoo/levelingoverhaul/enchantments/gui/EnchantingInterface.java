@@ -254,7 +254,7 @@ public class EnchantingInterface implements Listener {
                     gui.setItem(i, new ItemStack(Material.ENCHANTING_TABLE));
                     break;
                 default:
-                    gui.setItem(i, new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE));
+                    gui.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
             }
         }
 
