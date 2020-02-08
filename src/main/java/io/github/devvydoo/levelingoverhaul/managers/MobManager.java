@@ -308,7 +308,7 @@ public class MobManager implements Listener {
             case MULE:
             case DONKEY:
                 Tameable tamedEntity = (Tameable) entity;
-                level = tamedEntity.getOwner() != null ? ((Player)tamedEntity.getOwner()).getLevel() : (int)(Math.random() * 5 + 10);
+                level = tamedEntity.getOwner() != null && tamedEntity.getOwner() instanceof Player ? ((Player)tamedEntity.getOwner()).getLevel() : (int)(Math.random() * 5 + 10);
                 break;
 
             case BEE:
@@ -493,6 +493,8 @@ public class MobManager implements Listener {
             case TURTLE:
             case VILLAGER:
             case ZOMBIE_HORSE:
+            case TRADER_LLAMA:
+            case WANDERING_TRADER:
                 multiplier = .75;
                 break;
 
@@ -568,7 +570,7 @@ public class MobManager implements Listener {
                 break;
 
             default:
-                System.out.println(ChatColor.YELLOW + "[MobManager] Came across unexpected entity for HP calculation: " + entity.getType());
+                plugin.getLogger().warning("Came across unexpected entity for HP calculation: " + entity.getType());
                 multiplier = 1;
                 break;
         }
