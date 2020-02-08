@@ -3,15 +3,21 @@ version: ${project.version}
 main: io.github.devvydoo.levelingoverhaul.LevelingOverhaul
 api-version: 1.13
 commands:
-  mob:
-    description: Spawns a test mob
-    usage: /mob
   stats:
     description: See player stats
     usage: /stats
+  party:
+    description: Team up with other players, see their health, and disable friendly fire
+    usage: /party <player>
+  mob:
+    description: Spawns a test mob
+    usage: /mob
+    permission: op
   leveldebug:
     description: Used to modify player progression for debug purposes
     usage: /debug < reset | level | tp > [ CONFIRM / < new level > / [x, y, z] ]
+    permission: op
   enchantdebug:
     description: Used to enchant the item in your hand for debug purposes
     usage: /enchantdebug < level enchant > < quality >
+    permission: op

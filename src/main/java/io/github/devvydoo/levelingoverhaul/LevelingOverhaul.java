@@ -1,9 +1,6 @@
 package io.github.devvydoo.levelingoverhaul;
 
-import io.github.devvydoo.levelingoverhaul.commands.DebugEnchant;
-import io.github.devvydoo.levelingoverhaul.commands.DebugLevelSetter;
-import io.github.devvydoo.levelingoverhaul.commands.PlayerStatsCommand;
-import io.github.devvydoo.levelingoverhaul.commands.TestMobCommand;
+import io.github.devvydoo.levelingoverhaul.commands.*;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.ExplosiveTouchEnchantment;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.FoodEnchantments;
@@ -30,6 +27,7 @@ public final class LevelingOverhaul extends JavaPlugin {
     private PlayerHealthManager hpManager;
     private GlobalDamageManager damageManager;
     private ActionBarManager actionBarManager;
+    private ScoreboardManager scoreboardManager;
     private EnchantmentManager enchantmentManager;
     private BossManager bossManager;
     private TipAnnounceManager tipManager;
@@ -50,6 +48,10 @@ public final class LevelingOverhaul extends JavaPlugin {
 
     public ActionBarManager getActionBarManager() {
         return actionBarManager;
+    }
+
+    public ScoreboardManager getScoreboardManager() {
+        return scoreboardManager;
     }
 
     public EnchantmentManager getEnchantmentManager() {
@@ -81,6 +83,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         hpManager = new PlayerHealthManager(this);
         damageManager = new GlobalDamageManager(this);
         actionBarManager = new ActionBarManager(this);
+        scoreboardManager = new ScoreboardManager(this);
         enchantmentManager = new EnchantmentManager();
         bossManager = new BossManager();
         tipManager = new TipAnnounceManager(this);
@@ -133,6 +136,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         // Register commands
         getCommand("mob").setExecutor(new TestMobCommand(this));
         getCommand("stats").setExecutor(new PlayerStatsCommand());
+        getCommand("party").setExecutor(new PartyCommand());
         getCommand("leveldebug").setExecutor(new DebugLevelSetter(this));
         getCommand("enchantdebug").setExecutor(new DebugEnchant(this));
     }
