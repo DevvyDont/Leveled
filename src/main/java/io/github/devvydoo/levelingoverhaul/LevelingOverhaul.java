@@ -124,6 +124,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         // Listeners involving the scoreboard
         getServer().getPluginManager().registerEvents(new PlayerNametags(this), this);
         getServer().getPluginManager().registerEvents(actionBarManager, this);
+        getServer().getPluginManager().registerEvents(scoreboardManager, this);
 
         // Register custom recipes
         Recipes.registerRecipes(this);
