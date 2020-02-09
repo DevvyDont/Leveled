@@ -54,7 +54,7 @@ public class HomingArrows implements Listener {
 
     }
 
-    public static class HomingArrowTask extends BukkitRunnable {
+    public class HomingArrowTask extends BukkitRunnable {
 
         private Arrow arrow;
         private int aggression;
@@ -104,24 +104,34 @@ public class HomingArrows implements Listener {
                     if (entity instanceof Boss) {
                         target = (LivingEntity) entity;
                         break;
+
                     }  // Prioritize bosses
                     if (entity instanceof EnderDragonPart) {
                         EnderDragonPart part = (EnderDragonPart) entity;
                         target = part.getParent();
                         break;
                     }
-                    if (!(entity instanceof LivingEntity)) {
+
+                    if (!(entity instanceof LivingEntity))
                         continue;
-                    }
-                    if (entity instanceof ArmorStand || entity instanceof Enderman) {
+
+                    if (entity instanceof ArmorStand || entity instanceof Enderman)
                         continue;
-                    }
-                    if (entity.equals(arrow.getShooter())) {
+
+                    if (entity.equals(arrow.getShooter()))
                         continue;
+
+                    // If the target is in the same party as the shooter, ignore it
+                    if (entity instanceof Player && arrow.getShooter() instanceof Player){
+                        Player player = (Player) entity;
+                        Player owner = (Player) arrow.getShooter();
+                        if (plugin.getPartyManager().inSameParty(player, owner))
+                            continue;
                     }
-                    if (target == null && ((LivingEntity) entity).hasLineOfSight(arrow)) {
+
+                    if (target == null && ((LivingEntity) entity).hasLineOfSight(arrow))
                         target = (LivingEntity) entity;
-                    } else if (target != null && entity.getLocation().distance(arrow.getLocation()) < target.getLocation().distance(arrow.getLocation()) && ((LivingEntity) entity).hasLineOfSight(arrow)) {
+                    else if (target != null && entity.getLocation().distance(arrow.getLocation()) < target.getLocation().distance(arrow.getLocation()) && ((LivingEntity) entity).hasLineOfSight(arrow)) {
                         target = (LivingEntity) entity;
                     }
                 }

@@ -2,6 +2,7 @@ package io.github.devvydoo.levelingoverhaul.managers;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.util.Party;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -66,6 +67,18 @@ public class PartyManager implements Listener {
         return playerPartyHashMap.containsKey(player);
     }
 
+    public boolean inSameParty(Player player1, Player player2){
+
+        if (player1.equals(player2))
+            return false;
+
+        if (playerPartyHashMap.containsKey(player1) && playerPartyHashMap.containsKey(player2)){
+            return playerPartyHashMap.get(player1).equals(playerPartyHashMap.get(player2));
+        }
+
+        return false;
+    }
+
     public Collection<Party> getParties(){
         ArrayList<Party> uniqueParties = new ArrayList<>();
         for (Party p: playerPartyHashMap.values())
@@ -89,8 +102,17 @@ public class PartyManager implements Listener {
             Player damaged = (Player) event.getEntity();
             Player damager = (Player) event.getDamager();
             // If they are in the same party, cancel the damage
-            if (getParty(damager) != null && getParty(damager).getMembers().contains(damaged))
+            if (inSameParty(damaged, damager))
                 event.setCancelled(true);
+
+        } else if (event.getEntity() instanceof Player && event.getDamager() instanceof Arrow){
+            Player damaged = (Player) event.getEntity();
+            Arrow arrow = (Arrow) event.getDamager();
+            if (arrow.getShooter() instanceof Player){
+                Player damager = (Player) arrow.getShooter();
+                if (inSameParty(damaged, damager));
+                event.setCancelled(true);
+            }
         }
     }
 }
