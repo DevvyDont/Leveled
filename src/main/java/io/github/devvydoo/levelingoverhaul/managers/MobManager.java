@@ -569,6 +569,13 @@ public class MobManager implements Listener {
                 multiplier = .2 + size * 2;
                 break;
 
+            case ENDER_DRAGON:
+            case WITHER:
+            case GIANT:
+                baseHP = plugin.getBossManager().calculateEnderDragonHealth(level);
+                multiplier = 1.2;
+                break;
+
             default:
                 plugin.getLogger().warning("Came across unexpected entity for HP calculation: " + entity.getType());
                 multiplier = 1;

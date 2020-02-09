@@ -91,7 +91,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         partyManager = new PartyManager();
         scoreboardManager = new ScoreboardManager(this);
         enchantmentManager = new EnchantmentManager();
-        bossManager = new BossManager();
+        bossManager = new BossManager(this);
         tipManager = new TipAnnounceManager(this);
 
         // Listeners that change how natural progression works
@@ -140,6 +140,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         mobManager = new MobManager(this, getServer().getWorlds());  // Initialize all worlds.
         getServer().getPluginManager().registerEvents(mobManager, this);
         getServer().getPluginManager().registerEvents(new DamagePopupManager(this), this);
+        getServer().getPluginManager().registerEvents(bossManager, this);
 
         // Register commands
         getCommand("mob").setExecutor(new TestMobCommand(this));
