@@ -2,6 +2,7 @@ package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.util.DamagePopup;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,7 +19,7 @@ public class DamagePopupManager implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityGotHit(EntityDamageEvent event) {
-        if (event.getDamage() > 0 && event.getEntity() instanceof LivingEntity) {
+        if (event.getDamage() > 0 && event.getEntity() instanceof LivingEntity && !(event.getEntity() instanceof ArmorStand)) {
             new DamagePopup(plugin, event.getFinalDamage(), (LivingEntity) event.getEntity());
         }
     }
