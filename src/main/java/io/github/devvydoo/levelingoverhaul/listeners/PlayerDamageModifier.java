@@ -205,8 +205,8 @@ public class PlayerDamageModifier implements Listener {
         else if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
             float blocksFallen = player.getFallDistance();
             if (player.getInventory().getBoots() != null)
-                blocksFallen /= player.getInventory().getBoots().getEnchantmentLevel(Enchantment.PROTECTION_FALL);
-            event.setDamage(blocksFallen * fivePercentHP / 2);
+                blocksFallen /= ((player.getInventory().getBoots().getEnchantmentLevel(Enchantment.PROTECTION_FALL) + 1) / 2.);
+            event.setDamage(blocksFallen * fivePercentHP / 1.1);
         }
         else if (event.getCause().equals(EntityDamageEvent.DamageCause.THORNS) && event instanceof EntityDamageByEntityEvent) {
 
