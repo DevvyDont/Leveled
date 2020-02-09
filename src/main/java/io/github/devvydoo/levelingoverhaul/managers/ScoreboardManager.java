@@ -1,6 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.managers;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
+import io.github.devvydoo.levelingoverhaul.util.Party;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,7 +11,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class ScoreboardManager implements Listener {
 
@@ -94,29 +98,17 @@ public class ScoreboardManager implements Listener {
         Team partySlot2 = scoreboard.registerNewTeam(DEFAULT_PARTY_TWO_KEY);
         partySlot2.addEntry(DEFAULT_PARTY_TWO_ENTRY);
         partySlot2.setPrefix(ChatColor.DARK_GRAY + "Empty... use /party! ");
-//        partySlot2.setPrefix(ChatColor.GRAY + "Lv. " +  player.getLevel() + " " + ChatColor.BLUE + player.getDisplayName());
-//        partySlot2.setSuffix(ChatColor.DARK_RED + "❤" + ChatColor.GREEN + (int) player.getHealth());
         objective.getScore(DEFAULT_PARTY_TWO_ENTRY).setScore(9);
 
         Team partySlot3 = scoreboard.registerNewTeam(DEFAULT_PARTY_THREE_KEY);
         partySlot3.addEntry(DEFAULT_PARTY_THREE_ENTRY);
         partySlot3.setPrefix(ChatColor.DARK_GRAY + "Empty... use /party! ");
-//        partySlot3.setPrefix(ChatColor.GRAY + "Lv. " +  player.getLevel() + " " + ChatColor.BLUE + player.getDisplayName());
-//        partySlot3.setSuffix(ChatColor.DARK_RED + "❤" + ChatColor.GREEN + (int) player.getHealth());
         objective.getScore(DEFAULT_PARTY_THREE_ENTRY).setScore(8);
 
         Team partySlot4 = scoreboard.registerNewTeam(DEFAULT_PARTY_FOUR_KEY);
         partySlot4.addEntry(DEFAULT_PARTY_FOUR_ENTRY);
         partySlot4.setPrefix(ChatColor.DARK_GRAY + "Empty... use /party! ");
-//        partySlot4.setPrefix(ChatColor.GRAY + "Lv. " +  player.getLevel() + " " + ChatColor.BLUE + player.getDisplayName());
-//        partySlot4.setSuffix(ChatColor.DARK_RED + "❤" + ChatColor.GREEN + (int) player.getHealth());
         objective.getScore(DEFAULT_PARTY_FOUR_ENTRY).setScore(7);
-
-//        Score space3 = objective.getScore("   ");
-//        space3.setScore(6);
-//
-//        Score footer = objective.getScore(ChatColor.DARK_GRAY  + ">           " + ChatColor.GRAY + "mc.devvy.me");
-//        footer.setScore(5);
 
         player.setScoreboard(scoreboard);
         playerScoreboardMap.remove(player);
@@ -136,14 +128,53 @@ public class ScoreboardManager implements Listener {
         scoreboard.getTeam(DEFAULT_PARTY_ONE_KEY).setPrefix(getPartyMemberPrefix(player, true));
         scoreboard.getTeam(DEFAULT_PARTY_ONE_KEY).setSuffix(getPartyMemberSuffix(player));
 
-//        scoreboard.getTeam(DEFAULT_PARTY_TWO_KEY).setPrefix(getPartyMemberPrefix(player, true));
-//        scoreboard.getTeam(DEFAULT_PARTY_TWO_KEY).setSuffix(getPartyMemberSuffix(player));
-//
-//        scoreboard.getTeam(DEFAULT_PARTY_THREE_KEY).setPrefix(getPartyMemberPrefix(player, true));
-//        scoreboard.getTeam(DEFAULT_PARTY_THREE_KEY).setSuffix(getPartyMemberSuffix(player));
-//
-//        scoreboard.getTeam(DEFAULT_PARTY_FOUR_KEY).setPrefix(getPartyMemberPrefix(player, true));
-//        scoreboard.getTeam(DEFAULT_PARTY_FOUR_KEY).setSuffix(getPartyMemberSuffix(player));
+        Party party = plugin.getPartyManager().getParty(player);
+        if (party != null){
+
+            ArrayList<Player> members = new ArrayList<>(party.getMembers());
+            members.remove(player);
+            Iterator<Player> memberIterator = members.iterator();
+
+            try {
+                Player member = memberIterator.next();
+                scoreboard.getTeam(DEFAULT_PARTY_TWO_KEY).setPrefix(getPartyMemberPrefix(member, false));
+                scoreboard.getTeam(DEFAULT_PARTY_TWO_KEY).setSuffix(getPartyMemberSuffix(member));
+            } catch (NoSuchElementException ignored){
+                scoreboard.getTeam(DEFAULT_PARTY_TWO_KEY).setPrefix(ChatColor.DARK_GRAY + "Empty... use /party! ");
+                scoreboard.getTeam(DEFAULT_PARTY_TWO_KEY).setSuffix("");
+            }
+
+            try {
+                Player member = memberIterator.next();
+                scoreboard.getTeam(DEFAULT_PARTY_THREE_KEY).setPrefix(getPartyMemberPrefix(member, false));
+                scoreboard.getTeam(DEFAULT_PARTY_THREE_KEY).setSuffix(getPartyMemberSuffix(member));
+            } catch (NoSuchElementException ignored){
+                scoreboard.getTeam(DEFAULT_PARTY_THREE_KEY).setPrefix(ChatColor.DARK_GRAY + "Empty... use /party! ");
+                scoreboard.getTeam(DEFAULT_PARTY_THREE_KEY).setSuffix("");
+            }
+
+            try {
+                Player member = memberIterator.next();
+                scoreboard.getTeam(DEFAULT_PARTY_FOUR_KEY).setPrefix(getPartyMemberPrefix(member, false));
+                scoreboard.getTeam(DEFAULT_PARTY_FOUR_KEY).setSuffix(getPartyMemberSuffix(member));
+            } catch (NoSuchElementException ignored){
+                scoreboard.getTeam(DEFAULT_PARTY_FOUR_KEY).setPrefix(ChatColor.DARK_GRAY + "Empty... use /party! ");
+                scoreboard.getTeam(DEFAULT_PARTY_FOUR_KEY).setSuffix("");
+            }
+
+        } else {
+
+            scoreboard.getTeam(DEFAULT_PARTY_TWO_KEY).setPrefix(ChatColor.DARK_GRAY + "Empty... use /party! ");
+            scoreboard.getTeam(DEFAULT_PARTY_TWO_KEY).setSuffix("");
+
+            scoreboard.getTeam(DEFAULT_PARTY_THREE_KEY).setPrefix(ChatColor.DARK_GRAY + "Empty... use /party! ");
+            scoreboard.getTeam(DEFAULT_PARTY_THREE_KEY).setSuffix("");
+
+            scoreboard.getTeam(DEFAULT_PARTY_FOUR_KEY).setPrefix(ChatColor.DARK_GRAY + "Empty... use /party! ");
+            scoreboard.getTeam(DEFAULT_PARTY_FOUR_KEY).setSuffix("");
+        }
+
+
     }
 
     @EventHandler

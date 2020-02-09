@@ -27,6 +27,7 @@ public final class LevelingOverhaul extends JavaPlugin {
     private PlayerHealthManager hpManager;
     private GlobalDamageManager damageManager;
     private ActionBarManager actionBarManager;
+    private PartyManager partyManager;
     private ScoreboardManager scoreboardManager;
     private EnchantmentManager enchantmentManager;
     private BossManager bossManager;
@@ -48,6 +49,10 @@ public final class LevelingOverhaul extends JavaPlugin {
 
     public ActionBarManager getActionBarManager() {
         return actionBarManager;
+    }
+
+    public PartyManager getPartyManager() {
+        return partyManager;
     }
 
     public ScoreboardManager getScoreboardManager() {
@@ -83,6 +88,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         hpManager = new PlayerHealthManager(this);
         damageManager = new GlobalDamageManager(this);
         actionBarManager = new ActionBarManager(this);
+        partyManager = new PartyManager();
         scoreboardManager = new ScoreboardManager(this);
         enchantmentManager = new EnchantmentManager();
         bossManager = new BossManager();
@@ -124,6 +130,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         // Listeners involving the scoreboard
         getServer().getPluginManager().registerEvents(new PlayerNametags(this), this);
         getServer().getPluginManager().registerEvents(actionBarManager, this);
+        getServer().getPluginManager().registerEvents(partyManager, this);
         getServer().getPluginManager().registerEvents(scoreboardManager, this);
 
         // Register custom recipes
@@ -137,7 +144,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         // Register commands
         getCommand("mob").setExecutor(new TestMobCommand(this));
         getCommand("stats").setExecutor(new PlayerStatsCommand());
-        getCommand("party").setExecutor(new PartyCommand());
+        getCommand("party").setExecutor(new PartyCommand(this));
         getCommand("leveldebug").setExecutor(new DebugLevelSetter(this));
         getCommand("enchantdebug").setExecutor(new DebugEnchant(this));
     }
