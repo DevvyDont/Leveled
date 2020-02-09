@@ -102,26 +102,6 @@ public class PlayerArmorListeners implements Listener {
     }
 
     /**
-     * Because we don't have a 'post event' system we will just have to correct a players health later if armor has growth
-     *
-     * @param player The player to correct health for
-     */
-    private void correctPlayerHealthLater(Player player) {
-        new BukkitRunnable() {
-
-            public void run() {
-                double HP = plugin.getHpManager().calculatePlayerExpectedHealth(player);
-                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(HP);
-                if (player.getHealth() > HP) {
-                    player.setHealth(HP);
-                }
-                plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, "");
-            }
-
-        }.runTaskLater(plugin, 10);
-    }
-
-    /**
      * Listen to all right click events, and check if we should disallow a player to equip armor
      *
      * @param event - The PlayerInteractEvent we are listening to
@@ -153,15 +133,6 @@ public class PlayerArmorListeners implements Listener {
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_ANVIL_PLACE, .3f, .7f);
             event.getPlayer().sendActionBar( ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to equip that item!");
         }
-
-        // See if we have growth, if not return else correct the players hp later
-        try {
-            plugin.getEnchantmentManager().getEnchantLevel(event.getItem(), CustomEnchantType.GROWTH);
-        } catch (IllegalArgumentException ignored) {
-            return;
-        }
-        correctPlayerHealthLater(event.getPlayer());
-
     }
 
     /**
@@ -179,7 +150,6 @@ public class PlayerArmorListeners implements Listener {
         }
 
         Player player = (Player) event.getWhoClicked();
-        correctPlayerHealthLater(player);
 
         // Do we even need to check them?
         if (player.getLevel() >= BaseExperience.LEVEL_CAP) {
@@ -257,7 +227,7 @@ public class PlayerArmorListeners implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = false)
+    @EventHandler()
     public void onArmorClick(InventoryClickEvent event) {
 
         // Was armor clicked? Armor in our plugin is unbreakable so make sure it can't break

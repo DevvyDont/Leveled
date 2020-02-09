@@ -6,6 +6,7 @@ import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -13,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -272,18 +274,37 @@ public class GlobalDamageManager implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-        public void onMobHitByThorns(EntityDamageByEntityEvent event){
+    public void onMobHitByThorns(EntityDamageByEntityEvent event){
 
-            // Player vs Player thorns is handled elsewhere
-            if (event.getEntity() instanceof Player){ return; }
+        // Player vs Player thorns is handled elsewhere
+        if (event.getEntity() instanceof Player){ return; }
 
-            // If something other than a player is getting hit my thorns
-            if (event.getCause().equals(EntityDamageEvent.DamageCause.THORNS)) {
-                int level;
-                try { level = plugin.getMobManager().getMobLevel((LivingEntity) event.getDamager()); } catch (ClassCastException ignored) { return; }
-                event.setDamage(level * (Math.random() - .5));
-            }
+        // If something other than a player is getting hit my thorns
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.THORNS)) {
+            int level;
+            try { level = plugin.getMobManager().getMobLevel((LivingEntity) event.getDamager()); } catch (ClassCastException ignored) { return; }
+            event.setDamage(level * (Math.random() - .5));
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerRegen(EntityRegainHealthEvent event) {
+
+        if (event.getEntity() instanceof LivingEntity){
+            if (((LivingEntity) event.getEntity()).getHealth() < 1) { event.setCancelled(true); return; }
+        }
+
+        // This is basically just natural regen
+        if (event.getEntity() instanceof Player && event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.SATIATED)) {
+            Player player = (Player) event.getEntity();
+            double maxHP = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+            double halfHeartAmount = maxHP / 20.;
+            double amountToRegen;
+            if (maxHP / 2 > player.getHealth()) {amountToRegen = halfHeartAmount * 1.33; }
+            else { amountToRegen = halfHeartAmount * .35; }
+            event.setAmount(amountToRegen);
+        }
+    }
 
 
     @EventHandler

@@ -40,10 +40,8 @@ public class PlayerExperienceListeners implements Listener {
         }
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, .7f, .5f);
         LevelRewards.playerLeveledUp(player, oldLevel, newLevel);
-        double newMaxHp = this.plugin.getHpManager().calculatePlayerExpectedHealth(player, newLevel);
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(newMaxHp);
+        plugin.getArmorManager().updatePlayerArmorAttributes(player);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-        player.setHealthScale(20 + plugin.getHpManager().calculateGrowthFactor(player));
         player.setFoodLevel(20);
         player.setSaturation(20);
         for (int i = 0; i < 3; i++) {

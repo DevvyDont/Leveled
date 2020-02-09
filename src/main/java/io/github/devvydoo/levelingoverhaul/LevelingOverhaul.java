@@ -24,7 +24,7 @@ import java.util.Iterator;
 public final class LevelingOverhaul extends JavaPlugin {
 
     private MobManager mobManager;
-    private PlayerHealthManager hpManager;
+    private PlayerArmorManager armorManager;
     private GlobalDamageManager damageManager;
     private ActionBarManager actionBarManager;
     private PartyManager partyManager;
@@ -39,8 +39,8 @@ public final class LevelingOverhaul extends JavaPlugin {
         return this.mobManager;
     }
 
-    public PlayerHealthManager getHpManager() {
-        return hpManager;
+    public PlayerArmorManager getArmorManager() {
+        return armorManager;
     }
 
     public GlobalDamageManager getDamageManager() {
@@ -85,7 +85,7 @@ public final class LevelingOverhaul extends JavaPlugin {
             }
         }
 
-        hpManager = new PlayerHealthManager(this);
+        armorManager = new PlayerArmorManager(this);
         damageManager = new GlobalDamageManager(this);
         actionBarManager = new ActionBarManager(this);
         partyManager = new PartyManager();
@@ -97,7 +97,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         // Listeners that change how natural progression works
         getServer().getPluginManager().registerEvents(new ProgressionModifyingListeners(), this);
         getServer().getPluginManager().registerEvents(new PlayerDamageModifier(this), this);
-        getServer().getPluginManager().registerEvents(hpManager, this);
+        getServer().getPluginManager().registerEvents(armorManager, this);
         getServer().getPluginManager().registerEvents(damageManager, this);
 
         // Register listeners regarding experience

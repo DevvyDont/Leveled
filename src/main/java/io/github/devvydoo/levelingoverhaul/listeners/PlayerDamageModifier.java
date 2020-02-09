@@ -24,7 +24,7 @@ public class PlayerDamageModifier implements Listener {
     private double calculateEntityDamage(LivingEntity entity, EntityDamageEvent.DamageCause cause){
 
         int mobLevel = plugin.getMobManager().getMobLevel(entity);
-        double onLevelPlayerMaxHP = plugin.getHpManager().calculateBaseHealth(mobLevel);
+        double onLevelPlayerMaxHP =  100 + (Math.floor(Math.pow(mobLevel, 1.845142)));
         double damagePercent;
         switch (entity.getType()){
             case HUSK:
@@ -33,6 +33,7 @@ public class PlayerDamageModifier implements Listener {
             case DROWNED:
             case EVOKER:
             case STRAY:
+            case PILLAGER:
                 damagePercent = .25;
                 break;
             case SKELETON:
@@ -83,9 +84,6 @@ public class PlayerDamageModifier implements Listener {
             case VINDICATOR:
                 damagePercent = .80;
                 break;
-            case PILLAGER:
-                damagePercent = .25;
-                break;
             case GUARDIAN:
                 damagePercent = .18;
                 break;
@@ -124,179 +122,39 @@ public class PlayerDamageModifier implements Listener {
         }
 
         double damage = damagePercent * onLevelPlayerMaxHP;
-        double expectedResist = mobLevel / 200.;
+        double expectedResist = Math.pow(mobLevel / 2., 2);
         damage *= (1 + ((Math.random() - .5) / 10));
-        damage *= (1 + expectedResist);
+        damage += expectedResist;
         return damage;
     }
 
-    /**
-     * All armor in the game have a % resist value, that is defined here
-     *
-     * @param armor The ItemStack that the player is wearing
-     * @return a % amount of resist
-     */
-    private double getArmorDamageResistPercent(ItemStack armor) {
-        switch (armor.getType()) {
-            case DIAMOND_CHESTPLATE:
-                return .13;
-            case DIAMOND_LEGGINGS:
-                return .12;
-            case DIAMOND_HELMET:
-                return .09;
-            case DIAMOND_BOOTS:
-                return .08;
-
-            case IRON_CHESTPLATE:
-                return .10;
-            case IRON_LEGGINGS:
-                return .09;
-            case IRON_HELMET:
-                return .07;
-            case IRON_BOOTS:
-                return .06;
-
-            case CHAINMAIL_CHESTPLATE:
-                return .08;
-            case CHAINMAIL_LEGGINGS:
-                return .07;
-            case CHAINMAIL_HELMET:
-                return .06;
-            case CHAINMAIL_BOOTS:
-                return .04;
-
-
-            case GOLDEN_CHESTPLATE:
-                return .07;
-            case GOLDEN_LEGGINGS:
-                return .05;
-            case GOLDEN_HELMET:
-                return .04;
-            case GOLDEN_BOOTS:
-                return .02;
-
-            case LEATHER_CHESTPLATE:
-                return .04;
-            case LEATHER_LEGGINGS:
-                return .03;
-            case LEATHER_HELMET:
-            case TURTLE_HELMET:
-                return .02;
-            case LEATHER_BOOTS:
-                return .01;
-            default:
-                return 0;
-        }
-    }
-
-    /**
-     * Gets the total % resist that a player should resist from taking damage
-     *
-     * @param player the Player that got hit
-     * @return A % of damage that we should reduce
-     */
-    private double getPlayerDamageResist(Player player) {
-        PlayerInventory inventory = player.getInventory();
-        double damageResist = 0;
-        if (inventory.getHelmet() != null) {
-            damageResist += getArmorDamageResistPercent(inventory.getHelmet());
-        }
-        if (inventory.getChestplate() != null) {
-            damageResist += getArmorDamageResistPercent(inventory.getChestplate());
-        }
-        if (inventory.getLeggings() != null) {
-            damageResist += getArmorDamageResistPercent(inventory.getLeggings());
-        }
-        if (inventory.getBoots() != null) {
-            damageResist += getArmorDamageResistPercent(inventory.getBoots());
-        }
-        if (damageResist > .99) {
-            damageResist = .99;
-        }
-        return damageResist;
-    }
-
-    private double getPlayerProtectionResist(Player player, boolean checkProjectile) {
-        PlayerInventory inventory = player.getInventory();
-        double resist = 0;
-        if (inventory.getHelmet() != null) {
-            resist += .55 * inventory.getHelmet().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
-        }
-        if (inventory.getChestplate() != null) {
-            resist += .55 * inventory.getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
-        }
-        if (inventory.getLeggings() != null) {
-            resist += .55 * inventory.getLeggings().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
-        }
-        if (inventory.getBoots() != null) {
-            resist += .55 * inventory.getBoots().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
-        }
-        if (checkProjectile) {
-            if (inventory.getHelmet() != null) {
-                resist += .2 * inventory.getHelmet().getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE);
-            }
-            if (inventory.getChestplate() != null) {
-                resist += .2 * inventory.getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE);
-            }
-            if (inventory.getLeggings() != null) {
-                resist += .2 * inventory.getLeggings().getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE);
-            }
-            if (inventory.getBoots() != null) {
-                resist += .2 * inventory.getBoots().getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE);
-            }
-        }
-        return resist / 100.;
-    }
-
-    /**
-     * Calculates the % resist a player should resist from fire and lava damage
-     *
-     * @param player The player we are calculating fire resistance for
-     */
-    private double getPlayerFireResistancePercent(Player player){
-
-        PlayerInventory inventory = player.getInventory();
-        double resist = 0;
-        if (inventory.getHelmet() != null) { resist += .015 * inventory.getHelmet().getEnchantmentLevel(Enchantment.PROTECTION_FIRE); }
-        if (inventory.getChestplate() != null) { resist += .015 * inventory.getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_FIRE); }
-        if (inventory.getLeggings() != null) { resist += .015 * inventory.getLeggings().getEnchantmentLevel(Enchantment.PROTECTION_FIRE); }
-        if (inventory.getBoots() != null) { resist += .015 * inventory.getBoots().getEnchantmentLevel(Enchantment.PROTECTION_FIRE); }
-        return resist;
-    }
-
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerGotHitByMob(EntityDamageByEntityEvent event) {
+    public void onMobInflictedDamage(EntityDamageByEntityEvent event) {
 
-        if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0) {
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0)
             return;
-        }
 
         // If the entity hit wasnt living don't worry
-        if (!(event.getEntity() instanceof LivingEntity)) {
+        if (!(event.getEntity() instanceof LivingEntity))
             return;
-        }
 
         // If the entity that attacked wasn't a mob or a projectile don't worry about it
-        if (!(event.getDamager() instanceof LivingEntity || event.getDamager() instanceof Projectile)) {
+        if (!(event.getDamager() instanceof LivingEntity || event.getDamager() instanceof Projectile))
             return;
-        }
-
-
 
         // Find the source, if we don't have living entity or projectile, we don't care
         LivingEntity source;
-        if (event.getDamager() instanceof LivingEntity) {
+        if (event.getDamager() instanceof LivingEntity)
             source = (LivingEntity) event.getDamager();
-        } else if (event.getDamager() instanceof Projectile) {
+        else if (event.getDamager() instanceof Projectile)
             source = (LivingEntity) ((Projectile) event.getDamager()).getShooter();
-        } else {
+        else
             return;
-        }
+
 
         // We don't care for players doing damage
-        if (source instanceof Player){
+        if (source instanceof Player)
             return;
-        }
 
         // Get the level of the attacker
         double newDamage;
@@ -313,13 +171,11 @@ public class PlayerDamageModifier implements Listener {
     public void playerHitByMiscSource(EntityDamageEvent event) {
 
 
-        if (!(event.getEntity() instanceof Player)) {
+        if (!(event.getEntity() instanceof Player))
             return;
-        }
 
-        if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0) {
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0)
             return;
-        }
 
         Player player = (Player) event.getEntity();
         double fivePercentHP = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 20.;
@@ -331,41 +187,55 @@ public class PlayerDamageModifier implements Listener {
                 event.getCause().equals(EntityDamageEvent.DamageCause.STARVATION) ||
                 event.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) ||
                 event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION)) {
-            if (event.getDamage() < fivePercentHP) {
+            if (event.getDamage() < fivePercentHP)
                 event.setDamage(fivePercentHP);
-            }
-        } else if (event.getCause().equals(EntityDamageEvent.DamageCause.FIRE)) { event.setDamage((1 - getPlayerFireResistancePercent(player)) * fivePercentHP * 3); }
-        else if (event.getCause().equals(EntityDamageEvent.DamageCause.LAVA)) { event.setDamage((1 - getPlayerFireResistancePercent(player)) * fivePercentHP * 5); }
+
+        } else if (event.getCause().equals(EntityDamageEvent.DamageCause.FIRE)) {
+            double dmg = fivePercentHP - plugin.getArmorManager().getPlayerArmorAttributes(player).getFireDefense();
+            if (dmg <= 5)
+                dmg = 5;
+            event.setDamage(dmg);
+        }
+        else if (event.getCause().equals(EntityDamageEvent.DamageCause.LAVA)) {
+            double dmg = fivePercentHP * 5 - plugin.getArmorManager().getPlayerArmorAttributes(player).getFireDefense();
+            if (dmg <= 20)
+                dmg = 20;
+            event.setDamage(dmg);
+        }
         else if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
-            int blocksFallen = (int) ((event.getDamage() / 5) - 3) / 2;
-            if (blocksFallen <= 0) {
-                event.setCancelled(true);
-                return;
-            }
-            event.setDamage(blocksFallen * fivePercentHP);
-        } else if (event.getCause().equals(EntityDamageEvent.DamageCause.THORNS) && event instanceof EntityDamageByEntityEvent) {
+            float blocksFallen = player.getFallDistance();
+            if (player.getInventory().getBoots() != null)
+                blocksFallen /= player.getInventory().getBoots().getEnchantmentLevel(Enchantment.PROTECTION_FALL);
+            event.setDamage(blocksFallen * fivePercentHP / 2);
+        }
+        else if (event.getCause().equals(EntityDamageEvent.DamageCause.THORNS) && event instanceof EntityDamageByEntityEvent) {
 
             Entity thornsOwner = ((EntityDamageByEntityEvent) event).getDamager();
-            if (thornsOwner instanceof LivingEntity){
+            if (thornsOwner instanceof LivingEntity) {
                 int level = plugin.getMobManager().getMobLevel((LivingEntity) thornsOwner);
                 double newDamage = level * 2;
 
-                double percentResisted = getPlayerDamageResist(player);
-                double percentProtResist = getPlayerProtectionResist(player, false);
-                newDamage = newDamage * (1 - percentResisted - percentProtResist);
-                if (newDamage < 1) { newDamage = 1; }
+                newDamage -= plugin.getArmorManager().getPlayerArmorAttributes(player).getDefense();
+                if (newDamage < 1) {
+                    newDamage = 1;
+                }
                 event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
                 event.setDamage(EntityDamageEvent.DamageModifier.MAGIC, 0);
                 event.setDamage(newDamage);
             }
+        }
+        else if (event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) || event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)){
+            double dmg = event.getDamage() - plugin.getArmorManager().getPlayerArmorAttributes(player).getExplosionDefense();
+            if (dmg <= 20)
+                dmg = 20;
+            event.setDamage(dmg);
         } else {
-            // Here the player is being hit by things that armor should resist, here's how armor works:
-            // Every armor has a base % value to subtract off of the total damage, prot will be flat dmg reduction
             event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
             event.setDamage(EntityDamageEvent.DamageModifier.MAGIC, 0);
-            double percentResisted = getPlayerDamageResist(player);
-            double percentProtResist = getPlayerProtectionResist(player, event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE));
-            double newDamage = event.getDamage() * (1 - percentResisted - percentProtResist);
+            double newDamage = event.getDamage();
+            newDamage -= plugin.getArmorManager().getPlayerArmorAttributes(player).getDefense();
+            if (event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE))
+                newDamage -= plugin.getArmorManager().getPlayerArmorAttributes(player).getProjectileDefense();
             if (newDamage < 1) { newDamage = 1; }
             event.setDamage(newDamage);
         }

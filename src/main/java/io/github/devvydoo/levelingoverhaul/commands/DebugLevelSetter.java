@@ -60,7 +60,7 @@ public class DebugLevelSetter implements CommandExecutor {
             player.setLevel(level);
             player.setExp(0);
         }
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(plugin.getHpManager().calculatePlayerExpectedHealth(player, level));
+        plugin.getArmorManager().updatePlayerArmorAttributes(player);
     }
 
     @Override
