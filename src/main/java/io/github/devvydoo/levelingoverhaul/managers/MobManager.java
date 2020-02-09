@@ -303,7 +303,6 @@ public class MobManager implements Listener {
             case HORSE:
             case SKELETON_HORSE:
             case ZOMBIE_HORSE:
-            case FOX:
             case LLAMA:
             case MULE:
             case DONKEY:
@@ -314,6 +313,7 @@ public class MobManager implements Listener {
             case BEE:
             case VILLAGER:
             case WANDERING_TRADER:
+            case FOX:
                 level = (int)(Math.random() * 5 + 3);
                 break;
 
@@ -604,8 +604,8 @@ public class MobManager implements Listener {
             return;
         }
 
-        // We don't care about players
-        if (event.getEntity() instanceof Player) {
+        // We don't care about players or armor stands
+        if (event.getEntity() instanceof Player || event.getEntity() instanceof ArmorStand) {
             return;
         }
 
