@@ -147,7 +147,7 @@ public final class LevelingOverhaul extends JavaPlugin {
 
         // Register commands
         getCommand("mob").setExecutor(new TestMobCommand(this));
-        getCommand("stats").setExecutor(new PlayerStatsCommand());
+        getCommand("stats").setExecutor(new PlayerStatsCommand(this));
         getCommand("party").setExecutor(new PartyCommand(this));
         getCommand("leveldebug").setExecutor(new DebugLevelSetter(this));
         getCommand("enchantdebug").setExecutor(new DebugEnchant(this));

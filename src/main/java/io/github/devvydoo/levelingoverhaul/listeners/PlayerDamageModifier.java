@@ -24,7 +24,7 @@ public class PlayerDamageModifier implements Listener {
     private double calculateEntityDamage(LivingEntity entity, EntityDamageEvent.DamageCause cause){
 
         int mobLevel = plugin.getMobManager().getMobLevel(entity);
-        double onLevelPlayerMaxHP =  100 + (Math.floor(Math.pow(mobLevel, 1.845142)));
+        double onLevelPlayerMaxHP =  100 + (Math.floor(Math.pow(mobLevel, 2.1)));
         double damagePercent;
         switch (entity.getType()){
             case HUSK:
@@ -122,9 +122,7 @@ public class PlayerDamageModifier implements Listener {
         }
 
         double damage = damagePercent * onLevelPlayerMaxHP;
-        double expectedResist = Math.pow(mobLevel / 2., 2);
         damage *= (1 + ((Math.random() - .5) / 10));
-        damage += expectedResist;
         return damage;
     }
 

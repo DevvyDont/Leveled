@@ -91,23 +91,64 @@ public class PlayerArmorAttributes {
         int protectionLevel = 0;
         if (this.helmet != null) {
             this.defense += getBaseArmorDefense(this.helmet.getType());
-            protectionLevel += this.helmet.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
+            protectionLevel = this.helmet.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
+            int armorTier = getArmorTier(this.helmet);
+            this.defense += (Math.pow(protectionLevel, 1.25 + .25 * armorTier));
         }
         if (this.chestplate != null) {
             this.defense += getBaseArmorDefense(this.chestplate.getType());
-            protectionLevel += this.chestplate.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
+            protectionLevel = this.chestplate.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
+            int armorTier = getArmorTier(this.chestplate);
+            this.defense += (Math.pow(protectionLevel, 1.25 + .25 * armorTier));
         }
         if (this.leggings != null) {
             this.defense += getBaseArmorDefense(this.leggings.getType());
-            protectionLevel += this.leggings.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
+            protectionLevel = this.leggings.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
+            int armorTier = getArmorTier(this.leggings);
+            this.defense += (Math.pow(protectionLevel, 1.25 + .25 * armorTier));
         }
         if (this.boots != null) {
             this.defense += getBaseArmorDefense(this.boots.getType());
-            protectionLevel += this.boots.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
+            protectionLevel = this.boots.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
+            int armorTier = getArmorTier(this.boots);
+            this.defense += (Math.pow(protectionLevel, 1.25 + .25 * armorTier));
         }
 
-        this.defense += (Math.pow(protectionLevel, 2));
         return this.defense;
+    }
+
+    private int getArmorTier(ItemStack armor) {
+        switch (armor.getType()){
+            case DIAMOND_HELMET:
+            case DIAMOND_CHESTPLATE:
+            case DIAMOND_LEGGINGS:
+            case DIAMOND_BOOTS:
+                return 5;
+            case IRON_HELMET:
+            case IRON_CHESTPLATE:
+            case IRON_LEGGINGS:
+            case IRON_BOOTS:
+                return 4;
+            case CHAINMAIL_BOOTS:
+            case CHAINMAIL_CHESTPLATE:
+            case CHAINMAIL_HELMET:
+            case CHAINMAIL_LEGGINGS:
+                return 3;
+            case GOLDEN_BOOTS:
+            case GOLDEN_CHESTPLATE:
+            case GOLDEN_HELMET:
+            case GOLDEN_LEGGINGS:
+            case ELYTRA:
+                return 2;
+            case LEATHER_HELMET:
+            case LEATHER_BOOTS:
+            case LEATHER_CHESTPLATE:
+            case LEATHER_LEGGINGS:
+            case TURTLE_HELMET:
+                return 1;
+            default:
+                return 0;
+        }
     }
 
     private int calculateFireDefense() {
