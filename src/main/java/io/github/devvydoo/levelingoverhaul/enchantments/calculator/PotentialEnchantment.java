@@ -79,11 +79,14 @@ public class PotentialEnchantment {
 
     public boolean canBeAppliedTo(ItemStack itemStack) {
         if (enchantType instanceof Enchantment) {
+
             Enchantment enchant = (Enchantment) enchantType;
             // Override armor to not be able to receive unbreaking. armor in this plugin is unbreakable.
             if (ToolTypeHelpers.isArmor(itemStack) && enchant.getKey().toString().equals("minecraft:unbreaking")) { return false; }
+            if (itemStack.getType().equals(Material.ELYTRA) && enchant.getKey().toString().contains("protection")) { return true; }
             if ((itemStack.getType().equals(Material.BOW) || itemStack.getType().equals(Material.CROSSBOW)) && enchant.getKey().toString().equals("minecraft:unbreaking")) { return true; }
             return enchant.canEnchantItem(itemStack);
+
         } else if (enchantType instanceof CustomEnchantType) {
             CustomEnchantType type = (CustomEnchantType) enchantType;
             return enchantmentManager.canEnchantItem(type, itemStack);

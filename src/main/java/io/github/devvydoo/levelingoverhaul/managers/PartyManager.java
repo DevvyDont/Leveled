@@ -110,8 +110,8 @@ public class PartyManager implements Listener {
             Arrow arrow = (Arrow) event.getDamager();
             if (arrow.getShooter() instanceof Player){
                 Player damager = (Player) arrow.getShooter();
-                if (inSameParty(damaged, damager));
-                event.setCancelled(true);
+                if (inSameParty(damaged, damager))
+                    event.setCancelled(true);
             }
         }
     }

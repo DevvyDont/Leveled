@@ -4,6 +4,7 @@ import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -187,7 +188,10 @@ public class PlayerArmorAttributes {
 
     private double calculateTotalHealth(){
         double totalHealth = calculateBonusHealth() + calculateBaseHealth();
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(totalHealth);
+        AttributeInstance playerMaxHPAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        playerMaxHPAttribute.setBaseValue(totalHealth);
+        if (player.getHealth() > playerMaxHPAttribute.getBaseValue())
+            player.setHealth(playerMaxHPAttribute.getBaseValue());
         return totalHealth;
     }
 

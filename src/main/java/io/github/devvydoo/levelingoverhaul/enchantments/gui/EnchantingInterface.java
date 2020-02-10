@@ -155,7 +155,7 @@ public class EnchantingInterface implements Listener {
             case IRON_HELMET:
             case TURTLE_HELMET:
             case FISHING_ROD:
-//            case ELYTRA:  // TODO: Add enchants for elytra
+            case ELYTRA:  // TODO: Add enchants for elytra
             case SHEARS:
             case FLINT_AND_STEEL:
                 return true;

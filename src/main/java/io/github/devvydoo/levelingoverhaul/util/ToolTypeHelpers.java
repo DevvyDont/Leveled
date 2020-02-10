@@ -73,6 +73,7 @@ public final class ToolTypeHelpers {
         list.add(Material.CHAINMAIL_HELMET);
         list.add(Material.GOLDEN_HELMET);
         list.add(Material.DIAMOND_HELMET);
+        list.add(Material.TURTLE_HELMET);
     }
 
     public static void addChestplatesToList(ArrayList<Material> list) {
@@ -81,6 +82,7 @@ public final class ToolTypeHelpers {
         list.add(Material.CHAINMAIL_CHESTPLATE);
         list.add(Material.GOLDEN_CHESTPLATE);
         list.add(Material.DIAMOND_CHESTPLATE);
+        list.add(Material.ELYTRA);
     }
 
     public static void addLeggingsToList(ArrayList<Material> list) {

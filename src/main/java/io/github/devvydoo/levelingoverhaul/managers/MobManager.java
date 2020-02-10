@@ -337,6 +337,7 @@ public class MobManager implements Listener {
             case PUFFERFISH:
             case TROPICAL_FISH:
             case TURTLE:
+            case ARMOR_STAND:
                 level = 1;
                 break;
 
