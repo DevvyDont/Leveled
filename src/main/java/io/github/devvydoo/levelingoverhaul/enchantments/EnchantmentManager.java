@@ -81,8 +81,7 @@ public class EnchantmentManager {
 
     // A color to use for enchantment descriptions, should we use them. Enchantments never start with this color.
     public final String DESCRIPTION_COLOR = ChatColor.GRAY.toString();
-    public final String LEVEL_CAPPED_GEAR_COLOR = ChatColor.DARK_PURPLE.toString() + ChatColor.BOLD;
-    public final String LEVEL_CAPPED_GEAR_STRING = LEVEL_CAPPED_GEAR_COLOR + "Level";
+    public final String LEVEL_CAPPED_GEAR_STRING = "Level";
     public final String LEVEL_CAPPED_GEAR_STRING_FULL = LEVEL_CAPPED_GEAR_STRING + " %s ";
 
     public final int MAX_ENCHANT_QUALITY_FACTOR = 12;
@@ -98,7 +97,7 @@ public class EnchantmentManager {
         ArrayList<CustomEnchantment> enchantments = new ArrayList<>();
 
         // Apparently this is possible... check just in case
-        if (item.getItemMeta() == null || item.getItemMeta().getLore() == null) {
+        if (item == null || item.getItemMeta() == null || item.getItemMeta().getLore() == null) {
             return enchantments;  // Returns an empty list, no biggie
         }
 
@@ -210,7 +209,7 @@ public class EnchantmentManager {
         int level = 0;
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            String name = meta.getDisplayName();
+            String name = ChatColor.stripColor(meta.getDisplayName());
             if (name.startsWith(LEVEL_CAPPED_GEAR_STRING)) {
                 String[] components = name.split(" ");
                 level = Integer.parseInt(components[1]);
@@ -229,11 +228,14 @@ public class EnchantmentManager {
             return;
         }
 
+        Rarity itemRarity = Rarity.getItemRarity(item);
+
         // Now add the level
         String originalName = meta.hasDisplayName() ? meta.getDisplayName() : WordUtils.capitalizeFully(item.getType().toString().replace("_", " "));
-        String newName = String.format(LEVEL_CAPPED_GEAR_STRING_FULL, level) + ChatColor.LIGHT_PURPLE + originalName;
+        String newName = itemRarity.LEVEL_LABEL_COLOR + String.format(LEVEL_CAPPED_GEAR_STRING_FULL, level) + itemRarity.NAME_LABEL_COLOR + originalName;
         meta.setDisplayName(newName);
         item.setItemMeta(meta);
+        item.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
     }
 
     public void resetItemLevel(ItemStack itemStack) {
@@ -243,7 +245,7 @@ public class EnchantmentManager {
             return;
         }
 
-        String originalName = meta.getDisplayName();
+        String originalName = ChatColor.stripColor(meta.getDisplayName());
 
         if (originalName.startsWith(LEVEL_CAPPED_GEAR_STRING)) {
             String[] components = originalName.split(" ");

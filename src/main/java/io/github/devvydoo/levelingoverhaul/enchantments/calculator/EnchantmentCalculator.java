@@ -107,7 +107,6 @@ public class EnchantmentCalculator {
         enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.DIG_SPEED, 30, BaseExperience.LEVEL_CAP, 15));
         enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.LOOT_BONUS_BLOCKS, 30, BaseExperience.LEVEL_CAP, 10));
         enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.SILK_TOUCH, 30, BaseExperience.LEVEL_CAP, 1));
-        enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.DURABILITY, 30, BaseExperience.LEVEL_CAP, 14));
         enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.LUCK, 30, BaseExperience.LEVEL_CAP, 10));
         enchs.add(new PotentialEnchantment(enchantmentManager, Enchantment.LURE, 30, BaseExperience.LEVEL_CAP, 10));
 

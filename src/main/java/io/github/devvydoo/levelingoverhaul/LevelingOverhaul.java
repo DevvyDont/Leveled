@@ -29,6 +29,7 @@ public final class LevelingOverhaul extends JavaPlugin {
     private ActionBarManager actionBarManager;
     private PartyManager partyManager;
     private ScoreboardManager scoreboardManager;
+    private GlobalItemManager globalItemManager;
     private EnchantmentManager enchantmentManager;
     private BossManager bossManager;
     private TipAnnounceManager tipManager;
@@ -85,12 +86,13 @@ public final class LevelingOverhaul extends JavaPlugin {
             }
         }
 
+        enchantmentManager = new EnchantmentManager();
+        globalItemManager = new GlobalItemManager(this);
         armorManager = new PlayerArmorManager(this);
         damageManager = new GlobalDamageManager(this);
         actionBarManager = new ActionBarManager(this);
         partyManager = new PartyManager();
         scoreboardManager = new ScoreboardManager(this);
-        enchantmentManager = new EnchantmentManager();
         bossManager = new BossManager(this);
         tipManager = new TipAnnounceManager(this);
 
@@ -99,6 +101,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerDamageModifier(this), this);
         getServer().getPluginManager().registerEvents(armorManager, this);
         getServer().getPluginManager().registerEvents(damageManager, this);
+        getServer().getPluginManager().registerEvents(globalItemManager, this);
 
         // Register listeners regarding experience
         getServer().getPluginManager().registerEvents(new PlayerJoinListeners(this), this);

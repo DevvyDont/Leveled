@@ -2,7 +2,9 @@ package io.github.devvydoo.levelingoverhaul.util;
 
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * This class ensures that players are told what they unlocked when they level up
@@ -98,5 +100,73 @@ public abstract class LevelRewards {
             default:
                 return "";
         }
+    }
+
+    public static int getDefaultItemLevelCap(ItemStack itemStack){
+
+        switch (itemStack.getType()){
+
+
+            case DIAMOND_CHESTPLATE:
+            case DIAMOND_HELMET:
+            case DIAMOND_LEGGINGS:
+            case DIAMOND_BOOTS:
+                return DIAMOND_ARMOR_UNLOCK;
+            case DIAMOND_HOE:
+            case DIAMOND_SWORD:
+            case DIAMOND_PICKAXE:
+            case DIAMOND_AXE:
+            case DIAMOND_SHOVEL:
+                return DIAMOND_TOOLS_UNLOCK;
+            case IRON_CHESTPLATE:
+            case IRON_HELMET:
+            case IRON_LEGGINGS:
+            case IRON_BOOTS:
+                return IRON_ARMOR_UNLOCK;
+            case IRON_HOE:
+            case IRON_SWORD:
+            case IRON_PICKAXE:
+            case IRON_AXE:
+            case IRON_SHOVEL:
+                return IRON_TOOLS_UNLOCK;
+            case GOLDEN_CHESTPLATE:
+            case GOLDEN_HELMET:
+            case GOLDEN_LEGGINGS:
+            case GOLDEN_BOOTS:
+                return GOLDEN_ARMOR_UNLOCK;
+            case GOLDEN_HOE:
+            case GOLDEN_SWORD:
+            case GOLDEN_PICKAXE:
+            case GOLDEN_AXE:
+            case GOLDEN_SHOVEL:
+                return GOLDEN_TOOLS_UNLOCK;
+            case STONE_HOE:
+            case STONE_SWORD:
+            case STONE_PICKAXE:
+            case STONE_AXE:
+            case STONE_SHOVEL:
+                return STONE_TOOLS_UNLOCK;
+            case WOODEN_HOE:
+            case WOODEN_SWORD:
+            case WOODEN_PICKAXE:
+            case WOODEN_AXE:
+            case WOODEN_SHOVEL:
+                return 1;
+            case CHAINMAIL_CHESTPLATE:
+            case CHAINMAIL_HELMET:
+            case CHAINMAIL_LEGGINGS:
+            case CHAINMAIL_BOOTS:
+                return CHAINMAIL_ARMOR_UNLOCK;
+            case LEATHER_CHESTPLATE:
+            case LEATHER_HELMET:
+            case LEATHER_LEGGINGS:
+            case LEATHER_BOOTS:
+                return LEATHER_ARMOR_UNLOCK;
+
+            default:
+                return 0;
+
+        }
+
     }
 }
