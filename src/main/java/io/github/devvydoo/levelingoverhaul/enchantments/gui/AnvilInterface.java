@@ -231,7 +231,7 @@ public class AnvilInterface implements Listener {
     }
 
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler()
     public void onAnvilInteract(PlayerInteractEvent event) {
 
         // Did the player right click?
@@ -257,7 +257,7 @@ public class AnvilInterface implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler()
     public void onAnvilInterfaceClick(InventoryClickEvent event) {
 
         // Do we have the anvil interface open?
@@ -268,6 +268,14 @@ public class AnvilInterface implements Listener {
         // Cancel the event no matter what
         event.setCancelled(true);
 
+        // Double clicks do weird things
+        if (event.getClick().equals(ClickType.DOUBLE_CLICK))
+            return;
+
+        // If the output was clicked, and there's nothing in the input, we shouldn't do anything
+        if (event.getSlot() == ANVIL_OUTPUT_SLOT && event.getView().getItem(ANVIL_INPUT_SLOT) == null || event.getView().getItem(ANVIL_INPUT_SLOT).getType().equals(Material.AIR))
+            return;
+
         // In the case that we clicked the input slot, don't do anything
         if (!(event.getClickedInventory() instanceof PlayerInventory) && event.getSlot() == ANVIL_INPUT_SLOT) {
             // Check if we should update the output
@@ -276,7 +284,9 @@ public class AnvilInterface implements Listener {
                 if (cursor.getEnchantments().size() != 0 || plugin.getEnchantmentManager().getCustomEnchantments(cursor).size() != 0) {
                     try {
                         String viewTitle = event.getView().getTitle();
-                        event.getClickedInventory().setItem(ANVIL_OUTPUT_SLOT, new ItemStack(getMaterialRefundType(cursor, viewTitle), getMaterialRefundAmount(cursor, viewTitle)));
+                        ItemStack item = new ItemStack(getMaterialRefundType(cursor, viewTitle), getMaterialRefundAmount(cursor, viewTitle));
+                        plugin.getGlobalItemManager().fixItem(item);
+                        event.getClickedInventory().setItem(ANVIL_OUTPUT_SLOT, item);
                     } catch (IllegalArgumentException e) {
                         // we were given an illegal item, no need to do anything
                         System.out.println(ChatColor.YELLOW + "[Anvils] Illegal Argument " + cursor.getType() + ", this may be an error as it was enchanted.");
