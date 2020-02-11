@@ -6,19 +6,24 @@ import io.github.devvydoo.levelingoverhaul.enchantments.CustomItems;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.EnchantmentCalculator;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.PotentialEnchantment;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
+import org.bukkit.*;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -75,6 +80,7 @@ public class BossManager implements Listener {
         drop.setCustomName(drop.getItemStack().getItemMeta().getDisplayName());
         drop.setCustomNameVisible(true);
         drop.setVelocity(new Vector(Math.random() - .5, Math.random() - .5, Math.random() - .5));
+        drop.setMetadata("unique_drop", new FixedMetadataValue(plugin, true));
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -159,6 +165,94 @@ public class BossManager implements Listener {
             }.runTaskLater(plugin, 1);
         }
 
+    }
+
+    @EventHandler
+    public void onPlayerPickupLegendaryItem(PlayerAttemptPickupItemEvent event){
+        if (event.getItem().hasMetadata("unique_drop"))
+            plugin.getServer().broadcastMessage(ChatColor.GREEN + "" + ChatColor.BOLD + event.getPlayer().getDisplayName() + ChatColor.GRAY + " has found a " + event.getItem().getItemStack().getItemMeta().getDisplayName() + ChatColor.GRAY + "!");
+    }
+
+    private ArrayList<Player> poisonedPlayers = new ArrayList<>();
+
+    // ENDER DRAGON STUFF
+    @EventHandler
+    public void onEnderGasDamage(EntityDamageByEntityEvent event){
+
+        if (!(event.getEntity() instanceof LivingEntity))
+            return;
+        LivingEntity hurt = (LivingEntity) event.getEntity();
+        if (!(event.getDamager() instanceof  AreaEffectCloud))
+            return;
+        AreaEffectCloud gas = (AreaEffectCloud) event.getDamager();
+        if (!(gas.getSource() instanceof EnderDragon))
+            return;
+
+        EnderDragon dragon = (EnderDragon) gas.getSource();
+        int dragonLevel = plugin.getMobManager().getMobLevel(dragon);
+        double dmg = dragonLevel;
+        if (hurt instanceof Player)
+            dmg += plugin.getArmorManager().getPlayerArmorAttributes((Player)hurt).getDefense();
+        event.setDamage(dmg);
+
+        if (!(hurt instanceof Player))
+            return;
+
+        Player player = (Player) hurt;
+
+        if (poisonedPlayers.contains(player))
+            return;
+        poisonedPlayers.add(player);
+        player.sendTitle(ChatColor.LIGHT_PURPLE + "Poisoned!", ChatColor.GRAY + "Drink milk to clear the effect!", 5, 20, 5);
+        new BukkitRunnable() {
+            int times = 0;
+            @Override
+            public void run() {
+
+                times++;
+
+                if (player.isDead()){
+                    poisonedPlayers.remove(player);
+                    this.cancel();
+                    return;
+                }
+
+
+                if (!poisonedPlayers.contains(player) || times >= 600){
+                    plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.GREEN + "" + ChatColor.BOLD + "CURED");
+                    poisonedPlayers.remove(player);
+                    this.cancel();
+                    return;
+                }
+
+                try {
+                    double dmg = Math.min(player.getLevel(), times / 20);
+                    player.setHealth(player.getHealth() - dmg);
+                    plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "POISONED " + (29 - (times / 20)) + "." + (9 - (times % 20 / 2)) + "s");
+                } catch (IllegalArgumentException ignored){
+                    player.setHealth(1);
+                    plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "POISONED " + (29 - (times / 20)) + "." + (9 - (times % 20 / 2)) + "s");
+                } catch(Exception ignored){
+                    poisonedPlayers.remove(player);
+                    this.cancel();
+                }
+
+            }
+        }.runTaskTimer(plugin, 1, 1);
+    }
+
+    @EventHandler
+    public void onPlayerRegen(EntityRegainHealthEvent event){
+        if (event.getEntity() instanceof Player && poisonedPlayers.contains(event.getEntity())){
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onMilkDrank(PlayerItemConsumeEvent event){
+        if (poisonedPlayers.contains(event.getPlayer()) && event.getItem().getType().equals(Material.MILK_BUCKET)){
+            poisonedPlayers.remove(event.getPlayer());
+        }
     }
 
 }
