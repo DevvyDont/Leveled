@@ -3,6 +3,7 @@ package io.github.devvydoo.levelingoverhaul.commands;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.util.Party;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -87,14 +88,23 @@ public class PartyCommand implements CommandExecutor {
             handleLeaveSubCommand(player);
             return true;
 
-        } else if (args[0].equalsIgnoreCase("accept")){
+        }
+        else if (args[0].equalsIgnoreCase("accept")){
 
             handleAcceptSubCommand(player);
             return true;
 
-        } else if (args[0].equalsIgnoreCase("list")){
+        }
+        else if (args[0].equalsIgnoreCase("list")){
 
             handleListSubCommand(player);
+            return true;
+        } else if (args[0].equalsIgnoreCase("tp")){
+            if (args.length < 2){
+                player.sendMessage(ChatColor.RED + "Please specify a player");
+                return true;
+            }
+            handleTpSubCommand(player, args);
             return true;
         }
 
@@ -154,5 +164,29 @@ public class PartyCommand implements CommandExecutor {
             }
             player.sendMessage();
         }
+    }
+
+    private void handleTpSubCommand(Player player, String[] args) {
+        // Is the player in a party?
+        if (!plugin.getPartyManager().isPlayerInParty(player)){
+            player.sendMessage(ChatColor.RED + "You must be in a party to use that command!");
+            return;
+        }
+        // Was a valid player given?
+        Player friend = plugin.getServer().getPlayerExact(args[1]);
+        if (friend == null){
+            player.sendMessage(ChatColor.RED + "Could not find player " + ChatColor.DARK_RED +  args[1]);
+            return;
+        }
+        // Are the players in the same party?
+        if (!plugin.getPartyManager().inSameParty(player, friend)){
+            player.sendMessage(ChatColor.RED + "You must be in the same party as someone to tp to them!");
+            return;
+        }
+        // All good to tp
+        player.teleport(friend.getLocation());
+        player.sendTitle(ChatColor.GREEN + "Teleporting...", "", 20, 20, 10);
+        friend.sendTitle("", ChatColor.AQUA + player.getDisplayName() + ChatColor.GRAY + " teleported to you", 20, 15, 10);
+        friend.getWorld().playSound(friend.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
     }
 }
