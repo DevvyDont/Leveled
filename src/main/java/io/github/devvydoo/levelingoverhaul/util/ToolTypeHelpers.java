@@ -74,6 +74,7 @@ public final class ToolTypeHelpers {
         list.add(Material.GOLDEN_HELMET);
         list.add(Material.DIAMOND_HELMET);
         list.add(Material.TURTLE_HELMET);
+        list.add(Material.DRAGON_HEAD);
     }
 
     public static void addChestplatesToList(ArrayList<Material> list) {
