@@ -200,7 +200,7 @@ public class AnvilInterface implements Listener {
         }
         gui.setItem(ANVIL_INPUT_SLOT, new ItemStack(Material.AIR));
         gui.setItem(ANVIL_INPUT_SLOT + 9, setItemLore(new ItemStack(Material.ANVIL), ChatColor.RED + "Scrap Equipment"));
-        gui.setItem(ANVIL_OUTPUT_SLOT, new ItemStack(Material.AIR));
+        gui.setItem(ANVIL_OUTPUT_SLOT, setItemLore(new ItemStack(Material.CLAY_BALL), ChatColor.RED + "Put an enchanted tool in the left slot to refund materials!"));
         gui.setItem(ANVIL_OUTPUT_SLOT + 9, setItemLore(new ItemStack(Material.CRAFTING_TABLE), ChatColor.GREEN + "Materials Refunded"));
         player.openInventory(gui);
     }
@@ -225,7 +225,7 @@ public class AnvilInterface implements Listener {
         }
         gui.setItem(ANVIL_INPUT_SLOT, new ItemStack(Material.AIR));
         gui.setItem(ANVIL_INPUT_SLOT + 9, setItemLore(new ItemStack(Material.GRINDSTONE), ChatColor.RED + "Scrap Equipment"));
-        gui.setItem(ANVIL_OUTPUT_SLOT, new ItemStack(Material.AIR));
+        gui.setItem(ANVIL_OUTPUT_SLOT, setItemLore(new ItemStack(Material.CLAY_BALL), ChatColor.RED + "Put an enchanted tool in the left slot to refund materials!"));
         gui.setItem(ANVIL_OUTPUT_SLOT + 9, setItemLore(new ItemStack(Material.CRAFTING_TABLE), ChatColor.GREEN + "Materials Refunded"));
         player.openInventory(gui);
     }
@@ -265,6 +265,16 @@ public class AnvilInterface implements Listener {
             return;
         }
 
+        // Never allow shift clicks in custom guis
+        if (event.getClick().isShiftClick()){
+            event.setCancelled(true);
+            return;
+        }
+
+        // Let them interact with their own inventory as they please
+        if (event.getClickedInventory() instanceof PlayerInventory)
+            return;
+
         // Cancel the event no matter what
         event.setCancelled(true);
 
@@ -273,7 +283,7 @@ public class AnvilInterface implements Listener {
             return;
 
         // If the output was clicked, and there's nothing in the input, we shouldn't do anything
-        if (event.getSlot() == ANVIL_OUTPUT_SLOT && event.getView().getItem(ANVIL_INPUT_SLOT) == null || event.getView().getItem(ANVIL_INPUT_SLOT).getType().equals(Material.AIR))
+        if (event.getSlot() == ANVIL_OUTPUT_SLOT && (event.getView().getItem(ANVIL_INPUT_SLOT) == null || event.getView().getItem(ANVIL_INPUT_SLOT).getType().equals(Material.AIR)))
             return;
 
         // In the case that we clicked the input slot, don't do anything
@@ -294,7 +304,8 @@ public class AnvilInterface implements Listener {
                 }
                 // If there was nothing in the cursor just clear the output
             } else {
-                event.getClickedInventory().setItem(ANVIL_OUTPUT_SLOT, new ItemStack(Material.AIR));
+                ItemStack na = setItemLore(new ItemStack(Material.CLAY_BALL), ChatColor.RED + "Put an enchanted tool in the left slot to refund materials!");
+                event.getClickedInventory().setItem(ANVIL_OUTPUT_SLOT, na);
             }
             event.setCancelled(false);
             forceUpdateInventory((Player) event.getWhoClicked());
