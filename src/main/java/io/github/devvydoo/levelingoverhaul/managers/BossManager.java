@@ -9,6 +9,7 @@ import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -19,6 +20,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +34,7 @@ public class BossManager implements Listener {
     }
 
     public double calculateEnderDragonHealth(int level) {
-        return (Math.pow(level, 4) / 156.5) + (Math.pow(level, 3) / 5.) - 102083.082;
+        return Math.max(300, (Math.pow(level, 4) / 156.5) + (Math.pow(level, 3) / 5.) - 102083.082);
     }
 
     public double calculateWitherHealth(int level){
@@ -64,6 +66,33 @@ public class BossManager implements Listener {
         return drop;
     }
 
+    public void spawnBossDrop(ItemStack itemStack, Location location, boolean wantFloating){
+        Item drop = location.getWorld().dropItemNaturally(location, itemStack);
+        if (wantFloating)
+            drop.setGravity(false);
+        drop.setGlowing(true);
+        drop.setPickupDelay(20 * 7);
+        drop.setCustomName(drop.getItemStack().getItemMeta().getDisplayName());
+        drop.setCustomNameVisible(true);
+        drop.setVelocity(new Vector(Math.random() - .5, Math.random() - .5, Math.random() - .5));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+
+                if (!drop.isValid() || drop.isDead())
+                    this.cancel();
+
+                Firework firework = (Firework) drop.getWorld().spawnEntity(drop.getLocation().add(Math.random() * 2 - 1, 0, Math.random() * 2 - 1), EntityType.FIREWORK);
+                FireworkMeta meta = firework.getFireworkMeta();
+                FireworkEffect.Builder effectBuilder = FireworkEffect.builder();
+                effectBuilder.with(FireworkEffect.Type.BALL);
+                effectBuilder.withColor(Color.ORANGE, Color.PURPLE);
+                meta.addEffect(effectBuilder.build());
+                firework.setFireworkMeta(meta);
+            }
+        }.runTaskTimer(plugin, 1, 20);
+    }
+
 
     /**
      * Several cases where we handle when a boss is killed by a player
@@ -85,23 +114,7 @@ public class BossManager implements Listener {
                     p.giveExp(4 * dragonLevel);
                     p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Ender Dragon" + ChatColor.YELLOW + "! +" + 4 * dragonLevel + "XP");
                 }
-                Item drop = event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), getRandomEnderDragonDrop(dragonLevel - 2));
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-
-                        if (!drop.isValid() || drop.isDead())
-                            this.cancel();
-
-                        Firework firework = (Firework) drop.getWorld().spawnEntity(drop.getLocation().add(Math.random() * 2 - 1, 0, Math.random() * 2 - 1), EntityType.FIREWORK);
-                        FireworkMeta meta = firework.getFireworkMeta();
-                        FireworkEffect.Builder effectBuilder = FireworkEffect.builder();
-                        effectBuilder.with(FireworkEffect.Type.BALL);
-                        effectBuilder.withColor(Color.ORANGE, Color.PURPLE);
-                        meta.addEffect(effectBuilder.build());
-                        firework.setFireworkMeta(meta);
-                    }
-                }.runTaskTimer(plugin, 1, 20);
+                spawnBossDrop(getRandomEnderDragonDrop(dragonLevel - 2), event.getEntity().getLocation(), true);
                 break;
             case WITHER:
                 // All players within 100 block radius from the wither get credit
