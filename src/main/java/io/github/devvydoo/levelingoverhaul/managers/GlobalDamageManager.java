@@ -3,6 +3,7 @@ package io.github.devvydoo.levelingoverhaul.managers;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
+import io.github.devvydoo.levelingoverhaul.util.ToolTypeHelpers;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -49,8 +50,12 @@ public class GlobalDamageManager implements Listener {
         }
     }
 
-    private double getMeleeWeaponBaseDamage(Material tool) {
-        switch (tool) {
+    private double getMeleeWeaponBaseDamage(ItemStack tool) {
+
+        if (plugin.getCustomItemManager().isDragonSword(tool))
+            return 250;
+
+        switch (tool.getType()) {
 
             case DIAMOND_AXE:
                 return 140;
@@ -81,7 +86,7 @@ public class GlobalDamageManager implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamaged(EntityDamageEvent event) {
         event.setDamage(event.getDamage() * 5);
     }
@@ -91,7 +96,7 @@ public class GlobalDamageManager implements Listener {
      *
      * @param event The event in which any entity is damaged by another one
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerMeleeAttack(EntityDamageByEntityEvent event) {
 
         // Make sure a player is attacking
@@ -103,7 +108,7 @@ public class GlobalDamageManager implements Listener {
         ItemStack tool = player.getInventory().getItemInMainHand();
 
         // First let's get a base setup for how much certain weapons should do
-        double baseDamage = getMeleeWeaponBaseDamage(tool.getType());
+        double baseDamage = getMeleeWeaponBaseDamage(tool);
 
         // If baseDamage returns 0, we have something that we don't care to modify
         if (baseDamage <= 0) {
@@ -131,14 +136,24 @@ public class GlobalDamageManager implements Listener {
             }
         }
 
-        // Lastly, see if we should give a 50% bonus for crits
-        if (!player.isOnGround() && player.getVelocity().getY() < 0) {
+        // Lastly, see if we should give a 100% bonus for crits
+        if (ToolTypeHelpers.isAxe(tool)) {
+            if (Math.random() < .3) {
+                int critLevel = 0;
+                try {
+                    critLevel = plugin.getEnchantmentManager().getEnchantLevel(tool, CustomEnchantType.CRITICAL_STRIKE);
+                } catch (IllegalArgumentException ignored) {
+                }
+                newDamage *= (2 + (.5 * critLevel));
+            }
+        }
+        else if (!player.isOnGround() && player.getVelocity().getY() < 0) {
             int critLevel = 0;
             try {
                 critLevel = plugin.getEnchantmentManager().getEnchantLevel(tool, CustomEnchantType.CRITICAL_STRIKE);
             } catch (IllegalArgumentException ignored) {
             }
-            newDamage *= 1.5 + (critLevel * .15);
+            newDamage *= (2 + (critLevel * .5));
         }
 
         for (PotionEffect pot: player.getActivePotionEffects()){
