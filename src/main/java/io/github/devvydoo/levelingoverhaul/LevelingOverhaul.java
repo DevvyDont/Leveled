@@ -1,6 +1,7 @@
 package io.github.devvydoo.levelingoverhaul;
 
 import io.github.devvydoo.levelingoverhaul.commands.*;
+import io.github.devvydoo.levelingoverhaul.enchantments.CustomItemManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.ExplosiveTouchEnchantment;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.FoodEnchantments;
@@ -23,18 +24,32 @@ import java.util.Iterator;
 
 public final class LevelingOverhaul extends JavaPlugin {
 
+    private CustomItemManager customItemManager;
+    private EnchantmentManager enchantmentManager;
+    private GlobalItemManager globalItemManager;
+
     private MobManager mobManager;
+    private BossManager bossManager;
     private PlayerArmorManager armorManager;
     private GlobalDamageManager damageManager;
+
     private ActionBarManager actionBarManager;
     private PartyManager partyManager;
     private ScoreboardManager scoreboardManager;
-    private GlobalItemManager globalItemManager;
-    private EnchantmentManager enchantmentManager;
-    private BossManager bossManager;
-    private TipAnnounceManager tipManager;
 
     private Advancement enchantAdvancement;
+
+    public CustomItemManager getCustomItemManager() {
+        return customItemManager;
+    }
+
+    public GlobalItemManager getGlobalItemManager() {
+        return globalItemManager;
+    }
+
+    public EnchantmentManager getEnchantmentManager() {
+        return enchantmentManager;
+    }
 
     public MobManager getMobManager() {
         return this.mobManager;
@@ -44,24 +59,12 @@ public final class LevelingOverhaul extends JavaPlugin {
         return armorManager;
     }
 
-    public GlobalDamageManager getDamageManager() {
-        return damageManager;
-    }
-
     public ActionBarManager getActionBarManager() {
         return actionBarManager;
     }
 
     public PartyManager getPartyManager() {
         return partyManager;
-    }
-
-    public ScoreboardManager getScoreboardManager() {
-        return scoreboardManager;
-    }
-
-    public EnchantmentManager getEnchantmentManager() {
-        return enchantmentManager;
     }
 
     public BossManager getBossManager() {
@@ -86,7 +89,8 @@ public final class LevelingOverhaul extends JavaPlugin {
             }
         }
 
-        enchantmentManager = new EnchantmentManager();
+        enchantmentManager = new EnchantmentManager(this);
+        customItemManager = new CustomItemManager(this);
         globalItemManager = new GlobalItemManager(this);
         armorManager = new PlayerArmorManager(this);
         damageManager = new GlobalDamageManager(this);
@@ -94,7 +98,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         partyManager = new PartyManager();
         scoreboardManager = new ScoreboardManager(this);
         bossManager = new BossManager(this);
-        tipManager = new TipAnnounceManager(this);
+        new TipAnnounceManager(this);
 
         // Listeners that change how natural progression works
         getServer().getPluginManager().registerEvents(new ProgressionModifyingListeners(), this);
@@ -126,6 +130,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new FoodEnchantments(this), this);
         getServer().getPluginManager().registerEvents(new Infinity(), this);
         getServer().getPluginManager().registerEvents(new HomingArrows(this), this);
+        getServer().getPluginManager().registerEvents(customItemManager, this);
 
         // Listeners involving chat
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);

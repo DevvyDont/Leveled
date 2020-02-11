@@ -30,6 +30,9 @@ public enum Rarity {
 
         if (itemStack == null) {return null;}
 
+        // Custom item overrides
+
+
         // Legendary overrides
         switch (itemStack.getType()){
             case ELYTRA:
@@ -55,6 +58,7 @@ public enum Rarity {
             case WITHER_SKELETON_SKULL:
             case SKELETON_SKULL:
             case BEACON:
+            case CONDUIT:
                 return LEGENDARY;
 
             case ENCHANTED_GOLDEN_APPLE:
@@ -98,6 +102,10 @@ public enum Rarity {
             case SPLASH_POTION:
             case OBSIDIAN:
             case END_CRYSTAL:
+            case NAME_TAG:
+            case ENDER_EYE:
+            case ENDER_PEARL:
+            case ENCHANTING_TABLE:
                 return RARE;
 
             case IRON_PICKAXE:
@@ -129,6 +137,32 @@ public enum Rarity {
             case GOLDEN_HORSE_ARMOR:
             case GHAST_TEAR:
             case BLAZE_ROD:
+
+            case BOW:
+            case CROSSBOW:
+            case SHIELD:
+            case COAL:
+            case COAL_BLOCK:
+            case COAL_ORE:
+            case IRON_NUGGET:
+            case GOLD_NUGGET:
+            case LAPIS_LAZULI:
+            case LAPIS_ORE:
+            case LAPIS_BLOCK:
+            case REDSTONE:
+            case REDSTONE_ORE:
+            case REDSTONE_BLOCK:
+            case GLOWSTONE:
+            case GLOWSTONE_DUST:
+            case NETHER_QUARTZ_ORE:
+            case NETHER_WART:
+            case NETHER_WART_BLOCK:
+            case QUARTZ:
+            case QUARTZ_BLOCK:
+            case GRINDSTONE:
+            case ANVIL:
+            case CHIPPED_ANVIL:
+            case DAMAGED_ANVIL:
                 return UNCOMMON;
 
             default:

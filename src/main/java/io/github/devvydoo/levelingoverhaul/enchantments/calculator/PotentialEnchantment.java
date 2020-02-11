@@ -2,6 +2,7 @@ package io.github.devvydoo.levelingoverhaul.enchantments.calculator;
 
 
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
+import io.github.devvydoo.levelingoverhaul.enchantments.CustomItemManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.util.ToolTypeHelpers;
 import org.bukkit.Material;
@@ -11,12 +12,14 @@ import org.bukkit.inventory.ItemStack;
 public class PotentialEnchantment {
 
     private EnchantmentManager enchantmentManager;
+    private CustomItemManager customItemManager;
     private Object enchantType;
     private int minPlayerLevelRequired;  // The minimum level required to obtain this enchantment
     private int maxPlayerLevelRequired;  // The maximum player level required to achieve max enchant level if needed
     private int maxEnchantLevel;  // The max enchant level this enchantment can be
 
-    public PotentialEnchantment(EnchantmentManager enchantmentManager, Object enchantType, int minimumLevel, int maximumLevel, int maxEnchantLevel) {
+    public PotentialEnchantment(CustomItemManager customItemManager, EnchantmentManager enchantmentManager, Object enchantType, int minimumLevel, int maximumLevel, int maxEnchantLevel) {
+        this.customItemManager = customItemManager;
         this.enchantmentManager = enchantmentManager;
         this.enchantType = enchantType;
         this.minPlayerLevelRequired = minimumLevel;
@@ -84,6 +87,7 @@ public class PotentialEnchantment {
             // Override armor to not be able to receive unbreaking. armor in this plugin is unbreakable.
             if (ToolTypeHelpers.isArmor(itemStack) && enchant.getKey().toString().equals("minecraft:unbreaking")) { return false; }
             if (itemStack.getType().equals(Material.ELYTRA) && enchant.getKey().toString().contains("protection")) { return true; }
+            if (customItemManager.isDragonHelmet(itemStack) && enchant.canEnchantItem(new ItemStack(Material.LEATHER_HELMET))) { return true; }
             if ((itemStack.getType().equals(Material.BOW) || itemStack.getType().equals(Material.CROSSBOW)) && enchant.getKey().toString().equals("minecraft:unbreaking")) { return true; }
             return enchant.canEnchantItem(itemStack);
 

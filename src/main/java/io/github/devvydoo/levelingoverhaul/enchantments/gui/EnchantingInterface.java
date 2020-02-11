@@ -195,7 +195,7 @@ public class EnchantingInterface implements Listener {
             qualityFactor = plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR;
         }
 
-        EnchantmentCalculator calculator = new EnchantmentCalculator(plugin.getEnchantmentManager(), player.getLevel(), qualityFactor, item);
+        EnchantmentCalculator calculator = new EnchantmentCalculator(plugin.getCustomItemManager(), plugin.getEnchantmentManager(), player.getLevel(), qualityFactor, item);
         ArrayList<PotentialEnchantment> potentialEnchantments = calculator.calculateEnchantmentTypes();
         HashMap<PotentialEnchantment, Integer> enchantLevels = calculator.calculateEnchantmentLevels(potentialEnchantments);
 

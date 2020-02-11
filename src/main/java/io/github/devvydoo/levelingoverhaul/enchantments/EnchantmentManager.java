@@ -1,5 +1,6 @@
 package io.github.devvydoo.levelingoverhaul.enchantments;
 
+import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.util.ToolTypeHelpers;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -85,6 +86,12 @@ public class EnchantmentManager {
     public final String LEVEL_CAPPED_GEAR_STRING_FULL = LEVEL_CAPPED_GEAR_STRING + " %s ";
 
     public final int MAX_ENCHANT_QUALITY_FACTOR = 12;
+
+    private LevelingOverhaul plugin;
+
+    public EnchantmentManager(LevelingOverhaul plugin) {
+        this.plugin = plugin;
+    }
 
     /**
      * Returns an arraylist of custom enchants on an item stack, we do this by parsing the lore of the item stack
@@ -228,14 +235,19 @@ public class EnchantmentManager {
             return;
         }
 
-        Rarity itemRarity = Rarity.getItemRarity(item);
+        Rarity rarity;
+        if (plugin.getCustomItemManager().isCustomItem(item))
+            rarity = plugin.getCustomItemManager().getCustomItemRarity(item);
+        else
+            rarity = Rarity.getItemRarity(item);
 
         // Now add the level
         String originalName = meta.hasDisplayName() ? meta.getDisplayName() : WordUtils.capitalizeFully(item.getType().toString().replace("_", " "));
-        String newName = itemRarity.LEVEL_LABEL_COLOR + String.format(LEVEL_CAPPED_GEAR_STRING_FULL, level) + itemRarity.NAME_LABEL_COLOR + originalName;
+        String newName = rarity.LEVEL_LABEL_COLOR + String.format(LEVEL_CAPPED_GEAR_STRING_FULL, level) + rarity.NAME_LABEL_COLOR + originalName;
         meta.setDisplayName(newName);
         item.setItemMeta(meta);
         item.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        fixItemLore(item);
     }
 
     public void resetItemLevel(ItemStack itemStack) {
@@ -302,6 +314,9 @@ public class EnchantmentManager {
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         ArrayList<String> newLore = new ArrayList<>();
 
+        // If we have a custom item that needs a special header, do that
+        plugin.getCustomItemManager().setItemLoreHeader(itemStack, newLore);
+
         for (Enchantment enchantment : vanillaEnchantments.keySet()) {
             int levelDisplay = vanillaEnchantments.get(enchantment);
             // Since unbreaking 1 is a 'fake' enchantment, skip over it if applicable, otherwise subtract one from display
@@ -319,6 +334,10 @@ public class EnchantmentManager {
             newLore.add("");  // Basically a newline
             newLore.add(CustomEnchantment.getLoreContent(enchantment.getType(), enchantment.getLevel()));
             newLore.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment.getType()));
+        }
+
+        if (newLore.size() > 0 && newLore.get(newLore.size() - 1).equalsIgnoreCase("")){
+            newLore.remove(newLore.size() - 1);
         }
 
         meta.setLore(newLore);

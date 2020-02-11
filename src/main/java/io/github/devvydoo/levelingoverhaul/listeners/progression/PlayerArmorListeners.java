@@ -70,6 +70,13 @@ public class PlayerArmorListeners implements Listener {
 
 
         materialLevelCaps.put(Material.ELYTRA, LevelRewards.POST_ENDER_EQUIPMENT);
+
+        materialLevelCaps.put(Material.WITHER_SKELETON_SKULL, 1);
+        materialLevelCaps.put(Material.CREEPER_HEAD, 1);
+        materialLevelCaps.put(Material.PLAYER_HEAD, 1);
+        materialLevelCaps.put(Material.ZOMBIE_HEAD, 1);
+        materialLevelCaps.put(Material.SKELETON_SKULL, 1);
+        materialLevelCaps.put(Material.DRAGON_HEAD, 1);
     }
 
     private void equippedArmorSanityCheck(Player player){

@@ -1,7 +1,9 @@
 package io.github.devvydoo.levelingoverhaul.util;
 
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
+import io.github.devvydoo.levelingoverhaul.enchantments.CustomItemManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 public class PlayerArmorAttributes {
 
     private EnchantmentManager enchantmentManager;
+    private CustomItemManager customItemManager;
 
     private Player player;
 
@@ -30,8 +33,9 @@ public class PlayerArmorAttributes {
     private ItemStack leggings;
     private ItemStack boots;
 
-    public PlayerArmorAttributes(EnchantmentManager enchantmentManager, Player player) {
+    public PlayerArmorAttributes(EnchantmentManager enchantmentManager, CustomItemManager customItemManager, Player player) {
         this.enchantmentManager = enchantmentManager;
+        this.customItemManager = customItemManager;
         this.player = player;
         updateAttributes();
     }
@@ -90,25 +94,25 @@ public class PlayerArmorAttributes {
         this.defense = 0;
         int protectionLevel = 0;
         if (this.helmet != null) {
-            this.defense += getBaseArmorDefense(this.helmet.getType());
+            this.defense += getBaseArmorDefense(this.helmet);
             protectionLevel = this.helmet.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
             int armorTier = getArmorTier(this.helmet);
             this.defense += (Math.pow(protectionLevel, 1.25 + .25 * armorTier));
         }
         if (this.chestplate != null) {
-            this.defense += getBaseArmorDefense(this.chestplate.getType());
+            this.defense += getBaseArmorDefense(this.chestplate);
             protectionLevel = this.chestplate.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
             int armorTier = getArmorTier(this.chestplate);
             this.defense += (Math.pow(protectionLevel, 1.25 + .25 * armorTier));
         }
         if (this.leggings != null) {
-            this.defense += getBaseArmorDefense(this.leggings.getType());
+            this.defense += getBaseArmorDefense(this.leggings);
             protectionLevel = this.leggings.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
             int armorTier = getArmorTier(this.leggings);
             this.defense += (Math.pow(protectionLevel, 1.25 + .25 * armorTier));
         }
         if (this.boots != null) {
-            this.defense += getBaseArmorDefense(this.boots.getType());
+            this.defense += getBaseArmorDefense(this.boots);
             protectionLevel = this.boots.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
             int armorTier = getArmorTier(this.boots);
             this.defense += (Math.pow(protectionLevel, 1.25 + .25 * armorTier));
@@ -118,6 +122,11 @@ public class PlayerArmorAttributes {
     }
 
     private int getArmorTier(ItemStack armor) {
+
+        if (customItemManager.isDragonHelmet(armor) || customItemManager.isDragonChestplate(armor) || customItemManager.isDragonLeggings(armor) || customItemManager.isDragonBoots(armor)){
+            return 6;
+        }
+
         switch (armor.getType()){
             case DIAMOND_HELMET:
             case DIAMOND_CHESTPLATE:
@@ -242,7 +251,20 @@ public class PlayerArmorAttributes {
     }
 
     private ArrayList<CustomAbility> calculateAbilities() {
-        return new ArrayList<>();
+        ArrayList<CustomAbility> list = new ArrayList<>();
+        player.setAllowFlight(false);
+
+        if (helmet != null && chestplate != null && leggings != null & boots != null) {
+            if (customItemManager.isDragonHelmet(helmet) && customItemManager.isDragonChestplate(chestplate) && customItemManager.isDragonLeggings(leggings) && customItemManager.isDragonBoots(boots)){
+                list.add(CustomAbility.DRAGON_FLY);
+                if (!player.getAllowFlight()) {
+                    player.setAllowFlight(true);
+                    player.sendMessage(ChatColor.GREEN + "You can now fly!");
+                }
+            }
+        }
+
+        return list;
     }
 
     /**
@@ -251,17 +273,27 @@ public class PlayerArmorAttributes {
      * @param armor The ItemStack that the player is wearing
      * @return a dmg amount of resist
      */
-    private int getBaseArmorDefense(Material armor) {
-        switch (armor) {
+    private int getBaseArmorDefense(ItemStack armor) {
 
+        switch (armor.getType()) {
+
+            case DRAGON_HEAD:
+                if (customItemManager.isDragonHelmet(armor))
+                    return 185;
             case LEATHER_CHESTPLATE:
+                if (customItemManager.isDragonChestplate(armor))
+                    return 220;
                 return 12;
             case LEATHER_LEGGINGS:
+                if (customItemManager.isDragonLeggings(armor))
+                    return 200;
                 return 9;
             case LEATHER_HELMET:
             case TURTLE_HELMET:
                 return 7;
             case LEATHER_BOOTS:
+                if (customItemManager.isDragonBoots(armor))
+                    return 175;
                 return 5;
 
             case GOLDEN_CHESTPLATE:

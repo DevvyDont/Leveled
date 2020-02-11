@@ -45,7 +45,7 @@ public class DebugEnchant implements CommandExecutor {
 
         EnchantmentCalculator calculator;
         try {
-            calculator = new EnchantmentCalculator(plugin.getEnchantmentManager(), Integer.parseInt(args[0]), Integer.parseInt(args[1]), hand);
+            calculator = new EnchantmentCalculator(plugin.getCustomItemManager(), plugin.getEnchantmentManager(), Integer.parseInt(args[0]), Integer.parseInt(args[1]), hand);
         } catch (NumberFormatException ignored) {
             player.sendMessage(ChatColor.RED + "Please provide numbers.");
             return true;

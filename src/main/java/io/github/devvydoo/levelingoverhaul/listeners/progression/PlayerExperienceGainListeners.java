@@ -115,53 +115,6 @@ public class PlayerExperienceGainListeners implements Listener {
     }
 
     /**
-     * Several cases where we handle when a boss is killed by a player
-     *
-     * @param event - The EntityDeathEvent we are listening to
-     */
-    @EventHandler
-    public void onBossDeath(EntityDeathEvent event) {
-        EntityType enemy = event.getEntity().getType();
-
-        switch (enemy) {
-            case ENDER_DRAGON:
-                // We are going to give all players in the end a bonus
-                for (Player p : event.getEntity().getWorld().getPlayers()) {
-                    if (p.getLevel() == BaseExperience.LEVEL_CAP) {
-                        continue;
-                    }
-                    p.giveExp(200);
-                    p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Ender Dragon" + ChatColor.YELLOW + "! +200XP");
-                }
-                break;
-            case WITHER:
-                // All players within 100 block radius from the wither get credit
-                for (Player p : event.getEntity().getWorld().getPlayers()) {
-                    if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
-                        if (p.getLevel() == BaseExperience.LEVEL_CAP) {
-                            continue;
-                        }
-                        p.giveExp(175);
-                        p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Wither" + ChatColor.YELLOW + "! +175XP");
-                    }
-                }
-                break;
-            case ELDER_GUARDIAN:
-                // All players within 100 block radius from the guardian get credit
-                for (Player p : event.getEntity().getWorld().getPlayers()) {
-                    if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
-                        if (p.getLevel() == BaseExperience.LEVEL_CAP) {
-                            continue;
-                        }
-                        p.giveExp(120);
-                        p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Elder Guardian" + ChatColor.YELLOW + "! +120XP");
-                    }
-                }
-                break;
-        }
-    }
-
-    /**
      * Listen for when a block is broken by a player, we should see if they should be awarded xp
      *
      * @param event - The BlockBreakEvent we are listening for

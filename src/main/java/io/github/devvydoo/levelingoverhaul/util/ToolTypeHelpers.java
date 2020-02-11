@@ -133,5 +133,17 @@ public final class ToolTypeHelpers {
 
     }
 
+    public static boolean isAxe(ItemStack itemStack){
+        switch (itemStack.getType()){
+            case DIAMOND_AXE:
+            case GOLDEN_AXE:
+            case IRON_AXE:
+            case WOODEN_AXE:
+            case STONE_AXE:
+                return true;
+        }
+        return false;
+    }
+
 
 }
