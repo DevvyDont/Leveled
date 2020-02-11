@@ -55,7 +55,7 @@ public class GlobalItemManager implements Listener {
                 rarity = Rarity.getItemRarity(itemStack);
             ItemMeta meta = itemStack.getItemMeta();
             if (meta.hasDisplayName())
-                meta.setDisplayName(rarity.LEVEL_LABEL_COLOR + meta.getDisplayName());
+                meta.setDisplayName(rarity.LEVEL_LABEL_COLOR + ChatColor.stripColor(meta.getDisplayName()));
             else
                 meta.setDisplayName(rarity.LEVEL_LABEL_COLOR + WordUtils.capitalizeFully(itemStack.getType().toString().replace("_", " ")));
             itemStack.setItemMeta(meta);

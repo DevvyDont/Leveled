@@ -242,7 +242,7 @@ public class EnchantmentManager {
             rarity = Rarity.getItemRarity(item);
 
         // Now add the level
-        String originalName = meta.hasDisplayName() ? meta.getDisplayName() : WordUtils.capitalizeFully(item.getType().toString().replace("_", " "));
+        String originalName = meta.hasDisplayName() ? ChatColor.stripColor(meta.getDisplayName()) : WordUtils.capitalizeFully(item.getType().toString().replace("_", " "));
         String newName = rarity.LEVEL_LABEL_COLOR + String.format(LEVEL_CAPPED_GEAR_STRING_FULL, level) + rarity.NAME_LABEL_COLOR + originalName;
         meta.setDisplayName(newName);
         item.setItemMeta(meta);
