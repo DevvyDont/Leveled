@@ -343,12 +343,19 @@ public class GlobalDamageManager implements Listener {
                 }
             }
         }
-        for (MetadataValue metadataValue : arrow.getMetadata(ARROW_EXECUTE_ENCHANT_METANAME)){
-            if (metadataValue.getOwningPlugin() != null && metadataValue.getOwningPlugin().equals(plugin)){
-                newDamage *= (1.10 + (metadataValue.asInt() / 20.));
-                break;
+        // Test for executioner enchant
+        if (event.getEntity() instanceof LivingEntity){
+            LivingEntity livingEntity = (LivingEntity) event.getEntity();
+            if (livingEntity.getHealth() < livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()){
+                for (MetadataValue metadataValue : arrow.getMetadata(ARROW_EXECUTE_ENCHANT_METANAME)){
+                    if (metadataValue.getOwningPlugin() != null && metadataValue.getOwningPlugin().equals(plugin)){
+                        newDamage *= (1.10 + (metadataValue.asInt() / 20.));
+                        break;
+                    }
+                }
             }
         }
+
         if (newDamage > 0) {
             event.setDamage(newDamage);
         }
@@ -364,7 +371,7 @@ public class GlobalDamageManager implements Listener {
         if (event.getCause().equals(EntityDamageEvent.DamageCause.THORNS)) {
             int level;
             try { level = plugin.getMobManager().getMobLevel((LivingEntity) event.getDamager()); } catch (ClassCastException ignored) { return; }
-            event.setDamage(level * (Math.random() - .5));
+            event.setDamage(level * (Math.random() - .5) * 10);
         }
     }
 
