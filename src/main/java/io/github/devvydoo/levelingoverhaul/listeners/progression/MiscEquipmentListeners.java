@@ -66,7 +66,7 @@ public class MiscEquipmentListeners implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = false)
+    @EventHandler(ignoreCancelled = true)
     public void onItemInteract(PlayerInteractEvent event) {
 
 

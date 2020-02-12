@@ -39,7 +39,7 @@ public class AnvilInterface implements Listener {
             public void run() {
                 player.updateInventory();
             }
-        }.runTaskLater(plugin, 1);
+        }.runTaskLater(plugin, 2);
     }
 
     private ItemStack setItemLore(ItemStack itemStack, String itemTitle) {
@@ -267,6 +267,13 @@ public class AnvilInterface implements Listener {
 
         // Never allow shift clicks in custom guis
         if (event.getClick().isShiftClick()){
+            event.setCancelled(true);
+            return;
+        }
+
+        // Don't allow clay to be clicked
+        if (event.getCurrentItem() != null && event.getCurrentItem().getType().equals(Material.CLAY_BALL)){
+            forceUpdateInventory((Player)event.getWhoClicked());
             event.setCancelled(true);
             return;
         }

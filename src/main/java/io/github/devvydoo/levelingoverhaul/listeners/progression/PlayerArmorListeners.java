@@ -113,7 +113,7 @@ public class PlayerArmorListeners implements Listener {
      *
      * @param event - The PlayerInteractEvent we are listening to
      */
-    @EventHandler(ignoreCancelled = false)
+    @EventHandler(ignoreCancelled = true)
     public void onArmorRightClick(PlayerInteractEvent event) {
 
 

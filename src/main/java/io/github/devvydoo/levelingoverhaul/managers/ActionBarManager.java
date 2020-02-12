@@ -44,7 +44,7 @@ public class ActionBarManager implements Listener {
         player.sendActionBar(message);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerGotHit(EntityDamageEvent event) {
 
         if (event.getEntity() instanceof Player) {
@@ -61,7 +61,7 @@ public class ActionBarManager implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerHealed(EntityRegainHealthEvent event) {
 
         if (event.getEntity() instanceof Player) {

@@ -11,5 +11,13 @@ public enum CustomEnchantType {
     CRITICAL_STRIKE,
     SNIPE,
     GOLDEN_DIET,
-    HOMING
+    HOMING,
+    PROSPECT,
+    FULL_METAL_JACKET,
+    SPEEDSTER,
+    NETHER_HUNTER,
+    ENDER_HUNTER,
+    GREEDY_MINER,
+    BERSERK,
+    EXECUTIONER
 }

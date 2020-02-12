@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -118,6 +119,17 @@ public class EnchantmentManager {
             }
         }
         return enchantments;
+    }
+
+    public HashMap<CustomEnchantType, CustomEnchantment> getCustomEnchantmentMap(ItemStack itemStack){
+
+        HashMap<CustomEnchantType, CustomEnchantment> enchantmentHashMap = new HashMap<>();
+
+        for (CustomEnchantment enchantment : getCustomEnchantments(itemStack))
+            enchantmentHashMap.put(enchantment.getType(), enchantment);
+
+        return enchantmentHashMap;
+
     }
 
     /**
@@ -349,6 +361,7 @@ public class EnchantmentManager {
 
         switch (type) {
             case EXPLOSIVE_TOUCH:
+            case BERSERK:
                 return 5;
             case SATURATION:
             case CRITICAL_SHOT:
@@ -356,14 +369,20 @@ public class EnchantmentManager {
                 return 11;
             case SNIPE:
             case HOMING:
+            case FULL_METAL_JACKET:
+            case ENDER_HUNTER:
                 return 10;
             case EXPERIENCED:
             case GOLDEN_DIET:
+            case PROSPECT:
+            case NETHER_HUNTER:
                 return 6;
             case GROWTH:
             case SMELTING_TOUCH:
                 return 9;
             case SMARTY_PANTS:
+            case SPEEDSTER:
+            case GREEDY_MINER:
                 return 4;
             default:
                 throw new IllegalArgumentException("Received invalid argument for getEnchantQuality: " + type);
@@ -448,6 +467,7 @@ public class EnchantmentManager {
                 ToolTypeHelpers.addLeggingsToList(allowedTargets);
                 break;
             case SMELTING_TOUCH:
+            case GREEDY_MINER:
                 ToolTypeHelpers.addPickaxesToList(allowedTargets);
                 break;
             case CRITICAL_SHOT:
@@ -456,11 +476,30 @@ public class EnchantmentManager {
                 allowedTargets.add(Material.BOW);
                 allowedTargets.add(Material.CROSSBOW);
                 break;
+            case PROSPECT:
+            case FULL_METAL_JACKET:
+            case NETHER_HUNTER:
+            case ENDER_HUNTER:
+            case EXECUTIONER:
+                allowedTargets.add(Material.BOW);
+                allowedTargets.add(Material.CROSSBOW);
+                ToolTypeHelpers.addMeleeWeaponsToList(allowedTargets);
+                break;
             case CRITICAL_STRIKE:
                 ToolTypeHelpers.addMeleeWeaponsToList(allowedTargets);
                 break;
             case GOLDEN_DIET:
                 ToolTypeHelpers.addChestplatesToList(allowedTargets);
+                break;
+            case SPEEDSTER:
+                ToolTypeHelpers.addBootsToList(allowedTargets);
+                break;
+            case BERSERK:
+                allowedTargets.add(Material.WOODEN_AXE);
+                allowedTargets.add(Material.STONE_AXE);
+                allowedTargets.add(Material.GOLDEN_AXE);
+                allowedTargets.add(Material.IRON_AXE);
+                allowedTargets.add(Material.DIAMOND_AXE);
                 break;
             default:
                 throw new IllegalArgumentException("Tried to find EnchantmentTarget for " + type);
@@ -484,6 +523,7 @@ public class EnchantmentManager {
                 conflictingEnchantments.add(CustomEnchantType.EXPLOSIVE_TOUCH);
                 break;
             case SMELTING_TOUCH:
+            case GREEDY_MINER:
                 conflictingEnchantments.add("silk_touch");
                 break;
         }
@@ -535,6 +575,7 @@ public class EnchantmentManager {
                 conflictingEnchantments.add("fortune");
                 conflictingEnchantments.add(CustomEnchantType.EXPLOSIVE_TOUCH);
                 conflictingEnchantments.add(CustomEnchantType.SMELTING_TOUCH);
+                conflictingEnchantments.add(CustomEnchantType.GREEDY_MINER);
                 break;
             default:
                 break;
@@ -552,27 +593,43 @@ public class EnchantmentManager {
     public String getEnchantmentDescription(CustomEnchantType type) {
         switch (type) {
             case EXPLOSIVE_TOUCH:
-                return "Upon breaking a block, an explosion is created";
+                return "Explosions :)";
             case SATURATION:
-                return "Food eaten has a higher food saturation bonus";
+                return "Increases saturation from food";
             case EXPERIENCED:
-                return "Increases chance to receive bonus experience from mining and mobs";
+                return "Increases bonus XP chance";
             case GROWTH:
-                return "Increases Max HP by a percentage";
+                return "Increases Max HP";
             case SMARTY_PANTS:
-                return "Increases XP gained from advancements";
+                return "Increases advancement XP";
             case SMELTING_TOUCH:
                 return "Automatically smelts blocks broken";
             case CRITICAL_SHOT:
-                return "Increases chance to shoot a critical arrow";
+                return "Increases critical arrow chance";
             case CRITICAL_STRIKE:
                 return "Increases critical damage";
             case SNIPE:
-                return "Increases arrow damage based on distance travelled";
+                return "Increases long distance arrow damage";
             case GOLDEN_DIET:
-                return "Food eaten provides instant healing but reduces hunger satisfied";
+                return "Converts some food into instant HP";
             case HOMING:
                 return "Arrows home onto the nearest target";
+            case PROSPECT:
+                return "Increases drop chance of rare items";
+            case FULL_METAL_JACKET:
+                return "Increases damage against bosses";
+            case SPEEDSTER:
+                return "Increases movement speed";
+            case NETHER_HUNTER:
+                return "Increases damage dealt in the Nether";
+            case ENDER_HUNTER:
+                return "Increases damage dealt in The End";
+            case GREEDY_MINER:
+                return "Mining ores heals HP";
+            case BERSERK:
+                return "Deal double damage, receive tripled damage";
+            case EXECUTIONER:
+                return "Increases damage dealt to entities low on HP";
             default:
                 return "This enchantment doesn't have a description :(";
         }
@@ -635,9 +692,9 @@ public class EnchantmentManager {
             case "fire_aspect":
                 return "Causes enemies to be lit on fire when attacked";
             case "channeling":
-                return "";
+                return "Summon a lightning bold in thunder storms";
             case "sweeping":
-                return "Increases damage done by the sweeping attack mechanic";
+                return "Increases damage done from sweep attacks";
             case "thorns":
                 return "Reflects damage back on enemies";
             case "bane_of_arthropods":

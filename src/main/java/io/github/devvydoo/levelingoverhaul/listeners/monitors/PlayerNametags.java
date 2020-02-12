@@ -57,7 +57,7 @@ public class PlayerNametags implements Listener {
         updatePlayerScoreboard(event.getPlayer(), event.getPlayer().getLevel(), event.getPlayer().getHealth());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDamage(EntityDamageEvent event) {
 
         if (event.getEntity() instanceof Player) {
@@ -78,7 +78,7 @@ public class PlayerNametags implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onLevelChange(PlayerLevelChangeEvent event) {
         if (event.getNewLevel() < event.getOldLevel()) {
             return;
@@ -86,7 +86,7 @@ public class PlayerNametags implements Listener {
         updatePlayerScoreboard(event.getPlayer(), event.getNewLevel(), event.getPlayer().getHealth());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerHealthRegen(EntityRegainHealthEvent event) {
 
         if (event.getEntity() instanceof Player) {

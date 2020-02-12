@@ -622,7 +622,7 @@ public class MobManager implements Listener {
      *
      * @param event EntityDamageEvent
      */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageEvent event) {
 
         // We only care about living entities

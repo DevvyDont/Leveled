@@ -1,6 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.listeners;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
+import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.enchantments.Enchantment;
@@ -96,6 +97,7 @@ public class PlayerDamageModifier implements Listener {
                 break;
             case FOX:
             case WOLF:
+            case CAT:
                 damagePercent = .03;
                 break;
             case LLAMA:
@@ -113,7 +115,7 @@ public class PlayerDamageModifier implements Listener {
             case ENDER_DRAGON:
             case WITHER:
             case ELDER_GUARDIAN:
-                damagePercent = .5;
+                damagePercent = .22;
                 break;
             default:
                 System.out.println("[PlayerDamageModifer] Came across unknown entity to calculate damage for: " + entity.getType());
@@ -126,7 +128,7 @@ public class PlayerDamageModifier implements Listener {
         return damage;
     }
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onMobInflictedDamage(EntityDamageByEntityEvent event) {
 
         if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0)
@@ -165,7 +167,7 @@ public class PlayerDamageModifier implements Listener {
         event.setDamage(newDamage);
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     public void playerHitByMiscSource(EntityDamageEvent event) {
 
 
@@ -231,6 +233,8 @@ public class PlayerDamageModifier implements Listener {
             event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
             event.setDamage(EntityDamageEvent.DamageModifier.MAGIC, 0);
             double newDamage = event.getDamage();
+            if (plugin.getEnchantmentManager().hasEnchant(player.getInventory().getItemInMainHand(), CustomEnchantType.BERSERK))
+                newDamage *= 3;
             newDamage -= plugin.getArmorManager().getPlayerArmorAttributes(player).getDefense();
             if (event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE))
                 newDamage -= plugin.getArmorManager().getPlayerArmorAttributes(player).getProjectileDefense();
@@ -245,7 +249,7 @@ public class PlayerDamageModifier implements Listener {
      *
      * @param event The EntityDamageEvent we are listening to
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerGotHit(EntityDamageEvent event) {
 
         if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0) {

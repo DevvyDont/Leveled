@@ -70,7 +70,7 @@ public class PlayerToolListeners implements Listener {
      *
      * @param event - The BlockBreakEvent we are listening to
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onBlockBreakWithTool(BlockBreakEvent event) {
 
         Player player = event.getPlayer();

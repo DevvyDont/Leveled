@@ -116,7 +116,7 @@ public class EnchantmentCalculator {
         enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.EXPLOSIVE_TOUCH, 30, BaseExperience.LEVEL_CAP, 8));
         enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.SATURATION, 45, 75, 3));
         enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.EXPERIENCED, 30, 90, 10));
-        enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.GROWTH, 30, 140, 8));
+        enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.GROWTH, 35, 150, 8));
         enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.SMARTY_PANTS, 30, 50, 2));
         enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.SMELTING_TOUCH, 30, 30, 1));
         enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.CRITICAL_SHOT, 50, 80, 3));
@@ -124,6 +124,14 @@ public class EnchantmentCalculator {
         enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.SNIPE, 60, 120, 5));
         enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.GOLDEN_DIET, 75, 75, 1));
         enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.HOMING, 70, 120, 3));
+        enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.PROSPECT, 30, 120, 10));
+        enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.FULL_METAL_JACKET, 55, 120, 5));
+        enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.SPEEDSTER, 40, 110, 5));
+        enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.NETHER_HUNTER, 40, 80, 5));
+        enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.ENDER_HUNTER, 60, 120, 5));
+        enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.GREEDY_MINER, 30, 110, 4));
+        enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.BERSERK, 30, 30, 1));
+        enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, CustomEnchantType.EXECUTIONER, 45, 110, 5));
 
         return new ArrayList<>(enchs);
     }
@@ -144,14 +152,65 @@ public class EnchantmentCalculator {
 
         // Infinitely loop through the enchantments and add them until we have enough, or we tried this 30 times
         int attempts = 0;
-        while (enchantmentsToApply.size() < numEnchants && attempts < 30) {
+
+        // Because of how many enchantments we have, prioritize damage increasing enchants first
+        boolean forceDamageIncreaser = false;
+
+        for (PotentialEnchantment e : potentialEnchantments){
+            if (e.getEnchantType() instanceof Enchantment){
+                String keyName = ((Enchantment) e.getEnchantType()).getKey().toString().replace("minecraft:", "");
+                if (keyName.equalsIgnoreCase("sharpness") || keyName.equalsIgnoreCase("power") || keyName.equalsIgnoreCase("smite") || keyName.equalsIgnoreCase("bane_of_arthropods") || keyName.contains("protection")) {
+                    forceDamageIncreaser = Math.random() < .9;
+                    break;
+                }
+            }
+        }
+
+        while (enchantmentsToApply.size() < numEnchants && attempts < 100) {
             attempts++;
             Collections.shuffle(potentialEnchantments);  // Shuffle the enchantments
             for (PotentialEnchantment enchantment : potentialEnchantments) {
 
-                if (enchantmentsToApply.contains(enchantment)) {
-                    continue;
+                // If we are prioritizing a damage increaser
+                if (forceDamageIncreaser){
+
+                    // See if we already have one
+                    for (PotentialEnchantment e : enchantmentsToApply)
+                        if (e.getEnchantType() instanceof Enchantment) {
+                            if (((Enchantment) e.getEnchantType()).getKey().toString().contains("protection"))
+                                forceDamageIncreaser = false;
+                            switch (((Enchantment) e.getEnchantType()).getKey().toString().replace("minecraft:", "")) {
+                                case "sharpness":
+                                case "power":
+                                case "bane_of_arthropods":
+                                case "smite":
+                                    forceDamageIncreaser = false;
+                                    break;
+                            }
+                        }
+
+                    if (!(enchantment.getEnchantType() instanceof Enchantment))  // has to be vanilla
+                        continue;
+
+                    Enchantment e = (Enchantment) enchantment.getEnchantType();
+                    String name = e.getKey().toString().replace("minecraft:", "");
+                    if (name.contains("protection"))
+                        name = "protection";
+                    switch (name){
+                        case "sharpness":
+                        case "power":
+                        case "bane_of_arthropods":
+                        case "smite":
+                        case "protection":
+                            break;
+                        default:
+                            continue;
+                    }
+
                 }
+
+                if (enchantmentsToApply.contains(enchantment))
+                    continue;
 
                 boolean conflicts = false;
                 // Make sure we don't have a conflicting enchantment
@@ -163,9 +222,8 @@ public class EnchantmentCalculator {
                 }
 
                 // If we had a conflicting enchantment go to the next one
-                if (conflicts) {
+                if (conflicts)
                     continue;
-                }
 
                 // Calculate % chance we are applying this enchantment.
                 int qualityDifferenceFactor = Math.abs(enchantment.getQuality() - qualityFactor);

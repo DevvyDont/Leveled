@@ -23,7 +23,7 @@ public class HomingArrows implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onArrowShoot(EntityShootBowEvent event) {
 
         if (event.getEntity() instanceof Player && event.getProjectile() instanceof Arrow) {
@@ -88,9 +88,9 @@ public class HomingArrows implements Listener {
                 if (aggression == 3) {
                     velocityMultiplier *= 1.001;
                 } else if (aggression == 2) {
-                    velocityMultiplier *= .9;
+                    velocityMultiplier *= .99;
                 } else if (aggression == 1) {
-                    velocityMultiplier *= .7;
+                    velocityMultiplier *= .95;
                 } else {
                     velocityMultiplier *= (1 + ((aggression - 3) / 100.));
                 }

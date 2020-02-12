@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +26,7 @@ public class PlayerArmorAttributes {
     private int explosionDefense;
     private int projectileDefense;
     private double bonusHealth;
-    private int speed;
+    private double speed;
     private ArrayList<CustomAbility> abilities;
 
     private ItemStack helmet;
@@ -64,7 +65,7 @@ public class PlayerArmorAttributes {
         return bonusHealth;
     }
 
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
@@ -245,8 +246,15 @@ public class PlayerArmorAttributes {
         return totalHealth;
     }
 
-    private int calculateSpeed() {
-        this.speed = 100;
+    private double calculateSpeed() {
+        speed = 0.19982229;
+        int speedsterLevel = 0;
+        try {
+            speedsterLevel = enchantmentManager.getEnchantLevel(boots, CustomEnchantType.SPEEDSTER);
+        } catch (IllegalArgumentException ignored){}
+        if (speedsterLevel > 0)
+            speed += (speedsterLevel * .03);
+        player.setWalkSpeed((float) speed);
         return speed;  // TODO: Add armor that modifies speed
     }
 

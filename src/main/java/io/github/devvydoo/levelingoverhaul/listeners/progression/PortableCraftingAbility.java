@@ -10,33 +10,23 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PortableCraftingAbility implements Listener {
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onInteract(PlayerInteractEvent event) {
 
         Player player = event.getPlayer();
         // Are we a high enough level?
-        if (player.getLevel() < LevelRewards.UNIVERSAL_CRAFTING_ABILITY_UNLOCK) {
+        if (player.getLevel() < LevelRewards.UNIVERSAL_CRAFTING_ABILITY_UNLOCK)
             return;
-        }
 
         Action action = event.getAction();
 
-        // Did we right click?
-        if (!(action.equals(Action.RIGHT_CLICK_BLOCK) || action.equals(Action.RIGHT_CLICK_AIR))) {
-            return;
+        if (action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK)){
+            if (player.isSneaking() && player.getInventory().getItemInMainHand().getType().equals(Material.AIR) && player.getInventory().getItemInOffHand().getType().equals(Material.AIR)){
+                // Open the crafting menu
+                player.openWorkbench(null, true);  // Use player location, and force the menu to open
+            }
         }
 
-        // Are we sneaking?
-        if (!player.isSneaking()) {
-            return;
-        }
 
-        // Are we holding nothing in our hand?
-        if (!player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
-            return;
-        }
-
-        // Open the crafting menu
-        player.openWorkbench(null, true);  // Use player location, and force the menu to open
     }
 }

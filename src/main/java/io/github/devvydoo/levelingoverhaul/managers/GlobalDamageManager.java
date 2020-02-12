@@ -2,6 +2,7 @@ package io.github.devvydoo.levelingoverhaul.managers;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
+import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantment;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.util.ToolTypeHelpers;
 import org.bukkit.Material;
@@ -24,6 +25,9 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * A class used to do any necessary calculations for damage calculations BEFORE our plugin modifies anything whether it
  * be enchants, the overkill protection mechanic, etc. Since our base HP is 100 rather than 20, we start by making
@@ -34,13 +38,19 @@ public class GlobalDamageManager implements Listener {
     private LevelingOverhaul plugin;
     private String ARROW_DMG_METANAME = "base_damage";
     private String ARROW_SNIPE_ENCHANT_METANAME = "snipe_enchant_level";
+    private String ARROW_FMJ_ENCHANT_METANAME = "fmj_enchant_level";
+    private String ARROW_EXECUTE_ENCHANT_METANAME = "exe_enchant_level";
 
     public GlobalDamageManager(LevelingOverhaul plugin) {
         this.plugin = plugin;
     }
 
-    private double getRangedWeaponBaseDamage(Material tool) {
-        switch (tool) {
+    private double getRangedWeaponBaseDamage(ItemStack tool) {
+
+        if (plugin.getCustomItemManager().isEnderBow(tool))
+            return 50;
+
+        switch (tool.getType()) {
             case BOW:
                 return 20;
             case CROSSBOW:
@@ -136,29 +146,45 @@ public class GlobalDamageManager implements Listener {
             }
         }
 
-        // Lastly, see if we should give a 100% bonus for crits
-        if (ToolTypeHelpers.isAxe(tool)) {
-            if (Math.random() < .3) {
-                int critLevel = 0;
-                try {
-                    critLevel = plugin.getEnchantmentManager().getEnchantLevel(tool, CustomEnchantType.CRITICAL_STRIKE);
-                } catch (IllegalArgumentException ignored) {
-                }
-                newDamage *= (2 + (.5 * critLevel));
-            }
+        Map<CustomEnchantType, CustomEnchantment> customEnchantments = plugin.getEnchantmentManager().getCustomEnchantmentMap(tool);
+
+        // Check for boss damage
+        if (event.getEntity() instanceof Boss || event.getEntity() instanceof EnderDragonPart || event.getEntity() instanceof EnderDragon || event.getEntity() instanceof ComplexLivingEntity) {
+            if (customEnchantments.containsKey(CustomEnchantType.FULL_METAL_JACKET))
+                newDamage *= (customEnchantments.get(CustomEnchantType.FULL_METAL_JACKET).getLevel() / 2.);
         }
+
+        // Check for axe berserk
+        if (customEnchantments.containsKey(CustomEnchantType.BERSERK))
+            newDamage *= 2;
+
+        // Check if entity is low on HP for execute
+        if (customEnchantments.containsKey(CustomEnchantType.EXECUTIONER) && event.getEntity() instanceof LivingEntity) {
+            LivingEntity livingEntity = (LivingEntity) event.getEntity();
+            if (livingEntity.getHealth() / livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() > .25)
+                newDamage *= (1.10 + (customEnchantments.get(CustomEnchantType.EXECUTIONER).getLevel() / 20.));
+        }
+
+        // Lastly, see if we should give a 100% bonus for crits
+        // Axe crits
+        if (ToolTypeHelpers.isAxe(tool) && Math.random() < .3){
+            if (customEnchantments.containsKey(CustomEnchantType.CRITICAL_STRIKE))
+                newDamage *= (2 + (.5 * customEnchantments.get(CustomEnchantType.CRITICAL_STRIKE).getLevel()));
+            else
+                newDamage *= 2;
+        }
+        // Sword crits
         else if (!player.isOnGround() && player.getVelocity().getY() < 0) {
-            int critLevel = 0;
-            try {
-                critLevel = plugin.getEnchantmentManager().getEnchantLevel(tool, CustomEnchantType.CRITICAL_STRIKE);
-            } catch (IllegalArgumentException ignored) {
-            }
-            newDamage *= (2 + (critLevel * .5));
+            if (customEnchantments.containsKey(CustomEnchantType.CRITICAL_STRIKE))
+                newDamage *= (2 + (customEnchantments.get(CustomEnchantType.CRITICAL_STRIKE).getLevel() * .5));
+            else
+                newDamage *= 2;
         }
 
         for (PotionEffect pot: player.getActivePotionEffects()){
             if (pot.getType().equals(PotionEffectType.INCREASE_DAMAGE)){
                 newDamage *= (pot.getAmplifier() * 1.3);
+                break;
             }
         }
 
@@ -186,17 +212,21 @@ public class GlobalDamageManager implements Listener {
      *
      * @param event The EntityShootBowEvent we are listening to
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onPlayerShotBow(EntityShootBowEvent event) {
+
         if (event.getEntity() instanceof Player) {
+
             ItemStack bow = event.getBow();
-            if (bow == null) {
+
+            // Don't care if we dont have a bow
+            if (bow == null)
                 return;
-            }  // Don't care if we dont have a bow
-            double damage = getRangedWeaponBaseDamage(event.getBow().getType());
-            if (damage <= 0) {
+
+            double damage = getRangedWeaponBaseDamage(event.getBow());
+
+            if (damage <= 0)
                 return;
-            }  // Don't care if we don't have any damage to apply
 
             // Now we take into account force the bow shot with
             damage *= event.getForce();
@@ -209,17 +239,32 @@ public class GlobalDamageManager implements Listener {
 
             // 20% chance to crit for double damage
             double critPercent = .2;
+
+            // Get enchants
+            Map<CustomEnchantType, CustomEnchantment> customEnchantments = plugin.getEnchantmentManager().getCustomEnchantmentMap(bow);
+
             // crit enchant level * 10% chance bonus
-            try {
-                critPercent += plugin.getEnchantmentManager().getEnchantLevel(bow, CustomEnchantType.CRITICAL_SHOT) / 10.;
-            } catch (IllegalArgumentException ignored) {
+            if (customEnchantments.containsKey(CustomEnchantType.CRITICAL_SHOT))
+                critPercent += (customEnchantments.get(CustomEnchantType.CRITICAL_SHOT).getLevel() / 10.);
+
+            // dimension boosts
+            switch (event.getProjectile().getWorld().getEnvironment()){
+                case NETHER:
+                    if (customEnchantments.containsKey(CustomEnchantType.NETHER_HUNTER))
+                        damage *= (1 + (customEnchantments.get(CustomEnchantType.NETHER_HUNTER).getLevel() / 20.));
+                case THE_END:
+                    if (customEnchantments.containsKey(CustomEnchantType.ENDER_HUNTER))
+                        damage *= (1 + (customEnchantments.get(CustomEnchantType.ENDER_HUNTER).getLevel() / 18.));
             }
+
+            // Test for crit
             if (Math.random() < critPercent) {
                 damage *= 2;
                 event.getEntity().getWorld().spawnParticle(Particle.CRIT_MAGIC, event.getEntity().getLocation().add(0, 1.6, 0), 50);
                 event.getEntity().getWorld().playSound(event.getEntity().getLocation().add(0, 1.6, 0), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, .3f, .6f);
             }
 
+            // Check for strength
             for (PotionEffect pot: event.getEntity().getActivePotionEffects()){
                 if (pot.getType().equals(PotionEffectType.INCREASE_DAMAGE)){
                     damage *= (pot.getAmplifier() * 1.3);
@@ -231,11 +276,18 @@ public class GlobalDamageManager implements Listener {
 
             // Now we can put this value on the arrow to modify later in a different event
             event.getProjectile().setMetadata(ARROW_DMG_METANAME, new FixedMetadataValue(plugin, damage));
-            // Attempts to put the snipe level on the arrow if it exists, if it fails then no biggie
-            try {
-                event.getProjectile().setMetadata(ARROW_SNIPE_ENCHANT_METANAME, new FixedMetadataValue(plugin, plugin.getEnchantmentManager().getEnchantLevel(bow, CustomEnchantType.SNIPE)));
-            } catch (IllegalArgumentException ignored) {
-            }
+
+            // Attempts to put the snipe level on the arrow if it exists
+            if (customEnchantments.containsKey(CustomEnchantType.SNIPE))
+                event.getProjectile().setMetadata(ARROW_SNIPE_ENCHANT_METANAME, new FixedMetadataValue(plugin, customEnchantments.get(CustomEnchantType.SNIPE).getLevel()));
+
+            // Attempts to put the fmj level on the arrow if it exists
+            if (customEnchantments.containsKey(CustomEnchantType.FULL_METAL_JACKET))
+                event.getProjectile().setMetadata(ARROW_FMJ_ENCHANT_METANAME, new FixedMetadataValue(plugin, customEnchantments.get(CustomEnchantType.FULL_METAL_JACKET).getLevel()));
+
+            // Check if entity is low on HP for execute
+            if (customEnchantments.containsKey(CustomEnchantType.EXECUTIONER))
+                event.getProjectile().setMetadata(ARROW_EXECUTE_ENCHANT_METANAME, new FixedMetadataValue(plugin, customEnchantments.get(CustomEnchantType.EXECUTIONER).getLevel()));
         }
     }
 
@@ -283,12 +335,26 @@ public class GlobalDamageManager implements Listener {
             }
         }
         newDamage *= distanceMultiplier;
+        if ((event.getEntity() instanceof Boss || event.getEntity() instanceof ComplexLivingEntity || event.getEntity() instanceof ComplexEntityPart) &&  arrow.hasMetadata(ARROW_FMJ_ENCHANT_METANAME)) {
+            for (MetadataValue metadataValue : arrow.getMetadata(ARROW_FMJ_ENCHANT_METANAME)){
+                if (metadataValue.getOwningPlugin() != null && metadataValue.getOwningPlugin().equals(plugin)){
+                    newDamage *= (metadataValue.asInt() / 2.);
+                    break;
+                }
+            }
+        }
+        for (MetadataValue metadataValue : arrow.getMetadata(ARROW_EXECUTE_ENCHANT_METANAME)){
+            if (metadataValue.getOwningPlugin() != null && metadataValue.getOwningPlugin().equals(plugin)){
+                newDamage *= (1.10 + (metadataValue.asInt() / 20.));
+                break;
+            }
+        }
         if (newDamage > 0) {
             event.setDamage(newDamage);
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onMobHitByThorns(EntityDamageByEntityEvent event){
 
         // Player vs Player thorns is handled elsewhere
@@ -302,7 +368,7 @@ public class GlobalDamageManager implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onPlayerRegen(EntityRegainHealthEvent event) {
 
         if (event.getEntity() instanceof LivingEntity){
@@ -310,7 +376,7 @@ public class GlobalDamageManager implements Listener {
         }
 
         // This is basically just natural regen
-        if (event.getEntity() instanceof Player && event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.SATIATED)) {
+        if (event.getEntity() instanceof Player && (event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.SATIATED) || event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.REGEN) || event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.MAGIC_REGEN))  ) {
             Player player = (Player) event.getEntity();
             double maxHP = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
             double halfHeartAmount = maxHP / 20.;
@@ -324,7 +390,7 @@ public class GlobalDamageManager implements Listener {
 
     @EventHandler
     public void onFallingInVoid(PlayerMoveEvent event) {
-        if (event.getTo() != null && event.getTo().getY() < -300) {
+        if (event.getTo().getY() < -300) {
             event.getPlayer().damage(event.getTo().getY() * -1);
         }
     }

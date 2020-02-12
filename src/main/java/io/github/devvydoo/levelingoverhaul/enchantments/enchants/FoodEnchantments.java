@@ -72,7 +72,7 @@ public class FoodEnchantments implements Listener {
     }
 
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onFoodEat(PlayerItemConsumeEvent event) {
 
         // Does the player have a helmet?

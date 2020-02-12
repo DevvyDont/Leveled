@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class ProgressionModifyingListeners implements Listener {
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
 
         // If we are in creative mode, don't do anything

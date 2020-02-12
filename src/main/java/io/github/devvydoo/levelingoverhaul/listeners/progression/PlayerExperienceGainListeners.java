@@ -7,6 +7,7 @@ import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -20,6 +21,8 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Map;
 
 /**
  * Listeners in charge of listening for events where we should earn xp. Not to be confused with PlayerExperienceListeners
@@ -60,7 +63,7 @@ public class PlayerExperienceGainListeners implements Listener {
      *
      * @param event - The EntityDamageByEntityEvent event we are listening to
      */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerKillEntity(EntityDeathEvent event) {
 
         // Did the entity have a killer?
@@ -119,7 +122,7 @@ public class PlayerExperienceGainListeners implements Listener {
      *
      * @param event - The BlockBreakEvent we are listening for
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
 
         // Never ever ever give xp if the block isn't supposed to drop
@@ -133,10 +136,12 @@ public class PlayerExperienceGainListeners implements Listener {
         ItemStack tool = player.getInventory().getItemInMainHand();
         int xpGained = 0;
 
+        Map<CustomEnchantType, CustomEnchantment> customEnchantments = plugin.getEnchantmentManager().getCustomEnchantmentMap(tool);
+
         // Special case, if we mined iron ore gold ore...
         if (block.getType().equals(Material.GOLD_ORE) || block.getType().equals(Material.IRON_ORE)) {
             // If their tool has smelting touch...
-            if (plugin.getEnchantmentManager().hasEnchant(tool, CustomEnchantType.SMELTING_TOUCH)) {
+            if (customEnchantments.containsKey(CustomEnchantType.SMELTING_TOUCH)) {
                 event.setDropItems(false);
                 int numDrop = 1;
                 int fortuneLevel = tool.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
@@ -150,7 +155,7 @@ public class PlayerExperienceGainListeners implements Listener {
                 xpGained = block.getType().equals(Material.IRON_ORE) ? 1 : 3;
             }
         } else if (block.getType().equals(Material.STONE)) {
-            if (plugin.getEnchantmentManager().hasEnchant(tool, CustomEnchantType.SMELTING_TOUCH)) {
+            if (customEnchantments.containsKey(CustomEnchantType.SMELTING_TOUCH)) {
                 event.setDropItems(false);
                 block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.STONE));
             }
@@ -161,6 +166,11 @@ public class PlayerExperienceGainListeners implements Listener {
         // Did we even gain experience?
         if (xpGained <= 0) {
             return;
+        }
+
+        if (customEnchantments.containsKey(CustomEnchantType.GREEDY_MINER)) {
+            double healBonus = customEnchantments.get(CustomEnchantType.GREEDY_MINER).getLevel() / 10. * player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+            player.setHealth(Math.min(player.getHealth() + healBonus, player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()));
         }
 
         // Never ever ever give someone xp for silk touch breaks

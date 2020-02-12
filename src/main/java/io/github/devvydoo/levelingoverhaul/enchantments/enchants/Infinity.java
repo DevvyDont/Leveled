@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class Infinity implements Listener {
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onArrowShotByPlayer(EntityShootBowEvent event) {
 
         // Did a player shoot the arrow?
@@ -36,7 +36,12 @@ public class Infinity implements Listener {
         if (infinityLevel > 0) {
             // If we roll above, take an arrow from the player
             if (Math.random() > infinityLevel / 10.) {
-                player.getInventory().removeItem(new ItemStack(Material.ARROW, 1));
+                for (ItemStack itemStack : player.getInventory().getContents()){
+                    if (itemStack != null && itemStack.getType().equals(Material.ARROW)) { // TODO: support for spectral/tipped arrows
+                        itemStack.setAmount(itemStack.getAmount() - 1);
+                        break;
+                    }
+                }
             }
         }
 
