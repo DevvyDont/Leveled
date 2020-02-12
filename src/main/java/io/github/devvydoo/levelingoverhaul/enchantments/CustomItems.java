@@ -8,7 +8,9 @@ public enum CustomItems {
     DRAGON_HELMET("Dragon Helmet", "dragon_helmet_key", Material.DRAGON_HEAD, Rarity.LEGENDARY),
     DRAGON_CHESTPLATE("Dragon Chestplate", "dragon_chestplate_key", Material.LEATHER_CHESTPLATE, Rarity.LEGENDARY),
     DRAGON_LEGGINGS("Dragon Leggings", "dragon_leggings_key", Material.LEATHER_LEGGINGS, Rarity.LEGENDARY),
-    DRAGON_BOOTS("Dragon Boots", "dragon_boots_key", Material.LEATHER_BOOTS, Rarity.LEGENDARY);
+    DRAGON_BOOTS("Dragon Boots", "dragon_boots_key", Material.LEATHER_BOOTS, Rarity.LEGENDARY),
+    ENDER_BOW("Ender Bow", "ender_bow_key", Material.BOW, Rarity.LEGENDARY),
+    ;
 
     public final String name;
     public final String key;

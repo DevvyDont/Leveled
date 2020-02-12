@@ -8,6 +8,7 @@ import io.github.devvydoo.levelingoverhaul.enchantments.calculator.PotentialEnch
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import org.bukkit.*;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.Biome;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -22,8 +23,6 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -55,20 +54,25 @@ public class BossManager implements Listener {
         CustomItems[] choices = {CustomItems.DRAGON_HELMET, CustomItems.DRAGON_CHESTPLATE, CustomItems.DRAGON_LEGGINGS, CustomItems.DRAGON_BOOTS, CustomItems.DRAGON_SWORD};
         ItemStack drop = plugin.getCustomItemManager().getCustomItem(choices[random]);
 
-        EnchantmentCalculator calculator = new EnchantmentCalculator(plugin.getCustomItemManager(), plugin.getEnchantmentManager(), level + 10, plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR, drop);
+        drop = enchantBossDrop(drop, level + 10, level);
+        return drop;
+    }
+
+    public ItemStack enchantBossDrop(ItemStack itemStack, int enchantLevel, int itemLevel){
+        EnchantmentCalculator calculator = new EnchantmentCalculator(plugin.getCustomItemManager(), plugin.getEnchantmentManager(), enchantLevel, plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR, itemStack);
 
         ArrayList<PotentialEnchantment> enchantments = calculator.calculateEnchantmentTypes();
         HashMap<PotentialEnchantment, Integer> enchantmentLevelMap = calculator.calculateEnchantmentLevels(enchantments);
 
         for (PotentialEnchantment enchantment : enchantmentLevelMap.keySet()) {
             if (enchantment.getEnchantType() instanceof Enchantment) {
-                plugin.getEnchantmentManager().addEnchant(drop, (Enchantment) enchantment.getEnchantType(), enchantmentLevelMap.get(enchantment));
+                plugin.getEnchantmentManager().addEnchant(itemStack, (Enchantment) enchantment.getEnchantType(), enchantmentLevelMap.get(enchantment));
             } else if (enchantment.getEnchantType() instanceof CustomEnchantType) {
-                plugin.getEnchantmentManager().addEnchant(drop, (CustomEnchantType) enchantment.getEnchantType(), enchantmentLevelMap.get(enchantment));
+                plugin.getEnchantmentManager().addEnchant(itemStack, (CustomEnchantType) enchantment.getEnchantType(), enchantmentLevelMap.get(enchantment));
             }
         }
-        plugin.getEnchantmentManager().setItemLevel(drop, level);
-        return drop;
+        plugin.getEnchantmentManager().setItemLevel(itemStack, itemLevel);
+        return itemStack;
     }
 
     public void spawnBossDrop(ItemStack itemStack, Location location, boolean wantFloating){
@@ -99,6 +103,41 @@ public class BossManager implements Listener {
         }.runTaskTimer(plugin, 1, 20);
     }
 
+    @EventHandler
+    public void onEndermanDeath(EntityDeathEvent event){
+
+        if (event.getEntity().getType().equals(EntityType.ENDERMAN) && event.getEntity().getLocation().getBlock().getBiome().equals(Biome.SMALL_END_ISLANDS)){
+
+            if (event.getEntity().getKiller() == null)
+                return;
+
+            Player player = (event.getEntity().getKiller());
+            double dropPercent = .005;
+
+            int mainLevel = 0;
+            int offLevel = 0;
+
+            try {
+                mainLevel = plugin.getEnchantmentManager().getEnchantLevel(player.getInventory().getItemInMainHand(), CustomEnchantType.PROSPECT);
+            } catch (IllegalArgumentException ignored){}
+            try {
+                offLevel = plugin.getEnchantmentManager().getEnchantLevel(player.getInventory().getItemInOffHand(), CustomEnchantType.PROSPECT);
+            } catch (IllegalArgumentException ignored){}
+
+            int prospectLevel = Math.max(mainLevel, offLevel);
+
+            if (prospectLevel > 0)
+                dropPercent *= prospectLevel;
+
+            if (Math.random() > dropPercent)
+                return;
+
+            ItemStack bow = plugin.getCustomItemManager().getCustomItem(CustomItems.ENDER_BOW);
+            int endermanLevel = plugin.getMobManager().getMobLevel(event.getEntity());
+            bow = enchantBossDrop(bow, endermanLevel + 10, endermanLevel);
+            spawnBossDrop(bow, event.getEntity().getLocation(), true);
+        }
+    }
 
     /**
      * Several cases where we handle when a boss is killed by a player
@@ -169,11 +208,20 @@ public class BossManager implements Listener {
 
     @EventHandler
     public void onPlayerPickupLegendaryItem(PlayerAttemptPickupItemEvent event){
+        if (event.getPlayer().getInventory().firstEmpty() == -1)
+            return;
         if (event.getItem().hasMetadata("unique_drop"))
             plugin.getServer().broadcastMessage(ChatColor.GREEN + "" + ChatColor.BOLD + event.getPlayer().getDisplayName() + ChatColor.GRAY + " has found a " + event.getItem().getItemStack().getItemMeta().getDisplayName() + ChatColor.GRAY + "!");
     }
 
     private ArrayList<Player> poisonedPlayers = new ArrayList<>();
+
+    @EventHandler
+    public void onDragonDirectHit(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof EnderDragon){
+            event.getEntity().setVelocity(event.getEntity().getVelocity().add(new Vector(0, plugin.getMobManager().getMobLevel((LivingEntity)event.getDamager()) / 5, 0)));
+        }
+    }
 
     // ENDER DRAGON STUFF
     @EventHandler
@@ -203,7 +251,7 @@ public class BossManager implements Listener {
         if (poisonedPlayers.contains(player))
             return;
         poisonedPlayers.add(player);
-        player.sendTitle(ChatColor.LIGHT_PURPLE + "Poisoned!", ChatColor.GRAY + "Drink milk to clear the effect!", 5, 20, 5);
+        player.sendTitle(ChatColor.LIGHT_PURPLE + "Poisoned!", ChatColor.GRAY + "Eat a chorus fruit to clear the effect!", 5, 20, 5);
         new BukkitRunnable() {
             int times = 0;
             @Override
@@ -249,8 +297,8 @@ public class BossManager implements Listener {
     }
 
     @EventHandler
-    public void onMilkDrank(PlayerItemConsumeEvent event){
-        if (poisonedPlayers.contains(event.getPlayer()) && event.getItem().getType().equals(Material.MILK_BUCKET)){
+    public void onChorusFruitEat(PlayerItemConsumeEvent event){
+        if (poisonedPlayers.contains(event.getPlayer()) && event.getItem().getType().equals(Material.CHORUS_FRUIT)){
             poisonedPlayers.remove(event.getPlayer());
         }
     }
