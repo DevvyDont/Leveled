@@ -7,11 +7,12 @@ import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import java.util.*;
 
-public class PartyCommand implements CommandExecutor {
+public class PartyCommand implements CommandExecutor, TabCompleter {
 
     private LevelingOverhaul plugin;
     private HashMap<Player, PartyRequest> playerPartyRequests;
@@ -99,42 +100,49 @@ public class PartyCommand implements CommandExecutor {
 
             handleListSubCommand(player);
             return true;
-        } else if (args[0].equalsIgnoreCase("tp")){
+        }
+        else if (args[0].equalsIgnoreCase("tp")){
             if (args.length < 2){
                 player.sendMessage(ChatColor.RED + "Please specify a player");
                 return true;
             }
             handleTpSubCommand(player, args);
             return true;
-        }
-
-        // Attempt to get the player specified
-        Player member = plugin.getServer().getPlayerExact(args[0]);
-
-        if (member == null){
-            sender.sendMessage(ChatColor.RED + "Could not find the player: " + ChatColor.DARK_RED + args[0]);
+        } else if (args[0].equalsIgnoreCase("invite") && args.length > 1){
+            handleInviteSubCommand(player, args[1]);
             return true;
         }
 
-        // lol
-        if (member.equals(player)){
-            sender.sendMessage(ChatColor.RED + "You can't be in a party with yourself!");
-            return true;
-        }
-
-        // Make sure the other player is party-less
-        if (plugin.getPartyManager().getParty(member) != null){
-            sender.sendMessage(ChatColor.RED + "The player " + ChatColor.DARK_RED + member.getDisplayName() + ChatColor.RED + " is already in a party!");
-            return true;
-        }
-
-        // Make a request
-        playerPartyRequests.put(member, new PartyRequest(member, player, System.currentTimeMillis() + 120 * 1000));
-        player.sendMessage(ChatColor.GREEN + "Sent a party invite to " + ChatColor.DARK_GREEN +  member.getDisplayName() + ChatColor.GREEN + "!");
+        handleInviteSubCommand(player, args[0]);
         return true;
+
     }
 
-    public void handleLeaveSubCommand(Player player){
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        String[] subs = {"tp", "invite", "list", "leave", "accept"};
+        if (command.getName().equalsIgnoreCase("party")){
+            if (args.length == 1){
+                ArrayList<String> options = new ArrayList<>();
+
+                if (!args[0].equalsIgnoreCase("")){
+                    for (String sub : subs) {
+                        if (sub.startsWith(args[0]))
+                            options.add(sub);
+                    }
+                    Collections.sort(options);
+                    return options;
+
+                } else {
+                    return Arrays.asList(subs);
+                }
+
+            }
+        }
+        return null;
+    }
+
+    private void handleLeaveSubCommand(Player player){
         // Is the player in a party?
         Party party = plugin.getPartyManager().getParty(player);
         if (party == null){
@@ -146,7 +154,7 @@ public class PartyCommand implements CommandExecutor {
         player.sendMessage(ChatColor.RED + "You have left the party.");
     }
 
-    public void handleAcceptSubCommand(Player player){
+    private void handleAcceptSubCommand(Player player){
         // Do we have a request?
         if (!playerPartyRequests.containsKey(player) || playerPartyRequests.get(player).getExpireeTimestamp() < System.currentTimeMillis()){
             player.sendMessage(ChatColor.RED + "You don't have any party requests");
@@ -156,7 +164,7 @@ public class PartyCommand implements CommandExecutor {
         playerPartyRequests.remove(player);
     }
 
-    public void handleListSubCommand(Player player){
+    private void handleListSubCommand(Player player){
         for (Party party: plugin.getPartyManager().getParties()){
             player.sendMessage("Party owned by " + party.getOwner().getDisplayName());
             for (Player m: party.getMembers()){
@@ -188,5 +196,31 @@ public class PartyCommand implements CommandExecutor {
         player.sendTitle(ChatColor.GREEN + "Teleporting...", "", 20, 20, 10);
         friend.sendTitle("", ChatColor.AQUA + player.getDisplayName() + ChatColor.GRAY + " teleported to you", 20, 15, 10);
         friend.getWorld().playSound(friend.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+    }
+
+    private void handleInviteSubCommand(Player player, String potentialMember){
+        // Attempt to get the player specified
+        Player member = plugin.getServer().getPlayerExact(potentialMember);
+
+        if (member == null){
+            player.sendMessage(ChatColor.RED + "Could not find the player: " + ChatColor.DARK_RED + potentialMember);
+            return;
+        }
+
+        // lol
+        if (member.equals(player)){
+            player.sendMessage(ChatColor.RED + "You can't be in a party with yourself!");
+            return;
+        }
+
+        // Make sure the other player is party-less
+        if (plugin.getPartyManager().getParty(member) != null){
+            player.sendMessage(ChatColor.RED + "The player " + ChatColor.DARK_RED + member.getDisplayName() + ChatColor.RED + " is already in a party!");
+            return;
+        }
+
+        // Make a request
+        playerPartyRequests.put(member, new PartyRequest(member, player, System.currentTimeMillis() + 120 * 1000));
+        player.sendMessage(ChatColor.GREEN + "Sent a party invite to " + ChatColor.DARK_GREEN +  member.getDisplayName() + ChatColor.GREEN + "!");
     }
 }

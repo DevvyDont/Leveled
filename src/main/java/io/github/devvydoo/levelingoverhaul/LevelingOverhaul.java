@@ -151,11 +151,13 @@ public final class LevelingOverhaul extends JavaPlugin {
         getServer().getPluginManager().registerEvents(bossManager, this);
 
         // Register commands
-        getCommand("mob").setExecutor(new TestMobCommand(this));
+        PartyCommand partyCommand = new PartyCommand(this);
+        getCommand("adminmob").setExecutor(new TestMobCommand(this));
         getCommand("stats").setExecutor(new PlayerStatsCommand(this));
-        getCommand("party").setExecutor(new PartyCommand(this));
-        getCommand("leveldebug").setExecutor(new DebugLevelSetter(this));
-        getCommand("enchantdebug").setExecutor(new DebugEnchant(this));
+        getCommand("party").setExecutor(partyCommand);
+        getCommand("party").setTabCompleter(partyCommand);
+        getCommand("adminlevel").setExecutor(new DebugLevelSetter(this));
+        getCommand("adminenchant").setExecutor(new DebugEnchant(this));
     }
 
     @Override
