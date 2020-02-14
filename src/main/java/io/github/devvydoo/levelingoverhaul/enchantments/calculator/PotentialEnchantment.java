@@ -84,11 +84,16 @@ public class PotentialEnchantment {
         if (enchantType instanceof Enchantment) {
 
             Enchantment enchant = (Enchantment) enchantType;
+
+            // Various vanilla overrides
+
             // Override armor to not be able to receive unbreaking. armor in this plugin is unbreakable.
             if (ToolTypeHelpers.isArmor(itemStack) && enchant.getKey().toString().equals("minecraft:unbreaking")) { return false; }
+
+            // Override prot enchants for elytras
             if (itemStack.getType().equals(Material.ELYTRA) && enchant.getKey().toString().contains("protection")) { return true; }
+            // Override all helmet enchants for dragon helmet
             if (customItemManager.isDragonHelmet(itemStack) && enchant.canEnchantItem(new ItemStack(Material.LEATHER_HELMET))) { return true; }
-            if ((itemStack.getType().equals(Material.BOW) || itemStack.getType().equals(Material.CROSSBOW)) && enchant.getKey().toString().equals("minecraft:unbreaking")) { return true; }
             return enchant.canEnchantItem(itemStack);
 
         } else if (enchantType instanceof CustomEnchantType) {

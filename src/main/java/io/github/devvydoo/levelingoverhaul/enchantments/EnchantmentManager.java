@@ -376,7 +376,8 @@ public class EnchantmentManager {
             case GOLDEN_DIET:
             case PROSPECT:
             case NETHER_HUNTER:
-                return 6;
+            case EXECUTIONER:
+                return 8;
             case GROWTH:
             case SMELTING_TOUCH:
                 return 9;
@@ -576,6 +577,12 @@ public class EnchantmentManager {
                 conflictingEnchantments.add(CustomEnchantType.EXPLOSIVE_TOUCH);
                 conflictingEnchantments.add(CustomEnchantType.SMELTING_TOUCH);
                 conflictingEnchantments.add(CustomEnchantType.GREEDY_MINER);
+                break;
+            case "riptide":
+                conflictingEnchantments.add("channeling");
+                break;
+            case "channeling":
+                conflictingEnchantments.add("riptide");
                 break;
             default:
                 break;

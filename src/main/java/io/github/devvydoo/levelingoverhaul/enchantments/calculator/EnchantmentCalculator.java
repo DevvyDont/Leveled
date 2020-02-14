@@ -86,7 +86,7 @@ public class EnchantmentCalculator {
 
         // Extra weapons
         enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, Enchantment.FIRE_ASPECT, 30, BaseExperience.LEVEL_CAP, 7));
-        enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, Enchantment.LOOT_BONUS_MOBS, 30, 12, 12));
+        enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, Enchantment.LOOT_BONUS_MOBS, 30, 120, 12));
         enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, Enchantment.KNOCKBACK, 30, 120, 7));
         enchs.add(new PotentialEnchantment(customItemManager, enchantmentManager, Enchantment.SWEEPING_EDGE, 30, 120, 10));
 
@@ -147,8 +147,8 @@ public class EnchantmentCalculator {
         // Let's make a new list that determines the enchantments we are going to return
         ArrayList<PotentialEnchantment> enchantmentsToApply = new ArrayList<>();
 
-        // Calculate the number of enchantments we want, it is just (level - 15) / 15 with a chance to get one more
-        int numEnchants = (this.playerLevel - 15) / 15 + (Math.random() < .5 ? 1 : 0);
+        // Calculate the number of enchantments we want, it is just (level - 20) / 10 with a chance to get one more
+        int numEnchants = (this.playerLevel - 20) / 10 + (Math.random() < .5 ? 1 : 0);
 
         // Infinitely loop through the enchantments and add them until we have enough, or we tried this 30 times
         int attempts = 0;
