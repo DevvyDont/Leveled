@@ -10,10 +10,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -318,8 +315,13 @@ public class EnchantmentManager {
 
         // First we need to get the custom enchantment objects on the item
         List<CustomEnchantment> customEnchantments = getCustomEnchantments(itemStack);
+        customEnchantments.sort(Comparator.comparing(CustomEnchantment::getName));
         // Next get the vanilla enchantments the item has
         Map<Enchantment, Integer> vanillaEnchantments = itemStack.getEnchantments();
+
+        // Alphabetize them boys
+        ArrayList<Enchantment> orderedVanillaEnchs = new ArrayList<>(vanillaEnchantments.keySet());
+        orderedVanillaEnchs.sort(Comparator.comparing(o -> o.getKey().toString()));
 
         // Now set some item flags that our items need, and clear the old lore
         ItemMeta meta = itemStack.getItemMeta();
@@ -329,13 +331,8 @@ public class EnchantmentManager {
         // If we have a custom item that needs a special header, do that
         plugin.getCustomItemManager().setItemLoreHeader(itemStack, newLore);
 
-        for (Enchantment enchantment : vanillaEnchantments.keySet()) {
+        for (Enchantment enchantment : orderedVanillaEnchs) {
             int levelDisplay = vanillaEnchantments.get(enchantment);
-            // Since unbreaking 1 is a 'fake' enchantment, skip over it if applicable, otherwise subtract one from display
-            if (enchantment.getKey().toString().equals("minecraft:unbreaking")) {
-                if (vanillaEnchantments.get(enchantment) == 1) { continue; }
-                levelDisplay--;
-            }
             newLore.add("");  // Basically a newline
             newLore.add(String.format(ChatColor.BLUE + "%s %d", WordUtils.capitalize(enchantment.getKey().toString().replace("minecraft:", "").replace('_', ' ')), levelDisplay));
             newLore.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment));
@@ -685,7 +682,7 @@ public class EnchantmentManager {
             case "frost_walker":
                 return "Walk on water... Technically...";
             case "lure":
-                return "Fish will be caught quicke.";
+                return "Fish will be caught quicker.";
             case "looting":
                 return "Increases drop amount and chance from enemies";
             case "piercing":
