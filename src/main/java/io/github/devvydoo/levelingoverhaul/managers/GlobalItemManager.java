@@ -2,20 +2,18 @@ package io.github.devvydoo.levelingoverhaul.managers;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.Rarity;
-import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
-import org.bukkit.inventory.InventoryView;
+import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -38,7 +36,7 @@ public class GlobalItemManager implements Listener {
         itemMeta.setUnbreakable(true);
         itemStack.setItemMeta(itemMeta);
 
-        itemStack.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
+        itemStack.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
 
         // Already have a level?
         if (plugin.getEnchantmentManager().getItemLevel(itemStack) > 0)
@@ -83,6 +81,16 @@ public class GlobalItemManager implements Listener {
     @EventHandler
     public void onPickupItem(PlayerAttemptPickupItemEvent event){
         fixItem(event.getItem().getItemStack());
+    }
+
+    @EventHandler
+    public void onPickupEntity(PlayerPickupArrowEvent event){
+        fixItem(event.getItem().getItemStack());
+    }
+
+    @EventHandler
+    public void onProjectileShoot(EntityShootBowEvent event){
+        fixItem(event.getArrowItem());
     }
 
     @EventHandler
