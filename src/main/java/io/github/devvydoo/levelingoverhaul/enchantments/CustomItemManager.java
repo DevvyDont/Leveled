@@ -1,17 +1,21 @@
 package io.github.devvydoo.levelingoverhaul.enchantments;
 
+import com.destroystokyo.paper.event.player.PlayerElytraBoostEvent;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
+import io.github.devvydoo.levelingoverhaul.util.CustomAbility;
 import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.*;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -55,18 +59,21 @@ public class CustomItemManager implements Listener {
         if (isDragonSword(item)){
             lore.add("");
             lore.add(ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Instant Transmission");
-            lore.add(ChatColor.RED + "- Right click to instantly teleport!");
+            lore.add(ChatColor.GRAY + "Right click to instantly " + ChatColor.AQUA + "teleport 10 blocks!");
+            lore.add(ChatColor.GRAY + "Careful though... It kinda stings...");
         }
         else if (isDragonHelmet(item) || isDragonChestplate(item) || isDragonLeggings(item) || isDragonBoots(item)){
             lore.add("");
             lore.add(ChatColor.GOLD + ChatColor.BOLD.toString() + "FULL SET BONUS");
-            lore.add(ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Dragonfly");
-            lore.add(ChatColor.RED + "- Wear the full set to enable flight!");
+            lore.add(ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Boundless Rockets");
+            lore.add(ChatColor.GRAY + "Wear the full set to increase " + ChatColor.RED + "firework efficiency!");
+            lore.add(ChatColor.GRAY + "Fireworks have a " + ChatColor.GREEN + "50% chance" + ChatColor.GRAY + " to preserve when Elytra boosting");
         }
         else if (isEnderBow(item)){
             lore.add("");
             lore.add(ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Ender Displacement");
-            lore.add(ChatColor.RED + "- Teleports you to arrows upon landing on a block");
+            lore.add(ChatColor.GRAY + "Shooting an arrow while " + ChatColor.BLUE + "sneaking" + ChatColor.GRAY + " will");
+            lore.add(ChatColor.GRAY + "cause you to " + ChatColor.LIGHT_PURPLE + "teleport" + ChatColor.GRAY + " where the arrow lands!");
         }
         else if (isMagicMirror(item)){
             lore.add("");
@@ -140,7 +147,6 @@ public class CustomItemManager implements Listener {
                 return setupBooleanItemContainerData(dragonHead, DRAGON_HELMET_KEY, CustomItems.DRAGON_HELMET);
             case DRAGON_CHESTPLATE:
                 ItemStack dragonChestplate = new ItemStack(CustomItems.DRAGON_CHESTPLATE.type);
-                dyeDragonArmor(dragonChestplate);
                 return setupBooleanItemContainerData(dragonChestplate, DRAGON_CHESTPLATE_KEY, CustomItems.DRAGON_CHESTPLATE);
             case DRAGON_LEGGINGS:
                 ItemStack dragonLeggings = new ItemStack(CustomItems.DRAGON_LEGGINGS.type);
@@ -290,9 +296,27 @@ public class CustomItemManager implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOW)
+    public void onDragonSwordClickEntity(PlayerInteractEntityEvent event){
+        if (event.getRightClicked().getType().equals(EntityType.PLAYER) || event.getRightClicked().getType().equals(EntityType.ARMOR_STAND)){
+            event.getPlayer().getInventory().getItemInMainHand();
+            if (isDragonSword(event.getPlayer().getInventory().getItemInMainHand())){
+                event.setCancelled(true);
+            }
+        }
+    }
+
     @EventHandler
     public void onDragonSwordClick(PlayerInteractEvent event){
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+
+            if (event.getClickedBlock() != null) {
+                String blockName = event.getClickedBlock().getType().toString().toLowerCase();
+                if (blockName.contains("chest") || blockName.contains("door") || blockName.contains("shulker")){
+                    return;
+                }
+            }
+
             if (event.getItem() != null && isDragonSword(event.getItem())){
                 Location old = event.getPlayer().getLocation();
                 Location _new = old.add(old.getDirection().normalize().multiply(10));
@@ -317,8 +341,9 @@ public class CustomItemManager implements Listener {
 
     @EventHandler
     public void onEnderBowShoot(EntityShootBowEvent event){
-        if (event.getEntity() instanceof Player && event.getBow() != null && isEnderBow(event.getBow())){
+        if (event.getEntity() instanceof Player && ((Player) event.getEntity()).isSneaking() &&  event.getBow() != null && isEnderBow(event.getBow())){
             event.getProjectile().setMetadata("ender_arrow", new FixedMetadataValue(plugin, true));
+            event.getEntity().getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_ENDERMAN_STARE, .3f, .8f);
         }
     }
 
