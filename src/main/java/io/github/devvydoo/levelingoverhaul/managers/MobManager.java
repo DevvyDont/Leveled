@@ -187,7 +187,7 @@ public class MobManager implements Listener {
         if (entityHP <= 0) {
             entityHP = 0;
         }
-        hpTextColor = PlayerNametags.getChatColorFromHealth(entityHP);
+        hpTextColor = PlayerNametags.getChatColorFromHealth(entityHP, entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 
         // We should be good to set their name
         entity.setCustomName(null);
@@ -207,7 +207,7 @@ public class MobManager implements Listener {
 
         // We need to do 2 things, first, calculate what level the entity should be. Then setup their statistics
 
-        int level;
+        int level = 2;
 
         switch (entity.getType()) {
 
@@ -284,7 +284,13 @@ public class MobManager implements Listener {
 
             case PHANTOM:
                 Phantom phantom = (Phantom) entity;
-                level = phantom.getTarget() != null ? ((Player) phantom.getTarget()).getLevel() : 10;
+                if (phantom.getSpawningEntity() != null) {
+                    Player target = plugin.getServer().getPlayer(phantom.getSpawningEntity());
+                    if (target != null)
+                        level = target.getLevel();
+                        break;
+                }
+                level = 10;
                 break;
 
             case ILLUSIONER:
@@ -466,15 +472,7 @@ public class MobManager implements Listener {
      */
     private double calculateEntityHealth(LivingEntity entity, int level){
 
-        double baseHP = 50;
-
-        if (level < 5) {  }
-        else if (level < 15) { baseHP = 80; }
-        else if (level < 25) { baseHP = 120; }
-        else if (level < 30) { baseHP = 200; }
-        else if (level < 36) { baseHP = 265; }
-        else if (level < 40) { baseHP = 350; }
-        else { baseHP = Math.pow(level, 2) - Math.pow(level, 1.9205); }
+        double baseHP =  level * level + 40;
 
         double multiplier;
 
@@ -567,14 +565,15 @@ public class MobManager implements Listener {
             case SLIME:
             case MAGMA_CUBE:
                 int size = ((Slime) entity).getSize() + 1;
-                multiplier = .2 + size * 2;
+                multiplier = .2 + size * .2;
                 break;
 
             case ENDER_DRAGON:
             case WITHER:
             case GIANT:
-                baseHP = plugin.getBossManager().calculateEnderDragonHealth(level);
-                multiplier = 1.2;
+                multiplier = 300;
+                for (Player ignored : entity.getLocation().getNearbyPlayers(500))
+                    multiplier += Math.random() * 50 + 100;
                 break;
 
             default:
@@ -626,14 +625,12 @@ public class MobManager implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
 
         // We only care about living entities
-        if (!(event.getEntity() instanceof LivingEntity)) {
+        if (!(event.getEntity() instanceof LivingEntity))
             return;
-        }
 
         // We don't care about Players
-        if (event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player || event.getEntity() instanceof ArmorStand)
             return;
-        }
 
         // Marked
         event.getEntity().setCustomNameVisible(true);

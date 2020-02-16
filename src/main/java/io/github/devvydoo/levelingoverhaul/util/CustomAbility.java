@@ -2,7 +2,7 @@ package io.github.devvydoo.levelingoverhaul.util;
 
 public enum CustomAbility {
 
-    DRAGON_FLY,
+    BOUNDLESS_ROCKETS,
     FORCE_CHOKE
 
 }

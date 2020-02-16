@@ -355,4 +355,14 @@ public class CustomItemManager implements Listener {
         }
     }
 
+    @EventHandler
+    public void onElytraBoost(PlayerElytraBoostEvent event){
+        if (plugin.getPlayerManager().getLeveledPlayer(event.getPlayer()).getAbilities().contains(CustomAbility.BOUNDLESS_ROCKETS)){
+            if (Math.random() < .5){
+                event.setShouldConsume(false);
+                event.getPlayer().getLocation().getWorld().playSound(event.getPlayer().getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, .3f, .8f);
+            }
+        }
+    }
+
 }

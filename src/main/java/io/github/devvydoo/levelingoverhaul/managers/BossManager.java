@@ -7,17 +7,13 @@ import io.github.devvydoo.levelingoverhaul.enchantments.calculator.EnchantmentCa
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.PotentialEnchantment;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import org.bukkit.*;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Biome;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -35,18 +31,6 @@ public class BossManager implements Listener {
 
     public BossManager(LevelingOverhaul plugin) {
         this.plugin = plugin;
-    }
-
-    public double calculateEnderDragonHealth(int level) {
-        return Math.max(300, (Math.pow(level, 4) / 156.5) + (Math.pow(level, 3) / 5.) - 102083.082);
-    }
-
-    public double calculateWitherHealth(int level){
-        return calculateEnderDragonHealth(level);
-    }
-
-    public double calculateElderGuardianHealth(int level){
-        return calculateEnderDragonHealth(level);
     }
 
     private ItemStack getRandomEnderDragonDrop(int level){
@@ -174,6 +158,17 @@ public class BossManager implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBossSpawn(EntitySpawnEvent event){
+        switch (event.getEntityType()){
+            case ENDER_DRAGON:
+            case WITHER:
+            case ELDER_GUARDIAN:
+                if (event.getEntity().getCustomName() != null)
+                    plugin.getServer().broadcastMessage(ChatColor.GRAY + "A " + event.getEntity().getCustomName() + ChatColor.GRAY + " has spawned!");
+        }
+    }
+
     /**
      * Several cases where we handle when a boss is killed by a player
      *
@@ -195,6 +190,8 @@ public class BossManager implements Listener {
                     p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Ender Dragon" + ChatColor.YELLOW + "! +" + 4 * dragonLevel + "XP");
                 }
                 spawnBossDrop(getRandomEnderDragonDrop(dragonLevel - 2), event.getEntity().getLocation(), true);
+                if (event.getEntity().getKiller() != null && event.getEntity().getCustomName() != null)
+                    plugin.getServer().broadcastMessage(ChatColor.GREEN + event.getEntity().getKiller().getDisplayName() + ChatColor.GRAY + " has killed the " + event.getEntity().getCustomName());
                 break;
             case WITHER:
                 // All players within 100 block radius from the wither get credit
@@ -207,6 +204,8 @@ public class BossManager implements Listener {
                         p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Wither" + ChatColor.YELLOW + "! +175XP");
                     }
                 }
+                if (event.getEntity().getKiller() != null && event.getEntity().getCustomName() != null)
+                    plugin.getServer().broadcastMessage(ChatColor.GREEN + event.getEntity().getKiller().getDisplayName() + ChatColor.GRAY +  " has killed the " + event.getEntity().getCustomName());
                 break;
             case ELDER_GUARDIAN:
                 // All players within 100 block radius from the guardian get credit
@@ -219,6 +218,8 @@ public class BossManager implements Listener {
                         p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Elder Guardian" + ChatColor.YELLOW + "! +120XP");
                     }
                 }
+                if (event.getEntity().getKiller() != null && event.getEntity().getCustomName() != null)
+                    plugin.getServer().broadcastMessage(ChatColor.GREEN + event.getEntity().getKiller().getDisplayName() + ChatColor.GRAY + " has killed the " + event.getEntity().getCustomName());
                 break;
         }
     }
@@ -275,7 +276,7 @@ public class BossManager implements Listener {
         int dragonLevel = plugin.getMobManager().getMobLevel(dragon);
         double dmg = dragonLevel;
         if (hurt instanceof Player)
-            dmg += plugin.getArmorManager().getPlayerArmorAttributes((Player)hurt).getDefense();
+            dmg += plugin.getPlayerManager().getLeveledPlayer((Player)hurt).getDefense();
         event.setDamage(dmg);
 
         if (!(hurt instanceof Player))

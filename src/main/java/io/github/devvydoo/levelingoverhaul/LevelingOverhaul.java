@@ -9,7 +9,6 @@ import io.github.devvydoo.levelingoverhaul.enchantments.enchants.HomingArrows;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.Infinity;
 import io.github.devvydoo.levelingoverhaul.enchantments.gui.AnvilInterface;
 import io.github.devvydoo.levelingoverhaul.enchantments.gui.EnchantingInterface;
-import io.github.devvydoo.levelingoverhaul.listeners.PlayerDamageModifier;
 import io.github.devvydoo.levelingoverhaul.listeners.monitors.PlayerChatListener;
 import io.github.devvydoo.levelingoverhaul.listeners.monitors.PlayerJoinListeners;
 import io.github.devvydoo.levelingoverhaul.listeners.monitors.PlayerNametags;
@@ -30,7 +29,7 @@ public final class LevelingOverhaul extends JavaPlugin {
 
     private MobManager mobManager;
     private BossManager bossManager;
-    private PlayerArmorManager armorManager;
+    private LeveledPlayerManager playerManager;
     private GlobalDamageManager damageManager;
 
     private ActionBarManager actionBarManager;
@@ -55,8 +54,8 @@ public final class LevelingOverhaul extends JavaPlugin {
         return this.mobManager;
     }
 
-    public PlayerArmorManager getArmorManager() {
-        return armorManager;
+    public LeveledPlayerManager getPlayerManager() {
+        return playerManager;
     }
 
     public ActionBarManager getActionBarManager() {
@@ -92,7 +91,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         enchantmentManager = new EnchantmentManager(this);
         customItemManager = new CustomItemManager(this);
         globalItemManager = new GlobalItemManager(this);
-        armorManager = new PlayerArmorManager(this);
+        playerManager = new LeveledPlayerManager(this);
         damageManager = new GlobalDamageManager(this);
         actionBarManager = new ActionBarManager(this);
         partyManager = new PartyManager();
@@ -102,8 +101,7 @@ public final class LevelingOverhaul extends JavaPlugin {
 
         // Listeners that change how natural progression works
         getServer().getPluginManager().registerEvents(new ProgressionModifyingListeners(), this);
-        getServer().getPluginManager().registerEvents(new PlayerDamageModifier(this), this);
-        getServer().getPluginManager().registerEvents(armorManager, this);
+        getServer().getPluginManager().registerEvents(playerManager, this);
         getServer().getPluginManager().registerEvents(damageManager, this);
         getServer().getPluginManager().registerEvents(globalItemManager, this);
 

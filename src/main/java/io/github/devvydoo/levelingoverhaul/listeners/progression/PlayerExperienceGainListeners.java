@@ -10,7 +10,6 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -168,7 +167,7 @@ public class PlayerExperienceGainListeners implements Listener {
             return;
         }
 
-        if (customEnchantments.containsKey(CustomEnchantType.GREEDY_MINER)) {
+        if (customEnchantments.containsKey(CustomEnchantType.GREEDY_MINER) && !player.isDead()) {
             double healBonus = customEnchantments.get(CustomEnchantType.GREEDY_MINER).getLevel() / 10. * player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
             player.setHealth(Math.min(player.getHealth() + healBonus, player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()));
         }

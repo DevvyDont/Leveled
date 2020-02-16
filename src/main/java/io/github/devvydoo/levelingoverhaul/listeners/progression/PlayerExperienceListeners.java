@@ -40,7 +40,7 @@ public class PlayerExperienceListeners implements Listener {
         }
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, .7f, .5f);
         LevelRewards.playerLeveledUp(player, oldLevel, newLevel);
-        plugin.getArmorManager().updatePlayerArmorAttributes(player);
+        plugin.getPlayerManager().updateLeveledPlayerAttributes(player);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);

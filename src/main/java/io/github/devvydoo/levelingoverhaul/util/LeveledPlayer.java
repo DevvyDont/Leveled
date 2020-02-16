@@ -4,23 +4,24 @@ import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomItemManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 
-public class PlayerArmorAttributes {
+public class LeveledPlayer {
 
     private EnchantmentManager enchantmentManager;
     private CustomItemManager customItemManager;
 
     private Player player;
 
+    private int strength;
     private int defense;
     private int fireDefense;
     private int explosionDefense;
@@ -34,7 +35,7 @@ public class PlayerArmorAttributes {
     private ItemStack leggings;
     private ItemStack boots;
 
-    public PlayerArmorAttributes(EnchantmentManager enchantmentManager, CustomItemManager customItemManager, Player player) {
+    public LeveledPlayer(EnchantmentManager enchantmentManager, CustomItemManager customItemManager, Player player) {
         this.enchantmentManager = enchantmentManager;
         this.customItemManager = customItemManager;
         this.player = player;
@@ -45,20 +46,57 @@ public class PlayerArmorAttributes {
         return player;
     }
 
+    public int getStrength() {
+        return strength;
+    }
+
+    public double getStrengthBonus(){
+        double percent = strength / 100.;
+        for (PotionEffect potionEffect : player.getActivePotionEffects()){
+            if (potionEffect.getType().equals(PotionEffectType.INCREASE_DAMAGE))
+                percent += (1.3 * potionEffect.getAmplifier());
+        }
+        return percent;
+    }
+
     public int getDefense() {
         return defense;
+    }
+
+    public double getEnvResist(){
+        PotionEffect resistPot = player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+        int bonusResist = 0;
+        if (resistPot != null)
+            bonusResist += (resistPot.getAmplifier() * 150);
+        return 100. / (defense + bonusResist + 100.);
     }
 
     public int getFireDefense() {
         return fireDefense;
     }
 
+    public double getFireResist(){
+        PotionEffect resistPot = player.getPotionEffect(PotionEffectType.FIRE_RESISTANCE);
+        int bonusResist = 0;
+        if (resistPot != null)
+            bonusResist += (resistPot.getAmplifier() * 150);
+        return 100. / (fireDefense + 100.);
+    }
+
     public int getExplosionDefense() {
         return explosionDefense;
     }
 
+    public double getExplosionResist(){
+        return 100. / (explosionDefense + 100.);
+    }
+
     public int getProjectileDefense() {
         return projectileDefense;
+    }
+
+    public double getProjResist(){
+        return 100. / (projectileDefense + 100.);
     }
 
     public double getBonusHealth() {
@@ -79,6 +117,7 @@ public class PlayerArmorAttributes {
         this.leggings = player.getInventory().getLeggings();
         this.boots = player.getInventory().getBoots();
 
+        this.strength = 2 * player.getLevel() + 98;
         this.defense = calculateDefense();
         this.fireDefense = calculateFireDefense();
         this.explosionDefense = calculateExplosionDefense();
@@ -98,25 +137,25 @@ public class PlayerArmorAttributes {
             this.defense += getBaseArmorDefense(this.helmet);
             protectionLevel = this.helmet.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
             int armorTier = getArmorTier(this.helmet);
-            this.defense += (Math.pow(protectionLevel, 1.25 + .25 * armorTier));
+            this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier));
         }
         if (this.chestplate != null) {
             this.defense += getBaseArmorDefense(this.chestplate);
             protectionLevel = this.chestplate.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
             int armorTier = getArmorTier(this.chestplate);
-            this.defense += (Math.pow(protectionLevel, 1.25 + .25 * armorTier));
+            this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier));
         }
         if (this.leggings != null) {
             this.defense += getBaseArmorDefense(this.leggings);
             protectionLevel = this.leggings.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
             int armorTier = getArmorTier(this.leggings);
-            this.defense += (Math.pow(protectionLevel, 1.25 + .25 * armorTier));
+            this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier));
         }
         if (this.boots != null) {
             this.defense += getBaseArmorDefense(this.boots);
             protectionLevel = this.boots.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
             int armorTier = getArmorTier(this.boots);
-            this.defense += (Math.pow(protectionLevel, 1.25 + .25 * armorTier));
+            this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier));
         }
 
         return this.defense;
@@ -207,8 +246,9 @@ public class PlayerArmorAttributes {
     }
 
     public double calculateBaseHealth() {
-        if (player.getLevel() == 1) { return 100; }
-        return 100 + (Math.floor(Math.pow(player.getLevel(), 1.845142)));  // 100 + 12x where x is level - 1
+        if (player.getLevel() < 1)
+            return 100;
+        return 100 + Math.floor(Math.pow(player.getLevel() - 1, 2) / 2.);
     }
 
     private double calculateBonusHealth() {
@@ -232,18 +272,17 @@ public class PlayerArmorAttributes {
         }
 
         // Best growth currently is Growth %5 x 20, so best HP we can have is +100% HP
-        player.setHealthScale(20 + growthFactor);
+        player.setHealthScale(Math.min(20 + growthFactor, 40));
         this.bonusHealth = growthFactor * .05 * calculateBaseHealth();
         return this.bonusHealth;
     }
 
-    private double calculateTotalHealth(){
+    private void calculateTotalHealth(){
         double totalHealth = calculateBonusHealth() + calculateBaseHealth();
         AttributeInstance playerMaxHPAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         playerMaxHPAttribute.setBaseValue(totalHealth);
         if (player.getHealth() > playerMaxHPAttribute.getBaseValue())
             player.setHealth(playerMaxHPAttribute.getBaseValue());
-        return totalHealth;
     }
 
     private double calculateSpeed() {
@@ -264,11 +303,9 @@ public class PlayerArmorAttributes {
 
         if (helmet != null && chestplate != null && leggings != null & boots != null) {
             if (customItemManager.isDragonHelmet(helmet) && customItemManager.isDragonChestplate(chestplate) && customItemManager.isDragonLeggings(leggings) && customItemManager.isDragonBoots(boots)){
-                list.add(CustomAbility.DRAGON_FLY);
-                if (!player.getAllowFlight()) {
-                    player.setAllowFlight(true);
-                    player.sendMessage(ChatColor.GREEN + "You can now fly!");
-                }
+                list.add(CustomAbility.BOUNDLESS_ROCKETS);
+                if (!abilities.contains(CustomAbility.BOUNDLESS_ROCKETS))
+                    player.sendTitle(ChatColor.GOLD.toString() + ChatColor.BOLD + "Ability " + ChatColor.WHITE + "Boundless Rockets", ChatColor.GRAY + "Fireworks have a 50% to not consume when Elytra boosting!", 10, 60, 30);
             }
         }
 
@@ -287,22 +324,20 @@ public class PlayerArmorAttributes {
 
             case DRAGON_HEAD:
                 if (customItemManager.isDragonHelmet(armor))
-                    return 185;
+                    return 130;
             case LEATHER_CHESTPLATE:
-                if (customItemManager.isDragonChestplate(armor))
-                    return 220;
-                return 12;
+                return 10;
             case LEATHER_LEGGINGS:
                 if (customItemManager.isDragonLeggings(armor))
-                    return 200;
-                return 9;
+                    return 150;
+                return 8;
             case LEATHER_HELMET:
             case TURTLE_HELMET:
-                return 7;
+                return 5;
             case LEATHER_BOOTS:
                 if (customItemManager.isDragonBoots(armor))
-                    return 175;
-                return 5;
+                    return 110;
+                return 4;
 
             case GOLDEN_CHESTPLATE:
                 return 15;
@@ -314,33 +349,35 @@ public class PlayerArmorAttributes {
                 return 8;
 
             case CHAINMAIL_CHESTPLATE:
-                return 35;
+                return 30;
             case CHAINMAIL_LEGGINGS:
-                return 28;
+                return 24;
             case CHAINMAIL_HELMET:
-                return 25;
+                return 20;
             case CHAINMAIL_BOOTS:
-                return 21;
+                return 18;
 
             case IRON_CHESTPLATE:
-                return 60;
-            case IRON_LEGGINGS:
-                return 49;
-            case IRON_HELMET:
-                return 45;
-            case IRON_BOOTS:
                 return 40;
+            case IRON_LEGGINGS:
+                return 35;
+            case IRON_HELMET:
+                return 30;
+            case IRON_BOOTS:
+                return 28;
 
             case DIAMOND_CHESTPLATE:
-                return 80;
-            case DIAMOND_LEGGINGS:
-                return 70;
-            case DIAMOND_HELMET:
-                return 64;
-            case DIAMOND_BOOTS:
                 return 60;
+            case DIAMOND_LEGGINGS:
+                return 50;
+            case DIAMOND_HELMET:
+                return 45;
+            case DIAMOND_BOOTS:
+                return 40;
 
             case ELYTRA:
+                if (customItemManager.isDragonChestplate(armor))
+                    return 170;
                 return 20;
 
             default:
