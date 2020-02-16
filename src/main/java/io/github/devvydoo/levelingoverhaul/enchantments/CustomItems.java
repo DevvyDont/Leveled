@@ -10,6 +10,7 @@ public enum CustomItems {
     DRAGON_LEGGINGS("Dragon Leggings", "dragon_leggings_key", Material.LEATHER_LEGGINGS, Rarity.LEGENDARY),
     DRAGON_BOOTS("Dragon Boots", "dragon_boots_key", Material.LEATHER_BOOTS, Rarity.LEGENDARY),
     ENDER_BOW("Ender Bow", "ender_bow_key", Material.BOW, Rarity.LEGENDARY),
+    MAGIC_MIRROR("Magic Mirror", "magic_mirror_key", Material.COMPASS, Rarity.RARE),
     ;
 
     public final String name;

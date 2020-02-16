@@ -251,7 +251,7 @@ public class PlayerArmorAttributes {
         int speedsterLevel = 0;
         try {
             speedsterLevel = enchantmentManager.getEnchantLevel(boots, CustomEnchantType.SPEEDSTER);
-        } catch (IllegalArgumentException ignored){}
+        } catch (IllegalArgumentException | NullPointerException ignored){}
         if (speedsterLevel > 0)
             speed += (speedsterLevel * .03);
         player.setWalkSpeed((float) speed);

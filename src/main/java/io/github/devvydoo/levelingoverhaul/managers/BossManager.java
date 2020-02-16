@@ -139,6 +139,41 @@ public class BossManager implements Listener {
         }
     }
 
+    @EventHandler
+    public void onWitchDeath(EntityDeathEvent event){
+        if (event.getEntityType().equals(EntityType.WITCH)){
+
+            int mainLevel = 0;
+            int offLevel = 0;
+
+            double dropPercent = .01;
+
+            Player player = event.getEntity().getKiller();
+
+            if (player == null)
+                return;
+
+            try {
+                mainLevel = plugin.getEnchantmentManager().getEnchantLevel(player.getInventory().getItemInMainHand(), CustomEnchantType.PROSPECT);
+            } catch (IllegalArgumentException ignored){}
+            try {
+                offLevel = plugin.getEnchantmentManager().getEnchantLevel(player.getInventory().getItemInOffHand(), CustomEnchantType.PROSPECT);
+            } catch (IllegalArgumentException ignored){}
+
+            int prospectLevel = Math.max(mainLevel, offLevel);
+
+            if (prospectLevel > 0)
+                dropPercent *= prospectLevel;
+
+            if (Math.random() > dropPercent)
+                return;
+
+            ItemStack magicMirror = plugin.getCustomItemManager().getCustomItem(CustomItems.MAGIC_MIRROR);
+            plugin.getEnchantmentManager().setItemLevel(magicMirror, 90);
+            spawnBossDrop(magicMirror, event.getEntity().getLocation(), false);
+        }
+    }
+
     /**
      * Several cases where we handle when a boss is killed by a player
      *

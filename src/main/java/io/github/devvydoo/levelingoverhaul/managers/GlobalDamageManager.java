@@ -181,6 +181,16 @@ public class GlobalDamageManager implements Listener {
                 newDamage *= 2;
         }
 
+        // dimension boosts
+        switch (player.getWorld().getEnvironment()){
+            case NETHER:
+                if (customEnchantments.containsKey(CustomEnchantType.NETHER_HUNTER))
+                    newDamage *= (1 + (customEnchantments.get(CustomEnchantType.NETHER_HUNTER).getLevel() / 20.));
+            case THE_END:
+                if (customEnchantments.containsKey(CustomEnchantType.ENDER_HUNTER))
+                    newDamage *= (1 + (customEnchantments.get(CustomEnchantType.ENDER_HUNTER).getLevel() / 18.));
+        }
+
         for (PotionEffect pot: player.getActivePotionEffects()){
             if (pot.getType().equals(PotionEffectType.INCREASE_DAMAGE)){
                 newDamage *= (pot.getAmplifier() * 1.3);
