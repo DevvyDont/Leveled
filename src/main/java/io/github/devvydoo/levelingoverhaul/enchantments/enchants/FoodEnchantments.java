@@ -75,6 +75,9 @@ public class FoodEnchantments implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onFoodEat(PlayerItemConsumeEvent event) {
 
+        if (event.getPlayer().isDead())
+            return;
+
         // Does the player have a helmet?
         ItemStack helmet = event.getPlayer().getInventory().getHelmet();
         if (helmet != null && !helmet.getType().equals(Material.AIR)) {
