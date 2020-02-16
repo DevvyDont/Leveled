@@ -24,6 +24,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.RayTraceResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -318,9 +319,26 @@ public class CustomItemManager implements Listener {
             }
 
             if (event.getItem() != null && isDragonSword(event.getItem())){
-                Location old = event.getPlayer().getLocation();
-                Location _new = old.add(old.getDirection().normalize().multiply(10));
-                event.getPlayer().teleport(_new);
+                Location old = event.getPlayer().getEyeLocation();
+
+                boolean foundSpot = false;
+                int distance = 9;
+
+                while (!foundSpot && distance > 2){
+
+                    distance--;
+
+                    if (old.getWorld().rayTraceBlocks(old, old.getDirection(), distance) == null)
+                        foundSpot = true;
+                }
+
+                if (!foundSpot){
+                    event.getPlayer().sendMessage(ChatColor.RED + "No free spot ahead of you!");
+                    return;
+                }
+
+                Location newLocation = old.add(old.getDirection().normalize().multiply(distance));
+                event.getPlayer().teleport(newLocation);
                 event.getPlayer().damage(400);
 
                 new BukkitRunnable() {
@@ -332,8 +350,8 @@ public class CustomItemManager implements Listener {
                 }.runTaskLater(plugin, 1);
 
                 event.getPlayer().getWorld().playEffect(old, Effect.ENDEREYE_LAUNCH, 1);
-                event.getPlayer().getWorld().playEffect(_new, Effect.ENDER_SIGNAL, 0);
-                event.getPlayer().getWorld().playSound(_new, Sound.ENTITY_ENDER_EYE_DEATH, .4f, 1);
+                event.getPlayer().getWorld().playEffect(newLocation, Effect.ENDER_SIGNAL, 0);
+                event.getPlayer().getWorld().playSound(newLocation, Sound.ENTITY_ENDER_EYE_DEATH, .4f, 1);
                 event.getPlayer().getWorld().playSound(old, Sound.ENTITY_ENDERMAN_TELEPORT, .4f, 1);
             }
         }
