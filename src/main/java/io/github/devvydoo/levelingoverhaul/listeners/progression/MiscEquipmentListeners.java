@@ -1,7 +1,6 @@
 package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;

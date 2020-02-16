@@ -1,6 +1,5 @@
 package io.github.devvydoo.levelingoverhaul.managers;
 
-import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.util.Party;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;

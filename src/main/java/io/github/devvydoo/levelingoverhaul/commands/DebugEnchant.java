@@ -2,7 +2,6 @@ package io.github.devvydoo.levelingoverhaul.commands;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.EnchantmentCalculator;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.PotentialEnchantment;
 import org.bukkit.ChatColor;

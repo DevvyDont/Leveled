@@ -1,6 +1,5 @@
 package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
-import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
 import org.bukkit.*;
 import org.bukkit.entity.Player;

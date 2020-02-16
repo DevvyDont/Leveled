@@ -1,7 +1,5 @@
 package io.github.devvydoo.levelingoverhaul.util;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.Block;
