@@ -1,8 +1,10 @@
 package io.github.devvydoo.levelingoverhaul.managers;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
+import io.github.devvydoo.levelingoverhaul.listeners.monitors.PlayerNametags;
 import io.github.devvydoo.levelingoverhaul.util.Party;
 import org.bukkit.ChatColor;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -64,7 +66,7 @@ public class ScoreboardManager implements Listener {
     }
 
     private String getPartyMemberSuffix(Player player){
-        return ChatColor.DARK_RED + " ❤" + ChatColor.GREEN + (int) player.getHealth();
+        return ChatColor.DARK_RED + " ❤" + PlayerNametags.getChatColorFromHealth(player.getHealth(), player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) + (int) player.getHealth();
     }
 
     private void setDefaultPlayerScoreboard(Player player){
