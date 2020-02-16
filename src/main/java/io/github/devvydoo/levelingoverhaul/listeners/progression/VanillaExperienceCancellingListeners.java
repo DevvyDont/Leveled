@@ -1,5 +1,6 @@
 package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
+import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.tasks.XPOrbKillerTask;
 import org.bukkit.Material;
@@ -27,6 +28,11 @@ public class VanillaExperienceCancellingListeners implements Listener {
 
     public VanillaExperienceCancellingListeners(LevelingOverhaul plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onPlayerAttemptPickupExp(PlayerPickupExperienceEvent event){
+        event.setCancelled(true);
     }
 
     /**
