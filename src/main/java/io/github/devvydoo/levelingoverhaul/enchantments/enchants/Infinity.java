@@ -1,10 +1,10 @@
 package io.github.devvydoo.levelingoverhaul.enchantments.enchants;
 
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class Infinity implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onArrowShotByPlayer(EntityShootBowEvent event) {
 
         // Did a player shoot the arrow?
@@ -35,13 +35,9 @@ public class Infinity implements Listener {
         int infinityLevel = bow.getEnchantmentLevel(Enchantment.ARROW_INFINITE);
         if (infinityLevel > 0) {
             // If we roll above, take an arrow from the player
+            System.out.println("yes");
             if (Math.random() > infinityLevel / 10.) {
-                for (ItemStack itemStack : player.getInventory().getContents()){
-                    if (itemStack != null && itemStack.getType().equals(Material.ARROW)) { // TODO: support for spectral/tipped arrows
-                        itemStack.setAmount(itemStack.getAmount() - 1);
-                        break;
-                    }
-                }
+                event.getArrowItem().setAmount(event.getArrowItem().getAmount() - 1);
             }
         }
 
