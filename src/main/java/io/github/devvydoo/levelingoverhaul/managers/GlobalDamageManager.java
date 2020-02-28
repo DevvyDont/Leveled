@@ -15,7 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -365,7 +364,7 @@ public class GlobalDamageManager implements Listener {
     private double calculateEntityDamage(LivingEntity entity){
 
         int mobLevel = plugin.getMobManager().getMobLevel(entity);
-        double damage = mobLevel * mobLevel;
+        double damage = mobLevel * mobLevel * (mobLevel / 100.);
         double damagePercent = 1.0;
 
         switch (entity.getType()){
@@ -715,30 +714,15 @@ public class GlobalDamageManager implements Listener {
             double halfHeartAmount = maxHP / 20.;
             double amountToRegen;
             if (maxHP / 2 > player.getHealth()) {amountToRegen = halfHeartAmount * 1.33; }
-            else { amountToRegen = halfHeartAmount * .35; }
+            else { amountToRegen = halfHeartAmount * .66; }
             event.setAmount(amountToRegen);
-        }
-    }
-
-
-    @EventHandler
-    public void onFallingInVoid(PlayerMoveEvent event) {
-        if (event.getTo().getY() < -64) {
-            event.getPlayer().damage(event.getTo().getY() * -1);
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    event.getPlayer().setNoDamageTicks(0);
-                    event.getPlayer().setMaximumNoDamageTicks(0);
-                }
-            }.runTaskLater(plugin, 1);
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(PlayerDeathEvent event){
-        String playerName = ChatColor.GRAY.toString() + ChatColor.BOLD + "Lv. " + event.getEntity().getLevel() + " " + ChatColor.GREEN + event.getEntity().getDisplayName();
-        event.setDeathMessage(ChatColor.BLACK + "[" + ChatColor.DARK_RED + "☠" + ChatColor.BLACK + "] " + Objects.requireNonNull(event.getDeathMessage()).replace(event.getEntity().getName(), playerName));
+//        String playerName = ChatColor.GRAY.toString() + ChatColor.BOLD + "Lv. " + event.getEntity().getLevel() + " " + ChatColor.GREEN + event.getEntity().getDisplayName();
+//        event.setDeathMessage(ChatColor.BLACK + "[" + ChatColor.DARK_RED + "☠" + ChatColor.BLACK + "] " + Objects.requireNonNull(event.getDeathMessage()).replace(event.getEntity().getName(), playerName));
     }
 
 }
