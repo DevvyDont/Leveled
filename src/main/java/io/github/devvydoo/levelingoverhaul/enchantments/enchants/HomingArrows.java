@@ -42,7 +42,7 @@ public class HomingArrows implements Listener {
                 return;
             }
 
-            homingArrowCooldown.put(player, System.currentTimeMillis() + 2000);
+            homingArrowCooldown.put(player, System.currentTimeMillis() + 1000);
 
             int tickFrequency = 4 - homingLevel;
             if (tickFrequency <= 0) {
