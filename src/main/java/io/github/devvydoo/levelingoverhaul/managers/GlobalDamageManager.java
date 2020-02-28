@@ -543,13 +543,9 @@ public class GlobalDamageManager implements Listener {
             case STARVATION:
             case SUFFOCATION:
             case FALLING_BLOCK:
-
             case MAGIC:
-
             case WITHER:
-
             case POISON:
-
             case FIRE_TICK:
                 dmg = fivePercentHP;
                 break;
