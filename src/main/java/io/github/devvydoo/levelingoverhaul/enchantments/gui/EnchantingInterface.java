@@ -105,9 +105,9 @@ public class EnchantingInterface implements Listener {
 
     private boolean canBeEnchanted(ItemStack itemStack) {
         // If it's already enchanted we can't do anything
-        if (plugin.getEnchantmentManager().getCustomEnchantments(itemStack).size() > 0 || itemStack.getEnchantments().size() > 0) {
+        if (plugin.getEnchantmentManager().getCustomEnchantments(itemStack).size() > 0 || itemStack.getEnchantments().size() > 0)
             return false;
-        }
+
         // Check if the material type is allowed to be enchanted
         switch (itemStack.getType()) {
             case WOODEN_SHOVEL:
@@ -155,9 +155,8 @@ public class EnchantingInterface implements Listener {
             case IRON_HELMET:
             case TURTLE_HELMET:
             case FISHING_ROD:
-            case ELYTRA:  // TODO: Add enchants for elytra
+            case ELYTRA:
             case SHEARS:
-            case FLINT_AND_STEEL:
                 return true;
             default:
                 return false;
@@ -168,61 +167,52 @@ public class EnchantingInterface implements Listener {
         int qualityFactor = 1;
 
         // We need to perform a cubic search around the enchantment table to see if we have bookshelves
-        for (int xOffset = -2; xOffset <= 2; xOffset++) {
+        masterLoop: for (int xOffset = -2; xOffset <= 2; xOffset++) {
             for (int yOffset = -2; yOffset <= 2; yOffset++) {
                 for (int zOffset = -2; zOffset <= 2; zOffset++) {
-                    if (qualityFactor >= plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR) {
-                        break;
-                    }
+
                     Block block = enchantTable.getWorld().getBlockAt(enchantTable.getX() + xOffset, enchantTable.getY() + yOffset, enchantTable.getZ() + zOffset);
-                    if (block.getLocation().distance(enchantTable.getLocation()) <= 1) {
+                    if (block.getLocation().distance(enchantTable.getLocation()) <= 1)
                         continue;
-                    }
+
                     if (block.getType().equals(Material.BOOKSHELF)) {
                         qualityFactor++;
+                        if (qualityFactor >= plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR)
+                            break masterLoop;
                     }
+
                 }
-                if (qualityFactor >= plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR) {
-                    break;
-                }
-            }
-            if (qualityFactor >= plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR) {
-                break;
             }
         }
 
-        if (qualityFactor > plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR) {
+        if (qualityFactor > plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR)
             qualityFactor = plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR;
-        }
 
         EnchantmentCalculator calculator = new EnchantmentCalculator(plugin.getCustomItemManager(), plugin.getEnchantmentManager(), player.getLevel(), qualityFactor, item);
         ArrayList<PotentialEnchantment> potentialEnchantments = calculator.calculateEnchantmentTypes();
         HashMap<PotentialEnchantment, Integer> enchantLevels = calculator.calculateEnchantmentLevels(potentialEnchantments);
 
-        if (enchantLevels.isEmpty()) {
+        if (enchantLevels.isEmpty())
             System.out.println(ChatColor.RED + "[Enchanting] ERROR: Enchanting interface attempted to enchant item: " + item.getType() + " and didn't roll any enchantments!");
-        }
 
         for (PotentialEnchantment enchantment : enchantLevels.keySet()) {
-            if (enchantment.getEnchantType() instanceof Enchantment) {
+
+            if (enchantment.getEnchantType() instanceof Enchantment)
                 plugin.getEnchantmentManager().addEnchant(item, (Enchantment) enchantment.getEnchantType(), enchantLevels.get(enchantment));
-            } else if (enchantment.getEnchantType() instanceof CustomEnchantType) {
+             else if (enchantment.getEnchantType() instanceof CustomEnchantType)
                 plugin.getEnchantmentManager().addEnchant(item, (CustomEnchantType) enchantment.getEnchantType(), enchantLevels.get(enchantment));
-            } else {
+             else
                 throw new IllegalStateException("PotentialEnchantment enchantType was not Enchantment or CustomEnchantType!");
-            }
+
         }
         return item;
     }
 
-    private void openEnchantingInterface(Player player, Block enchantTable) {
+    private void openEnchantingInterface(Player player) {
 
-        Block blockLookingAt = player.getTargetBlockExact(10);
-        if (blockLookingAt != null && blockLookingAt.equals(enchantTable)) {
-
-        } else {
+        Block blockLookingAt = player.getTargetBlockExact(6);
+        if (blockLookingAt == null || !blockLookingAt.getType().equals(Material.ENCHANTING_TABLE))
             return;
-        }
 
         // Create the GUI
         Inventory gui = plugin.getServer().createInventory(player, 54, INTERFACE_NAME);
@@ -270,14 +260,12 @@ public class EnchantingInterface implements Listener {
     private void onEnchantInterfaceClick(InventoryClickEvent event) {
 
         // Ignore if its not our interface
-        if (!event.getView().getTitle().equals(INTERFACE_NAME)) {
+        if (!event.getView().getTitle().equals(INTERFACE_NAME))
             return;
-        }
 
         // Only care about players
-        if (!(event.getWhoClicked() instanceof Player)) {
+        if (!(event.getWhoClicked() instanceof Player))
             return;
-        }
 
         Player player = (Player) event.getWhoClicked();
         ClickType clickType = event.getClick();
@@ -295,14 +283,12 @@ public class EnchantingInterface implements Listener {
         }
 
         // If we don't have an inventory don't do anything
-        if (event.getClickedInventory() == null) {
+        if (event.getClickedInventory() == null)
             return;
-        }
 
         // Let players do whatever in their own inventories
-        if (event.getClickedInventory() instanceof PlayerInventory) {
+        if (event.getClickedInventory() instanceof PlayerInventory)
             return;
-        }
 
         event.setCancelled(true);
 
@@ -316,14 +302,16 @@ public class EnchantingInterface implements Listener {
 
             // Allow the event if we are holding lapis
             if (event.getCursor() != null && event.getCursor().getType().equals(Material.LAPIS_LAZULI)) {
+
                 event.setCancelled(false);
                 // Check the equipment slot to see if we should update the button or not
                 if (gui.getItem(EQUIPMENT_SLOT) != null && !gui.getItem(EQUIPMENT_SLOT).getType().equals(Material.AIR)) {
-                    if (lapisBeforeClick + event.getCursor().getAmount() >= getLapisRequired(player.getLevel())) {
+
+                    if (lapisBeforeClick + event.getCursor().getAmount() >= getLapisRequired(player.getLevel()))
                         gui.setItem(BUTTON_SLOT, setupButton(gui, readyButton, player.getLevel(), true));
-                    } else {
+                    else
                         gui.setItem(BUTTON_SLOT, setupButton(gui, notEnoughButton, player.getLevel(), false));
-                    }
+
                 }
 
                 // Allow the event if we are holding nothing
@@ -339,12 +327,13 @@ public class EnchantingInterface implements Listener {
             // Allow the event if we are holding an item that can be enchanted
             if (event.getCursor() != null && canBeEnchanted(event.getCursor())) {
                 event.setCancelled(false);
+
                 // Check the lapis to see if we should allow the enchant
-                if (lapisBeforeClick >= getLapisRequired(player.getLevel())) {
+                if (lapisBeforeClick >= getLapisRequired(player.getLevel()))
                     gui.setItem(BUTTON_SLOT, setupButton(gui, readyButton, player.getLevel(), true));
-                } else {
+                else
                     gui.setItem(BUTTON_SLOT, setupButton(gui, notEnoughButton, player.getLevel(), false));
-                }
+
                 // Allow the event if we aren't holding anything
             } else if (event.getCursor() == null || event.getCursor().getType().equals(Material.AIR)) {
                 event.setCancelled(false);
@@ -368,11 +357,12 @@ public class EnchantingInterface implements Listener {
                             plugin.getEnchantmentManager().setItemLevel(newItem, player.getLevel());
                             if (newItem.getEnchantmentLevel(Enchantment.DURABILITY) < 1) { newItem.addEnchantment(Enchantment.DURABILITY, 1); }
                             gui.setItem(EQUIPMENT_SLOT, newItem);
-                            if (lapisBeforeClick <= getLapisRequired(player.getLevel())) {
+
+                            if (lapisBeforeClick <= getLapisRequired(player.getLevel()))
                                 gui.setItem(LAPIS_SLOT, new ItemStack(Material.AIR));
-                            } else {
+                             else
                                 gui.getItem(LAPIS_SLOT).setAmount(lapisBeforeClick - getLapisRequired(player.getLevel()));
-                            }
+
                             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1, 1);
                             doUpdateInventoryTask(player);
                         }
@@ -386,37 +376,33 @@ public class EnchantingInterface implements Listener {
     public void onEnchantTableInteract(PlayerInteractEvent event) {
 
         // Are we right clicking a block?
-        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
             return;
-        }
 
         Block block = event.getClickedBlock();
 
         // Are we right clicking an enchanting table?
-        if (block == null || !block.getType().equals(Material.ENCHANTING_TABLE)) {
+        if (block == null || !block.getType().equals(Material.ENCHANTING_TABLE))
             return;
-        }
 
         // Is enchanting allowed?
-        if (event.getPlayer().getLevel() < LevelRewards.ENCHANTING_UNLOCK) {
+        if (event.getPlayer().getLevel() < LevelRewards.ENCHANTING_UNLOCK)
             return;
-        }
 
         // Give them enchanting advancement
         event.getPlayer().getAdvancementProgress(plugin.getEnchantAdvancement()).awardCriteria("enchanted_item");
 
         // Open the GUI
         event.setCancelled(true);
-        openEnchantingInterface(event.getPlayer(), block);
+        openEnchantingInterface(event.getPlayer());
     }
 
     @EventHandler
     public void onEnchantTableClose(InventoryCloseEvent event) {
 
         // Was our enchant GUI closed?
-        if (!event.getView().getTitle().equals(INTERFACE_NAME)) {
+        if (!event.getView().getTitle().equals(INTERFACE_NAME))
             return;
-        }
 
         Inventory gui = event.getView().getTopInventory();
 
@@ -425,19 +411,17 @@ public class EnchantingInterface implements Listener {
 
         ArrayList<ItemStack> overflow = new ArrayList<>();
 
-        if (lapis != null) {
+        if (lapis != null)
             overflow.addAll(event.getPlayer().getInventory().addItem(lapis).values());
-        }
-        if (equipment != null) {
-            overflow.addAll(event.getPlayer().getInventory().addItem(equipment).values());
-        }
-        if (overflow.size() <= 0) {
-            return;
-        }
 
-        for (ItemStack item : overflow) {
+        if (equipment != null)
+            overflow.addAll(event.getPlayer().getInventory().addItem(equipment).values());
+
+        if (overflow.size() <= 0)
+            return;
+
+        for (ItemStack item : overflow)
             event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), item);
-        }
     }
 
 }
