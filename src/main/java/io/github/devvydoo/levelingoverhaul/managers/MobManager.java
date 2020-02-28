@@ -30,11 +30,12 @@ public class MobManager implements Listener {
     private String LEVEL_COLOR = (ChatColor.GRAY + "" + ChatColor.BOLD);
     private String HOSTILE_MOB_COLOR = ChatColor.RED.toString();
     private String NEUTRAL_MOB_COLOR = ChatColor.WHITE.toString();
+    private String TAMED_MOB_COLOR = ChatColor.GREEN.toString();
     private String BOSS_MOB_COLOR = ChatColor.DARK_PURPLE.toString();
 
     private LevelingOverhaul plugin;
     private HashMap<LivingEntity, MobStatistics> entityToLevelMap = new HashMap<>();
-    private int MOB_CLEANUP_DELAY = 20 * 60 * 5;
+    private final int MOB_CLEANUP_DELAY = 20 * 60 * 5;
 
     /**
      * We need to make our plugin able to recover on a world that already has entities setup.
@@ -44,7 +45,7 @@ public class MobManager implements Listener {
     public MobManager(LevelingOverhaul plugin, List<World> worlds) {
         this.plugin = plugin;
         // Loop through all the worlds
-        System.out.println("[Mob Manager] Starting MobManager...");
+        plugin.getLogger().info("Starting mob manager...");
         int times = 0;
         long start = System.currentTimeMillis();
         for (World w : worlds) {
@@ -57,7 +58,7 @@ public class MobManager implements Listener {
             }
         }
 
-        System.out.println("[Mob Manager] Finished! " + times + " mobs successfully checked: " + (System.currentTimeMillis() - start) + "ms");
+        plugin.getLogger().info("Finished Mob Manager startup! " + times + " mobs successfully checked: " + (System.currentTimeMillis() - start) + "ms");
 
         // Make a task that runs every minute that cleans up mobs
         new BukkitRunnable() {
@@ -103,12 +104,13 @@ public class MobManager implements Listener {
         }
         int yModifier = wantYModifier && entity.getLocation().getY() < 50 ? (int) (12 - entity.getLocation().getY() / 7) : 0;
         if (numPlayers > 0) {
-            int level = (int) (totalLevels / numPlayers / 1.2 + (Math.random() * 5 + yModifier));
+            int level = (int) (totalLevels / numPlayers / 1.2 + (Math.random() * 5 - 3 + yModifier));
+            if (level < 1)
+                level = 1;
             return Math.min(level, levelCap);
         }
         return Math.min((int) (Math.random() * 5 + yModifier), levelCap);
     }
-
 
     private MobStatistics getMobStatistics(LivingEntity entity) {
         MobStatistics stats;
@@ -153,45 +155,35 @@ public class MobManager implements Listener {
     private void setEntityNametag(LivingEntity entity, double hpModification) {
 
         // Try to retrieve the entity, if we fail, it means the entity is not registered
-        int level;
-        try {
-            level = this.entityToLevelMap.get(entity).getLevel();  // Get the entities level
-        } catch (NullPointerException e) {
-            this.entityToLevelMap.put(entity, this.getMobStatistics(entity));
-            level = this.entityToLevelMap.get(entity).getLevel();
-        }
 
-        // In the chance our entity doesn't exist in the hashmap, set their level to 1 in case
-        if (level == 0) {
-            level = 1;
-        }
+        MobStatistics mobStats = getMobStatistics(entity);
+        int level = mobStats.getLevel();
 
         // Now we need to see if our nametag should be white or red determining if they're hostile
         String nametagColor;
-        if (entity instanceof Boss) {
+        if (entity instanceof Boss)
             nametagColor = BOSS_MOB_COLOR;
-        } else if (entity instanceof Monster) {
+        else if (entity instanceof Monster)
             nametagColor = HOSTILE_MOB_COLOR;
-        } else {
+        else if (entity instanceof Tameable && ((Tameable) entity).isTamed())
+            nametagColor = TAMED_MOB_COLOR;
+        else
             nametagColor = NEUTRAL_MOB_COLOR;
-        }
-
 
         // Do we need to make an hp modification?
         double entityHP = entity.getHealth() + entity.getAbsorptionAmount();
-        if (hpModification != 0) {
-            entityHP += hpModification;
-        }
 
-        String hpTextColor;
-        if (entityHP <= 0) {
+        if (hpModification != 0)
+            entityHP += hpModification;
+
+        if (entityHP <= 0)
             entityHP = 0;
-        }
-        hpTextColor = PlayerNametags.getChatColorFromHealth(entityHP, entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+
+        String hpTextColor = PlayerNametags.getChatColorFromHealth(entityHP, entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 
         // We should be good to set their name
         entity.setCustomName(null);
-        entity.setCustomName(LEVEL_COLOR + "Lv. " + level + " " + nametagColor + entity.getName() + " " + ChatColor.DARK_RED + "❤" + hpTextColor + (int) entityHP);
+        entity.setCustomName(LEVEL_COLOR + "Lv. " + level + " " + nametagColor + ChatColor.stripColor(mobStats.getName()) + " " + ChatColor.DARK_RED + "❤" + hpTextColor + (int) entityHP);
     }
 
     /**
@@ -286,9 +278,10 @@ public class MobManager implements Listener {
                 Phantom phantom = (Phantom) entity;
                 if (phantom.getSpawningEntity() != null) {
                     Player target = plugin.getServer().getPlayer(phantom.getSpawningEntity());
-                    if (target != null)
+                    if (target != null) {
                         level = target.getLevel();
                         break;
+                    }
                 }
                 level = 10;
                 break;
@@ -375,14 +368,15 @@ public class MobManager implements Listener {
             case HUSK:
             case DROWNED:
                 if (entity.getEquipment() != null) {
-                    if (level <= 25) {
-                    } else if (level <= 30) {
+                    if (level >= 20 && level < 30)
+                        entity.getEquipment().setItemInMainHand(new ItemStack(Material.WOODEN_SWORD));
+                    else if (level <= 30)
                         entity.getEquipment().setItemInMainHand(new ItemStack(Material.STONE_SWORD));
-                    } else if (level <= 35) {
+                    else if (level <= 35)
                         entity.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD));
-                    } else if (level <= 40) {
+                    else if (level <= 40)
                         entity.getEquipment().setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD));
-                    } else {
+                    else {
                         ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
                         sword.addEnchantment(Enchantment.DURABILITY, 1);
                         entity.getEquipment().setItemInMainHand(sword);
@@ -595,19 +589,16 @@ public class MobManager implements Listener {
     public void onEntitySpawn(EntitySpawnEvent event) {
 
         // This can happen?
-        if (event.getEntityType().equals(EntityType.ARMOR_STAND)) {
+        if (event.getEntityType().equals(EntityType.ARMOR_STAND))
             return;
-        }
 
         // We only care about living entities
-        if (!(event.getEntity() instanceof LivingEntity)) {
+        if (!(event.getEntity() instanceof LivingEntity))
             return;
-        }
 
         // We don't care about players or armor stands
-        if (event.getEntity() instanceof Player || event.getEntity() instanceof ArmorStand) {
+        if (event.getEntity() instanceof Player || event.getEntity() instanceof ArmorStand)
             return;
-        }
 
         LivingEntity entity = (LivingEntity) event.getEntity();
 
