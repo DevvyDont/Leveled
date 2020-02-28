@@ -304,7 +304,7 @@ public class LeveledPlayer {
         if (helmet != null && chestplate != null && leggings != null & boots != null) {
             if (customItemManager.isDragonHelmet(helmet) && customItemManager.isDragonChestplate(chestplate) && customItemManager.isDragonLeggings(leggings) && customItemManager.isDragonBoots(boots)){
                 list.add(CustomAbility.BOUNDLESS_ROCKETS);
-                if (!abilities.contains(CustomAbility.BOUNDLESS_ROCKETS))
+                if (abilities != null && !abilities.contains(CustomAbility.BOUNDLESS_ROCKETS))
                     player.sendTitle(ChatColor.GOLD.toString() + ChatColor.BOLD + "Ability " + ChatColor.WHITE + "Boundless Rockets", ChatColor.GRAY + "Fireworks have a 50% to not consume when Elytra boosting!", 10, 60, 30);
             }
         }

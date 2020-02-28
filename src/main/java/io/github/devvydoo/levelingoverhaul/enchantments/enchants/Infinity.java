@@ -35,7 +35,6 @@ public class Infinity implements Listener {
         int infinityLevel = bow.getEnchantmentLevel(Enchantment.ARROW_INFINITE);
         if (infinityLevel > 0) {
             // If we roll above, take an arrow from the player
-            System.out.println("yes");
             if (Math.random() > infinityLevel / 10.) {
                 event.getArrowItem().setAmount(event.getArrowItem().getAmount() - 1);
             }
