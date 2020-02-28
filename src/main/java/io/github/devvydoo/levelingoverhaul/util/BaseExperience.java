@@ -60,29 +60,6 @@ public abstract class BaseExperience {
             case DROWNED:
             case CAVE_SPIDER:
             case IRON_GOLEM:
-                return 1;
-            case SLIME:
-            case MAGMA_CUBE:
-                Slime slime = (Slime) mob;
-                int magmaBonus = 0;
-                if (slime instanceof MagmaCube) {
-                    magmaBonus = 1;
-                }
-                switch (slime.getSize()) {
-                    case 3:
-                        return 1 + magmaBonus;
-                    case 4:
-                        return 3 + magmaBonus;
-                    default:
-                        return 0;
-                }
-            case SPIDER:
-            case PHANTOM:
-            case VEX:
-            case SILVERFISH:
-            case SKELETON_HORSE:
-            case ZOMBIE_HORSE:
-                return 1;
             case CHICKEN:
             case DOLPHIN:
             case BAT:
@@ -108,7 +85,28 @@ public abstract class BaseExperience {
             case MUSHROOM_COW:
             case TURTLE:
             case POLAR_BEAR:
-                return 0;
+            case SPIDER:
+            case PHANTOM:
+            case VEX:
+            case SILVERFISH:
+            case SKELETON_HORSE:
+            case ZOMBIE_HORSE:
+                return 1;
+            case SLIME:
+            case MAGMA_CUBE:
+                Slime slime = (Slime) mob;
+                int magmaBonus = 0;
+                if (slime instanceof MagmaCube) {
+                    magmaBonus = 1;
+                }
+                switch (slime.getSize()) {
+                    case 3:
+                        return 1 + magmaBonus;
+                    case 4:
+                        return 3 + magmaBonus;
+                    default:
+                        return 0;
+                }
             case PLAYER:
                 // In the event a player kills another player, we are just going to give their xp to them
                 Player deadPlayer = (Player) mob;
