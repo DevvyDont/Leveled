@@ -2,8 +2,10 @@ package io.github.devvydoo.levelingoverhaul.listeners.monitors;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import org.bukkit.ChatColor;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -23,7 +25,7 @@ public class PlayerJoinListeners implements Listener {
      *
      * @param event - The PlayerJoinEvent we are listening for
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerFirstJoin(PlayerJoinEvent event) {
 
         // Is the player a newcomer?  TODO: Make the messages config-able
@@ -31,6 +33,9 @@ public class PlayerJoinListeners implements Listener {
             event.getPlayer().setLevel(1);  // Set their level to 1
             event.setJoinMessage(ChatColor.LIGHT_PURPLE + event.getPlayer().getDisplayName() +
                     ChatColor.GOLD + " has joined for the first time!");
+            event.getPlayer().setHealth(event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+            event.getPlayer().setSaturation(20);
+            event.getPlayer().setFoodLevel(20);
         } else {
             if (event.getPlayer().getLevel() < 1) { event.getPlayer().setLevel(1); }  // Sanity check, level 0 makes weird things happen
             event.setJoinMessage(ChatColor.LIGHT_PURPLE + event.getPlayer().getDisplayName() +
