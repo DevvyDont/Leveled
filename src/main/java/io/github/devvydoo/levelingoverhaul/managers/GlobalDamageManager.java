@@ -365,6 +365,9 @@ public class GlobalDamageManager implements Listener {
 
         int mobLevel = plugin.getMobManager().getMobLevel(entity);
         double damage = mobLevel * mobLevel * (mobLevel / 100.);
+        if (mobLevel < 20)
+            damage += 15;
+
         double damagePercent = 1.0;
 
         switch (entity.getType()){
