@@ -80,7 +80,7 @@ public class LeveledPlayer {
         int bonusResist = 0;
         if (resistPot != null)
             bonusResist += (resistPot.getAmplifier() * 150);
-        return 100. / (fireDefense + 100.);
+        return 100. / (fireDefense + bonusResist + 100.);
     }
 
     public int getExplosionDefense() {
@@ -132,29 +132,16 @@ public class LeveledPlayer {
 
     private int calculateDefense() {
         this.defense = 0;
-        int protectionLevel = 0;
-        if (this.helmet != null) {
-            this.defense += getBaseArmorDefense(this.helmet);
-            protectionLevel = this.helmet.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
-            int armorTier = getArmorTier(this.helmet);
-            this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier));
-        }
-        if (this.chestplate != null) {
-            this.defense += getBaseArmorDefense(this.chestplate);
-            protectionLevel = this.chestplate.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
-            int armorTier = getArmorTier(this.chestplate);
-            this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier));
-        }
-        if (this.leggings != null) {
-            this.defense += getBaseArmorDefense(this.leggings);
-            protectionLevel = this.leggings.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
-            int armorTier = getArmorTier(this.leggings);
-            this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier));
-        }
-        if (this.boots != null) {
-            this.defense += getBaseArmorDefense(this.boots);
-            protectionLevel = this.boots.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
-            int armorTier = getArmorTier(this.boots);
+        int protectionLevel;
+
+        ItemStack[] armorPieces = new ItemStack[]{this.helmet, this.chestplate, this.leggings, this.boots};
+
+        for (ItemStack armor : armorPieces){
+            if (armor == null)
+                continue;
+            this.defense += getBaseArmorDefense(armor);
+            protectionLevel = armor.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
+            int armorTier = getArmorTier(armor);
             this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier));
         }
 
@@ -203,14 +190,12 @@ public class LeveledPlayer {
     private int calculateFireDefense() {
         this.fireDefense = 0;
         int protectionLevel = 0;
-        if (this.helmet != null)
-            protectionLevel += this.helmet.getEnchantmentLevel(Enchantment.PROTECTION_FIRE);
-        if (this.chestplate != null)
-            protectionLevel += this.chestplate.getEnchantmentLevel(Enchantment.PROTECTION_FIRE);
-        if (this.leggings != null)
-            protectionLevel += this.leggings.getEnchantmentLevel(Enchantment.PROTECTION_FIRE);
-        if (this.boots != null)
-            protectionLevel += this.boots.getEnchantmentLevel(Enchantment.PROTECTION_FIRE);
+
+        ItemStack[] armorPieces = new ItemStack[]{this.helmet, this.chestplate, this.leggings, this.boots};
+        for (ItemStack armor : armorPieces)
+            if (armor != null)
+                protectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION_FIRE);
+
         this.fireDefense += (Math.pow(protectionLevel, 2));
         return this.fireDefense;
     }
@@ -218,14 +203,12 @@ public class LeveledPlayer {
     private int calculateExplosionDefense() {
         this.explosionDefense = 0;
         int protectionLevel = 0;
-        if (this.helmet != null)
-            protectionLevel += this.helmet.getEnchantmentLevel(Enchantment.PROTECTION_EXPLOSIONS);
-        if (this.chestplate != null)
-            protectionLevel += this.chestplate.getEnchantmentLevel(Enchantment.PROTECTION_EXPLOSIONS);
-        if (this.leggings != null)
-            protectionLevel += this.leggings.getEnchantmentLevel(Enchantment.PROTECTION_EXPLOSIONS);
-        if (this.boots != null)
-            protectionLevel += this.boots.getEnchantmentLevel(Enchantment.PROTECTION_EXPLOSIONS);
+
+        ItemStack[] armorPieces = new ItemStack[]{this.helmet, this.chestplate, this.leggings, this.boots};
+        for (ItemStack armor : armorPieces)
+            if (armor != null)
+                protectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION_EXPLOSIONS);
+
         this.explosionDefense += (Math.pow(protectionLevel, 2));
         return this.explosionDefense;
     }
@@ -233,42 +216,31 @@ public class LeveledPlayer {
     private int calculateProjectileDefense() {
         this.projectileDefense = 0;
         int protectionLevel = 0;
-        if (this.helmet != null)
-            protectionLevel += this.helmet.getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE);
-        if (this.chestplate != null)
-            protectionLevel += this.chestplate.getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE);
-        if (this.leggings != null)
-            protectionLevel += this.leggings.getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE);
-        if (this.boots != null)
-            protectionLevel += this.boots.getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE);
+
+        ItemStack[] armorPieces = new ItemStack[]{this.helmet, this.chestplate, this.leggings, this.boots};
+        for (ItemStack armor : armorPieces)
+            if (armor != null)
+                protectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE);
+
         this.projectileDefense += (Math.pow(protectionLevel, 2));
         return this.projectileDefense;
     }
 
     public double calculateBaseHealth() {
-        if (player.getLevel() < 1)
+        if (player.getLevel() <= 1)
             return 100;
-        return 100 + Math.floor(Math.pow(player.getLevel() - 1, 2) / 2.);
+        return 100 + Math.floor(Math.pow(player.getLevel() + 5, 2) / 2.);
     }
 
     private double calculateBonusHealth() {
         double growthFactor = 0;
         // Attempt to grab the Growth enchant level for all gear, if we get a nullptr, they don't have a helmet, if we get an illegalarg, they dont have growth
-        try {
-            growthFactor += enchantmentManager.getEnchantLevel(this.helmet, CustomEnchantType.GROWTH);
-        } catch (IllegalArgumentException | NullPointerException ignored) {
-        }
-        try {
-            growthFactor += enchantmentManager.getEnchantLevel(this.chestplate, CustomEnchantType.GROWTH);
-        } catch (IllegalArgumentException | NullPointerException ignored) {
-        }
-        try {
-            growthFactor += enchantmentManager.getEnchantLevel(this.leggings, CustomEnchantType.GROWTH);
-        } catch (IllegalArgumentException | NullPointerException ignored) {
-        }
-        try {
-            growthFactor += enchantmentManager.getEnchantLevel(this.boots, CustomEnchantType.GROWTH);
-        } catch (IllegalArgumentException | NullPointerException ignored) {
+        ItemStack[] armorPieces = new ItemStack[]{this.helmet, this.chestplate, this.leggings, this.boots};
+        for (ItemStack armor : armorPieces){
+            try {
+                growthFactor += enchantmentManager.getEnchantLevel(armor, CustomEnchantType.GROWTH);
+            } catch (IllegalArgumentException | NullPointerException ignored) {
+            }
         }
 
         // Best growth currently is Growth %5 x 20, so best HP we can have is +100% HP
@@ -299,7 +271,6 @@ public class LeveledPlayer {
 
     private ArrayList<CustomAbility> calculateAbilities() {
         ArrayList<CustomAbility> list = new ArrayList<>();
-        player.setAllowFlight(false);
 
         if (helmet != null && chestplate != null && leggings != null & boots != null) {
             if (customItemManager.isDragonHelmet(helmet) && customItemManager.isDragonChestplate(chestplate) && customItemManager.isDragonLeggings(leggings) && customItemManager.isDragonBoots(boots)){

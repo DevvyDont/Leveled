@@ -240,9 +240,8 @@ public class EnchantmentManager {
         resetItemLevel(item);
 
         ItemMeta meta = item.getItemMeta();
-        if (meta == null) {
+        if (meta == null)
             return;
-        }
 
         Rarity rarity;
         if (plugin.getCustomItemManager().isCustomItem(item))
