@@ -3,15 +3,21 @@ package io.github.devvydoo.levelingoverhaul.listeners.progression;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
+import io.github.devvydoo.levelingoverhaul.util.NametagInterface;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
 
@@ -146,6 +152,54 @@ public class MiscEquipmentListeners implements Listener {
             default:
                 return Sound.BLOCK_ANVIL_PLACE;
         }
+    }
+
+    @EventHandler
+    public void onNametagRightClick(PlayerInteractEvent event){
+
+        // If a player right clicks with a nametag in their hand
+        if (isRightClick(event.getAction()) && event.getItem() != null && event.getMaterial() == Material.NAME_TAG){
+            event.setCancelled(true);
+            NametagInterface gui = new NametagInterface(plugin, event.getItem());
+            gui.openInventory(event.getPlayer());
+        }
+
+    }
+
+    @EventHandler
+    public void onHoldingNametagClickOnInventoryItem(InventoryClickEvent event){
+
+        // Nametag?
+        if (event.getCursor() != null && event.getCursor().getType() == Material.NAME_TAG){
+            // Has a name?
+            if (event.getCursor().getItemMeta().getPersistentDataContainer().has(plugin.getNametagKey(), PersistentDataType.STRING)) {
+                // Clicked on another thing that can be named?
+                if (event.getCurrentItem() != null && canBeRenamed(event.getCurrentItem())) {
+                    event.setCancelled(true);
+                    String newName = event.getCursor().getItemMeta().getPersistentDataContainer().get(plugin.getNametagKey(), PersistentDataType.STRING);
+                    this.renameItem(event.getCurrentItem(), newName);
+                    event.getCursor().setAmount(event.getCursor().getAmount() - 1);
+                    event.getWhoClicked().getWorld().playSound(event.getWhoClicked().getEyeLocation(), Sound.BLOCK_BEACON_POWER_SELECT, .8f, 1.5f);
+                }
+            }
+        }
+    }
+
+    private boolean canBeRenamed(ItemStack itemStack){
+        return true;  // TODO
+    }
+
+    private void renameItem(ItemStack itemStack, String newName){
+        int level = plugin.getEnchantmentManager().getItemLevel(itemStack);
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.setDisplayName(ChatColor.stripColor(newName));
+        itemStack.setItemMeta(meta);
+        if (level > 0)
+            plugin.getEnchantmentManager().setItemLevel(itemStack, level);
+    }
+
+    private boolean isRightClick(Action action){
+        return action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR;
     }
 
 }

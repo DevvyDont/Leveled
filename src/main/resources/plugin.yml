@@ -23,3 +23,6 @@ commands:
     description: Used to enchant the item in your hand for debug purposes
     usage: /enchantdebug < level enchant > < quality >
     permission: op
+  nametag:
+    description: Used to change the name on a nametag
+    usage: /nametag < name >

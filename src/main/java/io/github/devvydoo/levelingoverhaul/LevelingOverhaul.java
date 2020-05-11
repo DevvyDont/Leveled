@@ -15,6 +15,7 @@ import io.github.devvydoo.levelingoverhaul.listeners.monitors.PlayerNametags;
 import io.github.devvydoo.levelingoverhaul.listeners.progression.*;
 import io.github.devvydoo.levelingoverhaul.managers.*;
 import io.github.devvydoo.levelingoverhaul.util.Recipes;
+import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,6 +23,13 @@ import java.util.Iterator;
 
 
 public final class LevelingOverhaul extends JavaPlugin {
+
+    // TODO: Make this not hacky
+    private NamespacedKey NAMETAG_KEY;
+
+    public NamespacedKey getNametagKey() {
+        return NAMETAG_KEY;
+    }
 
     private CustomItemManager customItemManager;
     private EnchantmentManager enchantmentManager;
@@ -77,7 +85,7 @@ public final class LevelingOverhaul extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
-
+        NAMETAG_KEY = new NamespacedKey(this, "name");
         // We need this key for later, not sure if there's a better way to do this because i don't really understand NamespacedKeys :(
         Iterator<Advancement> advanceIterator = getServer().advancementIterator();
         while (advanceIterator.hasNext()) {
@@ -156,6 +164,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         getCommand("party").setTabCompleter(partyCommand);
         getCommand("adminlevel").setExecutor(new DebugLevelSetter(this));
         getCommand("adminenchant").setExecutor(new DebugEnchant(this));
+        getCommand("nametag").setExecutor(new NametagCommand(this));
     }
 
     @Override
