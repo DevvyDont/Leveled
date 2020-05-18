@@ -124,15 +124,18 @@ public class PlayerExperienceGainListeners implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
 
         // Never ever ever give xp if the block isn't supposed to drop
-        if (!event.isDropItems()) {
+        if (!event.isDropItems())
             return;
-        }
 
         Player player = event.getPlayer();
         LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
+        ItemStack tool = player.getInventory().getItemInMainHand();
         Block block = event.getBlock();
 
-        ItemStack tool = player.getInventory().getItemInMainHand();
+        // Never ever ever ever ever give xp if there are no drops
+        if (event.getBlock().getDrops(tool).isEmpty())
+            return;
+
         int xpGained = 0;
 
         Map<CustomEnchantType, CustomEnchantment> customEnchantments = plugin.getEnchantmentManager().getCustomEnchantmentMap(tool);
