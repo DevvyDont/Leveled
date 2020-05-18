@@ -4,16 +4,24 @@ import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.Rarity;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GlobalItemManager implements Listener {
 
@@ -88,6 +96,45 @@ public class GlobalItemManager implements Listener {
                 continue;
             fixItem(item);
         }
+    }
+
+    @EventHandler
+    public void onMerchantInteract(PlayerInteractEntityEvent event){
+
+        List<MerchantRecipe> newRecipes = new ArrayList<>();
+
+        // Fix all the items in the trades
+        if (event.getRightClicked() instanceof Merchant){
+            Merchant merchant = (Merchant) event.getRightClicked();
+
+            for (MerchantRecipe recipe : merchant.getRecipes()){
+
+                ItemStack result = new ItemStack(recipe.getResult().getType(), recipe.getResult().getAmount());
+                result.setItemMeta(recipe.getResult().getItemMeta());
+                fixItem(result);
+
+                MerchantRecipe newRec = new MerchantRecipe(result, recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward());
+
+                List<ItemStack> fixedIngredients = new ArrayList<>();
+
+                for (ItemStack oldIngredient : recipe.getIngredients()){
+                    ItemStack newIngredient = new ItemStack(oldIngredient.getType(), oldIngredient.getAmount());
+                    newIngredient.setItemMeta(oldIngredient.getItemMeta());
+                    fixItem(newIngredient);
+                    fixedIngredients.add(newIngredient);
+                }
+
+                newRec.setIngredients(fixedIngredients);
+
+                newRecipes.add(newRec);
+
+            }
+
+            merchant.setRecipes(newRecipes);
+        }
+
+
+
     }
 
     @EventHandler

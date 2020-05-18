@@ -3,9 +3,11 @@ package io.github.devvydoo.levelingoverhaul.listeners.progression;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantment;
+import io.github.devvydoo.levelingoverhaul.enchantments.Rarity;
 import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
 import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
+import io.github.devvydoo.levelingoverhaul.util.FormattingHelpers;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -22,6 +24,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.VillagerReplenishTradeEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.TradeSelectEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.inventory.ItemStack;
@@ -227,9 +231,55 @@ public class PlayerExperienceGainListeners implements Listener {
         plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.GOLD + "+" + xpGained + " XP");
     }
 
-    @EventHandler
-    public void onTradeWithVillager(VillagerReplenishTradeEvent event){
-        List<Entity> nearbyEntities = event.getEntity().getNearbyEntities(10, 10, 10);  // Get nearby entities
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onTradeWithVillager(InventoryClickEvent event){
+
+        // Trading inventory?
+        if (event.getInventory().getType() != InventoryType.MERCHANT)
+            return;
+
+        // Clicking trading inventory?
+        if (event.getClickedInventory() != event.getInventory())
+            return;
+
+        // Clicking result slot?
+        if (event.getSlotType() != InventoryType.SlotType.RESULT)
+            return;
+
+        // Something to take?
+        if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
+            return;
+
+        // Don't allow shift clicks, can't award xp properly if we do that
+        if (event.isShiftClick()){
+            event.setCancelled(true);
+            return;
+        }
+
+        Player player = (Player) event.getWhoClicked();
+        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
+
+        // If the cursor is empty we have nothing to worry about, the trade should be fine
+        if (event.getCursor() == null || event.getCursor().getType() == Material.AIR){
+
+//            plugin.getGlobalItemManager().fixItem(event.getCurrentItem());
+
+            // Give them xp based on the rarity of the item
+            Rarity itemRarity = Rarity.getItemRarity(event.getCurrentItem());
+            int xp = 75000 * (itemRarity.ordinal() + 1);
+            leveledPlayer.giveExperience(xp);
+
+            player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+            plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_GREEN + "+" + FormattingHelpers.getFormattedInteger(xp) + "XP");;
+
+        } else {
+
+            // Something is in the cursor TODO: do the annoying work to figure out if the item can stack, for now just don't let them do it
+            event.setCancelled(true);
+
+        }
+
+
     }
 
     /**
