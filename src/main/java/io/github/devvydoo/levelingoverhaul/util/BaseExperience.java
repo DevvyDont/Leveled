@@ -176,12 +176,13 @@ public abstract class BaseExperience {
             case NETHER_QUARTZ_ORE:
                 return 10000;
             case LAPIS_ORE:
+                return 3500;
             case REDSTONE_ORE:
-                return 1500;
+                return 3000;
             case DIAMOND_ORE:
-                return 30000;
+                return 20000;
             case EMERALD_ORE:
-                return 75000;
+                return 80000;
             default:
                 return 0;
         }
