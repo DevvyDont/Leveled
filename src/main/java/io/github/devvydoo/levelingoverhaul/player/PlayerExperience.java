@@ -1,6 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.player;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Sound;
 
 public class PlayerExperience {
@@ -52,6 +53,10 @@ public class PlayerExperience {
         public void giveExperience(int amount){
 
             if (amount <= 0)
+                return;
+
+            // Dont care if they are in creative mode
+            if (player.getSpigotPlayer().getGameMode() == GameMode.CREATIVE)
                 return;
 
             // If they are maxed we dont care

@@ -9,6 +9,7 @@ import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levelingoverhaul.util.FormattingHelpers;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
@@ -80,6 +81,9 @@ public class PlayerExperienceGainListeners implements Listener {
             return;
 
         Player player = event.getEntity().getKiller();
+        if (player.getGameMode() == GameMode.CREATIVE)
+            return;
+
         LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
         LivingEntity livingEntity = event.getEntity();
 
@@ -122,6 +126,9 @@ public class PlayerExperienceGainListeners implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
+
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
+            return;
 
         // Never ever ever give xp if the block isn't supposed to drop
         if (!event.isDropItems())
@@ -220,6 +227,9 @@ public class PlayerExperienceGainListeners implements Listener {
             return;
 
         Player player = event.getPlayer();
+        if (player.getGameMode() == GameMode.CREATIVE)
+            return;
+
         LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
 
         // Does the player even need xp?
@@ -236,6 +246,9 @@ public class PlayerExperienceGainListeners implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onTradeWithVillager(InventoryClickEvent event){
+
+        if (event.getWhoClicked().getGameMode() == GameMode.CREATIVE)
+            return;
 
         // Trading inventory?
         if (event.getInventory().getType() != InventoryType.MERCHANT)
@@ -292,6 +305,9 @@ public class PlayerExperienceGainListeners implements Listener {
      */
     @EventHandler
     public void onAdvancementEarn(PlayerAdvancementDoneEvent event) {
+
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
+            return;
 
         // We don't care about recipe advancements
         if (event.getAdvancement().getKey().toString().startsWith("minecraft:recipes")) {
