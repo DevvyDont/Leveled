@@ -1,5 +1,6 @@
 package io.github.devvydoo.levelingoverhaul.util;
 
+import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.Block;
@@ -11,15 +12,6 @@ import org.bukkit.entity.Slime;
 
 public abstract class BaseExperience {
 
-    public static final int LEVEL_CAP = 100;
-
-    /**
-     * Because of how sanity checked xp gains are, we need a 'safe level' that we can set a player to to use as a
-     * case where we ignore logic. This will be useful if we ever implement commands that allow us to set a user's
-     * level, otherwise the command won't function properly since LevelChange events will still be fired
-     */
-    public static final int DEBUG_LEVEL = 77777777;
-
     /**
      * A helper method that returns the amount of xp we should receive when killing a mob
      *
@@ -29,97 +21,136 @@ public abstract class BaseExperience {
     public static int getBaseExperienceFromMob(LivingEntity mob) {
         switch (mob.getType()) {
 
-            case WITHER_SKELETON:
-                return 13;
+            // Bosses
+            case WITHER:
+                return 400000;  // 400k
             case GIANT:
-                return 20;
-            case ENDER_CRYSTAL:
-            case GHAST:
-            case RAVAGER:
-            case ILLUSIONER:
-            case ENDERMAN:
-                return 10;
-            case EVOKER:
-            case VINDICATOR:
-            case PILLAGER:
-            case SHULKER:
-            case GUARDIAN:
-                return 3;
-            case PIG_ZOMBIE:
-            case BLAZE:
-                return 4;
-            case ZOMBIE_VILLAGER:
-            case CREEPER:
-            case ENDERMITE:
-                return 2;
-            case ZOMBIE:
-            case SKELETON:
-            case HUSK:
-            case STRAY:
-            case WITCH:
-            case DROWNED:
-            case CAVE_SPIDER:
-            case IRON_GOLEM:
+                return 999999;  // 999,9999 idk lmao
+            case ENDER_DRAGON:
+                return 250000;  // 250k
+            case ELDER_GUARDIAN:
+                return 80000;  // 80k
+
+            // Passive (lvl 1-3)
+            case SHEEP:
             case CHICKEN:
-            case DOLPHIN:
-            case BAT:
-            case BEE:
-            case CAT:
-            case COD:
-            case COW:
-            case FOX:
             case PIG:
-            case MULE:
-            case HORSE:
-            case LLAMA:
-            case PANDA:
+            case TROPICAL_FISH:
+            case PUFFERFISH:
+            case COD:
+            case SALMON:
+            case RABBIT:
+            case MUSHROOM_COW:
             case DONKEY:
             case SQUID:
-            case WOLF:
             case SNOWMAN:
             case VILLAGER:
             case OCELOT:
             case PARROT:
-            case RABBIT:
-            case SHEEP:
-            case MUSHROOM_COW:
             case TURTLE:
-            case POLAR_BEAR:
-            case SPIDER:
-            case PHANTOM:
-            case VEX:
-            case SILVERFISH:
+            case DOLPHIN:
+            case BAT:
+            case CAT:
+            case COW:
+            case FOX:
+            case MULE:
+            case HORSE:
+            case LLAMA:
             case SKELETON_HORSE:
             case ZOMBIE_HORSE:
-                return 1;
+            case TRADER_LLAMA:
+                return 50;
+
+            // Neutral (lvl 5-15)
+            case WOLF:
+            case BEE:
+            case PANDA:
+            case POLAR_BEAR:
+
+            // Overworld easy
+
+            case PHANTOM:
+                return 400;
+
+            case ZOMBIE:
+            case ZOMBIE_VILLAGER:
+            case HUSK:
+            case DROWNED:
+                return 500;
+
+            case SKELETON:
+            case STRAY:
+                return 750;
+
+            case SPIDER:
+                return 600;
+
+            case CREEPER:
+                return 800;
+
+            case CAVE_SPIDER:
+                return 900;
+
             case SLIME:
-            case MAGMA_CUBE:
-                Slime slime = (Slime) mob;
-                int magmaBonus = 0;
-                if (slime instanceof MagmaCube) {
-                    magmaBonus = 1;
-                }
-                switch (slime.getSize()) {
-                    case 3:
-                        return 1 + magmaBonus;
-                    case 4:
-                        return 3 + magmaBonus;
-                    default:
-                        return 0;
-                }
+                return 1200;
+
+            // Overworld medium
+            case WITCH:
+                return 1500;
+
+            case PILLAGER:
+            case VINDICATOR:
+            case VEX:
+            case EVOKER:
+                return 2500;
+
+            case RAVAGER:
+                return 5000;
+
+            case ILLUSIONER:
+                return 6000;
+
+
+            case IRON_GOLEM:
+                return 7500;
+
+            // Nether (40-60)
+            case PIG_ZOMBIE:
+                return 10000;
+
+            case GHAST:
+                return 14500;
+
+            case BLAZE:
+                return 15000;
+
+            case MAGMA_CUBE:  // TODO: Give custom logic for size
+                return 10000;
+
+            case WITHER_SKELETON:
+                return 22000;
+
+            // Overworld hard
+            case SILVERFISH:
+                return 30000;
+
+            case ENDERMAN:
+                return 50000;
+
+            case GUARDIAN:
+                return 55000;
+
+            // The end (60-80)
+            case ENDERMITE:
+                return 55000;
+
+            case SHULKER:
+                return 65000;
+
+
             case PLAYER:
-                // In the event a player kills another player, we are just going to give their xp to them
-                Player deadPlayer = (Player) mob;
-                // Maxed players don't drop xp
-                if (deadPlayer.getLevel() >= BaseExperience.LEVEL_CAP) {
-                    return 0;
-                }
-                // Super edge case where if we killed a player that had a full xp bar
-                if (deadPlayer.getExp() == 1) {
-                    deadPlayer.setExp(.9999f);
-                }
-                // Math yay
-                return (int) (deadPlayer.getExpToLevel() * deadPlayer.getExp());
+                // TODO: Give players custom logic for xp drop
+                return 0;
             default:
                 return 0;
 
@@ -136,17 +167,19 @@ public abstract class BaseExperience {
      */
     public static int getBaseExperienceFromBlock(Block block) {
         switch (block.getType()) {
+            case GRASS_BLOCK:
+                return Math.random() < .01 ? 1 : 0;
             case COAL_ORE:
-                return Math.random() < .5 ? 1 : 0;
+                return 150;
             case NETHER_QUARTZ_ORE:
-                return (int) (Math.random() * 3 + 2);
+                return 10000;
             case LAPIS_ORE:
             case REDSTONE_ORE:
-                return 2 + (Math.random() < .5 ? 1 : 0);
+                return 1500;
             case DIAMOND_ORE:
-                return 8;
+                return 30000;
             case EMERALD_ORE:
-                return 20;
+                return 75000;
             default:
                 return 0;
         }
@@ -169,17 +202,17 @@ public abstract class BaseExperience {
             case COOKED_PORKCHOP:
             case COOKED_RABBIT:
             case COOKED_SALMON:
-                base = .6;
+                base = 100;
                 break;
             case DRIED_KELP:
             case BAKED_POTATO:
-                base = .3;
+                base = 40;
                 break;
             case IRON_INGOT:
-                base = 1.5;
+                base = 250;
                 break;
             case GOLD_INGOT:
-                base = 2.5;
+                base = 500;
                 break;
             default:
                 base = 0;
@@ -288,27 +321,28 @@ public abstract class BaseExperience {
             case "husbandry/fishy_business":
             case "husbandry/plant_seed":
             case "adventure/sleep_in_bed":
-                return 5;
+                return 1000;
             case "husbandry/safely_harvest_honey":
             case "adventure/honey_block_slide":
             case "adventure/trade":
-                return 7;
-            case "husbandry/tactical_fishing":  // Catch fish using a bucket
+                return 5000;
             case "story/upgrade_tools":  // Stone tools capped at level 5
+                return 2500;
+            case "husbandry/tactical_fishing":  // Catch fish using a bucket
             case "story/lava_bucket":  // Iron capped at lvl 15
             case "adventure/summon_iron_golem":  // Iron capped at lvl 15
             case "story/form_obsidian":  // Iron capped at lvl 15
             case "story/smelt_iron":  // Iron capped at lvl 15
             case "adventure/voluntary_exile":  // Kill raid captain
             case "story/deflect_arrow":  // Shield capped at lvl 20
-                return 10;
+                return 80000;
             case "adventure/shoot_arrow":  // Bow capped at lvl 15
             case "adventure/sniper_duel":  // Bow capped at level 15
-                return 20;
+                return 50000;
             case "story/iron_tools": // Capped at level 25
             case "story/mine_diamond": // Capped at level 25
             case "story/enchant_item":  // Enchanting capped at 30
-                return 25;
+                return 50000;
             case "adventure/arbalistic":  // Shoot a crossbow i think?
             case "adventure/ol_betsy":  // Shoot a crossbow i think?
             case "adventure/totem_of_undying":  // Cheat death
@@ -319,60 +353,60 @@ public abstract class BaseExperience {
             case "adventure/throw_trident":  // Throw a trident
             case "husbandry/silk_touch_nest":  // Silk touch bee nest with 3 bees inside
             case "story/obtain_armor":  // Clarification: Equip iron armor, capped at lvl 35
-                return 30;
+                return 250000;
             case "husbandry/bred_all_animals":  // Difficult to pull off, should reward a good amount
             case "husbandry/complete_catalogue":  // Difficult to pull off, tame all cat variants
-                return 100;
+                return 1000000;
             case "husbandry/balanced_diet":  // Eat everything, not easy
-                return 250;
+                return 1000000;
             case "adventure/adventuring_time":  // Visit all the biomss
-                return 300;
+                return 2000000;
 
             // Mid-game
             case "nether/find_fortress":  // Capped at level 40
             case "nether/obtain_blaze_rod":  // Capped at level 40
-                return 20;
+                return 500000;
             case "nether/brew_potion":  // Brewing capped at 45
-                return 25;
+                return 600000;
             case "story/enter_the_nether":  // Capped at level 40
-                return 30;
+                return 500000;
             case "nether/fast_travel":  // Capped at level 40
             case "nether/get_wither_skull":  // Capped at level 40 technically, pretty difficult
             case "nether/return_to_sender":  // Capped at level 40
-                return 50;
+                return 750000;
             case "husbandry/break_diamond_hoe":  // Diamond tools Capped at level 40
-                return 75;
+                return 750000;
             case "story/cure_zombie_villager":  // Brewing capped at 45, required to make potions for cure
             case "adventure/kill_all_mobs":  // Capped at level 40 technically
             case "story/shiny_gear":  // Diamond armor, capped at 50
             case "story/follow_ender_eye":  // Ender capped at 60
             case "story/enter_the_end":  // Ender capped at 60
-                return 100;
+                return 1500000;
             case "nether/create_beacon":  // Pretty difficult
-                return 120;
+                return 2500000;
             case "nether/all_effects":  // Brewing capped at 45
-                return 150;
+                return 1500000;
             case "nether/summon_wither":  // Summon wither, technically capped at 40
-                return 175;
+                return 3000000;
             case "nether/uneasy_alliance":  // Capped at level 40, kill ghast in overworld
-                return 200;
+                return 1500000;
             case "nether/create_full_beacon":  // Pretty difficult
-                return 225;
+                return 4000000;
 
             // End-game
             case "end/enter_end_gateway":
             case "end/find_end_city":
-                return 200;
+                return 2500000;
             case "end/dragon_breath":
             case "end/kill_dragon":
             case "end/dragon_egg":
-                return 400;
+                return 2000000;
             case "end/levitate":
             case "end/respawn_dragon":
             case "nether/all_potions":  // have every potion effect in the game, super difficult
-                return 500;
+                return 4000000;
             case "end/elytra":
-                return 750;
+                return 5000000;
             default:
                 System.out.println("[Achievements]: Came across unexpected achievement: " + advancementKey);
                 return 0;

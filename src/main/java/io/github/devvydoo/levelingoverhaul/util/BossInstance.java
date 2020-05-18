@@ -1,5 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.util;
 
+import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
+import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -62,12 +64,13 @@ public class BossInstance {
 
         // For all contributing players
         for (Player p: activePlayers){
+            LeveledPlayer leveledPlayer = LevelingOverhaul.getPlugin(LevelingOverhaul.class).getPlayerManager().getLeveledPlayer(p);
             // If they contributed damage
             if (playerDamageMap.containsKey(p)){
                 // They earned BASE + (damage% of xp pool)
                 double contributionPercent = (playerDamageMap.get(p) / totalDamageDone);
                 int xpEarned = (int) Math.ceil(BASE_XP + (contributionPercent * experiencePool));
-                p.giveExp(xpEarned);
+                leveledPlayer.giveExperience(xpEarned);
                 p.sendTitle("Boss Defeat!", "+" + xpEarned + "XP  (" + (int)(contributionPercent * 100) + "% damage done)", 10,20 * 5, 20);
             }
         }

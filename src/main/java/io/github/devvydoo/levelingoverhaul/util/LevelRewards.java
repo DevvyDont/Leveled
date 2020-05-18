@@ -1,6 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.util;
 
 
+import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,28 +11,29 @@ import org.bukkit.inventory.ItemStack;
  */
 public abstract class LevelRewards {
 
+    public static final int LEATHER_ARMOR_UNLOCK = 3;
     public static final int STONE_TOOLS_UNLOCK = 5;
-    public static final int LEATHER_ARMOR_UNLOCK = 8;
-    public static final int GOLDEN_TOOLS_UNLOCK = 12;
+    public static final int CHAINMAIL_ARMOR_UNLOCK = 10;
     public static final int NORMAL_BOW_UNLOCK = 15;
-    public static final int GOLDEN_ARMOR_UNLOCK = 18;
-    public static final int SHIELD_UNLOCK = 20;
-    public static final int IRON_TOOLS_UNLOCK = SHIELD_UNLOCK;
-    public static final int CHAINMAIL_ARMOR_UNLOCK = 25;
+    public static final int SHIELD_UNLOCK = 15;
+    public static final int IRON_TOOLS_UNLOCK = 20;
+    public static final int IRON_ARMOR_UNLOCK = 25;
     public static final int CROSSBOW_UNLOCK = 30;
-    public static final int ENCHANTING_UNLOCK = CROSSBOW_UNLOCK;
-    public static final int IRON_ARMOR_UNLOCK = 35;
-    public static final int DIAMOND_TOOLS_UNLOCK = 40;
-    public static final int NETHER_UNLOCK = DIAMOND_TOOLS_UNLOCK;
-    public static final int BREWING_UNLOCK = 45;
+    public static final int ENCHANTING_UNLOCK = 30;
+    public static final int GOLDEN_TOOLS_UNLOCK = 30;
+    public static final int GOLDEN_ARMOR_UNLOCK = 40;
+    public static final int NETHER_UNLOCK = 40;
+    public static final int DIAMOND_TOOLS_UNLOCK = 45;
     public static final int DIAMOND_ARMOR_UNLOCK = 50;
-    public static final int PRE_ENDER_EQUIPMENT = 55;
-    public static final int THE_END_UNLOCK = 60;
-    public static final int POST_ENDER_EQUIPMENT = 65;
+    public static final int BREWING_UNLOCK = 55;
+    public static final int PRE_ENDER_EQUIPMENT = 65;
+    public static final int THE_END_UNLOCK = 70;
+    public static final int POST_ENDER_EQUIPMENT = 75;
+
     public static final int UNIVERSAL_CRAFTING_ABILITY_UNLOCK = 70;
     public static final int CRAFT_WITHER_SKULLS_UNLOCK = 80;  // TODO: Implement
     public static final int FLIGHT_FEATHER_UNLOCK = 90;  // TODO: Implement
-    public static final int UNBREAKABLE_TOOLS_UNLOCK = BaseExperience.LEVEL_CAP;  // TODO: Implement
+    public static final int UNBREAKABLE_TOOLS_UNLOCK = PlayerExperience.LEVEL_CAP;  // TODO: Implement
 
     /**
      * Call this method every time a player levels up, this will tell them their unlocks
@@ -62,8 +64,6 @@ public abstract class LevelRewards {
                 return "You may now use Stone Tools!";
             case LEATHER_ARMOR_UNLOCK:
                 return "You may now wear Leather Armor!";
-            case GOLDEN_TOOLS_UNLOCK:
-                return "You may now use Golden Tools";
             case NORMAL_BOW_UNLOCK:
                 return "You may now use Bows!";
             case GOLDEN_ARMOR_UNLOCK:
@@ -73,7 +73,7 @@ public abstract class LevelRewards {
             case CHAINMAIL_ARMOR_UNLOCK:
                 return "You may now wear and craft Chainmail Armor! You can craft Chainmail Armor with Iron Bars.";
             case ENCHANTING_UNLOCK:
-                return "You now have access to enchanting and can use crossbows!";
+                return "You now have access to enchanting, crossbows, and Golden Tools!";
             case IRON_ARMOR_UNLOCK:
                 return "You may now wear Iron Armor!";
             case DIAMOND_TOOLS_UNLOCK:
@@ -85,17 +85,12 @@ public abstract class LevelRewards {
             case PRE_ENDER_EQUIPMENT:
                 return "You may now use Ender Pearls and Eyes of Ender!";
             case THE_END_UNLOCK:
-                return "You may now travel to The End!";
+                return "You may now travel to The End! You may also craft anywhere by sneak right clicking with nothing in your hands!";
             case POST_ENDER_EQUIPMENT:
                 return "You may now use Ender Chests, Shulker Boxes, and Elytras!";
-            case UNIVERSAL_CRAFTING_ABILITY_UNLOCK:
-                return "You have unlocked the ability to craft anywhere! Open the crafting menu by sneak right clicking with nothing in your hand.";
             case CRAFT_WITHER_SKULLS_UNLOCK:
                 return "You have unlocked the ability to craft Wither Skulls with a skeleton head, obsidian, and coal blocks!";
-            case FLIGHT_FEATHER_UNLOCK:
-                return "You now have the ability to name your items on the go! Use the /name command.";
-            case UNBREAKABLE_TOOLS_UNLOCK:
-                return "Congrats on reaching max level! Your tools/armor are now unbreakable.";
+
             default:
                 return "";
         }

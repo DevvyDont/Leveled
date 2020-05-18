@@ -5,6 +5,8 @@ import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomItems;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.EnchantmentCalculator;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.PotentialEnchantment;
+import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
+import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
@@ -183,10 +185,8 @@ public class BossManager implements Listener {
                 int dragonLevel = plugin.getMobManager().getMobLevel(event.getEntity());
                 // We are going to give all players in the end a bonus
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
-                    if (p.getLevel() == BaseExperience.LEVEL_CAP) {
-                        continue;
-                    }
-                    p.giveExp(4 * dragonLevel);
+                    LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(p);
+                    leveledPlayer.giveExperience(4 * dragonLevel);
                     p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Ender Dragon" + ChatColor.YELLOW + "! +" + 4 * dragonLevel + "XP");
                 }
                 spawnBossDrop(getRandomEnderDragonDrop(dragonLevel - 2), event.getEntity().getLocation(), true);
@@ -197,10 +197,8 @@ public class BossManager implements Listener {
                 // All players within 100 block radius from the wither get credit
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
                     if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
-                        if (p.getLevel() == BaseExperience.LEVEL_CAP) {
-                            continue;
-                        }
-                        p.giveExp(175);
+                        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(p);
+                        leveledPlayer.giveExperience(175);
                         p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Wither" + ChatColor.YELLOW + "! +175XP");
                     }
                 }
@@ -211,10 +209,8 @@ public class BossManager implements Listener {
                 // All players within 100 block radius from the guardian get credit
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
                     if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
-                        if (p.getLevel() == BaseExperience.LEVEL_CAP) {
-                            continue;
-                        }
-                        p.giveExp(120);
+                        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(p);
+                        leveledPlayer.giveExperience(120);
                         p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Elder Guardian" + ChatColor.YELLOW + "! +120XP");
                     }
                 }

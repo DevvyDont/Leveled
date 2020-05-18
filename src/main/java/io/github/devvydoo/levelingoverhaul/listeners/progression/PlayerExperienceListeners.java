@@ -1,6 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
+import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
 import org.bukkit.*;
@@ -12,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -32,9 +34,12 @@ public class PlayerExperienceListeners implements Listener {
 
     private void playerLeveledUp(Player player, int oldLevel, int newLevel) {
 
+        if (newLevel <= oldLevel)
+            return;
+
         this.plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + player.getDisplayName() + ChatColor.GRAY + " is now level " + ChatColor.GREEN + ChatColor.BOLD + newLevel);
-        if (newLevel == BaseExperience.LEVEL_CAP) {
-            player.sendTitle(ChatColor.RED + "MAX Level!", ChatColor.GOLD + "You are now Level " + BaseExperience.LEVEL_CAP + "!", 10, 140, 20);
+        if (newLevel == PlayerExperience.LEVEL_CAP) {
+            player.sendTitle(ChatColor.RED + "MAX Level!", ChatColor.GOLD + "You are now Level " + PlayerExperience.LEVEL_CAP + "!", 10, 140, 20);
         } else {
             player.sendTitle(ChatColor.GREEN + "Level Up!", ChatColor.DARK_GREEN + "You are now Level " + newLevel + "!", 10, 70, 20);
         }
@@ -67,25 +72,6 @@ public class PlayerExperienceListeners implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlayerExpChange(PlayerExpChangeEvent event) {
-
-        // If we are max level, or over max level, we should go to the max
-        if (event.getPlayer().getLevel() >= BaseExperience.LEVEL_CAP) {
-            event.getPlayer().setExp(.9999f);
-            event.getPlayer().setLevel(BaseExperience.LEVEL_CAP);
-            return;
-        }
-
-        // If we are gaining exp normally don't do anything
-        if (event.getAmount() > 0) {
-            return;
-        }
-
-        // At this point we are losing exp, we don't want that set it to 0
-        event.setAmount(0);
-    }
-
     /**
      * Every time a player's level changes, we want to make sure
      *
@@ -93,51 +79,12 @@ public class PlayerExperienceListeners implements Listener {
      */
     @EventHandler
     public void onPlayerLevelChange(PlayerLevelChangeEvent event) {
-
-        // Our plugin is probably modifying the level, don't do anything
-        if (event.getOldLevel() == BaseExperience.DEBUG_LEVEL || event.getNewLevel() == BaseExperience.DEBUG_LEVEL) {
-            return;
-        }
-
-        // We are already max level, we should stay at max level
-        if (event.getOldLevel() >= BaseExperience.LEVEL_CAP) {
-            event.getPlayer().setLevel(BaseExperience.LEVEL_CAP);
-            event.getPlayer().setExp(.9999f);
-            return;
-        }
-
-        // We just hit max level
-        if (event.getNewLevel() >= BaseExperience.LEVEL_CAP) {
-            event.getPlayer().setExp((float) .9999);
-            event.getPlayer().setLevel(BaseExperience.LEVEL_CAP);
-            playerLeveledUp(event.getPlayer(), event.getOldLevel(), event.getNewLevel());
-            return;
-        }
-
-        // First we want to make sure we are never going down in levels for now, our xp system doesn't go backwards
-        if (event.getNewLevel() < event.getOldLevel()) {
-            event.getPlayer().setLevel(event.getOldLevel());  // Simply sets their level back to what it was
-            event.getPlayer().setExp(0);  // This sets their progress to their current level to 0%
-            return;
-        }
-
         // At this point we are levelling up, let's tell the server
         playerLeveledUp(event.getPlayer(), event.getOldLevel(), event.getNewLevel());
     }
 
     @EventHandler
-    public void onPlayerDeath(EntityDeathEvent event) {
-
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
-            if (player.getLevel() == BaseExperience.LEVEL_CAP) {
-                return;
-            }
-            Boolean rule = player.getWorld().getGameRuleValue(GameRule.KEEP_INVENTORY);
-            if (rule == null || !rule) {
-                return;
-            }  // If keep inventory is off, proceed with expected behavior
-            player.setExp(0);  // If keep inventory is on, set the players exp progress to next level to 0
-        }
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        event.setShouldDropExperience(false);
     }
 }

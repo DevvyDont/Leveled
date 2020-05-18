@@ -1,8 +1,9 @@
-package io.github.devvydoo.levelingoverhaul.util;
+package io.github.devvydoo.levelingoverhaul.player;
 
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomItemManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
+import io.github.devvydoo.levelingoverhaul.util.CustomAbility;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -19,8 +20,9 @@ public class LeveledPlayer {
     private EnchantmentManager enchantmentManager;
     private CustomItemManager customItemManager;
 
-    private Player player;
+    private Player spigotPlayer;
 
+    private PlayerExperience experience;
     private int strength;
     private int defense;
     private int fireDefense;
@@ -38,12 +40,21 @@ public class LeveledPlayer {
     public LeveledPlayer(EnchantmentManager enchantmentManager, CustomItemManager customItemManager, Player player) {
         this.enchantmentManager = enchantmentManager;
         this.customItemManager = customItemManager;
-        this.player = player;
+        this.spigotPlayer = player;
+        this.experience = new PlayerExperience(this);
         updateAttributes();
     }
 
-    public Player getPlayer() {
-        return player;
+    public Player getSpigotPlayer() {
+        return spigotPlayer;
+    }
+
+    public PlayerExperience getExperience() {
+        return experience;
+    }
+
+    public void giveExperience(int amount){
+        experience.giveExperience(amount);
     }
 
     public int getStrength() {
@@ -52,7 +63,7 @@ public class LeveledPlayer {
 
     public double getStrengthBonus(){
         double percent = strength / 100.;
-        for (PotionEffect potionEffect : player.getActivePotionEffects()){
+        for (PotionEffect potionEffect : spigotPlayer.getActivePotionEffects()){
             if (potionEffect.getType().equals(PotionEffectType.INCREASE_DAMAGE))
                 percent += (1.3 * potionEffect.getAmplifier());
         }
@@ -64,7 +75,7 @@ public class LeveledPlayer {
     }
 
     public double getEnvResist(){
-        PotionEffect resistPot = player.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+        PotionEffect resistPot = spigotPlayer.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
         int bonusResist = 0;
         if (resistPot != null)
             bonusResist += (resistPot.getAmplifier() * 150);
@@ -76,7 +87,7 @@ public class LeveledPlayer {
     }
 
     public double getFireResist(){
-        PotionEffect resistPot = player.getPotionEffect(PotionEffectType.FIRE_RESISTANCE);
+        PotionEffect resistPot = spigotPlayer.getPotionEffect(PotionEffectType.FIRE_RESISTANCE);
         int bonusResist = 0;
         if (resistPot != null)
             bonusResist += (resistPot.getAmplifier() * 150);
@@ -112,12 +123,12 @@ public class LeveledPlayer {
     }
 
     public void updateAttributes() {
-        this.helmet = player.getInventory().getHelmet();
-        this.chestplate = player.getInventory().getChestplate();
-        this.leggings = player.getInventory().getLeggings();
-        this.boots = player.getInventory().getBoots();
+        this.helmet = spigotPlayer.getInventory().getHelmet();
+        this.chestplate = spigotPlayer.getInventory().getChestplate();
+        this.leggings = spigotPlayer.getInventory().getLeggings();
+        this.boots = spigotPlayer.getInventory().getBoots();
 
-        this.strength = 2 * player.getLevel() + 98;
+        this.strength = 2 * spigotPlayer.getLevel() + 98;
         this.defense = calculateDefense();
         this.fireDefense = calculateFireDefense();
         this.explosionDefense = calculateExplosionDefense();
@@ -127,7 +138,7 @@ public class LeveledPlayer {
         calculateTotalHealth();
         this.speed = calculateSpeed();
         this.abilities = calculateAbilities();
-        player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(128);
+        spigotPlayer.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(128);
     }
 
     private int calculateDefense() {
@@ -227,9 +238,9 @@ public class LeveledPlayer {
     }
 
     public double calculateBaseHealth() {
-        if (player.getLevel() <= 1)
+        if (spigotPlayer.getLevel() <= 1)
             return 100;
-        return 100 + Math.floor(Math.pow(player.getLevel() + 5, 2) / 2.);
+        return 100 + Math.floor(Math.pow(spigotPlayer.getLevel() + 5, 2) / 2.);
     }
 
     private double calculateBonusHealth() {
@@ -244,17 +255,17 @@ public class LeveledPlayer {
         }
 
         // Best growth currently is Growth %5 x 20, so best HP we can have is +100% HP
-        player.setHealthScale(Math.min(20 + growthFactor, 40));
+        spigotPlayer.setHealthScale(Math.min(20 + growthFactor, 40));
         this.bonusHealth = growthFactor * .05 * calculateBaseHealth();
         return this.bonusHealth;
     }
 
     private void calculateTotalHealth(){
         double totalHealth = calculateBonusHealth() + calculateBaseHealth();
-        AttributeInstance playerMaxHPAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        AttributeInstance playerMaxHPAttribute = spigotPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         playerMaxHPAttribute.setBaseValue(totalHealth);
-        if (player.getHealth() > playerMaxHPAttribute.getBaseValue())
-            player.setHealth(playerMaxHPAttribute.getBaseValue());
+        if (spigotPlayer.getHealth() > playerMaxHPAttribute.getBaseValue())
+            spigotPlayer.setHealth(playerMaxHPAttribute.getBaseValue());
     }
 
     private double calculateSpeed() {
@@ -265,7 +276,7 @@ public class LeveledPlayer {
         } catch (IllegalArgumentException | NullPointerException ignored){}
         if (speedsterLevel > 0)
             speed += (speedsterLevel * .03);
-        player.setWalkSpeed((float) speed);
+        spigotPlayer.setWalkSpeed((float) speed);
         return speed;  // TODO: Add armor that modifies speed
     }
 
@@ -276,7 +287,7 @@ public class LeveledPlayer {
             if (customItemManager.isDragonHelmet(helmet) && customItemManager.isDragonChestplate(chestplate) && customItemManager.isDragonLeggings(leggings) && customItemManager.isDragonBoots(boots)){
                 list.add(CustomAbility.BOUNDLESS_ROCKETS);
                 if (abilities != null && !abilities.contains(CustomAbility.BOUNDLESS_ROCKETS))
-                    player.sendTitle(ChatColor.GOLD.toString() + ChatColor.BOLD + "Ability " + ChatColor.WHITE + "Boundless Rockets", ChatColor.GRAY + "Fireworks have a 50% to not consume when Elytra boosting!", 10, 60, 30);
+                    spigotPlayer.sendTitle(ChatColor.GOLD.toString() + ChatColor.BOLD + "Ability " + ChatColor.WHITE + "Boundless Rockets", ChatColor.GRAY + "Fireworks have a 50% to not consume when Elytra boosting!", 10, 60, 30);
             }
         }
 

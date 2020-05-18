@@ -1,7 +1,9 @@
 package io.github.devvydoo.levelingoverhaul.managers;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
+import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
+import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
+import io.github.devvydoo.levelingoverhaul.util.FormattingHelpers;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -22,23 +24,23 @@ public class ActionBarManager implements Listener {
         }
     }
 
-    private double getTotalExpAccumulated(double percentCompleted, double totalXpInLevel) {
-        return percentCompleted * totalXpInLevel;
-    }
-
     /**
      * Displays default action bar text
      *
      * @param player The player the send the action bar to
      */
     private void displayActionBarText(Player player, int currentHP, int maxHP, String extra) {
-        int xpTotal = player.getExpToLevel();
-        int xpProgress = (int) getTotalExpAccumulated(player.getExp(), xpTotal);
-        String xpPortion = ChatColor.GREEN + "" + xpProgress + ChatColor.GRAY + "/" + ChatColor.DARK_GREEN + "" + xpTotal + ChatColor.GRAY + " XP   ";
-        if (player.getLevel() == BaseExperience.LEVEL_CAP) {
+
+        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
+        String accumulated = FormattingHelpers.getFormattedInteger(leveledPlayer.getExperience().getAccumulatedExperienceToNextLevel());
+        String totalNeeded = FormattingHelpers.getFormattedInteger(leveledPlayer.getExperience().getTotalExperienceRequiredForNextLevel());
+
+        String xpPortion = ChatColor.GREEN + "" + accumulated + ChatColor.GRAY + "/" + ChatColor.DARK_GREEN + "" + totalNeeded + ChatColor.GRAY + " XP   ";
+
+        if (player.getLevel() == PlayerExperience.LEVEL_CAP)
             xpPortion = ChatColor.GREEN + "" + ChatColor.BOLD + "MAXED" + ChatColor.GRAY + " XP   ";
-        }
-        String message = ChatColor.RED + "" + currentHP + "/" + maxHP + ChatColor.DARK_RED + " ❤   " + xpPortion + extra;
+
+        String message = ChatColor.RED + "" + FormattingHelpers.getFormattedInteger(currentHP) + "/" + FormattingHelpers.getFormattedInteger(maxHP) + ChatColor.DARK_RED + " ❤   " + xpPortion + extra;
         player.sendActionBar(message);
     }
 

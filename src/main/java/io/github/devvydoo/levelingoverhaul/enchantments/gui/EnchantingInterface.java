@@ -4,6 +4,7 @@ import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.EnchantmentCalculator;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.PotentialEnchantment;
+import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
@@ -216,7 +217,7 @@ public class EnchantingInterface implements Listener {
 
         // Create the GUI
         Inventory gui = plugin.getServer().createInventory(player, 54, INTERFACE_NAME);
-        gui.setMaxStackSize(BaseExperience.LEVEL_CAP);  // Hopefully this works, didn't work in 1.8 xd
+        gui.setMaxStackSize(PlayerExperience.LEVEL_CAP);  // Hopefully this works, didn't work in 1.8 xd
         // Make slots be black stained glass
         for (int i = 0; i < 54; i++) {
             switch (i) {

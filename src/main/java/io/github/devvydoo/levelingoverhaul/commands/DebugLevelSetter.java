@@ -1,6 +1,8 @@
 package io.github.devvydoo.levelingoverhaul.commands;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
+import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
+import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -26,7 +28,8 @@ public class DebugLevelSetter implements CommandExecutor {
     private void resetPlayerProgress(Player player) {
 
         // First reset their level
-        changePlayerLevel(player, 1);
+        player.setLevel(1);
+        player.setExp(0);
 
         // Reset their advancements
         Iterator<Advancement> iterator = plugin.getServer().advancementIterator();
@@ -43,23 +46,8 @@ public class DebugLevelSetter implements CommandExecutor {
         player.getInventory().setChestplate(new ItemStack(Material.AIR));
         player.getInventory().setLeggings(new ItemStack(Material.AIR));
         player.getInventory().setBoots(new ItemStack(Material.AIR));
-
-    }
-
-    private void changePlayerLevel(Player player, int level) {
-        if (level < player.getLevel()) {
-            player.setLevel(BaseExperience.DEBUG_LEVEL);
-            new BukkitRunnable() {
-                public void run() {
-                    player.setLevel(level);
-                    player.setExp(0);
-                }
-            }.runTaskLater(plugin, 10);
-        } else {
-            player.setLevel(level);
-            player.setExp(0);
-        }
         plugin.getPlayerManager().updateLeveledPlayerAttributes(player);
+
     }
 
     @Override
@@ -108,11 +96,13 @@ public class DebugLevelSetter implements CommandExecutor {
             if (lvl < 1) {
                 player.sendMessage(ChatColor.RED + "You can't have a level less than one!");
                 return true;
-            } else if (lvl > BaseExperience.LEVEL_CAP) {
+            } else if (lvl > PlayerExperience.LEVEL_CAP) {
                 player.sendMessage(ChatColor.RED + "You can't go above the level cap!");
                 return true;
             }
-            changePlayerLevel(player, lvl);
+            player.setLevel(lvl);
+            player.setExp(0);
+            plugin.getPlayerManager().updateLeveledPlayerAttributes(player);
             player.sendMessage(ChatColor.GREEN + "You are now level " + lvl + "!");
             return true;
         } else if (args[0].toLowerCase().equals("tp")) {

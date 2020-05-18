@@ -2,7 +2,7 @@ package io.github.devvydoo.levelingoverhaul.managers;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.util.LeveledPlayer;
+import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

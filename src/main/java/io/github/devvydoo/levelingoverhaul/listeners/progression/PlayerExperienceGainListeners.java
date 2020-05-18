@@ -3,6 +3,8 @@ package io.github.devvydoo.levelingoverhaul.listeners.progression;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantment;
+import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
+import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,6 +12,7 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,10 +20,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.VillagerReplenishTradeEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
+import org.bukkit.event.inventory.TradeSelectEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,25 +72,23 @@ public class PlayerExperienceGainListeners implements Listener {
     public void onPlayerKillEntity(EntityDeathEvent event) {
 
         // Did the entity have a killer?
-        if (event.getEntity().getKiller() == null){ return; }
+        if (event.getEntity().getKiller() == null)
+            return;
 
         Player player = event.getEntity().getKiller();
+        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
         LivingEntity livingEntity = event.getEntity();
-
-        // Does the player even need xp? i.e. are they max level
-        if (player.getLevel() >= BaseExperience.LEVEL_CAP) {
-            player.setLevel(BaseExperience.LEVEL_CAP);
-            player.setExp((float) .9999);
-            return;
-        }
 
         // At this point a player has killed another entity and we can calculate their xp
         int xp = BaseExperience.getBaseExperienceFromMob(livingEntity);
 
         double extraLevelXp = 0;
-        if (!(livingEntity instanceof Player)) {
-            extraLevelXp = this.plugin.getMobManager().getMobLevel(livingEntity) / (Math.random() * 20 + 11);
-        }
+
+        int mobLevel = plugin.getMobManager().getMobLevel(livingEntity);
+
+        if (!(livingEntity instanceof Player))
+            extraLevelXp = mobLevel * mobLevel * (Math.random() + .5);
+
         xp += (int) extraLevelXp;
 
         // 5% chance for double xp :)
@@ -99,20 +103,11 @@ public class PlayerExperienceGainListeners implements Listener {
             xp *= 2;
         }
 
-        // If we have no xp to give don't do anything
-        if (!(livingEntity instanceof Player)) {
-            int mobLevel = plugin.getMobManager().getMobLevel(livingEntity);
-            if (mobLevel < player.getLevel()) {
-                xp *= (1 - .04 * (player.getLevel() - mobLevel));
-            }
-        }
-
-        if (xp <= 0) {
+        if (xp <= 0)
             return;
-        }
-        player.giveExp(xp); // Gives player exp
-        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, (float) .5, 1);
 
+        leveledPlayer.giveExperience(xp); // Gives player exp
+        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, (float) .5, 1);
         plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, bonus + ChatColor.YELLOW + "+" + xp + " XP");
     }
 
@@ -130,6 +125,7 @@ public class PlayerExperienceGainListeners implements Listener {
         }
 
         Player player = event.getPlayer();
+        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
         Block block = event.getBlock();
 
         ItemStack tool = player.getInventory().getItemInMainHand();
@@ -180,7 +176,7 @@ public class PlayerExperienceGainListeners implements Listener {
         }
 
         // Does the player even need experience?
-        if (player.getLevel() >= BaseExperience.LEVEL_CAP) {
+        if (player.getLevel() >= PlayerExperience.LEVEL_CAP) {
             return;
         }
 
@@ -198,7 +194,7 @@ public class PlayerExperienceGainListeners implements Listener {
         }
 
         // Looks good to give them xp
-        player.giveExp(xpGained);
+        leveledPlayer.giveExperience(xpGained);
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .5f, 1);
         plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, xpMessage);
     }
@@ -213,22 +209,27 @@ public class PlayerExperienceGainListeners implements Listener {
     public void onSmeltExtract(FurnaceExtractEvent event) {
 
         // Was this event meant to drop xp?
-        if (event.getExpToDrop() <= 0) {
+        if (event.getExpToDrop() <= 0)
             return;
-        }
 
         Player player = event.getPlayer();
+        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
 
         // Does the player even need xp?
-        if (player.getLevel() >= BaseExperience.LEVEL_CAP) {
+        if (player.getLevel() >= PlayerExperience.LEVEL_CAP) {
             return;
         }
 
         // We should be good to give xp
         int xpGained = BaseExperience.getBaseExperienceFromSmelt(event.getItemType(), event.getItemAmount());
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .5f, 1);
-        player.giveExp(xpGained);
+        leveledPlayer.giveExperience(xpGained);
         plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.GOLD + "+" + xpGained + " XP");
+    }
+
+    @EventHandler
+    public void onTradeWithVillager(VillagerReplenishTradeEvent event){
+        List<Entity> nearbyEntities = event.getEntity().getNearbyEntities(10, 10, 10);  // Get nearby entities
     }
 
     /**
@@ -252,11 +253,7 @@ public class PlayerExperienceGainListeners implements Listener {
         }
 
         Player player = event.getPlayer();
-
-        // Is the player at the level cap?
-        if (player.getLevel() >= BaseExperience.LEVEL_CAP) {
-            return;
-        }
+        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
 
         // Smarty pants?
         double multiplier = 1;
@@ -272,7 +269,7 @@ public class PlayerExperienceGainListeners implements Listener {
 
         // Gib xp
         player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, .5f, 1);
-        player.giveExp(xpEarned);
+        leveledPlayer.giveExperience(xpEarned);
         plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, message);
     }
 }

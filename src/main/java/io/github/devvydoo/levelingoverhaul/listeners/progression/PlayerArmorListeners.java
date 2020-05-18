@@ -1,6 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
+import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
 import org.bukkit.ChatColor;
@@ -155,7 +156,7 @@ public class PlayerArmorListeners implements Listener {
         Player player = (Player) event.getWhoClicked();
 
         // Do we even need to check them?
-        if (player.getLevel() >= BaseExperience.LEVEL_CAP) {
+        if (player.getLevel() >= PlayerExperience.LEVEL_CAP) {
             return;
         }
 
