@@ -44,7 +44,6 @@ public abstract class BaseExperience {
             case DONKEY:
             case SQUID:
             case SNOWMAN:
-            case VILLAGER:
             case OCELOT:
             case PARROT:
             case TURTLE:
@@ -60,6 +59,9 @@ public abstract class BaseExperience {
             case ZOMBIE_HORSE:
             case TRADER_LLAMA:
                 return 50;
+
+            case VILLAGER:
+                return 750;
 
             // Neutral (lvl 5-15)
             case WOLF:

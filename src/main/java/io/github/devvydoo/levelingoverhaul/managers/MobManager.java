@@ -289,6 +289,7 @@ public class MobManager implements Listener {
             case ILLUSIONER:
             case EVOKER:
             case VEX:
+            case VILLAGER:
                 level = 30;
                 break;
 
@@ -310,7 +311,6 @@ public class MobManager implements Listener {
                 break;
 
             case BEE:
-            case VILLAGER:
             case WANDERING_TRADER:
             case FOX:
                 level = (int)(Math.random() * 5 + 3);

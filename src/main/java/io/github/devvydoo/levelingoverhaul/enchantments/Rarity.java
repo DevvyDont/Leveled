@@ -106,6 +106,9 @@ public enum Rarity {
             case ENDER_EYE:
             case ENDER_PEARL:
             case ENCHANTING_TABLE:
+            case EMERALD:
+            case EMERALD_ORE:
+            case EMERALD_BLOCK:
                 return RARE;
 
             case IRON_PICKAXE:

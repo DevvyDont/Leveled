@@ -91,7 +91,7 @@ public class PlayerExperienceGainListeners implements Listener {
         int mobLevel = plugin.getMobManager().getMobLevel(livingEntity);
 
         if (!(livingEntity instanceof Player))
-            extraLevelXp = mobLevel * mobLevel * (Math.random() + .5);
+            extraLevelXp = mobLevel * mobLevel * mobLevel * (Math.random() + .5) / 2;
 
         xp += (int) extraLevelXp;
 
