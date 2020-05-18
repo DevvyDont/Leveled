@@ -7,9 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.FurnaceSmeltEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemFlag;
@@ -61,21 +59,11 @@ public class GlobalItemManager implements Listener {
     }
 
     @EventHandler
-    public void onCraft(CraftItemEvent event){
-        if (event.getCurrentItem() != null){
-            fixItem(event.getCurrentItem());
-        }
-        new BukkitRunnable() {
+    public void onCraft(PrepareItemCraftEvent event){
 
-            @Override
-            public void run() {
-                for (ItemStack item : event.getWhoClicked().getInventory().getContents()){
-                    if (item == null)
-                        continue;
-                    fixItem(item);
-                }
-            }
-        }.runTaskLater(plugin, 1);
+        if (event.getInventory().getResult() != null)
+            fixItem(event.getInventory().getResult());
+
     }
 
     @EventHandler
