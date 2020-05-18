@@ -6,8 +6,6 @@ import io.github.devvydoo.levelingoverhaul.enchantments.CustomItems;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.EnchantmentCalculator;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.PotentialEnchantment;
 import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
-import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
-import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.enchantments.Enchantment;

@@ -1,9 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.commands;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
 import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
-import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,7 +11,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Iterator;
 

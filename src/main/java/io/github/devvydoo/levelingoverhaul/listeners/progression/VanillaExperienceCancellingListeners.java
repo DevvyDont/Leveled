@@ -2,7 +2,6 @@ package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

@@ -24,10 +24,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.RayTraceResult;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CustomItemManager implements Listener {
@@ -254,7 +252,6 @@ public class CustomItemManager implements Listener {
     public Location getMagicMirrorLocation(ItemStack itemStack){
         if (isMagicMirror(itemStack)) {
             String location = itemStack.getItemMeta().getPersistentDataContainer().get(MAGIC_MIRROR_KEY, PersistentDataType.STRING);
-            System.out.println(location);
             if (location == null || location.equalsIgnoreCase(""))
                 return null;
             String[] parsedLocation = location.split(",");
@@ -264,12 +261,8 @@ public class CustomItemManager implements Listener {
     }
 
     public void setMagicMirrorLocation(ItemStack itemStack, Location location){
-        System.out.println("in");
         if (isMagicMirror(itemStack)) {
-            System.out.println("in if");
             String[] mirrorVal = {location.getWorld().getName(), String.valueOf(location.getBlockX()), String.valueOf(location.getBlockY()), String.valueOf(location.getBlockZ())};
-            System.out.println(Arrays.toString(mirrorVal));
-            System.out.println(String.join(",", mirrorVal[0], mirrorVal[1], mirrorVal[2], mirrorVal[3]));
             ItemMeta meta = itemStack.getItemMeta();
             meta.getPersistentDataContainer().set(MAGIC_MIRROR_KEY, PersistentDataType.STRING, String.join(",", mirrorVal[0], mirrorVal[1], mirrorVal[2], mirrorVal[3]));
             ArrayList<String> newLore = new ArrayList<>();

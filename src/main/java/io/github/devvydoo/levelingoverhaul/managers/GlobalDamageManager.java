@@ -4,7 +4,6 @@ import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantment;
 import io.github.devvydoo.levelingoverhaul.util.ToolTypeHelpers;
-import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
@@ -21,7 +20,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * A class used to do any necessary calculations for damage calculations BEFORE our plugin modifies anything whether it

@@ -1,13 +1,9 @@
 package io.github.devvydoo.levelingoverhaul.util;
 
-import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.MagmaCube;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Slime;
 
 
 public abstract class BaseExperience {
