@@ -1,7 +1,6 @@
 package io.github.devvydoo.levelingoverhaul.items;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.enchantments.Rarity;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;

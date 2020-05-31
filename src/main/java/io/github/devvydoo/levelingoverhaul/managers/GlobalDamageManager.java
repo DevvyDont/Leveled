@@ -1,8 +1,8 @@
 package io.github.devvydoo.levelingoverhaul.managers;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantment;
+import io.github.devvydoo.levelingoverhaul.enchantments.enchants.CustomEnchantType;
+import io.github.devvydoo.levelingoverhaul.enchantments.enchants.CustomEnchantment;
 import io.github.devvydoo.levelingoverhaul.util.ToolTypeHelpers;
 import org.bukkit.Particle;
 import org.bukkit.Sound;

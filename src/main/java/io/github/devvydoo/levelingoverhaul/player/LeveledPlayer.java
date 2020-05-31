@@ -1,7 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.player;
 
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomItemManager;
+import io.github.devvydoo.levelingoverhaul.enchantments.enchants.CustomEnchantType;
+import io.github.devvydoo.levelingoverhaul.items.CustomItemManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.items.CustomAbility;
 import org.bukkit.ChatColor;

@@ -1,8 +1,8 @@
 package io.github.devvydoo.levelingoverhaul.enchantments.calculator;
 
 
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomItemManager;
+import io.github.devvydoo.levelingoverhaul.enchantments.enchants.CustomEnchantType;
+import io.github.devvydoo.levelingoverhaul.items.CustomItemManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.util.ToolTypeHelpers;
 import org.bukkit.Material;

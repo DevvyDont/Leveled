@@ -1,8 +1,7 @@
-package io.github.devvydoo.levelingoverhaul.enchantments;
+package io.github.devvydoo.levelingoverhaul.items;
 
 import com.destroystokyo.paper.event.player.PlayerElytraBoostEvent;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.items.CustomAbility;
 import io.github.devvydoo.levelingoverhaul.player.LevelRewards;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.*;

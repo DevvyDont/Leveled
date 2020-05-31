@@ -1,4 +1,4 @@
-package io.github.devvydoo.levelingoverhaul.enchantments;
+package io.github.devvydoo.levelingoverhaul.enchantments.enchants;
 
 public enum CustomEnchantType {
     EXPLOSIVE_TOUCH,

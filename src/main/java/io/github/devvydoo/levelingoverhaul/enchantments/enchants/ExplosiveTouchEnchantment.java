@@ -1,7 +1,6 @@
 package io.github.devvydoo.levelingoverhaul.enchantments.enchants;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

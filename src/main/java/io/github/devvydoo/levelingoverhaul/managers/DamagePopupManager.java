@@ -1,4 +1,4 @@
-package io.github.devvydoo.levelingoverhaul.listeners.progression;
+package io.github.devvydoo.levelingoverhaul.managers;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.util.DamagePopup;

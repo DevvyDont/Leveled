@@ -1,9 +1,9 @@
 package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantment;
-import io.github.devvydoo.levelingoverhaul.enchantments.Rarity;
+import io.github.devvydoo.levelingoverhaul.enchantments.enchants.CustomEnchantType;
+import io.github.devvydoo.levelingoverhaul.enchantments.enchants.CustomEnchantment;
+import io.github.devvydoo.levelingoverhaul.items.Rarity;
 import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
 import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import io.github.devvydoo.levelingoverhaul.player.BaseExperience;

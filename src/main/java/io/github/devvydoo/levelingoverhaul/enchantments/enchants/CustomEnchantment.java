@@ -1,5 +1,7 @@
-package io.github.devvydoo.levelingoverhaul.enchantments;
+package io.github.devvydoo.levelingoverhaul.enchantments.enchants;
 
+import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
+import io.github.devvydoo.levelingoverhaul.enchantments.enchants.CustomEnchantType;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 

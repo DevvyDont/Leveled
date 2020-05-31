@@ -1,7 +1,7 @@
 package io.github.devvydoo.levelingoverhaul;
 
 import io.github.devvydoo.levelingoverhaul.commands.*;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomItemManager;
+import io.github.devvydoo.levelingoverhaul.items.CustomItemManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.ExplosiveTouchEnchantment;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.FoodEnchantments;

@@ -1,7 +1,6 @@
 package io.github.devvydoo.levelingoverhaul.enchantments.enchants;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
