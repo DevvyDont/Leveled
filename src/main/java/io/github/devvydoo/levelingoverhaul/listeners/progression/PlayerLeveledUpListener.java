@@ -24,11 +24,11 @@ import org.bukkit.scheduler.BukkitRunnable;
  * A class responsible for how we should handle experience gain for players. In general, we want to be completely in
  * charge of player experience, so we should cancel all vanilla experience gains
  */
-public class PlayerExperienceListeners implements Listener {
+public class PlayerLeveledUpListener implements Listener {
 
     private LevelingOverhaul plugin;
 
-    public PlayerExperienceListeners(LevelingOverhaul plugin) {
+    public PlayerLeveledUpListener(LevelingOverhaul plugin) {
         this.plugin = plugin;
     }
 
