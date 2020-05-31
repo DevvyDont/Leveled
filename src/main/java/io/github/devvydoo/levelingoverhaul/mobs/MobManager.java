@@ -1,8 +1,7 @@
-package io.github.devvydoo.levelingoverhaul.managers;
+package io.github.devvydoo.levelingoverhaul.mobs;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.listeners.monitors.PlayerNametags;
-import io.github.devvydoo.levelingoverhaul.util.MobStatistics;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;

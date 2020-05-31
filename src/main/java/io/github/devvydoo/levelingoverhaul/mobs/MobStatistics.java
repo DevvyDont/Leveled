@@ -1,4 +1,4 @@
-package io.github.devvydoo.levelingoverhaul.util;
+package io.github.devvydoo.levelingoverhaul.mobs;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;

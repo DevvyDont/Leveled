@@ -1,8 +1,8 @@
-package io.github.devvydoo.levelingoverhaul.managers;
+package io.github.devvydoo.levelingoverhaul.player;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.listeners.monitors.PlayerNametags;
-import io.github.devvydoo.levelingoverhaul.util.Party;
+import io.github.devvydoo.levelingoverhaul.party.Party;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;

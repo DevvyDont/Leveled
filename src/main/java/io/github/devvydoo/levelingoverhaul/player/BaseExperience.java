@@ -1,4 +1,4 @@
-package io.github.devvydoo.levelingoverhaul.util;
+package io.github.devvydoo.levelingoverhaul.player;
 
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;

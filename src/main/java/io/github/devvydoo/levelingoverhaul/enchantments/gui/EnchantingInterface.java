@@ -5,7 +5,7 @@ import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.EnchantmentCalculator;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.PotentialEnchantment;
 import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
-import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
+import io.github.devvydoo.levelingoverhaul.player.LevelRewards;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;

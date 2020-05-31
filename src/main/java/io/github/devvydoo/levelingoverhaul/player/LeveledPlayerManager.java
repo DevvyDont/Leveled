@@ -1,4 +1,4 @@
-package io.github.devvydoo.levelingoverhaul.managers;
+package io.github.devvydoo.levelingoverhaul.player;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;

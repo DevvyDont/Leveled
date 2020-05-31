@@ -1,6 +1,6 @@
 package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
-import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
+import io.github.devvydoo.levelingoverhaul.player.LevelRewards;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;

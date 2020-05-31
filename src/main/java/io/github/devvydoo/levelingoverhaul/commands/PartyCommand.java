@@ -1,7 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.commands;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.util.Party;
+import io.github.devvydoo.levelingoverhaul.party.Party;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;

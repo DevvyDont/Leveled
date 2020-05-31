@@ -2,7 +2,7 @@ package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
-import io.github.devvydoo.levelingoverhaul.util.LevelRewards;
+import io.github.devvydoo.levelingoverhaul.player.LevelRewards;
 import io.github.devvydoo.levelingoverhaul.util.NametagInterface;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

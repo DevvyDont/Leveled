@@ -3,7 +3,7 @@ package io.github.devvydoo.levelingoverhaul.player;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.CustomItemManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
-import io.github.devvydoo.levelingoverhaul.util.CustomAbility;
+import io.github.devvydoo.levelingoverhaul.items.CustomAbility;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;

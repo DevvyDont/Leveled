@@ -1,4 +1,4 @@
-package io.github.devvydoo.levelingoverhaul.util;
+package io.github.devvydoo.levelingoverhaul.items;
 
 public enum CustomAbility {
 

@@ -1,4 +1,4 @@
-package io.github.devvydoo.levelingoverhaul.util;
+package io.github.devvydoo.levelingoverhaul.items;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import org.bukkit.Material;

@@ -1,10 +1,9 @@
 package io.github.devvydoo.levelingoverhaul.player;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.managers.PartyManager;
+import io.github.devvydoo.levelingoverhaul.party.PartyManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;

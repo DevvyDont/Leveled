@@ -1,4 +1,4 @@
-package io.github.devvydoo.levelingoverhaul.managers;
+package io.github.devvydoo.levelingoverhaul.player;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;

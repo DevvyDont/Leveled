@@ -6,7 +6,7 @@ import io.github.devvydoo.levelingoverhaul.enchantments.CustomEnchantment;
 import io.github.devvydoo.levelingoverhaul.enchantments.Rarity;
 import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
 import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
-import io.github.devvydoo.levelingoverhaul.util.BaseExperience;
+import io.github.devvydoo.levelingoverhaul.player.BaseExperience;
 import io.github.devvydoo.levelingoverhaul.util.FormattingHelpers;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
