@@ -198,22 +198,55 @@ public class MobManager implements Listener {
 
         // We need to do 2 things, first, calculate what level the entity should be. Then setup their statistics
 
-        int level = 2;
+        int level;
 
         switch (entity.getType()) {
 
+            // Early game mobs, stick with player level but cap at 30
             case ZOMBIE:
-            case ZOMBIE_VILLAGER:
-            case HUSK:
-            case DROWNED:
-            case CAVE_SPIDER:
             case SPIDER:
             case SKELETON:
             case CREEPER:
-            case SLIME:
-            case SILVERFISH:
-            case STRAY:
                 level = getAveragePlayerLevel(entity, 250, true, 80);
+                break;
+
+            // Caves
+            case CAVE_SPIDER:
+            case SLIME:
+            case WITCH:
+                level = 7 + (int)(Math.random() * 8);
+                break;
+
+            // Desert mobs ~15-20
+            case HUSK:
+            case STRAY:
+                level = 15 + (int)(Math.random() * 5);
+                break;
+
+            // Ocean mobs ~25-30
+            case GUARDIAN:
+            case DROWNED:
+                level = 25 + (int)(Math.random() * 5);
+                break;
+            case ELDER_GUARDIAN:
+                level = 35;
+                break;
+
+            // Village and pillage ~35-40
+            case VILLAGER:
+            case PILLAGER:
+            case VINDICATOR:
+            case VEX:
+            case RAVAGER:
+            case IRON_GOLEM:
+            case ZOMBIE_VILLAGER:
+            case ILLUSIONER:
+            case EVOKER:
+                level = 35 + (int)(Math.random() * 5);
+
+            // Stronghold
+            case SILVERFISH:
+                level = 55 + (int)(Math.random() * 5);
                 break;
 
             case ENDERMAN:
@@ -234,7 +267,8 @@ public class MobManager implements Listener {
                 break;
 
             case WITHER:  // TODO: Give custom logic
-            case ELDER_GUARDIAN: // TODO: Give custom logic
+                level = 80;
+                break;
             case ENDER_DRAGON:
                 level = 2;
                 int totalPlayerLevels = 0;
@@ -246,31 +280,26 @@ public class MobManager implements Listener {
                     level += totalPlayerLevels / numPlayers;
                 break;
 
-            case PILLAGER:
-            case GUARDIAN:
-                level = (int) (Math.random() * 5 + 25);
-                break;
-
-            case VINDICATOR:
-            case RAVAGER:
-                level = (int) (Math.random() * 5 + 30);
-                break;
-
+            // Nether plains
             case PIG_ZOMBIE:
             case MAGMA_CUBE:
+                level = 38 + (int)(Math.random() * 7);
+                break;
             case GHAST:
+                level = 42 + (int)(Math.random() * 7);
+                break;
+
+            // Nether fortress
             case BLAZE:
-                level = getAveragePlayerLevel(entity, 250, false, 60) + ((int) (Math.random() * 6));
+                level = 45 + (int)(Math.random() * 5);
                 break;
-
             case WITHER_SKELETON:
-                level = getAveragePlayerLevel(entity, 250, false, 70) + ((int) (Math.random() * 6));
+                level = 50 + (int)(Math.random() * 5);
                 break;
 
-            case WITCH:
             case POLAR_BEAR:
             case TRADER_LLAMA:
-                level = 15;  // TODO: Make scale on target
+                level = 15;
                 break;
 
             case PHANTOM:
@@ -285,16 +314,6 @@ public class MobManager implements Listener {
                 level = 10;
                 break;
 
-            case ILLUSIONER:
-            case EVOKER:
-            case VEX:
-            case VILLAGER:
-                level = 30;
-                break;
-
-            case IRON_GOLEM:
-                level =  35;
-                break;
 
             case WOLF:
             case CAT:
