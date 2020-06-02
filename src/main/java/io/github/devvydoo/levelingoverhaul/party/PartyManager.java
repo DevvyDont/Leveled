@@ -11,8 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,13 +52,18 @@ public class PartyManager implements Listener {
         downedPlayers.get(player).runTaskTimer(LevelingOverhaul.getPlugin(LevelingOverhaul.class), 0, 1);
         numDowns.put(player, numDowns.get(player) + 1);
         player.sendTitle(ChatColor.DARK_RED + "DOWNED!", ChatColor.GRAY + "Get a kill to get back up!", 2, 40, 10);
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_HURT, .9f, .3f);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_DEATH, .9f, .3f);
         player.setInvulnerable(true);
         player.setHealth(1);
 
-        if (player.getFoodLevel() >= 10)
-            player.setFoodLevel(10);
+        if (player.getFoodLevel() >= 6)
+            player.setFoodLevel(6);
         player.setSaturation(0);
+
+        if (killer.equals(player))
+            LevelingOverhaul.getPlugin(LevelingOverhaul.class).getServer().broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getDisplayName() + ChatColor.DARK_GRAY + " is down!");
+        else
+            LevelingOverhaul.getPlugin(LevelingOverhaul.class).getServer().broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getDisplayName() + ChatColor.DARK_GRAY + " was downed by " + ChatColor.RED + ChatColor.BOLD.toString() + killer.getName());
     }
 
     public void downPlayer(Player player){
@@ -211,4 +215,41 @@ public class PartyManager implements Listener {
         }
 
     }
+
+    @EventHandler
+    public void onDownedPlayerHeal(EntityRegainHealthEvent event){
+        // If a downed player tries to heal, cancel
+        if (downedPlayers.containsKey(event.getEntity()))
+            event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onDownedPlayerConsumeItem(PlayerItemConsumeEvent event){
+        // Ifa downed player tries to eat something cancel
+        if (downedPlayers.containsKey(event.getPlayer()))
+            event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerRightClickedDownedPlayer(PlayerInteractAtEntityEvent event){
+
+        // ignore downed players
+        if (downedPlayers.containsKey(event.getPlayer()))
+            return;
+
+        // Did a player right click another player?
+        if (!(event.getRightClicked() instanceof Player))
+            return;
+
+        Player rightClickedEntity = (Player) event.getRightClicked();
+
+        // Did a player right click someone that is in their party and downed?
+        if (!(downedPlayers.containsKey(rightClickedEntity) && inSameParty(rightClickedEntity, event.getPlayer())))
+            return;
+
+        event.setCancelled(true);
+        downedPlayers.get(rightClickedEntity).doReviveTick(event.getPlayer());
+
+    }
+
 }
