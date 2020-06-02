@@ -79,6 +79,7 @@ public class PartyManager implements Listener {
         if (player.getFoodLevel() >= 6)
             player.setFoodLevel(6);
         player.setSaturation(0);
+        player.setGlowing(true);
 
         if (killer.equals(player))
             LevelingOverhaul.getPlugin(LevelingOverhaul.class).getServer().broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getDisplayName() + ChatColor.DARK_GRAY + " is down!");
@@ -94,6 +95,7 @@ public class PartyManager implements Listener {
         downedPlayers.get(player).cancel();
         downedPlayers.remove(player);
         player.setInvulnerable(false);
+        player.setGlowing(false);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * .1);
         player.sendTitle(ChatColor.AQUA + "REVIVED!", "", 2, 20, 10);
         player.getWorld().playSound(player.getLocation(), Sound.ITEM_TOTEM_USE, .9f, 1);
@@ -205,6 +207,7 @@ public class PartyManager implements Listener {
         if (event.getEntity().getLastDamageCause() == null || event.getEntity().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
             downedPlayers.remove(event.getEntity());
             numDowns.put(event.getEntity(), 0);
+            event.getEntity().setGlowing(false);
             return;
         }
 

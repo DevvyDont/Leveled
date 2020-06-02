@@ -20,6 +20,7 @@ public class PlayerDownedTask extends BukkitRunnable {
     private int currentTick = 0;
     private int totalReviveTicks = 0;
     private int temporaryReviveTicks = 0;
+    private final int TARGET_REVIVE_TICKS = 120;
 
     public PlayerDownedTask(final PartyManager partyManager, final Player player, final Entity killer, int seconds){
         this.partyManager = partyManager;
@@ -35,11 +36,17 @@ public class PlayerDownedTask extends BukkitRunnable {
         if (temporaryReviveTicks > 0) {
             this.totalReviveTicks++;
             this.temporaryReviveTicks--;
-            player.sendTitle(ChatColor.AQUA + lastReviver.getDisplayName() + ChatColor.GRAY + " is reviving you!", ChatColor.GRAY + "" + Math.min(Math.round((totalReviveTicks + 1) / 60. * 100), 100) + "%", 0, 20, 30);
-            lastReviver.sendTitle(ChatColor.GRAY + "Reviving " + ChatColor.AQUA + player.getDisplayName() + ChatColor.GRAY + "!", ChatColor.GRAY + "" + Math.min(Math.round((totalReviveTicks + 1) / 60. * 100), 100) + "%", 0, 20, 30);
+            player.sendTitle(ChatColor.AQUA + lastReviver.getDisplayName() + ChatColor.GRAY + " is reviving you!", ChatColor.GRAY + "" + Math.min(Math.round((totalReviveTicks + 1) / (TARGET_REVIVE_TICKS * 1.) * 100), 100) + "%", 0, 20, 30);
+            lastReviver.sendTitle(ChatColor.GRAY + "Reviving " + ChatColor.AQUA + player.getDisplayName() + ChatColor.GRAY + "!", ChatColor.GRAY + "" + Math.min(Math.round((totalReviveTicks + 1) / (TARGET_REVIVE_TICKS * 1.) * 100), 100) + "%", 0, 20, 30);
         }
-        else
+        else {
             currentTick++;
+            if (totalReviveTicks > 0){
+                totalReviveTicks--;
+                lastReviver.sendTitle(ChatColor.GRAY + "Reviving " + ChatColor.AQUA + player.getDisplayName() + ChatColor.GRAY + "!", ChatColor.GRAY + "" + Math.min(Math.round((totalReviveTicks + 1) / (TARGET_REVIVE_TICKS * 1.) * 100), 100) + "%", 0, 20, 30);
+                player.sendTitle(ChatColor.AQUA + lastReviver.getDisplayName() + ChatColor.GRAY + " is reviving you!", ChatColor.GRAY + "" + Math.min(Math.round((totalReviveTicks + 1) / (TARGET_REVIVE_TICKS * 1.) * 100), 100) + "%", 0, 20, 30);
+            }
+        }
 
         LevelingOverhaul.getPlugin(LevelingOverhaul.class).getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_RED + "" + ChatColor.BOLD + "DOWNED! " + getSecondsRemaining() + "s");
 
@@ -56,7 +63,7 @@ public class PlayerDownedTask extends BukkitRunnable {
             player.setInvulnerable(false);
             player.damage(Integer.MAX_VALUE);
             cancel();
-        } else if (totalReviveTicks >= 60){
+        } else if (totalReviveTicks >= TARGET_REVIVE_TICKS){
             partyManager.revivePlayer(player);
 
             if (lastReviver != null)
