@@ -32,7 +32,7 @@ public class PartyManager implements Listener {
             numDowns.put(p, 0);
     }
 
-    public int getSecondWindSeconds(Player player){
+    private int getSecondWindSeconds(Player player){
 
         int downs = numDowns.get(player);
 
@@ -41,12 +41,32 @@ public class PartyManager implements Listener {
 
     }
 
+    /**
+     * Gets the amount of time remaining that a player has downed before they bleed out, -1 if they are not downed
+     *
+     * @param player The player to check for down time
+     * @return Seconds of time remaining
+     */
+    public int getTimeRemainingDowned(Player player){
+        PlayerDownedTask task = downedPlayers.get(player);
+        return task != null ? task.getSecondsRemaining() : -1;
+    }
+
     public void downPlayer(Player player, Entity killer){
 
         for (Entity e : player.getNearbyEntities(100, 50, 100))
             if (e instanceof Creature)
                 if (((Creature)e).getTarget() == player)
                     ((Creature)e).setTarget(null);
+
+        Party party = getParty(player);
+
+        if (party != null)
+            for (Player teammate : party.getMembers())
+                if (teammate != player) {
+                    teammate.sendTitle("", ChatColor.AQUA + player.getDisplayName() + ChatColor.GRAY + " is down!", 10, 30, 10);
+                    teammate.playSound(teammate.getEyeLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, .5f, .5f);
+                }
 
         downedPlayers.put(player, new PlayerDownedTask(this, player, killer, getSecondWindSeconds(player)));
         downedPlayers.get(player).runTaskTimer(LevelingOverhaul.getPlugin(LevelingOverhaul.class), 0, 1);

@@ -66,6 +66,10 @@ public class ScoreboardManager implements Listener {
     }
 
     private String getPartyMemberSuffix(Player player){
+
+        if (plugin.getPartyManager().getTimeRemainingDowned(player) != -1)
+            return ChatColor.RED + " ☠" + ChatColor.DARK_RED + plugin.getPartyManager().getTimeRemainingDowned(player);
+
         return ChatColor.DARK_RED + " ❤" + PlayerNametags.getChatColorFromHealth(player.getHealth(), player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) + (int) player.getHealth();
     }
 

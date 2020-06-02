@@ -41,7 +41,7 @@ public class PlayerDownedTask extends BukkitRunnable {
         else
             currentTick++;
 
-        LevelingOverhaul.getPlugin(LevelingOverhaul.class).getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_RED + "" + ChatColor.BOLD + "DOWNED! " + ((TARGET_TICKS - currentTick) / 20) + "s");
+        LevelingOverhaul.getPlugin(LevelingOverhaul.class).getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_RED + "" + ChatColor.BOLD + "DOWNED! " + getSecondsRemaining() + "s");
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 2, -3, false, false, false));
         player.setGliding(true);
@@ -71,6 +71,10 @@ public class PlayerDownedTask extends BukkitRunnable {
     public void doReviveTick(Player reviver){
         this.lastReviver = reviver;
         this.temporaryReviveTicks = Math.min(this.temporaryReviveTicks + 5, 5);
+    }
+
+    public int getSecondsRemaining(){
+        return ((TARGET_TICKS - currentTick) / 20);
     }
 
 }
