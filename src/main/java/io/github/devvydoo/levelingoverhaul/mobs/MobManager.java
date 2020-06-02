@@ -76,6 +76,27 @@ public class MobManager implements Listener {
         return entityToLevelMap;
     }
 
+    /**
+     * Can be used to spawn a mob with a pre-determined level, overriding natural flow for a normal mob spawn
+     *
+     * @return The entity created, allowing for further customization
+     */
+    public LivingEntity spawnLeveledMob(Location location, EntityType entityType, String name, int level){
+
+        if (level < 1)
+            throw new IllegalArgumentException("Mob level cannot be less than 1!");
+
+        assert entityType.getEntityClass() != null;
+
+        LivingEntity entity = (LivingEntity) location.getWorld().spawn(location, entityType.getEntityClass());
+
+        entityToLevelMap.put(entity, new MobStatistics(entity, level, name));
+        setEntityAttributes(entity, level);
+        setEntityNametag(entity);
+        return entity;
+
+    }
+
     public int getMobLevel(LivingEntity mob) {
         if (mob instanceof Player) {
             return ((Player) mob).getLevel();
