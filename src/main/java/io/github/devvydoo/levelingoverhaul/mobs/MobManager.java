@@ -620,8 +620,7 @@ public class MobManager implements Listener {
 
         LivingEntity entity = (LivingEntity) event.getEntity();
 
-        MobStatistics stats = new MobStatistics(entity, this.calculateEntityLevel(entity), entity.getName());
-        this.entityToLevelMap.put(entity, stats);
+        getMobStatistics(entity);  // Will handle putting the mob in the entity map if needed
         this.setEntityNametag(entity);
     }
 
