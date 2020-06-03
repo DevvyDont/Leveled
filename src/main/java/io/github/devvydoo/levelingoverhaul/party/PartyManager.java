@@ -4,6 +4,7 @@ import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.player.PlayerDownedTask;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
@@ -204,7 +205,10 @@ public class PartyManager implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDown(PlayerDeathEvent event){
 
-        if (event.getEntity().getLastDamageCause() == null || event.getEntity().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
+        if (event.getEntity().getLastDamageCause() == null || event.getEntity().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.CUSTOM || event.getEntity().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.VOID) {
+            if (downedPlayers.containsKey(event.getEntity()))
+                downedPlayers.get(event.getEntity()).cancel();
+
             downedPlayers.remove(event.getEntity());
             numDowns.put(event.getEntity(), 0);
             event.getEntity().setGlowing(false);
@@ -273,6 +277,30 @@ public class PartyManager implements Listener {
         event.setCancelled(true);
         downedPlayers.get(rightClickedEntity).doReviveTick(event.getPlayer());
 
+    }
+
+    @EventHandler
+    public void onDownedPlayerRightClickedWithTotem(PlayerInteractEvent event){
+
+        // Ignore players that aren't down
+        if (!downedPlayers.containsKey(event.getPlayer()))
+            return;
+
+        // Did a player right click with a totem in their hand
+        if (event.getItem() == null || event.getItem().getType() != Material.TOTEM_OF_UNDYING)
+            return;
+
+        event.setCancelled(true);
+        downedPlayers.get(event.getPlayer()).doReviveTick(event.getPlayer());
+
+    }
+
+    @EventHandler
+    public void onDownedPlayerDroppedItem(PlayerDropItemEvent event){
+        if (!downedPlayers.containsKey(event.getPlayer()))
+            return;
+
+        event.setCancelled(true);
     }
 
 }
