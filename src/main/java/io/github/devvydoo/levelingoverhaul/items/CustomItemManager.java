@@ -331,7 +331,7 @@ public class CustomItemManager implements Listener {
 
                 Location newLocation = old.add(old.getDirection().normalize().multiply(distance));
                 event.getPlayer().teleport(newLocation);
-                event.getPlayer().damage(400);
+                event.getPlayer().damage(400, event.getPlayer());
 
                 new BukkitRunnable() {
                     @Override
@@ -365,7 +365,7 @@ public class CustomItemManager implements Listener {
                 shooter.teleport(event.getEntity().getLocation().add(event.getHitBlockFace().getDirection().normalize()));
                 shooter.getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, .4f);
                 shooter.getWorld().playEffect(event.getEntity().getLocation(), Effect.ENDER_SIGNAL, 1);
-                shooter.damage(150);
+                shooter.damage(150, event.getEntity());
             }
         }
     }
