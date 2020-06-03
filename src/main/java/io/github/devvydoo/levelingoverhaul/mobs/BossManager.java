@@ -184,7 +184,7 @@ public class BossManager implements Listener {
                 // We are going to give all players in the end a bonus
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
                     LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(p);
-                    leveledPlayer.giveExperience(4 * dragonLevel);
+                    leveledPlayer.giveExperience(75000 * dragonLevel);
                     p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Ender Dragon" + ChatColor.YELLOW + "! +" + 4 * dragonLevel + "XP");
                 }
                 spawnBossDrop(getRandomEnderDragonDrop(dragonLevel - 2), event.getEntity().getLocation(), true);
@@ -196,8 +196,8 @@ public class BossManager implements Listener {
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
                     if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
                         LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(p);
-                        leveledPlayer.giveExperience(175);
-                        p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Wither" + ChatColor.YELLOW + "! +175XP");
+                        leveledPlayer.giveExperience(1000000);
+                        p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Wither" + ChatColor.YELLOW + "! +1,000,000XP");
                     }
                 }
                 if (event.getEntity().getKiller() != null && event.getEntity().getCustomName() != null)
@@ -208,8 +208,8 @@ public class BossManager implements Listener {
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
                     if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
                         LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(p);
-                        leveledPlayer.giveExperience(120);
-                        p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Elder Guardian" + ChatColor.YELLOW + "! +120XP");
+                        leveledPlayer.giveExperience(200000);
+                        p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Elder Guardian" + ChatColor.YELLOW + "! +200,000XP");
                     }
                 }
                 if (event.getEntity().getKiller() != null && event.getEntity().getCustomName() != null)
