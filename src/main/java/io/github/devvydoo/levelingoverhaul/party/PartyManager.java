@@ -17,12 +17,13 @@ import org.bukkit.event.player.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class PartyManager implements Listener {
 
-    private HashMap<Player, Party> playerPartyHashMap;
-    private HashMap<Player, PlayerDownedTask> downedPlayers;
-    private HashMap<Player, Integer> numDowns;
+    private final HashMap<UUID, Party> playerPartyHashMap;
+    private final HashMap<UUID, PlayerDownedTask> downedPlayers;
+    private final HashMap<UUID, Integer> numDowns;
 
     public PartyManager() {
         playerPartyHashMap = new HashMap<>();
@@ -30,12 +31,12 @@ public class PartyManager implements Listener {
         numDowns = new HashMap<>();
 
         for (Player p : Bukkit.getOnlinePlayers())
-            numDowns.put(p, 0);
+            numDowns.put(p.getUniqueId(), 0);
     }
 
     private int getSecondWindSeconds(Player player){
 
-        int downs = numDowns.get(player);
+        int downs = numDowns.get(player.getUniqueId());
 
         int penalty = downs * 6;
         return Math.max(5, 60 - penalty);
@@ -49,7 +50,7 @@ public class PartyManager implements Listener {
      * @return Seconds of time remaining
      */
     public int getTimeRemainingDowned(Player player){
-        PlayerDownedTask task = downedPlayers.get(player);
+        PlayerDownedTask task = downedPlayers.get(player.getUniqueId());
         return task != null ? task.getSecondsRemaining() : -1;
     }
 
@@ -69,9 +70,9 @@ public class PartyManager implements Listener {
                     teammate.playSound(teammate.getEyeLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, .5f, .5f);
                 }
 
-        downedPlayers.put(player, new PlayerDownedTask(this, player, killer, getSecondWindSeconds(player)));
-        downedPlayers.get(player).runTaskTimer(LevelingOverhaul.getPlugin(LevelingOverhaul.class), 0, 1);
-        numDowns.put(player, numDowns.get(player) + 1);
+        downedPlayers.put(player.getUniqueId(), new PlayerDownedTask(this, player, killer, getSecondWindSeconds(player)));
+        downedPlayers.get(player.getUniqueId()).runTaskTimer(LevelingOverhaul.getPlugin(LevelingOverhaul.class), 0, 1);
+        numDowns.put(player.getUniqueId(), numDowns.get(player.getUniqueId()) + 1);
         player.sendTitle(ChatColor.DARK_RED + "DOWNED!", ChatColor.GRAY + "Get a kill to get back up!", 2, 40, 10);
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_DEATH, .9f, .3f);
         player.setInvulnerable(true);
@@ -93,8 +94,8 @@ public class PartyManager implements Listener {
     }
 
     public void revivePlayer(Player player){
-        downedPlayers.get(player).cancel();
-        downedPlayers.remove(player);
+        downedPlayers.get(player.getUniqueId()).cancel();
+        downedPlayers.remove(player.getUniqueId());
         player.setInvulnerable(false);
         player.setGlowing(false);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * .1);
@@ -103,16 +104,16 @@ public class PartyManager implements Listener {
     }
 
     public void addPlayerToParty(Player owner, Player player){
-        if (playerPartyHashMap.containsKey(owner)) {
-            Party party = playerPartyHashMap.get(owner);
+        if (playerPartyHashMap.containsKey(owner.getUniqueId())) {
+            Party party = playerPartyHashMap.get(owner.getUniqueId());
             party.addPlayer(player);
-            playerPartyHashMap.put(player, party);
+            playerPartyHashMap.put(player.getUniqueId(), party);
         }
     }
 
     public void removePlayerFromParty(Player player){
-        if (playerPartyHashMap.containsKey(player)){
-            Party party = playerPartyHashMap.get(player);
+        if (playerPartyHashMap.containsKey(player.getUniqueId())){
+            Party party = playerPartyHashMap.get(player.getUniqueId());
             if (party.getOwner().equals(player))
                 disbandParty(player);
             else
@@ -121,30 +122,30 @@ public class PartyManager implements Listener {
     }
 
     public void makeNewParty(Player owner){
-        if (!playerPartyHashMap.containsKey(owner))
-            playerPartyHashMap.put(owner, new Party(owner));
+        if (!playerPartyHashMap.containsKey(owner.getUniqueId()))
+            playerPartyHashMap.put(owner.getUniqueId(), new Party(owner));
     }
 
     public void disbandParty(Player owner){
-        if (playerPartyHashMap.containsKey(owner)){
-            Party party = playerPartyHashMap.get(owner);
+        if (playerPartyHashMap.containsKey(owner.getUniqueId())){
+            Party party = playerPartyHashMap.get(owner.getUniqueId());
             for (Player p: party.getMembers())
                 if (!p.equals(party.getOwner())) {
                     party.removePlayer(p);
-                    playerPartyHashMap.remove(p);
+                    playerPartyHashMap.remove(p.getUniqueId());
                 }
         }
-        playerPartyHashMap.remove(owner);
+        playerPartyHashMap.remove(owner.getUniqueId());
     }
 
     public Party getParty(Player player){
-        if (playerPartyHashMap.containsKey(player))
-            return playerPartyHashMap.get(player);
+        if (playerPartyHashMap.containsKey(player.getUniqueId()))
+            return playerPartyHashMap.get(player.getUniqueId());
         return null;
     }
 
     public boolean isPlayerInParty(Player player){
-        return playerPartyHashMap.containsKey(player);
+        return playerPartyHashMap.containsKey(player.getUniqueId());
     }
 
     public boolean inSameParty(Player player1, Player player2){
@@ -152,8 +153,8 @@ public class PartyManager implements Listener {
         if (player1.equals(player2))
             return false;
 
-        if (playerPartyHashMap.containsKey(player1) && playerPartyHashMap.containsKey(player2)){
-            return playerPartyHashMap.get(player1).equals(playerPartyHashMap.get(player2));
+        if (playerPartyHashMap.containsKey(player1.getUniqueId()) && playerPartyHashMap.containsKey(player2.getUniqueId())){
+            return playerPartyHashMap.get(player1.getUniqueId()).equals(playerPartyHashMap.get(player2.getUniqueId()));
         }
 
         return false;
@@ -170,14 +171,20 @@ public class PartyManager implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
-        numDowns.put(event.getPlayer(), 0);
+        numDowns.put(event.getPlayer().getUniqueId(), 0);
     }
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event){
-        numDowns.remove(event.getPlayer());
-        if (playerPartyHashMap.containsKey(event.getPlayer()))
+        numDowns.remove(event.getPlayer().getUniqueId());
+        if (playerPartyHashMap.containsKey(event.getPlayer().getUniqueId()))
             removePlayerFromParty(event.getPlayer());
+
+        if (downedPlayers.containsKey(event.getPlayer().getUniqueId())){
+            event.getPlayer().setHealth(0);
+            event.getPlayer().setInvulnerable(false);
+            downedPlayers.remove(event.getPlayer().getUniqueId());
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -205,12 +212,12 @@ public class PartyManager implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDown(PlayerDeathEvent event){
 
-        if (event.getEntity().getLastDamageCause() == null || event.getEntity().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.CUSTOM || event.getEntity().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.VOID) {
-            if (downedPlayers.containsKey(event.getEntity()))
-                downedPlayers.get(event.getEntity()).cancel();
+        if (downedPlayers.containsKey(event.getEntity().getUniqueId()) || event.getEntity().getLastDamageCause() == null || event.getEntity().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.CUSTOM || event.getEntity().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.VOID) {
+            if (downedPlayers.containsKey(event.getEntity().getUniqueId()))
+                downedPlayers.get(event.getEntity().getUniqueId()).cancel();
 
-            downedPlayers.remove(event.getEntity());
-            numDowns.put(event.getEntity(), 0);
+            downedPlayers.remove(event.getEntity().getUniqueId());
+            numDowns.put(event.getEntity().getUniqueId(), 0);
             event.getEntity().setGlowing(false);
             return;
         }
@@ -228,7 +235,7 @@ public class PartyManager implements Listener {
     public void onEntityTargetedDownedPlayer(EntityTargetEvent event){
 
         if (event.getEntity() instanceof Player)
-            if (downedPlayers.containsKey(event.getEntity()))
+            if (downedPlayers.containsKey(event.getEntity().getUniqueId()))
                 event.setCancelled(true);
     }
 
@@ -237,7 +244,7 @@ public class PartyManager implements Listener {
 
         Player killer = event.getEntity().getKiller();
 
-        if (killer != null && downedPlayers.containsKey(killer)){
+        if (killer != null && downedPlayers.containsKey(killer.getUniqueId())){
             revivePlayer(killer);
         }
 
@@ -246,14 +253,14 @@ public class PartyManager implements Listener {
     @EventHandler
     public void onDownedPlayerHeal(EntityRegainHealthEvent event){
         // If a downed player tries to heal, cancel
-        if (downedPlayers.containsKey(event.getEntity()))
+        if (downedPlayers.containsKey(event.getEntity().getUniqueId()))
             event.setCancelled(true);
     }
 
     @EventHandler
     public void onDownedPlayerConsumeItem(PlayerItemConsumeEvent event){
         // Ifa downed player tries to eat something cancel
-        if (downedPlayers.containsKey(event.getPlayer()))
+        if (downedPlayers.containsKey(event.getPlayer().getUniqueId()))
             event.setCancelled(true);
     }
 
@@ -261,7 +268,7 @@ public class PartyManager implements Listener {
     public void onPlayerRightClickedDownedPlayer(PlayerInteractAtEntityEvent event){
 
         // ignore downed players
-        if (downedPlayers.containsKey(event.getPlayer()))
+        if (downedPlayers.containsKey(event.getPlayer().getUniqueId()))
             return;
 
         // Did a player right click another player?
@@ -271,11 +278,11 @@ public class PartyManager implements Listener {
         Player rightClickedEntity = (Player) event.getRightClicked();
 
         // Did a player right click someone that is in their party and downed?
-        if (!(downedPlayers.containsKey(rightClickedEntity) && inSameParty(rightClickedEntity, event.getPlayer())))
+        if (!(downedPlayers.containsKey(rightClickedEntity.getUniqueId()) && inSameParty(rightClickedEntity, event.getPlayer())))
             return;
 
         event.setCancelled(true);
-        downedPlayers.get(rightClickedEntity).doReviveTick(event.getPlayer());
+        downedPlayers.get(rightClickedEntity.getUniqueId()).doReviveTick(event.getPlayer());
 
     }
 
@@ -283,7 +290,7 @@ public class PartyManager implements Listener {
     public void onDownedPlayerRightClickedWithTotem(PlayerInteractEvent event){
 
         // Ignore players that aren't down
-        if (!downedPlayers.containsKey(event.getPlayer()))
+        if (!downedPlayers.containsKey(event.getPlayer().getUniqueId()))
             return;
 
         // Did a player right click with a totem in their hand
@@ -291,13 +298,13 @@ public class PartyManager implements Listener {
             return;
 
         event.setCancelled(true);
-        downedPlayers.get(event.getPlayer()).doReviveTick(event.getPlayer());
+        downedPlayers.get(event.getPlayer().getUniqueId()).doReviveTick(event.getPlayer());
 
     }
 
     @EventHandler
     public void onDownedPlayerDroppedItem(PlayerDropItemEvent event){
-        if (!downedPlayers.containsKey(event.getPlayer()))
+        if (!downedPlayers.containsKey(event.getPlayer().getUniqueId()))
             return;
 
         event.setCancelled(true);
