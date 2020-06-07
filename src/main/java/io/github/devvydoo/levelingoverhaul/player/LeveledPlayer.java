@@ -153,7 +153,7 @@ public class LeveledPlayer {
             this.defense += getBaseArmorDefense(armor);
             protectionLevel = armor.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
             int armorTier = getArmorTier(armor);
-            this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier));
+            this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier) / 2);
         }
 
         return this.defense;
