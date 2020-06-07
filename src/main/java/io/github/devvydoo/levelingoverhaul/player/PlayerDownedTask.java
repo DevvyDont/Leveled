@@ -61,7 +61,7 @@ public class PlayerDownedTask extends BukkitRunnable {
 
         if (currentTick >= TARGET_TICKS) {
             player.setInvulnerable(false);
-            player.damage(Integer.MAX_VALUE);
+            player.setHealth(0);
             cancel();
         } else if (totalReviveTicks >= TARGET_REVIVE_TICKS){
             partyManager.revivePlayer(player);
