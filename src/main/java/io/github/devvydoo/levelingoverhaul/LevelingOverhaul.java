@@ -132,8 +132,6 @@ public final class LevelingOverhaul extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EnchantmentListeners(), this);
         getServer().getPluginManager().registerEvents(new BrewingListeners(), this);
         getServer().getPluginManager().registerEvents(new MiscEquipmentListeners(this), this);
-        getServer().getPluginManager().registerEvents(new PortableCraftingAbility(), this);
-        getServer().getPluginManager().registerEvents(new CraftingListener(), this);
 
         // Listeners involving custom enchantments
         getServer().getPluginManager().registerEvents(new EnchantingInterface(this), this);

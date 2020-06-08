@@ -3,6 +3,8 @@ package io.github.devvydoo.levelingoverhaul.player;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
+import io.github.devvydoo.levelingoverhaul.player.abilities.AbilityBoundlessRockets;
+import io.github.devvydoo.levelingoverhaul.player.abilities.AbilityExpertCrafter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,6 +28,10 @@ public class LeveledPlayerManager implements Listener {
         playerArmorAttributesMap = new HashMap<>();
         for (Player player : plugin.getServer().getOnlinePlayers())
             playerArmorAttributesMap.put(player, new LeveledPlayer(plugin.getEnchantmentManager(), plugin.getCustomItemManager(), player));
+
+        // Register ability classes
+        plugin.getServer().getPluginManager().registerEvents(new AbilityExpertCrafter(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new AbilityBoundlessRockets(), plugin);
     }
 
     public void updateLeveledPlayerAttributes(Player player){
