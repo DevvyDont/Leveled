@@ -1,7 +1,11 @@
 package io.github.devvydoo.levelingoverhaul.mobs;
 
+import com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.listeners.monitors.PlayerNametags;
+import io.github.devvydoo.levelingoverhaul.mobs.custommobs.CustomMob;
+import io.github.devvydoo.levelingoverhaul.mobs.custommobs.MobCorruptedSkeleton;
+import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
@@ -10,10 +14,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.entity.EntityTameEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -34,6 +35,7 @@ public class MobManager implements Listener {
 
     private LevelingOverhaul plugin;
     private HashMap<LivingEntity, MobStatistics> entityToLevelMap = new HashMap<>();
+    private HashMap<LivingEntity, CustomMob> entityToCustomMobInstanceMap = new HashMap<>();
     private final int MOB_CLEANUP_DELAY = 20 * 60 * 5;
 
     /**
@@ -264,6 +266,7 @@ public class MobManager implements Listener {
             case ILLUSIONER:
             case EVOKER:
                 level = 35 + (int)(Math.random() * 5);
+                break;
 
             // Stronghold
             case SILVERFISH:
@@ -678,6 +681,13 @@ public class MobManager implements Listener {
     public void onEntityDeath(EntityDeathEvent event) {
         // Remove the entity from our map if needed.
         this.entityToLevelMap.remove(event.getEntity());
+
+        if (entityToCustomMobInstanceMap.containsKey(event.getEntity())){
+            CustomMob mob = entityToCustomMobInstanceMap.get(event.getEntity());
+            List<ItemStack> drops = event.getDrops();
+            drops.clear();
+            drops.addAll(mob.getLootTable().roll());
+        }
     }
 
     /**
@@ -694,6 +704,37 @@ public class MobManager implements Listener {
             updateMobWithStatistics(event.getEntity());  // Apply the changes
             event.getEntity().getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, .5f, .5f);
         }
+
+    }
+
+    @EventHandler
+    public void onCustomMobSpawn(CreatureSpawnEvent event){
+        
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM || Math.random() > .2)
+            return;
+
+        long start = System.currentTimeMillis();
+
+        System.out.println("spawning a skeleboi because of " + event.getEntity().getName() + " at location " + event.getEntity().getLocation().toVector());
+
+        Location entityLocation = event.getLocation();
+        World.Environment environment = entityLocation.getWorld().getEnvironment();
+        Biome biome = entityLocation.getWorld().getBiome(entityLocation.getBlockX(), entityLocation.getBlockY(), entityLocation.getBlockZ());
+
+        // What should we do in the end?
+        switch (environment) {
+
+            case THE_END:
+                LivingEntity cs = spawnLeveledMob(entityLocation, EntityType.STRAY, "Corrupted Skeleton", 70);
+                MobCorruptedSkeleton mcs = new MobCorruptedSkeleton(EntityType.STRAY);
+                mcs.setup(cs);
+                entityToCustomMobInstanceMap.put(cs, mcs);
+                break;
+
+        }
+
+        System.out.println("done, time taken: " + (System.currentTimeMillis() - start) + "ms");
+
 
     }
 
