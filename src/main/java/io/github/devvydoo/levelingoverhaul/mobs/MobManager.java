@@ -709,7 +709,7 @@ public class MobManager implements Listener {
 
     @EventHandler
     public void onCustomMobSpawn(CreatureSpawnEvent event){
-        
+
         if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM || Math.random() > .2)
             return;
 
