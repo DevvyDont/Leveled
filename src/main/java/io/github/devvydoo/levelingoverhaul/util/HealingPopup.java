@@ -21,7 +21,7 @@ public class HealingPopup extends DamagePopup {
                 (ArmorStand a) -> {
                     a.setVisible(false);
                     a.setMarker(true);
-                    a.setCustomName(ChatColor.GREEN  + FormattingHelpers.getFormattedInteger((int) Math.ceil(amount)));
+                    a.setCustomName(ChatColor.GREEN + "" + ChatColor.BOLD + FormattingHelpers.getFormattedInteger((int) Math.ceil(amount)));
                     a.setCustomNameVisible(true);
                 });
     }
