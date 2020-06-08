@@ -184,8 +184,9 @@ public class BossManager implements Listener {
                 // We are going to give all players in the end a bonus
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
                     LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(p);
-                    leveledPlayer.giveExperience(75000 * dragonLevel);
-                    p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Ender Dragon" + ChatColor.YELLOW + "! +" + 4 * dragonLevel + "XP");
+                    int xp = Math.min(dragonLevel * 20000, 900000);
+                    leveledPlayer.giveExperience(xp);
+                    p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Ender Dragon" + ChatColor.YELLOW + "! +" + xp + "XP");
                 }
                 spawnBossDrop(getRandomEnderDragonDrop(dragonLevel - 2), event.getEntity().getLocation(), true);
                 if (event.getEntity().getKiller() != null && event.getEntity().getCustomName() != null)
