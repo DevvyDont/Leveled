@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class MobManager implements Listener {
 
@@ -274,20 +275,37 @@ public class MobManager implements Listener {
                 break;
 
             case ENDERMAN:
-                if (entity.getWorld().getEnvironment().equals(World.Environment.NORMAL)) { level = (int) (Math.random() * 16 + 40); }  // ~ 40 - 55 in overworld
-                else if (entity.getWorld().getEnvironment().equals(World.Environment.NETHER)) { level = (int) (Math.random() * 25 + 45); } // ~ 45 - 70 in nether
-                else {
-                    Biome biome = entity.getLocation().getBlock().getBiome();
-                    if (biome.equals(Biome.THE_END)) { level = (int) (Math.random() * 5 + 58); }
-                    else if (biome.equals(Biome.END_HIGHLANDS)) { level = (int) (Math.random() * 5 + 67); }
-                    else if (biome.equals(Biome.END_MIDLANDS)) { level = (int) (Math.random() * 5 + 63); }
-                    else { level = (int) (Math.random() * 5 + 70); }
+                switch (entity.getWorld().getEnvironment()){
+                    case NORMAL:
+                        level = (int) (Math.random() * 16 + 50);
+                        break;
+
+                    case NETHER:
+                        level = (int) (Math.random() * 25 + 45);
+                        break;
+
+                    case THE_END:
+                        Biome biome = entity.getLocation().getBlock().getBiome();
+                        if (biome.equals(Biome.THE_END))
+                            level = (int) (Math.random() * 5 + 68);
+                        else if (biome.equals(Biome.END_HIGHLANDS))
+                            level = (int) (Math.random() * 5 + 77);
+                        else if (biome.equals(Biome.END_MIDLANDS))
+                            level = (int) (Math.random() * 5 + 73);
+                        else
+                            level = (int) (Math.random() * 5 + 80);
+                        break;
+
+                    default:
+                        level = 1;
+                        plugin.getLogger().warning("Could not determine environment for enderman, defaulting to level 1");
+                        break;
                 }
                 break;
 
             case SHULKER:
             case ENDERMITE:
-                level = (int) (Math.random() * 6 + 60);
+                level = (int) (Math.random() * 6 + 70);
                 break;
 
             case WITHER:  // TODO: Give custom logic
@@ -713,10 +731,6 @@ public class MobManager implements Listener {
         if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM || Math.random() > .2)
             return;
 
-        long start = System.currentTimeMillis();
-
-        System.out.println("spawning a skeleboi because of " + event.getEntity().getName() + " at location " + event.getEntity().getLocation().toVector());
-
         Location entityLocation = event.getLocation();
         World.Environment environment = entityLocation.getWorld().getEnvironment();
         Biome biome = entityLocation.getWorld().getBiome(entityLocation.getBlockX(), entityLocation.getBlockY(), entityLocation.getBlockZ());
@@ -726,15 +740,12 @@ public class MobManager implements Listener {
 
             case THE_END:
                 LivingEntity cs = spawnLeveledMob(entityLocation, EntityType.STRAY, "Corrupted Skeleton", 70);
-                MobCorruptedSkeleton mcs = new MobCorruptedSkeleton(EntityType.STRAY);
+                CustomMob mcs = new MobCorruptedSkeleton(EntityType.STRAY);
                 mcs.setup(cs);
                 entityToCustomMobInstanceMap.put(cs, mcs);
                 break;
 
         }
-
-        System.out.println("done, time taken: " + (System.currentTimeMillis() - start) + "ms");
-
 
     }
 
