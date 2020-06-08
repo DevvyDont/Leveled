@@ -21,8 +21,8 @@ import java.util.HashMap;
 
 public class MiscEquipmentListeners implements Listener {
 
-    private LevelingOverhaul plugin;
-    private HashMap<Material, Integer> equipmentRequirements;
+    private final LevelingOverhaul plugin;
+    private final HashMap<Material, Integer> equipmentRequirements;
 
     public MiscEquipmentListeners(LevelingOverhaul plugin) {
 
@@ -67,6 +67,40 @@ public class MiscEquipmentListeners implements Listener {
             default:
                 return false;
         }
+    }
+
+    private Sound getSoundFromMaterial(Material material) {
+        switch (material) {
+            case CROSSBOW:
+            case BOW:
+                return Sound.ITEM_CROSSBOW_SHOOT;
+            case SHIELD:
+                return Sound.ITEM_SHIELD_BREAK;
+            case ENDER_CHEST:
+            case ENDER_PEARL:
+            case ENDER_EYE:
+            case SHULKER_BOX:
+                return Sound.ENTITY_ENDERMAN_TELEPORT;
+            default:
+                return Sound.BLOCK_ANVIL_PLACE;
+        }
+    }
+
+    private boolean canBeRenamed(ItemStack itemStack){
+        return true;  // TODO
+    }
+
+    private void renameItem(ItemStack itemStack, String newName){
+        int level = plugin.getEnchantmentManager().getItemLevel(itemStack);
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.setDisplayName(ChatColor.stripColor(newName));
+        itemStack.setItemMeta(meta);
+        if (level > 0)
+            plugin.getEnchantmentManager().setItemLevel(itemStack, level);
+    }
+
+    private boolean isRightClick(Action action){
+        return action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR;
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -135,23 +169,6 @@ public class MiscEquipmentListeners implements Listener {
 
     }
 
-    private Sound getSoundFromMaterial(Material material) {
-        switch (material) {
-            case CROSSBOW:
-            case BOW:
-                return Sound.ITEM_CROSSBOW_SHOOT;
-            case SHIELD:
-                return Sound.ITEM_SHIELD_BREAK;
-            case ENDER_CHEST:
-            case ENDER_PEARL:
-            case ENDER_EYE:
-            case SHULKER_BOX:
-                return Sound.ENTITY_ENDERMAN_TELEPORT;
-            default:
-                return Sound.BLOCK_ANVIL_PLACE;
-        }
-    }
-
     @EventHandler
     public void onNametagRightClick(PlayerInteractEvent event){
 
@@ -181,23 +198,6 @@ public class MiscEquipmentListeners implements Listener {
                 }
             }
         }
-    }
-
-    private boolean canBeRenamed(ItemStack itemStack){
-        return true;  // TODO
-    }
-
-    private void renameItem(ItemStack itemStack, String newName){
-        int level = plugin.getEnchantmentManager().getItemLevel(itemStack);
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.setDisplayName(ChatColor.stripColor(newName));
-        itemStack.setItemMeta(meta);
-        if (level > 0)
-            plugin.getEnchantmentManager().setItemLevel(itemStack, level);
-    }
-
-    private boolean isRightClick(Action action){
-        return action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR;
     }
 
 }

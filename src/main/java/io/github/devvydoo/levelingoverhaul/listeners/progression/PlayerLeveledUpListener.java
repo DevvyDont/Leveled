@@ -79,6 +79,10 @@ public class PlayerLeveledUpListener implements Listener {
      */
     @EventHandler
     public void onPlayerLevelChange(PlayerLevelChangeEvent event) {
+
+        if (event.getOldLevel() >= event.getNewLevel())
+            return;
+
         // At this point we are levelling up, let's tell the server
         playerLeveledUp(event.getPlayer(), event.getOldLevel(), event.getNewLevel());
     }
