@@ -2,6 +2,8 @@ package io.github.devvydoo.levelingoverhaul.util;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -10,21 +12,24 @@ public class DamagePopup {
 
     public DamagePopup(LevelingOverhaul plugin, double amount, LivingEntity entityHit) {
 
-        if (amount <= 0) {
+        if (amount <= 0)
             return;
-        }
-//        ArmorStand armorStand = (ArmorStand) entityHit.getWorld().spawnEntity(entityHit.getLocation().add(Math.random() * 2 - 1, 2.55, Math.random() * 2 - 1), EntityType.ARMOR_STAND);
-        ArmorStand armorStand = entityHit.getWorld().spawn(
-                entityHit.getLocation().add(Math.random() - .5, 2.55, Math.random() - .5),
+
+        ArmorStand armorStand = getArmorStandPopup(entityHit.getLocation(), amount);
+        ArmorStandRemovalTask removalTask = new ArmorStandRemovalTask(armorStand);
+        removalTask.runTaskLater(plugin, 20);
+    }
+
+    protected ArmorStand getArmorStandPopup(Location spawnLocation, double amount){
+        return spawnLocation.getWorld().spawn(
+                spawnLocation.add(Math.random() - .5, 2.55, Math.random() - .5),
                 ArmorStand.class,
                 (ArmorStand a) -> {
                     a.setVisible(false);
                     a.setMarker(true);
-                    a.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + "-" + (int) Math.ceil(amount));
+                    a.setCustomName(ChatColor.RED + "" + ChatColor.BOLD + FormattingHelpers.getFormattedInteger((int) Math.ceil(amount)));
                     a.setCustomNameVisible(true);
                 });
-        ArmorStandRemovalTask removalTask = new ArmorStandRemovalTask(armorStand);
-        removalTask.runTaskLater(plugin, 20);
     }
 
     public static class ArmorStandRemovalTask extends BukkitRunnable {

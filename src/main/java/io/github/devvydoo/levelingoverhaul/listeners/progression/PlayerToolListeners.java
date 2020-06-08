@@ -67,7 +67,7 @@ public class PlayerToolListeners implements Listener {
             return;
 
         int toolLevel = plugin.getEnchantmentManager().getItemLevel(toolUsed);
-        
+
         if (toolLevel > player.getLevel())
             cancelEquipmentUse(event, player, toolLevel);
     }
