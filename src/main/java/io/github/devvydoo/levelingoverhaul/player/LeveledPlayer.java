@@ -153,7 +153,7 @@ public class LeveledPlayer {
             this.defense += getBaseArmorDefense(armor);
             protectionLevel = armor.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
             int armorTier = getArmorTier(armor);
-            this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier) / 2);
+            this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier) / 4);
         }
 
         return this.defense;
@@ -306,20 +306,20 @@ public class LeveledPlayer {
 
             case DRAGON_HEAD:
                 if (customItemManager.isDragonHelmet(armor))
-                    return 130;
+                    return 85;
             case LEATHER_CHESTPLATE:
-                return 10;
+                return 5;
             case LEATHER_LEGGINGS:
                 if (customItemManager.isDragonLeggings(armor))
-                    return 150;
-                return 8;
+                    return 90;
+                return 3;
             case LEATHER_HELMET:
             case TURTLE_HELMET:
-                return 5;
+                return 2;
             case LEATHER_BOOTS:
                 if (customItemManager.isDragonBoots(armor))
-                    return 110;
-                return 4;
+                    return 80;
+                return 1;
 
             case GOLDEN_CHESTPLATE:
                 return 15;
@@ -331,36 +331,36 @@ public class LeveledPlayer {
                 return 8;
 
             case CHAINMAIL_CHESTPLATE:
-                return 30;
+                return 22;
             case CHAINMAIL_LEGGINGS:
-                return 24;
+                return 19;
             case CHAINMAIL_HELMET:
-                return 20;
+                return 17;
             case CHAINMAIL_BOOTS:
-                return 18;
+                return 15;
 
             case IRON_CHESTPLATE:
-                return 40;
-            case IRON_LEGGINGS:
-                return 35;
-            case IRON_HELMET:
                 return 30;
+            case IRON_LEGGINGS:
+                return 27;
+            case IRON_HELMET:
+                return 23;
             case IRON_BOOTS:
-                return 28;
+                return 20;
 
             case DIAMOND_CHESTPLATE:
-                return 60;
-            case DIAMOND_LEGGINGS:
                 return 50;
-            case DIAMOND_HELMET:
-                return 45;
-            case DIAMOND_BOOTS:
+            case DIAMOND_LEGGINGS:
                 return 40;
+            case DIAMOND_HELMET:
+                return 35;
+            case DIAMOND_BOOTS:
+                return 32;
 
             case ELYTRA:
                 if (customItemManager.isDragonChestplate(armor))
-                    return 170;
-                return 20;
+                    return 100;
+                return 10;
 
             default:
                 return 0;
