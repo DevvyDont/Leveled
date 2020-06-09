@@ -3,8 +3,7 @@ package io.github.devvydoo.levelingoverhaul.mobs;
 import com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.listeners.monitors.PlayerNametags;
-import io.github.devvydoo.levelingoverhaul.mobs.custommobs.CustomMob;
-import io.github.devvydoo.levelingoverhaul.mobs.custommobs.MobCorruptedSkeleton;
+import io.github.devvydoo.levelingoverhaul.mobs.custommobs.*;
 import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -20,6 +19,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -98,6 +98,21 @@ public class MobManager implements Listener {
         setEntityNametag(entity);
         return entity;
 
+    }
+
+    public CustomMob spawnCustomLeveledMob(CustomMobType type, Location location, int level){
+
+        LivingEntity vanillaEntity = spawnLeveledMob(location, type.ENTITY_TYPE, type.NAME, level);
+        CustomMob customMob;
+
+        try { customMob = type.CLAZZ.getDeclaredConstructor(LivingEntity.class).newInstance(vanillaEntity); } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {e.printStackTrace();vanillaEntity.remove();return null;}
+        customMob.setup();
+        entityToCustomMobInstanceMap.put(vanillaEntity, customMob);
+        return customMob;
+    }
+
+    public CustomMob spawnCustomLeveledMob(CustomMobType type, Location location){
+        return spawnCustomLeveledMob(type, location, type.DEFAULT_LEVEL);
     }
 
     public int getMobLevel(LivingEntity mob) {
@@ -725,24 +740,32 @@ public class MobManager implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onCustomMobSpawn(CreatureSpawnEvent event){
 
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM || Math.random() > .2)
+        // If a mob was custom-ly spawned they cannot recursively call this event
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM)
             return;
 
         Location entityLocation = event.getLocation();
         World.Environment environment = entityLocation.getWorld().getEnvironment();
         Biome biome = entityLocation.getWorld().getBiome(entityLocation.getBlockX(), entityLocation.getBlockY(), entityLocation.getBlockZ());
+        int relativeLevel = getMobLevel(event.getEntity());
 
-        // What should we do in the end?
         switch (environment) {
 
             case THE_END:
-                LivingEntity cs = spawnLeveledMob(entityLocation, EntityType.STRAY, "Corrupted Skeleton", 70);
-                CustomMob mcs = new MobCorruptedSkeleton(EntityType.STRAY);
-                mcs.setup(cs);
-                entityToCustomMobInstanceMap.put(cs, mcs);
+
+                // What should we do in the end?
+                if (event.getEntity().getType() == EntityType.ENDERMAN && Math.random() < CustomMobType.CORRUPTED_SKELETON.FREQUENCY)
+                    spawnCustomLeveledMob(CustomMobType.CORRUPTED_SKELETON, entityLocation, Math.max(relativeLevel, CustomMobType.CORRUPTED_SKELETON.DEFAULT_LEVEL));
+                break;
+
+            case NETHER:
+
+                // What should we do in the nether?
+                if (event.getEntity().getType() == EntityType.WITHER_SKELETON && Math.random() < CustomMobType.NETHER_FOX.FREQUENCY)
+                    spawnCustomLeveledMob(CustomMobType.NETHER_FOX, entityLocation);
                 break;
 
         }

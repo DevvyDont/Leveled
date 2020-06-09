@@ -5,29 +5,27 @@ import org.bukkit.entity.LivingEntity;
 
 public abstract class CustomMob {
 
-    protected final EntityType actualMobType;
     protected final CustomMobLootTable lootTable;
-    protected LivingEntity entity = null;
+    protected LivingEntity entity;
 
-    public CustomMob(EntityType actualMobType, CustomMobLootTable lootTable) {
-        this.actualMobType = actualMobType;
+    public CustomMob(LivingEntity entity, CustomMobLootTable lootTable) {
         this.lootTable = lootTable;
+        this.entity = entity;
+        setup();
     }
 
-    public CustomMob(EntityType actualMobType) {
-        this(actualMobType, new CustomMobLootTable());
-    }
-
-    public EntityType getActualMobType() {
-        return actualMobType;
+    public CustomMob(LivingEntity entity) {
+        this(entity, new CustomMobLootTable());
     }
 
     public CustomMobLootTable getLootTable() {
         return lootTable;
     }
 
+    public abstract CustomMobType getCustomMobType();
+
     /**
      * Any custom logic that we should run on the mob
      */
-    public abstract void setup(LivingEntity entity);
+    public abstract void setup();
 }
