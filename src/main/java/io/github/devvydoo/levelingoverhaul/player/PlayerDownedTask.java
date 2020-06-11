@@ -3,12 +3,12 @@ package io.github.devvydoo.levelingoverhaul.player;
 import com.google.common.base.Strings;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.party.PartyManager;
-import io.github.devvydoo.levelingoverhaul.util.FormattingHelpers;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Shulker;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -28,6 +28,8 @@ public class PlayerDownedTask extends BukkitRunnable {
     private final int TARGET_REVIVE_TICKS = 120;
 
     private final ArmorStand playerLabel;
+    private final Shulker playerPusherPassenger;
+    private final ArmorStand playerPusher;  // This is an armor stand with a shulker riding it that shoves the player into the ground
 
     public PlayerDownedTask(final PartyManager partyManager, final Player player, final Entity killer, int seconds){
         this.partyManager = partyManager;
@@ -44,11 +46,39 @@ public class PlayerDownedTask extends BukkitRunnable {
                     a.setCustomName("This is a label.");
                     a.setCustomNameVisible(true);
                 });
+
+        this.playerPusherPassenger = player.getWorld().spawn(
+                player.getLocation().add(0, 1, 0),
+                Shulker.class,
+                (Shulker s) -> {
+                    s.setInvulnerable(true);
+                    s.setAI(false);
+                    s.setSilent(true);
+                    s.setCustomNameVisible(false);
+                    s.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999, 1, false, false, false));
+                }
+        );
+
+        this.playerPusher = player.getLocation().getWorld().spawn(
+                player.getLocation(),
+                ArmorStand.class,
+                (ArmorStand a) -> {
+                    a.setVisible(false);
+                    a.setInvulnerable(true);
+                    a.setMarker(true);
+                    a.addPassenger(this.playerPusherPassenger);
+                }
+        );
+
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 120 * 20, 1, false, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 120 * 20, 5, false, false, false));
     }
 
 
     @Override
     public void run() {
+
+        updateArmorStands();
 
         if (temporaryReviveTicks > 0) {
             this.totalReviveTicks++;
@@ -63,31 +93,13 @@ public class PlayerDownedTask extends BukkitRunnable {
             }
         }
 
-        LevelingOverhaul.getPlugin(LevelingOverhaul.class).getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_RED + "" + ChatColor.BOLD + "DOWNED! " + getSecondsRemainingWithDecimal() + "s");
-
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1, 3, false, false, false));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 1, 5, false, false, false));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1, -3, false, false, false));
-        player.setGliding(true);
-
         // If the player is being revived they can't move
         if (temporaryReviveTicks > 0)
-            player.setVelocity(player.getVelocity().zero());
-
-        // If the block below them is something they can fall through, don't let them move on the xz plane and just let them fall
-        else if (!player.isOnGround()) {
             player.setVelocity(player.getVelocity().setX(0).setZ(0));
-            player.setGliding(false);
-        }
 
-        // Restrict their movement speed, don't count their vertical velocity however
-        if (temporaryReviveTicks <= 0 && player.getVelocity().setY(0).length() > .078)
-            player.setVelocity(player.getVelocity().multiply(.3).setY(player.getVelocity().getY()));
-
-        updateArmorStand();
+        player.setGliding(false);
 
         if (currentTick >= TARGET_TICKS) {
-            player.setInvulnerable(false);
             player.setHealth(0);
             cancel();
         } else if (totalReviveTicks >= TARGET_REVIVE_TICKS){
@@ -100,14 +112,23 @@ public class PlayerDownedTask extends BukkitRunnable {
 
             cancel();
         }
+
+        if (!isCancelled())
+            LevelingOverhaul.getPlugin(LevelingOverhaul.class).getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_RED + "" + ChatColor.BOLD + "DOWNED! " + getSecondsRemainingWithDecimal() + "s");
     }
 
     @Override
     public synchronized void cancel() throws IllegalStateException {
         this.playerLabel.remove();
+        this.playerPusherPassenger.remove();
+        this.playerPusher.remove();
+        this.player.setInvulnerable(false);
+        this.player.removePotionEffect(PotionEffectType.SLOW);
+        this.player.removePotionEffect(PotionEffectType.SLOW_DIGGING);
+        this.player.setGlowing(false);
+        this.player.setRemainingAir(20 * 5);
         super.cancel();
     }
-
 
     public void doReviveTick(Player reviver){
         this.lastReviver = reviver;
@@ -130,10 +151,21 @@ public class PlayerDownedTask extends BukkitRunnable {
         return String.format("%s.%s", getSecondsRemaining(), 9 - (currentTick % 20 / 2));
     }
 
-    private void updateArmorStand(){
+    private void updateArmorStands(){
+
+        // First handle the downed label above the player
         double yOffset = Math.sin(currentTick / 5.) / 4. + 1.5;
         this.playerLabel.teleport(this.player.getLocation().add(0, yOffset, 0));
         this.playerLabel.setCustomName(ChatColor.GREEN.toString() + ChatColor.BOLD + "REVIVE " + ChatColor.DARK_GRAY + "☠" + (getSecondsRemaining() % 2 == 0 ? ChatColor.RED : ChatColor.DARK_RED) + getSecondsRemainingWithDecimal() + "s" + getReviveProgressText());
+
+        // Next handle the armor stand that shoves the player in the ground
+        playerPusher.eject();
+        boolean armorStandTpSuccess = playerPusher.teleport(player.getLocation().add(0, 1, 0));
+
+        if (armorStandTpSuccess)
+            playerPusher.addPassenger(playerPusherPassenger);
+        else
+            playerPusherPassenger.teleport(player.getLocation().add(0, 1, 0));
     }
 
     private String getReviveProgressText() {

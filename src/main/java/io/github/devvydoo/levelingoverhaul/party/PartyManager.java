@@ -11,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -61,8 +62,6 @@ public class PartyManager implements Listener {
 
     public void downPlayer(Player player, Entity killer){
 
-        LevelingOverhaul plugin = LevelingOverhaul.getPlugin(LevelingOverhaul.class);
-
         for (Entity e : player.getNearbyEntities(100, 50, 100))
             if (e instanceof Creature)
                 if (((Creature)e).getTarget() == player)
@@ -103,14 +102,11 @@ public class PartyManager implements Listener {
     public void revivePlayer(Player player){
         downedPlayers.get(player.getUniqueId()).cancel();
         downedPlayers.remove(player.getUniqueId());
-        player.setInvulnerable(false);
-        player.setGlowing(false);
-        for (PotionEffect activePotionEffect : player.getActivePotionEffects())
-            player.removePotionEffect(activePotionEffect.getType());
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20 * 10, 3, true, false, true));
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20 * 30, 3, false, false, true));
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * .1);
         player.sendTitle(ChatColor.AQUA + "REVIVED!", "", 2, 20, 10);
+        LevelingOverhaul.getPlugin(LevelingOverhaul.class).getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.AQUA + "REVIVED");
         player.getWorld().playSound(player.getLocation(), Sound.ITEM_TOTEM_USE, .9f, 1);
     }
 
@@ -315,14 +311,6 @@ public class PartyManager implements Listener {
 
     @EventHandler
     public void onDownedPlayerDroppedItem(PlayerDropItemEvent event){
-        if (!downedPlayers.containsKey(event.getPlayer().getUniqueId()))
-            return;
-
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onDownedPlayerJump(PlayerJumpEvent event){
         if (!downedPlayers.containsKey(event.getPlayer().getUniqueId()))
             return;
 
