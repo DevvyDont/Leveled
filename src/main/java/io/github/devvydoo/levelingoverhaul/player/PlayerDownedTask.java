@@ -65,13 +65,24 @@ public class PlayerDownedTask extends BukkitRunnable {
 
         LevelingOverhaul.getPlugin(LevelingOverhaul.class).getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_RED + "" + ChatColor.BOLD + "DOWNED! " + getSecondsRemainingWithDecimal() + "s");
 
-        player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 2, -3, false, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1, 3, false, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 1, 5, false, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1, -3, false, false, false));
         player.setGliding(true);
 
-        if (player.getWorld().getBlockAt(player.getLocation().subtract(0, 1, 0)).isPassable())
+        // If the player is being revived they can't move
+        if (temporaryReviveTicks > 0)
+            player.setVelocity(player.getVelocity().zero());
+
+        // If the block below them is something they can fall through, don't let them move on the xz plane and just let them fall
+        else if (!player.isOnGround()) {
             player.setVelocity(player.getVelocity().setX(0).setZ(0));
-        else if (player.getVelocity().length() > .078)
-            player.setVelocity(player.getVelocity().multiply(.3));
+            player.setGliding(false);
+        }
+
+        // Restrict their movement speed, don't count their vertical velocity however
+        if (temporaryReviveTicks <= 0 && player.getVelocity().setY(0).length() > .078)
+            player.setVelocity(player.getVelocity().multiply(.3).setY(player.getVelocity().getY()));
 
         updateArmorStand();
 

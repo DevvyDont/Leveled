@@ -1,11 +1,9 @@
 package io.github.devvydoo.levelingoverhaul.party;
 
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.player.PlayerDownedTask;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -13,6 +11,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,8 +30,13 @@ public class PartyManager implements Listener {
         downedPlayers = new HashMap<>();
         numDowns = new HashMap<>();
 
-        for (Player p : Bukkit.getOnlinePlayers())
+        for (Player p : Bukkit.getOnlinePlayers()) {
+
             numDowns.put(p.getUniqueId(), 0);
+
+            if (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
+                p.setInvulnerable(false);
+        }
     }
 
     private int getSecondWindSeconds(Player player){
@@ -55,6 +60,8 @@ public class PartyManager implements Listener {
     }
 
     public void downPlayer(Player player, Entity killer){
+
+        LevelingOverhaul plugin = LevelingOverhaul.getPlugin(LevelingOverhaul.class);
 
         for (Entity e : player.getNearbyEntities(100, 50, 100))
             if (e instanceof Creature)
@@ -98,6 +105,10 @@ public class PartyManager implements Listener {
         downedPlayers.remove(player.getUniqueId());
         player.setInvulnerable(false);
         player.setGlowing(false);
+        for (PotionEffect activePotionEffect : player.getActivePotionEffects())
+            player.removePotionEffect(activePotionEffect.getType());
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20 * 10, 3, true, false, true));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20 * 30, 3, false, false, true));
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * .1);
         player.sendTitle(ChatColor.AQUA + "REVIVED!", "", 2, 20, 10);
         player.getWorld().playSound(player.getLocation(), Sound.ITEM_TOTEM_USE, .9f, 1);
@@ -304,6 +315,14 @@ public class PartyManager implements Listener {
 
     @EventHandler
     public void onDownedPlayerDroppedItem(PlayerDropItemEvent event){
+        if (!downedPlayers.containsKey(event.getPlayer().getUniqueId()))
+            return;
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onDownedPlayerJump(PlayerJumpEvent event){
         if (!downedPlayers.containsKey(event.getPlayer().getUniqueId()))
             return;
 
