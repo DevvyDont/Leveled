@@ -3,6 +3,7 @@ package io.github.devvydoo.levelingoverhaul.mobs;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.mobs.custommobs.*;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -11,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -232,10 +234,16 @@ public class MobManager implements Listener {
     public void onEntityTamed(EntityTameEvent event){
 
         if (event.getOwner() instanceof Player){
-            int newEntitylevel = ((Player)event.getOwner()).getLevel();  // Gets the level of the player who tamed
-            getLeveledEntity(event.getEntity()).setLevel(newEntitylevel, true);
-            getLeveledEntity(event.getEntity()).update();
-            event.getEntity().getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, .5f, .5f);
+            // ok honestly frick minecraft, after this event fires its going to set the mobs hp to whatever value it wants, so we have to do this later
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    int newEntitylevel = ((Player)event.getOwner()).getLevel();  // Gets the level of the player who tamed
+                    getLeveledEntity(event.getEntity()).setLevel(newEntitylevel, true);
+                    getLeveledEntity(event.getEntity()).update();
+                    event.getEntity().getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, .5f, .5f);
+                }
+            }.runTaskLater(LevelingOverhaul.getPlugin(LevelingOverhaul.class), 1);
         }
 
     }
