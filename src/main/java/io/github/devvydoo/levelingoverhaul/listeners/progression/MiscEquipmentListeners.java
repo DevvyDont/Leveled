@@ -1,19 +1,27 @@
 package io.github.devvydoo.levelingoverhaul.listeners.progression;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
+import io.github.devvydoo.levelingoverhaul.mobs.LeveledLivingEntity;
 import io.github.devvydoo.levelingoverhaul.player.PlayerExperience;
 import io.github.devvydoo.levelingoverhaul.player.LevelRewards;
 import io.github.devvydoo.levelingoverhaul.util.NametagInterface;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -198,6 +206,41 @@ public class MiscEquipmentListeners implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onHoldingNametagRightClickEntity(PlayerInteractEntityEvent event) {
+
+        if (event.getRightClicked() instanceof LivingEntity)
+            System.out.println(((LivingEntity) event.getRightClicked()).getMaxHealth());
+
+        // Don't do players
+        if (event.getRightClicked() instanceof Player)
+            return;
+
+        if (!(event.getHand() == EquipmentSlot.HAND || event.getHand() == EquipmentSlot.OFF_HAND))
+            return;
+
+        PlayerInventory playerInventory = event.getPlayer().getInventory();
+        ItemStack itemUsed = event.getHand() == EquipmentSlot.HAND ? playerInventory.getItemInMainHand() : playerInventory.getItemInOffHand();
+
+        if (itemUsed.getType() != Material.NAME_TAG)
+            return;
+
+        event.setCancelled(true);
+
+        if (!itemUsed.getItemMeta().getPersistentDataContainer().has(plugin.getNametagKey(), PersistentDataType.STRING))
+            return;
+
+        String newName = itemUsed.getItemMeta().getPersistentDataContainer().get(plugin.getNametagKey(), PersistentDataType.STRING);
+
+        LeveledLivingEntity leveledLivingEntity = plugin.getMobManager().getLeveledEntity((LivingEntity) event.getRightClicked());
+        leveledLivingEntity.setName(newName);
+        leveledLivingEntity.update();
+
+        if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
+            itemUsed.setAmount(itemUsed.getAmount() - 1);
+
     }
 
 }
