@@ -510,10 +510,14 @@ public class LeveledLivingEntity {
                 multiplier = .2 + size * .2;
                 break;
 
+            case ELDER_GUARDIAN:
+                multiplier = 100;
+                break;
+
             case ENDER_DRAGON:
             case WITHER:
             case GIANT:
-                multiplier = 300;
+                multiplier = 150;
                 for (Player ignored : entity.getLocation().getNearbyPlayers(500))
                     multiplier += Math.random() * 50 + 100;
                 break;
