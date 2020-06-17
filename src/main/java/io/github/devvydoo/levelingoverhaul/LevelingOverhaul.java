@@ -22,7 +22,9 @@ import io.github.devvydoo.levelingoverhaul.player.ActionBarManager;
 import io.github.devvydoo.levelingoverhaul.player.LeveledPlayerManager;
 import io.github.devvydoo.levelingoverhaul.player.ScoreboardManager;
 import io.github.devvydoo.levelingoverhaul.items.Recipes;
+import org.bukkit.GameRule;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -110,6 +112,10 @@ public final class LevelingOverhaul extends JavaPlugin {
         // Is flight enabled?
         if (!getServer().getAllowFlight())
             getLogger().warning("The server does not have flight enabled, which may cause some issues in the late game. It is recommended that flight be enabled using this plugin.");
+
+        // keep inventory should be true, items are balanced to be like an mmo TODO: make config option
+        for (World w : getServer().getWorlds())
+            w.setGameRule(GameRule.KEEP_INVENTORY, true);
 
         // Plugin startup logic
         NAMETAG_KEY = new NamespacedKey(this, "name");

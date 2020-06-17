@@ -90,5 +90,6 @@ public class PlayerLeveledUpListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         event.setShouldDropExperience(false);
+        event.setNewTotalExp(event.getEntity().getTotalExperience());
     }
 }
