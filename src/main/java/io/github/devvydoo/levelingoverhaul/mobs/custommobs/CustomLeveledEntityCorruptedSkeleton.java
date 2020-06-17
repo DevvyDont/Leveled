@@ -5,15 +5,15 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
-public class MobCorruptedSkeleton extends CustomMob {
+public class CustomLeveledEntityCorruptedSkeleton extends CustomLeveledEntity {
 
-    public MobCorruptedSkeleton(LivingEntity entity) {
+    public CustomLeveledEntityCorruptedSkeleton(LivingEntity entity) {
         super(entity);
     }
 
     @Override
-    public CustomMobType getCustomMobType() {
-        return CustomMobType.CORRUPTED_SKELETON;
+    public CustomLeveledEntityType getCustomMobType() {
+        return CustomLeveledEntityType.CORRUPTED_SKELETON;
     }
 
     @Override

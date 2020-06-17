@@ -4,16 +4,16 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class CustomMobLootTable {
+public class CustomLeveledEntityLootTable {
 
-    List<CustomMobLootTableItem> possibleItems;
+    List<CustomLeveledEntityLootTableItem> possibleItems;
     private boolean oneShot;
 
-    public CustomMobLootTable(CustomMobLootTableItem... lootTableItems){
+    public CustomLeveledEntityLootTable(CustomLeveledEntityLootTableItem... lootTableItems){
         this(false, lootTableItems);
     }
 
-    public CustomMobLootTable(boolean oneShot, CustomMobLootTableItem... lootTableItems){
+    public CustomLeveledEntityLootTable(boolean oneShot, CustomLeveledEntityLootTableItem... lootTableItems){
         this.oneShot = oneShot;
         possibleItems = new ArrayList<>();
         possibleItems.addAll(Arrays.asList(lootTableItems));
@@ -24,11 +24,11 @@ public class CustomMobLootTable {
      *
      * @return
      */
-    public List<CustomMobLootTableItem> getPossibleItems() {
+    public List<CustomLeveledEntityLootTableItem> getPossibleItems() {
         return possibleItems;
     }
 
-    public void setPossibleItems(List<CustomMobLootTableItem> possibleItems) {
+    public void setPossibleItems(List<CustomLeveledEntityLootTableItem> possibleItems) {
         this.possibleItems = possibleItems;
     }
 
@@ -57,7 +57,7 @@ public class CustomMobLootTable {
             Collections.shuffle(possibleItems);
             buffer.add(possibleItems.get(0).getItem());
         } else {
-            for (CustomMobLootTableItem lootTableItem : possibleItems)
+            for (CustomLeveledEntityLootTableItem lootTableItem : possibleItems)
                 if (Math.random() + luckBoost < lootTableItem.getChance())
                     buffer.add(lootTableItem.getItem());
         }

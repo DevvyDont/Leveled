@@ -2,12 +2,12 @@ package io.github.devvydoo.levelingoverhaul.mobs.custommobs;
 
 import org.bukkit.inventory.ItemStack;
 
-public class CustomMobLootTableItem {
+public class CustomLeveledEntityLootTableItem {
 
     private final ItemStack item;
     private float chance;
 
-    public CustomMobLootTableItem(ItemStack item, float chance) {
+    public CustomLeveledEntityLootTableItem(ItemStack item, float chance) {
         this.item = item;
         this.chance = chance;
     }

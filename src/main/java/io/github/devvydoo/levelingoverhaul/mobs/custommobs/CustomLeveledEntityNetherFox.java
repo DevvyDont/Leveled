@@ -8,15 +8,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class MobNetherFox extends CustomMob {
+public class CustomLeveledEntityNetherFox extends CustomLeveledEntity {
 
-    public MobNetherFox(LivingEntity entity) {
+    public CustomLeveledEntityNetherFox(LivingEntity entity) {
         super(entity);
     }
 
     @Override
-    public CustomMobType getCustomMobType() {
-        return CustomMobType.NETHER_FOX;
+    public CustomLeveledEntityType getCustomMobType() {
+        return CustomLeveledEntityType.NETHER_FOX;
     }
 
     @Override

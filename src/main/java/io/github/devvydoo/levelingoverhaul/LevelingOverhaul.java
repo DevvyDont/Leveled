@@ -91,6 +91,26 @@ public final class LevelingOverhaul extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        // First do some checks to make sure the server is setup right...
+        // Can HP be really high?
+        if (getServer().spigot().getSpigotConfig().getDouble("settings.attribute.maxHealth.max") < 2000000000){
+            getLogger().severe("Your spigot server is not setup correctly for this plugin! You must set max health attribute in spigot.yml to at least 2 billion or higher! (2000000000)\nThe current setting is: " + Math.round(getServer().spigot().getSpigotConfig().getDouble("settings.attribute.maxHealth.max")));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        // Can attack damage be really high?
+        if (getServer().spigot().getSpigotConfig().getDouble("settings.attribute.attackDamage.max") < 10000000){
+            getLogger().severe("Your spigot server is not setup correctly for this plugin! You must set max attack damage attribute in spigot.yml to at least 10 million or higher! (10000000)\nThe current setting is: " + Math.round(getServer().spigot().getSpigotConfig().getDouble("settings.attribute.attackDamage.max")));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        // Is flight enabled?
+        if (!getServer().getAllowFlight())
+            getLogger().warning("The server does not have flight enabled, which may cause some issues in the late game. It is recommended that flight be enabled using this plugin.");
+
         // Plugin startup logic
         NAMETAG_KEY = new NamespacedKey(this, "name");
         // We need this key for later, not sure if there's a better way to do this because i don't really understand NamespacedKeys :(
@@ -155,14 +175,14 @@ public final class LevelingOverhaul extends JavaPlugin {
         Recipes.registerRecipes(this);
 
         // Listeners involving mobs
-        mobManager = new MobManager(this, getServer().getWorlds());  // Initialize all worlds.
+        mobManager = new MobManager(getServer().getWorlds());  // Initialize all worlds.
         getServer().getPluginManager().registerEvents(mobManager, this);
         getServer().getPluginManager().registerEvents(new DamagePopupManager(this), this);
         getServer().getPluginManager().registerEvents(bossManager, this);
 
         // Register commands
         PartyCommand partyCommand = new PartyCommand(this);
-        getCommand("adminmob").setExecutor(new TestMobCommand(this));
+        getCommand("adminmob").setExecutor(new TestMobCommand());
         getCommand("stats").setExecutor(new PlayerStatsCommand(this));
         getCommand("party").setExecutor(partyCommand);
         getCommand("party").setTabCompleter(partyCommand);
