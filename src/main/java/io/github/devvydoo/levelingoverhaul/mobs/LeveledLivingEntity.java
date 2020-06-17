@@ -72,7 +72,8 @@ public class LeveledLivingEntity {
 
     public void setLevel(int newLevel, boolean updateStats) {
         entity.getPersistentDataContainer().set(MobManager.MOB_LEVEL_KEY, PersistentDataType.INTEGER, newLevel);
-        setEntityAttributes(entity, newLevel);
+        if (updateStats)
+            setEntityAttributes(entity, newLevel);
     }
 
     public String getName() {
@@ -105,7 +106,7 @@ public class LeveledLivingEntity {
         if (!entity.isValid())
             return;
 
-        int hp = (int) Math.round(entity.getHealth() + deltaHP);
+        int hp = Math.max((int) Math.round(entity.getHealth() + deltaHP), 0);
         String hpTextColor = PlayerNametags.getChatColorFromHealth(hp, entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         entity.setCustomName(LEVEL_COLOR + "Lv. " + getLevel() + " " + getEntityNametagColor(entity) + ChatColor.stripColor(getName()) + " " + ChatColor.DARK_RED + "❤" + hpTextColor + hp);
     }
@@ -398,11 +399,9 @@ public class LeveledLivingEntity {
                 break;
         }
 
-        if (entity.getAttribute(Attribute.GENERIC_MAX_HEALTH) != null) {
-            double expectedHP = calculateEntityHealth(entity, level);
-            Objects.requireNonNull(entity.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(expectedHP);
-            entity.setHealth(expectedHP);
-        }
+        double expectedHP = calculateEntityHealth(entity, level);
+        entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(expectedHP);
+        entity.setHealth(expectedHP);
     }
 
     /**
