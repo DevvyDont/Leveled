@@ -11,12 +11,12 @@ import org.bukkit.inventory.ItemStack;
 
 public class PotentialEnchantment {
 
-    private EnchantmentManager enchantmentManager;
-    private CustomItemManager customItemManager;
-    private Object enchantType;
-    private int minPlayerLevelRequired;  // The minimum level required to obtain this enchantment
-    private int maxPlayerLevelRequired;  // The maximum player level required to achieve max enchant level if needed
-    private int maxEnchantLevel;  // The max enchant level this enchantment can be
+    private final EnchantmentManager enchantmentManager;
+    private final CustomItemManager customItemManager;
+    private final Object enchantType;
+    private final int minPlayerLevelRequired;  // The minimum level required to obtain this enchantment
+    private final int maxPlayerLevelRequired;  // The maximum player level required to achieve max enchant level if needed
+    private final int maxEnchantLevel;  // The max enchant level this enchantment can be
 
     public PotentialEnchantment(CustomItemManager customItemManager, EnchantmentManager enchantmentManager, Object enchantType, int minimumLevel, int maximumLevel, int maxEnchantLevel) {
         this.customItemManager = customItemManager;

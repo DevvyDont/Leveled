@@ -29,7 +29,7 @@ import java.util.List;
 
 public class CustomItemManager implements Listener {
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     // These keys should never be changed for existing worlds, they will break custom items
     public final NamespacedKey DRAGON_SWORD_KEY;

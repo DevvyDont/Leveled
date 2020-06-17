@@ -34,13 +34,13 @@ import static org.bukkit.event.EventPriority.HIGHEST;
 
 public class EnchantingInterface implements Listener {
 
-    private LevelingOverhaul plugin;
-    private String INTERFACE_NAME = ChatColor.LIGHT_PURPLE + "Enchanting";
-    private int LAPIS_SLOT = 38;
-    private int BUTTON_SLOT = 42;
-    private int EQUIPMENT_SLOT = 13;
-    private HashMap<Player, Long> interfaceInteractCooldownPlayers = new HashMap<>();
-    private ArrayList<Player> inventoryRefreshCooldownPlayers = new ArrayList<>();
+    private final LevelingOverhaul plugin;
+    private final String INTERFACE_NAME = ChatColor.LIGHT_PURPLE + "Enchanting";
+    private final int LAPIS_SLOT = 38;
+    private final int BUTTON_SLOT = 42;
+    private final int EQUIPMENT_SLOT = 13;
+    private final HashMap<Player, Long> interfaceInteractCooldownPlayers = new HashMap<>();
+    private final ArrayList<Player> inventoryRefreshCooldownPlayers = new ArrayList<>();
 
     public EnchantingInterface(LevelingOverhaul plugin) {
         this.plugin = plugin;

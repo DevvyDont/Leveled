@@ -20,7 +20,7 @@ public enum Rarity {
     public final String LEVEL_LABEL_COLOR;
     public final String NAME_LABEL_COLOR;
 
-    private Rarity(String title, String levelColor, String nameColor){
+    Rarity(String title, String levelColor, String nameColor){
         this.RARITY_TITLE = title;
         this.LEVEL_LABEL_COLOR = levelColor;
         this.NAME_LABEL_COLOR = nameColor;

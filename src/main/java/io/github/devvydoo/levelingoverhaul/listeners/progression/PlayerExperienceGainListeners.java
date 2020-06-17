@@ -37,7 +37,7 @@ import java.util.Map;
  */
 public class PlayerExperienceGainListeners implements Listener {
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public PlayerExperienceGainListeners(LevelingOverhaul plugin) {
         this.plugin = plugin;
@@ -282,7 +282,7 @@ public class PlayerExperienceGainListeners implements Listener {
             leveledPlayer.giveExperience(xp);
 
             player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
-            plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_GREEN + "+" + FormattingHelpers.getFormattedInteger(xp) + "XP");;
+            plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_GREEN + "+" + FormattingHelpers.getFormattedInteger(xp) + "XP");
 
         } else {
 

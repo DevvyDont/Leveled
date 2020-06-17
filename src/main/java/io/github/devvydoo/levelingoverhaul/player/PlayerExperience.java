@@ -9,7 +9,7 @@ public class PlayerExperience {
 
         public static final int LEVEL_CAP = 100;
 
-        private LeveledPlayer player;
+        private final LeveledPlayer player;
 
         public PlayerExperience(LeveledPlayer player) {
             this.player = player;

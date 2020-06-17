@@ -13,7 +13,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class NametagCommand implements CommandExecutor {
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public NametagCommand(LevelingOverhaul plugin) {
         this.plugin = plugin;

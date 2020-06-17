@@ -13,11 +13,11 @@ import java.util.HashMap;
 
 public class EnchantmentCalculator {
 
-    private CustomItemManager customItemManager;
-    private EnchantmentManager enchantmentManager;
-    private ArrayList<PotentialEnchantment> potentialEnchantments;  // A list of enchantments we can have when init'd
-    private int playerLevel;  // The player level that we are calculating enchants for
-    private int qualityFactor;  // The quality of the enchants to factor in when calculating types
+    private final CustomItemManager customItemManager;
+    private final EnchantmentManager enchantmentManager;
+    private final ArrayList<PotentialEnchantment> potentialEnchantments;  // A list of enchantments we can have when init'd
+    private final int playerLevel;  // The player level that we are calculating enchants for
+    private final int qualityFactor;  // The quality of the enchants to factor in when calculating types
 
     /**
      * Constructs an object used to perform a single enchant event. New object must be made per enchant, no re-use

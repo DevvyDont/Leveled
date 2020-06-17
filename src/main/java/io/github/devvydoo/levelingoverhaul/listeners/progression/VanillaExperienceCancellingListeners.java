@@ -12,7 +12,7 @@ import org.bukkit.event.Listener;
  */
 public class VanillaExperienceCancellingListeners implements Listener {
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public VanillaExperienceCancellingListeners(LevelingOverhaul plugin) {
         this.plugin = plugin;

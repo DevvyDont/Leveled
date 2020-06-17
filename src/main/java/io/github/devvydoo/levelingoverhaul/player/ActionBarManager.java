@@ -15,7 +15,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 public class ActionBarManager implements Listener {
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public ActionBarManager(LevelingOverhaul plugin) {
         this.plugin = plugin;

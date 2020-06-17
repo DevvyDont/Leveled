@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class DebugEnchant implements CommandExecutor {
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public DebugEnchant(LevelingOverhaul plugin) {
         this.plugin = plugin;

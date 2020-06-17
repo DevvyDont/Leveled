@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class FoodEnchantments implements Listener {
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public FoodEnchantments(LevelingOverhaul plugin) {
         this.plugin = plugin;

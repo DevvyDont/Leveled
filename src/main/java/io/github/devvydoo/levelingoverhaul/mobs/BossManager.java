@@ -27,7 +27,7 @@ import java.util.HashMap;
 
 public class BossManager implements Listener {
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public BossManager(LevelingOverhaul plugin) {
         this.plugin = plugin;
@@ -245,7 +245,7 @@ public class BossManager implements Listener {
             plugin.getServer().broadcastMessage(ChatColor.GREEN + "" + ChatColor.BOLD + event.getPlayer().getDisplayName() + ChatColor.GRAY + " has found a " + event.getItem().getItemStack().getItemMeta().getDisplayName() + ChatColor.GRAY + "!");
     }
 
-    private ArrayList<Player> poisonedPlayers = new ArrayList<>();
+    private final ArrayList<Player> poisonedPlayers = new ArrayList<>();
 
     @EventHandler
     public void onDragonDirectHit(EntityDamageByEntityEvent event) {

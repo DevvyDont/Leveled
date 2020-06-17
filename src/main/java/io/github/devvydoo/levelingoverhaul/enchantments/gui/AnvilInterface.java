@@ -23,11 +23,11 @@ import java.util.Collection;
 
 public class AnvilInterface implements Listener {
 
-    private LevelingOverhaul plugin;
-    private String ANVIL_INTERFACE_NAME = ChatColor.DARK_GRAY + "Anvil";
-    private String GRINDSTONE_INTERFACE_NAME = ChatColor.DARK_GRAY + "Grindstone";
-    private int ANVIL_INPUT_SLOT = 20;
-    private int ANVIL_OUTPUT_SLOT = 24;
+    private final LevelingOverhaul plugin;
+    private final String ANVIL_INTERFACE_NAME = ChatColor.DARK_GRAY + "Anvil";
+    private final String GRINDSTONE_INTERFACE_NAME = ChatColor.DARK_GRAY + "Grindstone";
+    private final int ANVIL_INPUT_SLOT = 20;
+    private final int ANVIL_OUTPUT_SLOT = 24;
 
     public AnvilInterface(LevelingOverhaul plugin) {
         this.plugin = plugin;

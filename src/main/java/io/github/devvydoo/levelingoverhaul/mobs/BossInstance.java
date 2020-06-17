@@ -10,10 +10,10 @@ import java.util.HashMap;
 
 public class BossInstance {
 
-    private Entity boss;  // Stores the actual boss
-    private int experiencePool;  // The XP to be distributed when this boss dies
-    private ArrayList<Player> activePlayers;  // A list of active players in the boss fight
-    private HashMap<Player, Double> playerDamageMap;  // How much damage all the players have done
+    private final Entity boss;  // Stores the actual boss
+    private final int experiencePool;  // The XP to be distributed when this boss dies
+    private final ArrayList<Player> activePlayers;  // A list of active players in the boss fight
+    private final HashMap<Player, Double> playerDamageMap;  // How much damage all the players have done
 
     public BossInstance(Entity boss, int experiencePool, ArrayList<Player> activePlayers) {
         this.boss = boss;

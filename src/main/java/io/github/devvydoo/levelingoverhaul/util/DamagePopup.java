@@ -34,7 +34,7 @@ public class DamagePopup {
 
     public static class ArmorStandRemovalTask extends BukkitRunnable {
 
-        private ArmorStand popup;
+        private final ArmorStand popup;
 
         public ArmorStandRemovalTask(ArmorStand popup) {
             this.popup = popup;

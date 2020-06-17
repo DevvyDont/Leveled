@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 
 public class PlayerStatsCommand implements CommandExecutor {
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public PlayerStatsCommand(LevelingOverhaul plugin) {
         this.plugin = plugin;

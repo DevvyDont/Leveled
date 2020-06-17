@@ -88,7 +88,7 @@ public class EnchantmentManager {
 
     public final int MAX_ENCHANT_QUALITY_FACTOR = 12;
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public EnchantmentManager(LevelingOverhaul plugin) {
         this.plugin = plugin;

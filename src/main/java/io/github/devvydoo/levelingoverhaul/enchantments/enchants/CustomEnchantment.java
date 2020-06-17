@@ -7,9 +7,9 @@ import org.bukkit.ChatColor;
 
 public class CustomEnchantment {
 
-    private EnchantmentManager enchantmentManager;
-    private CustomEnchantType type;
-    private int level;
+    private final EnchantmentManager enchantmentManager;
+    private final CustomEnchantType type;
+    private final int level;
 
     public CustomEnchantment(EnchantmentManager enchantmentManager, CustomEnchantType type, int level) {
         this.enchantmentManager = enchantmentManager;

@@ -16,12 +16,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerNametags implements Listener {
 
-    private static String HEALTHY_HP_COLOR = ChatColor.GREEN.toString();
-    private static String DAMAGED_HP_COLOR = ChatColor.YELLOW.toString();
-    private static String HURT_HP_COLOR = ChatColor.GOLD.toString();
-    private static String CRITICAL_HP_COLOR = ChatColor.RED.toString();
-    private static String DEAD_HP_COLOR = ChatColor.DARK_GRAY.toString();
-    private LevelingOverhaul plugin;
+    private static final String HEALTHY_HP_COLOR = ChatColor.GREEN.toString();
+    private static final String DAMAGED_HP_COLOR = ChatColor.YELLOW.toString();
+    private static final String HURT_HP_COLOR = ChatColor.GOLD.toString();
+    private static final String CRITICAL_HP_COLOR = ChatColor.RED.toString();
+    private static final String DEAD_HP_COLOR = ChatColor.DARK_GRAY.toString();
+    private final LevelingOverhaul plugin;
 
     public PlayerNametags(LevelingOverhaul plugin) {
         this.plugin = plugin;

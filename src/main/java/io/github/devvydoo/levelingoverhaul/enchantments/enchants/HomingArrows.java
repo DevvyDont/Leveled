@@ -14,8 +14,8 @@ import java.util.HashMap;
 
 public class HomingArrows implements Listener {
 
-    private LevelingOverhaul plugin;
-    private HashMap<Player, Long> homingArrowCooldown = new HashMap<>();
+    private final LevelingOverhaul plugin;
+    private final HashMap<Player, Long> homingArrowCooldown = new HashMap<>();
 
     public HomingArrows(LevelingOverhaul plugin) {
         this.plugin = plugin;
@@ -54,8 +54,8 @@ public class HomingArrows implements Listener {
 
     public class HomingArrowTask extends BukkitRunnable {
 
-        private Arrow arrow;
-        private int aggression;
+        private final Arrow arrow;
+        private final int aggression;
         private LivingEntity target;
 
         public HomingArrowTask(Arrow arrow, int aggression) {

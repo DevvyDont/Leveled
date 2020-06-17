@@ -14,7 +14,7 @@ public class TipAnnounceManager {
 
     public class AnnounceTipTask extends BukkitRunnable {
 
-        private ArrayList<String> tips;
+        private final ArrayList<String> tips;
         Iterator<String> tipIterator;
 
         public AnnounceTipTask(ArrayList<String> tips) {
@@ -36,7 +36,7 @@ public class TipAnnounceManager {
 
     }
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public TipAnnounceManager(LevelingOverhaul plugin) {
         this.plugin = plugin;

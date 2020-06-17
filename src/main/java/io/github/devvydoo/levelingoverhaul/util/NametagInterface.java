@@ -22,8 +22,8 @@ public class NametagInterface implements InventoryHolder, Listener {
 
 
     private final Inventory inv;
-    private LevelingOverhaul plugin;
-    private ItemStack nametag;
+    private final LevelingOverhaul plugin;
+    private final ItemStack nametag;
 
     private final int DISPLAY_SLOT = 19;
     private final int CLEAR_SLOT = 22;

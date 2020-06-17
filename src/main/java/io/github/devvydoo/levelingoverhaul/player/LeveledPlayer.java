@@ -17,12 +17,12 @@ import java.util.ArrayList;
 
 public class LeveledPlayer {
 
-    private EnchantmentManager enchantmentManager;
-    private CustomItemManager customItemManager;
+    private final EnchantmentManager enchantmentManager;
+    private final CustomItemManager customItemManager;
 
-    private Player spigotPlayer;
+    private final Player spigotPlayer;
 
-    private PlayerExperience experience;
+    private final PlayerExperience experience;
     private int strength;
     private int defense;
     private int fireDefense;

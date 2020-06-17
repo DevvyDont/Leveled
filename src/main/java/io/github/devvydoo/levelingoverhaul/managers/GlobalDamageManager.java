@@ -28,11 +28,11 @@ import java.util.Map;
  */
 public class GlobalDamageManager implements Listener {
 
-    private LevelingOverhaul plugin;
-    private String ARROW_DMG_METANAME = "base_damage";
-    private String ARROW_SNIPE_ENCHANT_METANAME = "snipe_enchant_level";
-    private String ARROW_FMJ_ENCHANT_METANAME = "fmj_enchant_level";
-    private String ARROW_EXECUTE_ENCHANT_METANAME = "exe_enchant_level";
+    private final LevelingOverhaul plugin;
+    private final String ARROW_DMG_METANAME = "base_damage";
+    private final String ARROW_SNIPE_ENCHANT_METANAME = "snipe_enchant_level";
+    private final String ARROW_FMJ_ENCHANT_METANAME = "fmj_enchant_level";
+    private final String ARROW_EXECUTE_ENCHANT_METANAME = "exe_enchant_level";
 
     public GlobalDamageManager(LevelingOverhaul plugin) {
         this.plugin = plugin;

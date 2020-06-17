@@ -16,7 +16,7 @@ import java.util.Iterator;
 
 public class DebugLevelSetter implements CommandExecutor {
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public DebugLevelSetter(LevelingOverhaul plugin) {
         this.plugin = plugin;

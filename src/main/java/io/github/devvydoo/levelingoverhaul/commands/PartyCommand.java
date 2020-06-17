@@ -14,14 +14,14 @@ import java.util.*;
 
 public class PartyCommand implements CommandExecutor, TabCompleter {
 
-    private LevelingOverhaul plugin;
-    private HashMap<Player, PartyRequest> playerPartyRequests;
+    private final LevelingOverhaul plugin;
+    private final HashMap<Player, PartyRequest> playerPartyRequests;
 
     private class PartyRequest {
 
-        private Player pendingMember;
-        private Player invitee;
-        private long expireeTimestamp;
+        private final Player pendingMember;
+        private final Player invitee;
+        private final long expireeTimestamp;
 
         public PartyRequest(Player pendingMember, Player invitee, long expireeTimestamp) {
             this.pendingMember = pendingMember;

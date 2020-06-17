@@ -20,8 +20,8 @@ import java.util.HashMap;
  */
 public class LeveledPlayerManager implements Listener {
 
-    private LevelingOverhaul plugin;
-    private HashMap<Player, LeveledPlayer> playerArmorAttributesMap;
+    private final LevelingOverhaul plugin;
+    private final HashMap<Player, LeveledPlayer> playerArmorAttributesMap;
 
     public LeveledPlayerManager(LevelingOverhaul plugin) {
         this.plugin = plugin;

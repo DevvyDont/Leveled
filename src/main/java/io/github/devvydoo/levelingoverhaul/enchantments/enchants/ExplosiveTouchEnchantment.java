@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ExplosiveTouchEnchantment implements Listener {
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public ExplosiveTouchEnchantment(LevelingOverhaul plugin) {
         this.plugin = plugin;

@@ -26,7 +26,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class PlayerLeveledUpListener implements Listener {
 
-    private LevelingOverhaul plugin;
+    private final LevelingOverhaul plugin;
 
     public PlayerLeveledUpListener(LevelingOverhaul plugin) {
         this.plugin = plugin;
