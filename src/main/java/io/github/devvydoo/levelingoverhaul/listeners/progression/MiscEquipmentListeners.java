@@ -211,9 +211,6 @@ public class MiscEquipmentListeners implements Listener {
     @EventHandler
     public void onHoldingNametagRightClickEntity(PlayerInteractEntityEvent event) {
 
-        if (event.getRightClicked() instanceof LivingEntity)
-            System.out.println(((LivingEntity) event.getRightClicked()).getMaxHealth());
-
         // Don't do players
         if (event.getRightClicked() instanceof Player)
             return;
