@@ -32,6 +32,10 @@ public class CustomLeveledEntityLootTable {
         this.possibleItems = possibleItems;
     }
 
+    public void setPossibleItems(CustomLeveledEntityLootTableItem... possibleItems) {
+        this.possibleItems = Arrays.asList(possibleItems);
+    }
+
     /**
      * A one shot loot table means that one item will always be dropped if there are items to drop, but ONLY one
      *

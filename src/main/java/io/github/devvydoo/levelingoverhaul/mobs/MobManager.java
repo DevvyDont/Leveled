@@ -3,7 +3,6 @@ package io.github.devvydoo.levelingoverhaul.mobs;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.mobs.custommobs.*;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -272,8 +271,8 @@ public class MobManager implements Listener {
             case NETHER:
 
                 // What should we do in the nether?
-                if (event.getEntity().getType() == EntityType.WITHER_SKELETON && Math.random() < CustomLeveledEntityType.NETHER_FOX.FREQUENCY)
-                    spawnCustomLeveledMob(CustomLeveledEntityType.NETHER_FOX, entityLocation);
+                if (event.getEntity().getType() == EntityType.WITHER_SKELETON && Math.random() < CustomLeveledEntityType.FIREFOX.FREQUENCY)
+                    spawnCustomLeveledMob(CustomLeveledEntityType.FIREFOX, entityLocation);
                 break;
 
         }

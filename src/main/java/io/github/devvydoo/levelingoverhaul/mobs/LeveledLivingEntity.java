@@ -108,7 +108,7 @@ public class LeveledLivingEntity {
 
         int hp = Math.max((int) Math.round(entity.getHealth() + deltaHP), 0);
         String hpTextColor = PlayerNametags.getChatColorFromHealth(hp, entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-        entity.setCustomName(LEVEL_COLOR + "Lv. " + getLevel() + " " + getEntityNametagColor(entity) + ChatColor.stripColor(getName()) + " " + ChatColor.DARK_RED + "❤" + hpTextColor + hp);
+        entity.setCustomName(LEVEL_COLOR + "Lv. " + getLevel() + " " + getEntityNametagColor(entity) + getName() + " " + ChatColor.DARK_RED + "❤" + hpTextColor + hp);
     }
 
 

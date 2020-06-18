@@ -6,7 +6,7 @@ import org.bukkit.entity.EntityType;
 public enum CustomLeveledEntityType {
 
     CORRUPTED_SKELETON(CustomLeveledEntityCorruptedSkeleton.class, EntityType.STRAY, "Corrupted Skeleton", 70, .2f),
-    NETHER_FOX(CustomLeveledEntityNetherFox.class, EntityType.FOX,  ChatColor.RED + "Nether Fox", 50, .25f);
+    FIREFOX(CustomLeveledEntityFireFox.class, EntityType.FOX,  ChatColor.RED + "Firefox", 50, .25f);
 
     public final Class<? extends CustomLeveledEntity> CLAZZ;
     public final EntityType ENTITY_TYPE;

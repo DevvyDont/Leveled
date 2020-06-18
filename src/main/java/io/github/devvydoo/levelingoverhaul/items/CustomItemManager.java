@@ -42,6 +42,8 @@ public class CustomItemManager implements Listener {
 
     public final NamespacedKey MAGIC_MIRROR_KEY;
 
+    public final NamespacedKey MOZILLA_KEY;
+
     public CustomItemManager(LevelingOverhaul plugin) {
         this.plugin = plugin;
         DRAGON_SWORD_KEY = new NamespacedKey(plugin, CustomItems.DRAGON_SWORD.key);
@@ -51,6 +53,7 @@ public class CustomItemManager implements Listener {
         DRAGON_BOOTS_KEY = new NamespacedKey(plugin, CustomItems.DRAGON_BOOTS.key);
         ENDER_BOW_KEY = new NamespacedKey(plugin, CustomItems.ENDER_BOW.key);
         MAGIC_MIRROR_KEY = new NamespacedKey(plugin, CustomItems.MAGIC_MIRROR.key);
+        MOZILLA_KEY = new NamespacedKey(plugin, CustomItems.MOZILLA.key);
     }
 
     public void setItemLoreHeader(ItemStack item, List<String> lore){
@@ -99,6 +102,8 @@ public class CustomItemManager implements Listener {
                 return 65;
             case MAGIC_MIRROR:
                 return 90;
+            case MOZILLA:
+                return 50;
             default:
                 throw new IllegalArgumentException("Could not find type" + getCustomItemType(itemStack));
         }
@@ -160,6 +165,9 @@ public class CustomItemManager implements Listener {
             case MAGIC_MIRROR:
                 ItemStack compass = new ItemStack(CustomItems.MAGIC_MIRROR.type);
                 return setupStringItemContainerData(compass, MAGIC_MIRROR_KEY, CustomItems.MAGIC_MIRROR);
+            case MOZILLA:
+                ItemStack sword = new ItemStack(CustomItems.MOZILLA.type);
+                return setupBooleanItemContainerData(sword, MOZILLA_KEY, CustomItems.MOZILLA);
         }
         throw new IllegalArgumentException("Item " + item + " was not defined in getCustomItem. This is a plugin error.");
     }
@@ -195,6 +203,9 @@ public class CustomItemManager implements Listener {
         }
         else if (container.has(MAGIC_MIRROR_KEY, PersistentDataType.STRING)){
             return CustomItems.MAGIC_MIRROR;
+        }
+        else if (container.has(MOZILLA_KEY, PersistentDataType.INTEGER)) {
+            return CustomItems.MOZILLA;
         }
 
         throw new IllegalArgumentException("Was not a custom item!");
@@ -245,6 +256,12 @@ public class CustomItemManager implements Listener {
     public boolean isMagicMirror(ItemStack itemStack){
         if (itemStack.getType().equals(CustomItems.MAGIC_MIRROR.type))
             return itemStack.getItemMeta().getPersistentDataContainer().has(MAGIC_MIRROR_KEY, PersistentDataType.STRING);
+        return false;
+    }
+
+    public boolean isMozilla(ItemStack itemStack) {
+        if (itemStack.getType().equals(CustomItems.MOZILLA.type))
+            return itemStack.getItemMeta().getPersistentDataContainer().has(MOZILLA_KEY, PersistentDataType.INTEGER);
         return false;
     }
 

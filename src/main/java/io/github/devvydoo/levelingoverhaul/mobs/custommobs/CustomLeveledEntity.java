@@ -5,7 +5,7 @@ import org.bukkit.entity.LivingEntity;
 
 public abstract class CustomLeveledEntity extends LeveledLivingEntity {
 
-    protected final CustomLeveledEntityLootTable lootTable;
+    protected CustomLeveledEntityLootTable lootTable;
 
     public CustomLeveledEntity(LivingEntity entity, CustomLeveledEntityLootTable lootTable) {
         super(entity, false);

@@ -1,22 +1,24 @@
 package io.github.devvydoo.levelingoverhaul.mobs.custommobs;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
+import io.github.devvydoo.levelingoverhaul.items.CustomItems;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Fox;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class CustomLeveledEntityNetherFox extends CustomLeveledEntity {
+public class CustomLeveledEntityFireFox extends CustomLeveledEntity {
 
-    public CustomLeveledEntityNetherFox(LivingEntity entity) {
+    public CustomLeveledEntityFireFox(LivingEntity entity) {
         super(entity);
     }
 
     @Override
     public CustomLeveledEntityType getCustomMobType() {
-        return CustomLeveledEntityType.NETHER_FOX;
+        return CustomLeveledEntityType.FIREFOX;
     }
 
     @Override
@@ -26,6 +28,12 @@ public class CustomLeveledEntityNetherFox extends CustomLeveledEntity {
             fox.setFoxType(Fox.Type.RED);
             fox.getEquipment().setItemInMainHand(new ItemStack(Material.GOLDEN_SWORD));
             new FoxTargetPlayerTask(fox).runTaskTimer(LevelingOverhaul.getPlugin(LevelingOverhaul.class), 1, 60);
+
+            lootTable = new CustomLeveledEntityLootTable();
+            lootTable.setPossibleItems(new CustomLeveledEntityLootTableItem(LevelingOverhaul.getPlugin(LevelingOverhaul.class).getCustomItemManager().getCustomItem(CustomItems.MOZILLA), 1f));
+
+            fox.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(4500 + (int)(Math.random() * 10) * 100);
+            fox.setHealth(fox.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         }
     }
 
