@@ -331,7 +331,7 @@ public class GlobalDamageManager implements Listener {
         }
     }
 
-    private double calculateEntityDamage(LivingEntity entity){
+    private double calculateEntityDamage(LivingEntity entity, Entity victim){
 
         int mobLevel = plugin.getMobManager().getMobLevel(entity);
 
@@ -364,9 +364,15 @@ public class GlobalDamageManager implements Listener {
                 break;
 
             case CREEPER:
-                // TODO: Make scale based on distance
-                damagePercent = 2.5;
-                if (((Creeper) entity).isPowered()) { damagePercent += 1.5; }
+                Creeper creeper = (Creeper)entity;
+                damagePercent = 5.0;
+                if (creeper.isPowered())
+                    damagePercent += 5.5;
+
+                double distanceFromExplosion = creeper.getLocation().distance(victim.getLocation());
+                damagePercent -= distanceFromExplosion;
+                if (damagePercent < .1)
+                    damagePercent = .1;
                 break;
 
             case ENDERMAN:
@@ -374,7 +380,7 @@ public class GlobalDamageManager implements Listener {
             case ENDER_DRAGON:
             case WITHER:
             case ELDER_GUARDIAN:
-                damagePercent = 1.5;
+                damagePercent = 1.2;
                 break;
 
             case SILVERFISH:
@@ -390,6 +396,7 @@ public class GlobalDamageManager implements Listener {
 
             case SLIME:
             case MAGMA_CUBE:
+                //TODO: balance this, not tested
                 Slime s = (Slime) entity;
                 damagePercent = .2;
                 if (s instanceof MagmaCube) { damagePercent += .1; }
@@ -398,7 +405,7 @@ public class GlobalDamageManager implements Listener {
 
             case WITHER_SKELETON:
             case PIG_ZOMBIE:
-                damagePercent = 1.2;
+                damagePercent = 1.25;
                 break;
 
             case GHAST:
@@ -423,7 +430,7 @@ public class GlobalDamageManager implements Listener {
             case FOX:
             case WOLF:
             case CAT:
-                damagePercent = 3;
+                damagePercent = .45;
                 break;
             case LLAMA:
                 damagePercent = .3;
@@ -474,7 +481,7 @@ public class GlobalDamageManager implements Listener {
         double newDamage;
 
         // Calculates damage based on damage type, and the entity doing the damage, generally, the damage will be the % of a players max HP at the same level of the mob i.e. zombie does 15% damage to player on level
-        newDamage = calculateEntityDamage(source);
+        newDamage = calculateEntityDamage(source, event.getEntity());
 
         // Sanity check
         if (newDamage < 0) { newDamage = 0; }
