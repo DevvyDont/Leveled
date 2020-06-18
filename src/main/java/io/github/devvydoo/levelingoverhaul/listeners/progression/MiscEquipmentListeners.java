@@ -99,12 +99,12 @@ public class MiscEquipmentListeners implements Listener {
     }
 
     private void renameItem(ItemStack itemStack, String newName){
-        int level = plugin.getEnchantmentManager().getItemLevel(itemStack);
+        int level = plugin.getCustomItemManager().getItemLevel(itemStack);
         ItemMeta meta = itemStack.getItemMeta();
         meta.setDisplayName(ChatColor.stripColor(newName));
         itemStack.setItemMeta(meta);
         if (level > 0)
-            plugin.getEnchantmentManager().setItemLevel(itemStack, level);
+            plugin.getCustomItemManager().setItemLevel(itemStack, level);
     }
 
     private boolean isRightClick(Action action){
@@ -143,7 +143,7 @@ public class MiscEquipmentListeners implements Listener {
 
         // We may potentially run into issues, check their main hand first
         if (mainHandNeedsChecked) {
-            int levelRequired = Math.max(plugin.getEnchantmentManager().getItemLevel(itemInHand), equipmentRequirements.get(itemInHand.getType()));
+            int levelRequired = Math.max(plugin.getCustomItemManager().getItemLevel(itemInHand), equipmentRequirements.get(itemInHand.getType()));
             if (levelRequired > player.getLevel()) {
                 event.setCancelled(true);
                 player.sendActionBar(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + levelRequired + ChatColor.RED + " to use this item!");
@@ -152,7 +152,7 @@ public class MiscEquipmentListeners implements Listener {
             // Now check their offhand
         }
         if (offhandNeedsChecked) {
-            int levelRequired = Math.max(plugin.getEnchantmentManager().getItemLevel(itemInOffhand), equipmentRequirements.get(itemInOffhand.getType()));
+            int levelRequired = Math.max(plugin.getCustomItemManager().getItemLevel(itemInOffhand), equipmentRequirements.get(itemInOffhand.getType()));
             if (levelRequired > player.getLevel()) {
                 event.setCancelled(true);
                 player.sendActionBar( ChatColor.RED + "You must be level " + ChatColor.DARK_RED + levelRequired + ChatColor.RED + " to use this item!");

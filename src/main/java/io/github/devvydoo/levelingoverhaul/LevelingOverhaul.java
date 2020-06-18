@@ -130,7 +130,7 @@ public final class LevelingOverhaul extends JavaPlugin {
         }
 
         enchantmentManager = new EnchantmentManager(this);
-        customItemManager = new CustomItemManager(this);
+        customItemManager = new CustomItemManager();
         globalItemManager = new GlobalItemManager(this);
         playerManager = new LeveledPlayerManager(this);
         damageManager = new GlobalDamageManager(this);

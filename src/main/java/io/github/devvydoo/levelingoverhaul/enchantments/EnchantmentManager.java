@@ -150,7 +150,7 @@ public class EnchantmentManager {
 
         // Sanity check, don't add an enchantment if we already have it
         if (hasEnchant(item, enchantment)) {
-            fixItemLore(item);
+            plugin.getCustomItemManager().updateItemLore(item);
             return;
         }
 
@@ -168,7 +168,7 @@ public class EnchantmentManager {
         meta.setLore(lore);
         item.setItemMeta(meta);
 
-        fixItemLore(item);
+        plugin.getCustomItemManager().updateItemLore(item);
     }
 
     /**
@@ -186,7 +186,7 @@ public class EnchantmentManager {
         }
 
         item.addUnsafeEnchantment(enchantment, level);
-        fixItemLore(item);
+        plugin.getCustomItemManager().updateItemLore(item);
     }
 
     /**
@@ -219,70 +219,6 @@ public class EnchantmentManager {
     }
 
     /**
-     * Parses the item's title to see if it is level capped
-     *
-     * @param item The ItemStack we want to check for
-     * @return the int level cap of the item, if it isn't capped 0 is returned
-     */
-    public int getItemLevel(ItemStack item) {
-        int level = 0;
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            String name = ChatColor.stripColor(meta.getDisplayName());
-            if (name.startsWith(LEVEL_CAPPED_GEAR_STRING)) {
-                String[] components = name.split(" ");
-                level = Integer.parseInt(components[1]);
-            }
-        }
-        return level;
-    }
-
-    public void setItemLevel(ItemStack item, int level) {
-
-        // Check if we need to remove the old level somehow
-        resetItemLevel(item);
-
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return;
-
-        Rarity rarity;
-        if (plugin.getCustomItemManager().isCustomItem(item))
-            rarity = plugin.getCustomItemManager().getCustomItemRarity(item);
-        else
-            rarity = Rarity.getItemRarity(item);
-
-        // Now add the level
-        String originalName = meta.hasDisplayName() ? ChatColor.stripColor(meta.getDisplayName()) : WordUtils.capitalizeFully(item.getType().toString().replace("_", " "));
-        String newName = rarity.LEVEL_LABEL_COLOR + String.format(LEVEL_CAPPED_GEAR_STRING_FULL, level) + rarity.NAME_LABEL_COLOR + originalName;
-        meta.setDisplayName(newName);
-        item.setItemMeta(meta);
-        item.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        fixItemLore(item);
-    }
-
-    public void resetItemLevel(ItemStack itemStack) {
-
-        ItemMeta meta = itemStack.getItemMeta();
-        if (meta == null) {
-            return;
-        }
-
-        String originalName = ChatColor.stripColor(meta.getDisplayName());
-
-        if (originalName.startsWith(LEVEL_CAPPED_GEAR_STRING)) {
-            String[] components = originalName.split(" ");
-            ArrayList<String> newComponents = new ArrayList<>();
-            for (int i = 2; i < components.length; i++) {
-                newComponents.add(components[i]);
-            }
-            originalName = String.join(" ", newComponents);
-            meta.setDisplayName(originalName);
-            itemStack.setItemMeta(meta);
-        }
-    }
-
-    /**
      * A helper method that parses a line of lore to find a potential enchantment
      *
      * @param loreLine - The string of lore we are reading
@@ -310,10 +246,9 @@ public class EnchantmentManager {
         return null;
     }
 
-    /**
-     * Simple method that will format an ItemStack to display enchantments properly
-     */
-    public void fixItemLore(ItemStack itemStack) {
+    public List<String> getEnchantmentLoreSection(ItemStack itemStack) {
+
+        List<String> newLore = new ArrayList<>();
 
         // First we need to get the custom enchantment objects on the item
         List<CustomEnchantment> customEnchantments = getCustomEnchantments(itemStack);
@@ -325,13 +260,6 @@ public class EnchantmentManager {
         ArrayList<Enchantment> orderedVanillaEnchs = new ArrayList<>(vanillaEnchantments.keySet());
         orderedVanillaEnchs.sort(Comparator.comparing(o -> o.getKey().toString()));
 
-        // Now set some item flags that our items need, and clear the old lore
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        ArrayList<String> newLore = new ArrayList<>();
-
-        // If we have a custom item that needs a special header, do that
-        plugin.getCustomItemManager().setItemLoreHeader(itemStack, newLore);
 
         for (Enchantment enchantment : orderedVanillaEnchs) {
             int levelDisplay = vanillaEnchantments.get(enchantment);
@@ -347,13 +275,7 @@ public class EnchantmentManager {
             newLore.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment.getType()));
         }
 
-        if (newLore.size() > 0 && newLore.get(newLore.size() - 1).equalsIgnoreCase("")){
-            newLore.remove(newLore.size() - 1);
-        }
-
-        meta.setLore(newLore);
-        itemStack.setItemMeta(meta);
-
+        return newLore;
     }
 
     public int getEnchantQuality(CustomEnchantType type) {

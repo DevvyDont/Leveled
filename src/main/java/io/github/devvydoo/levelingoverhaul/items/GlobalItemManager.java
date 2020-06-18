@@ -1,22 +1,19 @@
 package io.github.devvydoo.levelingoverhaul.items;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import org.apache.commons.lang.WordUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
+import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,37 +27,9 @@ public class GlobalItemManager implements Listener {
     }
 
     public void fixItem(ItemStack itemStack){
-
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (itemMeta == null)
-            return;
-        // Unbreakable items are already fixed
-        if (itemMeta.isUnbreakable())
-            return;
-        itemMeta.setUnbreakable(true);
-        itemStack.setItemMeta(itemMeta);
-
-        itemStack.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
-
-        // Already have a level?
-        if (plugin.getEnchantmentManager().getItemLevel(itemStack) > 0)
-            return;
-
-        int itemLevel = plugin.getCustomItemManager().getItemLevelCap(itemStack);
-        if (itemLevel > 0)
-            plugin.getEnchantmentManager().setItemLevel(itemStack, itemLevel);
-        else{
-            Rarity rarity;
-            if (plugin.getCustomItemManager().isCustomItem(itemStack))
-                rarity = plugin.getCustomItemManager().getCustomItemRarity(itemStack);
-            else
-                rarity = Rarity.getItemRarity(itemStack);
-            ItemMeta meta = itemStack.getItemMeta();
-            if (meta.hasDisplayName())
-                meta.setDisplayName(rarity.LEVEL_LABEL_COLOR + ChatColor.stripColor(meta.getDisplayName()));
-            else
-                meta.setDisplayName(rarity.LEVEL_LABEL_COLOR + WordUtils.capitalizeFully(itemStack.getType().toString().replace("_", " ")));
-            itemStack.setItemMeta(meta);
+        if (itemStack != null && itemStack.getItemMeta() != null && !itemStack.getItemMeta().isUnbreakable()) {
+            plugin.getCustomItemManager().getItemLevel(itemStack);
+            plugin.getCustomItemManager().updateItemLore(itemStack);
         }
     }
 
@@ -130,9 +99,12 @@ public class GlobalItemManager implements Listener {
 
             merchant.setRecipes(newRecipes);
         }
+    }
 
-
-
+    @EventHandler
+    public void ItemSpawnedIn(InventoryCreativeEvent event) {
+        fixItem(event.getCursor());
+        fixItem(event.getCurrentItem());
     }
 
     @EventHandler

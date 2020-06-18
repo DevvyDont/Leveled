@@ -64,7 +64,7 @@ public class DebugEnchant implements CommandExecutor {
                 plugin.getEnchantmentManager().addEnchant(hand, (CustomEnchantType) type.getEnchantType(), lvls.get(type));
             }
         }
-        plugin.getEnchantmentManager().setItemLevel(hand, Integer.parseInt(args[0]));
+        plugin.getCustomItemManager().setItemLevel(hand, Integer.parseInt(args[0]));
 
         return true;
     }

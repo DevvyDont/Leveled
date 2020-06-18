@@ -40,7 +40,7 @@ public class PlayerArmorListeners implements Listener {
             if (armorItem == null || armorItem.getType() == Material.AIR)
                 continue;
 
-            int level = plugin.getEnchantmentManager().getItemLevel(armorItem);
+            int level = plugin.getCustomItemManager().getItemLevel(armorItem);
 
             if (level > player.getLevel()){
                 player.getWorld().dropItemNaturally(player.getLocation(), armorItem.clone());
@@ -107,7 +107,7 @@ public class PlayerArmorListeners implements Listener {
             return;
 
         // Does our player have the required level to equip this?
-        int requiredLevel = plugin.getEnchantmentManager().getItemLevel(event.getItem());
+        int requiredLevel = plugin.getCustomItemManager().getItemLevel(event.getItem());
 
         if (event.getPlayer().getLevel() < requiredLevel)
             cancelArmorEvent(event, event.getPlayer(), requiredLevel);
@@ -137,7 +137,7 @@ public class PlayerArmorListeners implements Listener {
             if (itemHeld == null || !isWearable(itemHeld.getType()))
                 return;
 
-            int requiredLevel = plugin.getEnchantmentManager().getItemLevel(itemHeld);
+            int requiredLevel = plugin.getCustomItemManager().getItemLevel(itemHeld);
 
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel) {
@@ -156,7 +156,7 @@ public class PlayerArmorListeners implements Listener {
                 return;
 
             // Are they a high enough level to equip it?
-            int requiredLevel = plugin.getEnchantmentManager().getItemLevel(itemClicked);
+            int requiredLevel = plugin.getCustomItemManager().getItemLevel(itemClicked);
 
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel)

@@ -3,6 +3,7 @@ package io.github.devvydoo.levelingoverhaul.player;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.items.CustomItemManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
+import io.github.devvydoo.levelingoverhaul.items.CustomItemType;
 import io.github.devvydoo.levelingoverhaul.player.abilities.CustomAbility;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
@@ -67,7 +68,7 @@ public class LeveledPlayer {
             if (potionEffect.getType().equals(PotionEffectType.INCREASE_DAMAGE))
                 percent += (1.3 * potionEffect.getAmplifier());
         }
-        return percent;
+        return 1 + percent;
     }
 
     public int getDefense() {
@@ -161,9 +162,7 @@ public class LeveledPlayer {
 
     private int getArmorTier(ItemStack armor) {
 
-        if (customItemManager.isDragonHelmet(armor) || customItemManager.isDragonChestplate(armor) || customItemManager.isDragonLeggings(armor) || customItemManager.isDragonBoots(armor)){
-            return 6;
-        }
+        // TODO: Change armor to use flat rates, prot be % increase
 
         switch (armor.getType()){
             case DIAMOND_HELMET:
@@ -284,7 +283,7 @@ public class LeveledPlayer {
         ArrayList<CustomAbility> list = new ArrayList<>();
 
         if (helmet != null && chestplate != null && leggings != null & boots != null) {
-            if (customItemManager.isDragonHelmet(helmet) && customItemManager.isDragonChestplate(chestplate) && customItemManager.isDragonLeggings(leggings) && customItemManager.isDragonBoots(boots)){
+            if (customItemManager.hasFullSetBonus(spigotPlayer, CustomAbility.BOUNDLESS_ROCKETS)){
                 list.add(CustomAbility.BOUNDLESS_ROCKETS);
                 if (abilities != null && !abilities.contains(CustomAbility.BOUNDLESS_ROCKETS))
                     spigotPlayer.sendTitle(ChatColor.GOLD.toString() + ChatColor.BOLD + "Ability " + ChatColor.WHITE + "Boundless Rockets", ChatColor.GRAY + "Fireworks have a 50% to not consume when Elytra boosting!", 10, 60, 30);
@@ -302,69 +301,16 @@ public class LeveledPlayer {
      */
     private int getBaseArmorDefense(ItemStack armor) {
 
-        switch (armor.getType()) {
+        // Try to get a custom defense value
+        CustomItemType type = customItemManager.getCustomItemType(armor);
+        if (type != null && type.CATEGORY == CustomItemType.Category.ARMOR)
+            return type.STAT_AMOUNT;
 
-            case DRAGON_HEAD:
-                if (customItemManager.isDragonHelmet(armor))
-                    return 85;
-            case LEATHER_CHESTPLATE:
-                return 5;
-            case LEATHER_LEGGINGS:
-                if (customItemManager.isDragonLeggings(armor))
-                    return 90;
-                return 3;
-            case LEATHER_HELMET:
-            case TURTLE_HELMET:
-                return 2;
-            case LEATHER_BOOTS:
-                if (customItemManager.isDragonBoots(armor))
-                    return 80;
-                return 1;
+        CustomItemType.Category fallbackCategory = CustomItemType.Category.getFallbackCategory(armor.getType());
+        if (fallbackCategory == CustomItemType.Category.ARMOR)
+            return CustomItemType.getFallbackStat(armor.getType());
 
-            case GOLDEN_CHESTPLATE:
-                return 15;
-            case GOLDEN_LEGGINGS:
-                return 12;
-            case GOLDEN_HELMET:
-                return 10;
-            case GOLDEN_BOOTS:
-                return 8;
-
-            case CHAINMAIL_CHESTPLATE:
-                return 22;
-            case CHAINMAIL_LEGGINGS:
-                return 19;
-            case CHAINMAIL_HELMET:
-                return 17;
-            case CHAINMAIL_BOOTS:
-                return 15;
-
-            case IRON_CHESTPLATE:
-                return 30;
-            case IRON_LEGGINGS:
-                return 27;
-            case IRON_HELMET:
-                return 23;
-            case IRON_BOOTS:
-                return 20;
-
-            case DIAMOND_CHESTPLATE:
-                return 50;
-            case DIAMOND_LEGGINGS:
-                return 40;
-            case DIAMOND_HELMET:
-                return 35;
-            case DIAMOND_BOOTS:
-                return 32;
-
-            case ELYTRA:
-                if (customItemManager.isDragonChestplate(armor))
-                    return 100;
-                return 10;
-
-            default:
-                return 0;
-        }
+        return 0;
     }
 
 

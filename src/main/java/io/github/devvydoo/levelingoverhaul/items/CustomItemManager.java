@@ -1,410 +1,213 @@
 package io.github.devvydoo.levelingoverhaul.items;
 
-import com.destroystokyo.paper.event.player.PlayerElytraBoostEvent;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.player.LevelRewards;
+import io.github.devvydoo.levelingoverhaul.player.abilities.CustomAbility;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.*;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitRunnable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CustomItemManager implements Listener {
 
-    private final LevelingOverhaul plugin;
+    public static final NamespacedKey CUSTOM_ITEM_INDEX_KEY = new NamespacedKey(LevelingOverhaul.getPlugin(LevelingOverhaul.class), "custom-item-index");
+    public static final NamespacedKey ITEM_LEVEL_KEY = new NamespacedKey(LevelingOverhaul.getPlugin(LevelingOverhaul.class), "item-level");
+    private final Map<CustomItemType, CustomItem> customItemMap;
 
-    // These keys should never be changed for existing worlds, they will break custom items
-    public final NamespacedKey DRAGON_SWORD_KEY;
-    public final NamespacedKey DRAGON_HELMET_KEY;
-    public final NamespacedKey DRAGON_CHESTPLATE_KEY;
-    public final NamespacedKey DRAGON_LEGGINGS_KEY;
-    public final NamespacedKey DRAGON_BOOTS_KEY;
+    public CustomItemManager() {
 
-    public final NamespacedKey ENDER_BOW_KEY;
+        customItemMap = new HashMap<>();
 
-    public final NamespacedKey MAGIC_MIRROR_KEY;
+        for (CustomItemType type : CustomItemType.values()){
 
-    public final NamespacedKey MOZILLA_KEY;
+            // Attempt to create an instance of the custom item's class type, this shouldn't fail unless it's coded incorrectly
+            try {
+                customItemMap.put(type, type.CLAZZ.getDeclaredConstructor(CustomItemType.class).newInstance(type));
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+                LevelingOverhaul.getPlugin(LevelingOverhaul.class).getPluginLoader().disablePlugin(LevelingOverhaul.getPlugin(LevelingOverhaul.class));
+                return;
+            }
 
-    public CustomItemManager(LevelingOverhaul plugin) {
-        this.plugin = plugin;
-        DRAGON_SWORD_KEY = new NamespacedKey(plugin, CustomItems.DRAGON_SWORD.key);
-        DRAGON_HELMET_KEY = new NamespacedKey(plugin, CustomItems.DRAGON_HELMET.key);
-        DRAGON_CHESTPLATE_KEY = new NamespacedKey(plugin, CustomItems.DRAGON_CHESTPLATE.key);
-        DRAGON_LEGGINGS_KEY = new NamespacedKey(plugin, CustomItems.DRAGON_LEGGINGS.key);
-        DRAGON_BOOTS_KEY = new NamespacedKey(plugin, CustomItems.DRAGON_BOOTS.key);
-        ENDER_BOW_KEY = new NamespacedKey(plugin, CustomItems.ENDER_BOW.key);
-        MAGIC_MIRROR_KEY = new NamespacedKey(plugin, CustomItems.MAGIC_MIRROR.key);
-        MOZILLA_KEY = new NamespacedKey(plugin, CustomItems.MOZILLA.key);
+        }
+
+        // Register all the events
+        for (CustomItem cu : customItemMap.values())
+            LevelingOverhaul.getPlugin(LevelingOverhaul.class).getServer().getPluginManager().registerEvents(cu, LevelingOverhaul.getPlugin(LevelingOverhaul.class));
+
     }
 
-    public void setItemLoreHeader(ItemStack item, List<String> lore){
-        if (isDragonSword(item)){
-            lore.add("");
-            lore.add(ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Instant Transmission");
-            lore.add(ChatColor.GRAY + "Right click to instantly " + ChatColor.AQUA + "teleport 10 blocks!");
-            lore.add(ChatColor.GRAY + "Careful though... It kinda stings...");
+    // Simply just tags the item as leveled, provide an arg of 0 if it isn't capped. A cap of 0 will not show up.
+    public void setItemLevel(ItemStack item, int level) {
+        if (item != null && item.getItemMeta() != null){
+
+            ItemMeta itemMeta = item.getItemMeta();
+            String itemName = "";
+
+            // We need to find out if this item is already leveled, if it is it means that we already added a level tag
+            if (itemMeta.getPersistentDataContainer().has(ITEM_LEVEL_KEY, PersistentDataType.INTEGER)) {
+                String[] components = itemMeta.getDisplayName().split(" ");  // Lv. xx "name"    which means we omit index 0 and 1
+                for (int i = 2; i < components.length; i++)
+                    itemName += components[i] + " ";
+            }
+            else
+                itemName = itemMeta.hasDisplayName() ? ChatColor.stripColor(itemMeta.getDisplayName()) : WordUtils.capitalizeFully(item.getType().toString().replace("_", " "));
+
+            // Actually set the container to the level
+            itemMeta.getPersistentDataContainer().set(ITEM_LEVEL_KEY, PersistentDataType.INTEGER, level);
+
+            // Now we can go ahead and update the display name
+            // Attempt to get the custom item that this thing could potentially be
+            CustomItemType customItemType = getCustomItemType(item);
+
+            Rarity itemRarity;
+
+            // Is it custom?
+            if (customItemType != null)
+                itemRarity = customItemType.RARITY;
+            else
+                itemRarity = Rarity.getItemRarity(item);  // Resort to default rarity if it's not custom
+
+            // If the rarity isn't legendary, and the item has enchants, then the item is enchanted rarity
+            if (itemRarity != Rarity.LEGENDARY && !item.getEnchantments().isEmpty())
+                itemRarity = Rarity.ENCHANTED;
+
+            // Now actually update the name
+            if (level > 0)
+                itemMeta.setDisplayName(itemRarity.LEVEL_LABEL_COLOR + "Lv. " + level + " " + itemRarity.NAME_LABEL_COLOR + ChatColor.stripColor(itemName));
+            else
+                itemMeta.setDisplayName(itemRarity.LEVEL_LABEL_COLOR + ChatColor.stripColor(itemName));
+
+            // Other stuff that 'fixes' our items
+            itemMeta.setUnbreakable(true);
+            itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
+
+            item.setItemMeta(itemMeta);
         }
-        else if (isDragonHelmet(item) || isDragonChestplate(item) || isDragonLeggings(item) || isDragonBoots(item)){
-            lore.add("");
-            lore.add(ChatColor.GOLD + ChatColor.BOLD.toString() + "FULL SET BONUS");
-            lore.add(ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Boundless Rockets");
-            lore.add(ChatColor.GRAY + "Wear the full set to increase " + ChatColor.RED + "firework efficiency!");
-            lore.add(ChatColor.GRAY + "Fireworks have a " + ChatColor.GREEN + "50% chance" + ChatColor.GRAY + " to preserve when Elytra boosting");
+    }
+
+    public int getItemLevel(ItemStack itemStack) {
+
+        // If the item has the key, then the level of the item is that. If not, assume 0.
+        if (itemStack.getItemMeta().getPersistentDataContainer().has(ITEM_LEVEL_KEY, PersistentDataType.INTEGER))
+            return itemStack.getItemMeta().getPersistentDataContainer().get(ITEM_LEVEL_KEY, PersistentDataType.INTEGER);
+
+        setItemLevel(itemStack, getItemLevelCap(itemStack));
+        return getItemLevelCap(itemStack);
+    }
+
+    public void updateItemLore(ItemStack itemStack) {
+
+        List<String> newLore = new ArrayList<>();
+
+        // First we add the damage/defense of the item if applicable.
+
+        // Is the item custom and not utility? This means it has to have some stat to display
+        if (isCustomItem(itemStack) && getCustomItemType(itemStack).CATEGORY != CustomItemType.Category.UTILITY) {
+            newLore.add("");
+            CustomItemType customItemType = getCustomItemType(itemStack);
+            // Add the line that says "Defense: 69" to the lore
+            newLore.add(CustomItemType.Category.getCategoryStatPrefix(customItemType.CATEGORY) + customItemType.STAT_AMOUNT);
         }
-        else if (isEnderBow(item)){
-            lore.add("");
-            lore.add(ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Ender Displacement");
-            lore.add(ChatColor.GRAY + "Shooting an arrow while " + ChatColor.BLUE + "sneaking" + ChatColor.GRAY + " will");
-            lore.add(ChatColor.GRAY + "cause you to " + ChatColor.LIGHT_PURPLE + "teleport" + ChatColor.GRAY + " where the arrow lands!");
+        // If the fallback category is something that we need to pay attention to
+        else if (CustomItemType.Category.getFallbackCategory(itemStack.getType()) != null) {
+            CustomItemType.Category categoryOfItem = CustomItemType.Category.getFallbackCategory(itemStack.getType());
+            if (categoryOfItem != CustomItemType.Category.UTILITY) {
+                newLore.add("");
+                newLore.add(CustomItemType.Category.getCategoryStatPrefix(categoryOfItem) + CustomItemType.getFallbackStat(itemStack.getType()));
+            }
         }
-        else if (isMagicMirror(item)){
-            lore.add("");
-            lore.add(ChatColor.DARK_RED + "UNBINDED!");
-            lore.add(ChatColor.RED + "Right click with this item in your hand");
-            lore.add(ChatColor.RED + "to bind this mirror to a location!");
-            lore.add("");
-            lore.add(ChatColor.AQUA + "Interacting with this item will instantly");
-            lore.add(ChatColor.AQUA + "teleport the user to the binded location!");
+
+        // Next we add the enchantments that are on the item
+        if (!itemStack.getEnchantments().isEmpty())
+            newLore.addAll(LevelingOverhaul.getPlugin(LevelingOverhaul.class).getEnchantmentManager().getEnchantmentLoreSection(itemStack));
+
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.setLore(newLore);
+        itemStack.setItemMeta(meta);
+    }
+
+    // TODO: refactor full set bonuses to have a more expandable system
+    public boolean hasFullSetBonus(Player player, CustomAbility abilityReward) {
+
+        switch (abilityReward) {
+            case BOUNDLESS_ROCKETS:
+                PlayerInventory playerInventory = player.getInventory();
+                if (isCustomItemType(playerInventory.getHelmet(), CustomItemType.DRAGON_HELMET) && isCustomItemType(playerInventory.getChestplate(), CustomItemType.DRAGON_CHESTPLATE) && isCustomItemType(playerInventory.getLeggings(), CustomItemType.DRAGON_LEGGINGS) && isCustomItemType(playerInventory.getBoots(), CustomItemType.DRAGON_BOOTS))
+                    return true;
+                break;
         }
+
+        return false;
+    }
+
+    /**
+     * Gets the custom item instance that this item is. If the item is not custom, null is returned.
+     *
+     * @param item Some itemstack that could potentially be custom
+     * @return The CustomItemType enum that this item is, null otherwise
+     */
+    public CustomItem getCustomItem(ItemStack item) {
+        CustomItemType type = getCustomItemType(item);
+        return type != null ? customItemMap.get(type) : null;
+    }
+
+    /**
+     * Gets the type of custom item that this item is. If the item is not custom, null is returned.
+     *
+     * @param item Some itemstack that could potentially be custom
+     * @return The CustomItemType enum that this item is, null otherwise
+     */
+    public CustomItemType getCustomItemType(ItemStack item) {
+
+        if (item == null || item.getItemMeta() == null)
+            return null;
+
+        if (!item.getItemMeta().getPersistentDataContainer().has(CUSTOM_ITEM_INDEX_KEY, PersistentDataType.INTEGER))
+            return null;
+
+        Integer index = item.getItemMeta().getPersistentDataContainer().get(CUSTOM_ITEM_INDEX_KEY, PersistentDataType.INTEGER);
+
+        if (index == null)
+            return null;
+        else if (index < 0 || index >= CustomItemType.values().length)
+            return null;
+
+        return CustomItemType.values()[index];
+    }
+
+    public boolean isCustomItem(ItemStack itemStack) {
+        return getCustomItemType(itemStack) != null;
+    }
+
+    public boolean isCustomItemType(ItemStack itemStack, CustomItemType type) {
+        return getCustomItemType(itemStack) == type;
     }
 
     public int getItemLevelCap(ItemStack itemStack){
         if (!isCustomItem(itemStack))
             return LevelRewards.getDefaultItemLevelCap(itemStack);
 
-        switch (getCustomItemType(itemStack)){
-            case DRAGON_SWORD:
-            case DRAGON_HELMET:
-            case DRAGON_BOOTS:
-            case DRAGON_CHESTPLATE:
-            case DRAGON_LEGGINGS:
-                return 60;
-            case ENDER_BOW:
-                return 65;
-            case MAGIC_MIRROR:
-                return 90;
-            case MOZILLA:
-                return 50;
-            default:
-                throw new IllegalArgumentException("Could not find type" + getCustomItemType(itemStack));
-        }
+        return getCustomItemType(itemStack).DEFAULT_LEVEL;
     }
 
-    private ItemStack setupBooleanItemContainerData(ItemStack item, NamespacedKey key, CustomItems customItemType){
-        ItemMeta meta = item.getItemMeta();
-        meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, 1);
-        meta.setDisplayName(ChatColor.YELLOW + customItemType.name);
-        List<String> lore = new ArrayList<>();
-        setItemLoreHeader(item, lore);
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        return item;
-    }
-
-
-    private ItemStack setupStringItemContainerData(ItemStack item, NamespacedKey key, CustomItems customItemType){
-        ItemMeta meta = item.getItemMeta();
-        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "");
-        meta.setDisplayName(ChatColor.YELLOW + customItemType.name);
-        List<String> lore = new ArrayList<>();
-        setItemLoreHeader(item, lore);
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        return item;
-    }
-
-    private void dyeDragonArmor(ItemStack armor){
-        if (armor.getItemMeta() instanceof LeatherArmorMeta){
-            LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) armor.getItemMeta();
-            leatherArmorMeta.setColor(Color.PURPLE);
-            armor.setItemMeta(leatherArmorMeta);
-        }
-    }
-
-    public ItemStack getCustomItem(CustomItems item){
-        switch (item){
-            case DRAGON_SWORD:
-                ItemStack goldSword = new ItemStack(CustomItems.DRAGON_SWORD.type);
-                return setupBooleanItemContainerData(goldSword, DRAGON_SWORD_KEY, CustomItems.DRAGON_SWORD);
-            case DRAGON_HELMET:
-                ItemStack dragonHead = new ItemStack(CustomItems.DRAGON_HELMET.type);
-                return setupBooleanItemContainerData(dragonHead, DRAGON_HELMET_KEY, CustomItems.DRAGON_HELMET);
-            case DRAGON_CHESTPLATE:
-                ItemStack dragonChestplate = new ItemStack(CustomItems.DRAGON_CHESTPLATE.type);
-                return setupBooleanItemContainerData(dragonChestplate, DRAGON_CHESTPLATE_KEY, CustomItems.DRAGON_CHESTPLATE);
-            case DRAGON_LEGGINGS:
-                ItemStack dragonLeggings = new ItemStack(CustomItems.DRAGON_LEGGINGS.type);
-                dyeDragonArmor(dragonLeggings);
-                return setupBooleanItemContainerData(dragonLeggings, DRAGON_LEGGINGS_KEY, CustomItems.DRAGON_LEGGINGS);
-            case DRAGON_BOOTS:
-                ItemStack dragonBoots = new ItemStack(CustomItems.DRAGON_BOOTS.type);
-                dyeDragonArmor(dragonBoots);
-                return setupBooleanItemContainerData(dragonBoots, DRAGON_BOOTS_KEY, CustomItems.DRAGON_BOOTS);
-            case ENDER_BOW:
-                ItemStack enderBow = new ItemStack(CustomItems.ENDER_BOW.type);
-                return setupBooleanItemContainerData(enderBow, ENDER_BOW_KEY, CustomItems.ENDER_BOW);
-            case MAGIC_MIRROR:
-                ItemStack compass = new ItemStack(CustomItems.MAGIC_MIRROR.type);
-                return setupStringItemContainerData(compass, MAGIC_MIRROR_KEY, CustomItems.MAGIC_MIRROR);
-            case MOZILLA:
-                ItemStack sword = new ItemStack(CustomItems.MOZILLA.type);
-                return setupBooleanItemContainerData(sword, MOZILLA_KEY, CustomItems.MOZILLA);
-        }
-        throw new IllegalArgumentException("Item " + item + " was not defined in getCustomItem. This is a plugin error.");
-    }
-
-    public boolean isCustomItem(ItemStack itemStack){
-        try {
-            getCustomItemType(itemStack);
-            return true;
-        } catch (IllegalArgumentException ignored){
-            return false;
-        }
-    }
-
-    public CustomItems getCustomItemType(ItemStack itemStack){
-        PersistentDataContainer container = itemStack.getItemMeta().getPersistentDataContainer();
-        if (container.has(DRAGON_SWORD_KEY, PersistentDataType.INTEGER)){
-            return CustomItems.DRAGON_SWORD;
-        }
-        else if (container.has(DRAGON_HELMET_KEY, PersistentDataType.INTEGER)){
-            return CustomItems.DRAGON_HELMET;
-        }
-        else if (container.has(DRAGON_CHESTPLATE_KEY, PersistentDataType.INTEGER)){
-            return CustomItems.DRAGON_CHESTPLATE;
-        }
-        else if (container.has(DRAGON_LEGGINGS_KEY, PersistentDataType.INTEGER)){
-            return CustomItems.DRAGON_LEGGINGS;
-        }
-        else if (container.has(DRAGON_BOOTS_KEY, PersistentDataType.INTEGER)){
-            return CustomItems.DRAGON_BOOTS;
-        }
-        else if (container.has(ENDER_BOW_KEY, PersistentDataType.INTEGER)){
-            return CustomItems.ENDER_BOW;
-        }
-        else if (container.has(MAGIC_MIRROR_KEY, PersistentDataType.STRING)){
-            return CustomItems.MAGIC_MIRROR;
-        }
-        else if (container.has(MOZILLA_KEY, PersistentDataType.INTEGER)) {
-            return CustomItems.MOZILLA;
-        }
-
-        throw new IllegalArgumentException("Was not a custom item!");
+    public ItemStack getCustomItem(CustomItemType item){
+        return customItemMap.get(item).getItemStackClone();
     }
 
     public Rarity getCustomItemRarity(ItemStack itemStack){
-        return getCustomItemType(itemStack).rarity;
-    }
-
-    // To make this easier, we are going to make a method for every custom item that just tells the plugin whether or not its the custom item
-
-    public boolean isDragonSword(ItemStack itemStack){
-        if (itemStack.getType().equals(Material.GOLDEN_SWORD))
-            return itemStack.getItemMeta().getPersistentDataContainer().has(DRAGON_SWORD_KEY, PersistentDataType.INTEGER);
-        return false;
-    }
-
-    public boolean isDragonHelmet(ItemStack itemStack){
-        if (itemStack.getType().equals(CustomItems.DRAGON_HELMET.type))
-            return itemStack.getItemMeta().getPersistentDataContainer().has(DRAGON_HELMET_KEY, PersistentDataType.INTEGER);
-        return false;
-    }
-
-    public boolean isDragonChestplate(ItemStack itemStack){
-        if (itemStack.getType().equals(CustomItems.DRAGON_CHESTPLATE.type))
-            return itemStack.getItemMeta().getPersistentDataContainer().has(DRAGON_CHESTPLATE_KEY, PersistentDataType.INTEGER);
-        return false;
-    }
-
-    public boolean isDragonLeggings(ItemStack itemStack){
-        if (itemStack.getType().equals(CustomItems.DRAGON_LEGGINGS.type))
-            return itemStack.getItemMeta().getPersistentDataContainer().has(DRAGON_LEGGINGS_KEY, PersistentDataType.INTEGER);
-        return false;
-    }
-
-    public boolean isDragonBoots(ItemStack itemStack){
-        if (itemStack.getType().equals(CustomItems.DRAGON_BOOTS.type))
-            return itemStack.getItemMeta().getPersistentDataContainer().has(DRAGON_BOOTS_KEY, PersistentDataType.INTEGER);
-        return false;
-    }
-
-    public boolean isEnderBow(ItemStack itemStack){
-        if (itemStack.getType().equals(CustomItems.ENDER_BOW.type))
-            return itemStack.getItemMeta().getPersistentDataContainer().has(ENDER_BOW_KEY, PersistentDataType.INTEGER);
-        return false;
-    }
-
-    public boolean isMagicMirror(ItemStack itemStack){
-        if (itemStack.getType().equals(CustomItems.MAGIC_MIRROR.type))
-            return itemStack.getItemMeta().getPersistentDataContainer().has(MAGIC_MIRROR_KEY, PersistentDataType.STRING);
-        return false;
-    }
-
-    public boolean isMozilla(ItemStack itemStack) {
-        if (itemStack.getType().equals(CustomItems.MOZILLA.type))
-            return itemStack.getItemMeta().getPersistentDataContainer().has(MOZILLA_KEY, PersistentDataType.INTEGER);
-        return false;
-    }
-
-    public Location getMagicMirrorLocation(ItemStack itemStack){
-        if (isMagicMirror(itemStack)) {
-            String location = itemStack.getItemMeta().getPersistentDataContainer().get(MAGIC_MIRROR_KEY, PersistentDataType.STRING);
-            if (location == null || location.equalsIgnoreCase(""))
-                return null;
-            String[] parsedLocation = location.split(",");
-            return new Location(plugin.getServer().getWorld(parsedLocation[0]), Double.parseDouble(parsedLocation[1]), Double.parseDouble(parsedLocation[2]), Double.parseDouble(parsedLocation[3]));
-        }
-        return null;
-    }
-
-    public void setMagicMirrorLocation(ItemStack itemStack, Location location){
-        if (isMagicMirror(itemStack)) {
-            String[] mirrorVal = {location.getWorld().getName(), String.valueOf(location.getBlockX()), String.valueOf(location.getBlockY()), String.valueOf(location.getBlockZ())};
-            ItemMeta meta = itemStack.getItemMeta();
-            meta.getPersistentDataContainer().set(MAGIC_MIRROR_KEY, PersistentDataType.STRING, String.join(",", mirrorVal[0], mirrorVal[1], mirrorVal[2], mirrorVal[3]));
-            ArrayList<String> newLore = new ArrayList<>();
-            newLore.add("");
-            newLore.add(ChatColor.DARK_GREEN + "BINDED!");
-            newLore.add(ChatColor.GREEN + "Binded to " + getEnvironmentName(location.getWorld().getEnvironment()) + " (" + location.getBlockX() + ", " +  location.getBlockY() + ", " + location.getBlockZ() + ")");
-            newLore.add("");
-            newLore.add(ChatColor.AQUA + "Interacting with this item will instantly");
-            newLore.add(ChatColor.AQUA + "teleport the user to the binded location!");
-            meta.setLore(newLore);
-            itemStack.setItemMeta(meta);
-        }
-    }
-
-    private String getEnvironmentName(World.Environment env){
-        switch (env){
-            case NORMAL:
-                return "Overworld";
-            case NETHER:
-                return "The Nether";
-            case THE_END:
-                return "The End";
-            default:
-                return WordUtils.capitalizeFully(env.toString());
-        }
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void onDragonSwordClickEntity(PlayerInteractEntityEvent event){
-        if (event.getRightClicked().getType().equals(EntityType.PLAYER) || event.getRightClicked().getType().equals(EntityType.ARMOR_STAND)){
-            event.getPlayer().getInventory().getItemInMainHand();
-            if (isDragonSword(event.getPlayer().getInventory().getItemInMainHand())){
-                event.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler
-    public void onDragonSwordClick(PlayerInteractEvent event){
-        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-
-            if (event.getClickedBlock() != null) {
-                String blockName = event.getClickedBlock().getType().toString().toLowerCase();
-                if (blockName.contains("chest") || blockName.contains("door") || blockName.contains("shulker")){
-                    return;
-                }
-            }
-
-            if (event.getItem() != null && isDragonSword(event.getItem())){
-                Location old = event.getPlayer().getEyeLocation();
-
-                boolean foundSpot = false;
-                int distance = 9;
-
-                while (!foundSpot && distance > 2){
-
-                    distance--;
-
-                    if (old.getWorld().rayTraceBlocks(old, old.getDirection(), distance) == null)
-                        foundSpot = true;
-                }
-
-                if (!foundSpot){
-                    event.getPlayer().sendMessage(ChatColor.RED + "No free spot ahead of you!");
-                    return;
-                }
-
-                Location newLocation = old.add(old.getDirection().normalize().multiply(distance));
-                event.getPlayer().teleport(newLocation);
-                event.getPlayer().damage(400, event.getPlayer());
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        event.getPlayer().setNoDamageTicks(0);
-                        event.getPlayer().setMaximumNoDamageTicks(0);
-                    }
-                }.runTaskLater(plugin, 1);
-
-                event.getPlayer().getWorld().playEffect(old, Effect.ENDEREYE_LAUNCH, 1);
-                event.getPlayer().getWorld().playEffect(newLocation, Effect.ENDER_SIGNAL, 0);
-                event.getPlayer().getWorld().playSound(newLocation, Sound.ENTITY_ENDER_EYE_DEATH, .4f, 1);
-                event.getPlayer().getWorld().playSound(old, Sound.ENTITY_ENDERMAN_TELEPORT, .4f, 1);
-            }
-        }
-    }
-
-    @EventHandler
-    public void onEnderBowShoot(EntityShootBowEvent event){
-        if (event.getEntity() instanceof Player && ((Player) event.getEntity()).isSneaking() &&  event.getBow() != null && isEnderBow(event.getBow())){
-            event.getProjectile().setMetadata("ender_arrow", new FixedMetadataValue(plugin, true));
-            event.getEntity().getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_ENDERMAN_STARE, .3f, .8f);
-        }
-    }
-
-    @EventHandler
-    public void onArrowLand(ProjectileHitEvent event){
-        if (event.getHitBlock() != null && event.getHitBlockFace() != null && event.getEntity().hasMetadata("ender_arrow")) {
-            if (event.getEntity().getShooter() instanceof LivingEntity){
-                LivingEntity shooter = (LivingEntity) event.getEntity().getShooter();
-                shooter.teleport(event.getEntity().getLocation().add(event.getHitBlockFace().getDirection().normalize()));
-                shooter.getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, .4f);
-                shooter.getWorld().playEffect(event.getEntity().getLocation(), Effect.ENDER_SIGNAL, 1);
-                shooter.damage(150, event.getEntity());
-            }
-        }
-    }
-
-    @EventHandler
-    public void onMagicMirrorInteract(PlayerInteractEvent event){
-        if (event.getItem() != null && isMagicMirror(event.getItem())){
-
-            // We have a magic mirror, what should we do?
-            Location magicMirrorLocation = getMagicMirrorLocation(event.getItem());
-
-            // Consider the case the mirror isnt binded
-            if (magicMirrorLocation == null){
-                setMagicMirrorLocation(event.getItem(), event.getPlayer().getLocation());
-                event.getPlayer().sendTitle(ChatColor.GREEN + "Location binded!", ChatColor.GRAY + "You can now teleport to this location using this mirror!", 20, 50, 30);
-            } else {
-                event.getPlayer().teleport(magicMirrorLocation);
-                event.getPlayer().sendTitle(ChatColor.BLUE + "Mirror Teleport!", "", 10, 30, 10);
-                event.getPlayer().getWorld().playSound(magicMirrorLocation, Sound.BLOCK_PORTAL_TRAVEL, .5f, .8f);
-            }
-
-        }
+        return getCustomItemType(itemStack).RARITY;
     }
 
 }

@@ -4,6 +4,7 @@ package io.github.devvydoo.levelingoverhaul.enchantments.calculator;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.items.CustomItemManager;
 import io.github.devvydoo.levelingoverhaul.enchantments.EnchantmentManager;
+import io.github.devvydoo.levelingoverhaul.items.CustomItemType;
 import io.github.devvydoo.levelingoverhaul.util.ToolTypeHelpers;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -93,7 +94,7 @@ public class PotentialEnchantment {
             // Override prot enchants for elytras
             if (itemStack.getType().equals(Material.ELYTRA) && enchant.getKey().toString().contains("protection")) { return true; }
             // Override all helmet enchants for dragon helmet
-            if (customItemManager.isDragonHelmet(itemStack) && enchant.canEnchantItem(new ItemStack(Material.LEATHER_HELMET))) { return true; }
+            if (customItemManager.isCustomItemType(itemStack, CustomItemType.DRAGON_HELMET) && enchant.canEnchantItem(new ItemStack(Material.LEATHER_HELMET))) { return true; }
             return enchant.canEnchantItem(itemStack);
 
         } else if (enchantType instanceof CustomEnchantType) {

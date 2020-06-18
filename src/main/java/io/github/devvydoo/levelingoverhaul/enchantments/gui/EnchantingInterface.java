@@ -354,7 +354,7 @@ public class EnchantingInterface implements Listener {
                         if (canBeEnchanted(gui.getItem(EQUIPMENT_SLOT))) {
                             ItemStack newItem = enchantItem(player, player.getTargetBlockExact(10), gui.getItem(EQUIPMENT_SLOT)); // Enchant
                             if (newItem.getEnchantments().isEmpty() && plugin.getEnchantmentManager().getCustomEnchantments(newItem).isEmpty()){ return; }
-                            plugin.getEnchantmentManager().setItemLevel(newItem, player.getLevel());
+                            plugin.getCustomItemManager().setItemLevel(newItem, player.getLevel());
                             if (newItem.getEnchantmentLevel(Enchantment.DURABILITY) < 1) { newItem.addEnchantment(Enchantment.DURABILITY, 1); }
                             gui.setItem(EQUIPMENT_SLOT, newItem);
 

@@ -1,7 +1,7 @@
 package io.github.devvydoo.levelingoverhaul.mobs.custommobs;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
-import io.github.devvydoo.levelingoverhaul.items.CustomItems;
+import io.github.devvydoo.levelingoverhaul.items.CustomItemType;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Fox;
@@ -30,7 +30,7 @@ public class CustomLeveledEntityFireFox extends CustomLeveledEntity {
             new FoxTargetPlayerTask(fox).runTaskTimer(LevelingOverhaul.getPlugin(LevelingOverhaul.class), 1, 60);
 
             lootTable = new CustomLeveledEntityLootTable();
-            lootTable.setPossibleItems(new CustomLeveledEntityLootTableItem(LevelingOverhaul.getPlugin(LevelingOverhaul.class).getCustomItemManager().getCustomItem(CustomItems.MOZILLA), 1f));
+            lootTable.setPossibleItems(new CustomLeveledEntityLootTableItem(LevelingOverhaul.getPlugin(LevelingOverhaul.class).getCustomItemManager().getCustomItem(CustomItemType.MOZILLA), 1f));
 
             fox.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(4500 + (int)(Math.random() * 10) * 100);
             fox.setHealth(fox.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());

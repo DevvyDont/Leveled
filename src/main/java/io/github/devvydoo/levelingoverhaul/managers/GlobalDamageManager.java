@@ -3,6 +3,7 @@ package io.github.devvydoo.levelingoverhaul.managers;
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.CustomEnchantType;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.CustomEnchantment;
+import io.github.devvydoo.levelingoverhaul.items.CustomItemType;
 import io.github.devvydoo.levelingoverhaul.util.ToolTypeHelpers;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -40,53 +41,24 @@ public class GlobalDamageManager implements Listener {
 
     private double getRangedWeaponBaseDamage(ItemStack tool) {
 
-        if (plugin.getCustomItemManager().isEnderBow(tool))
-            return 65;
+        if (plugin.getCustomItemManager().isCustomItem(tool))
+            return plugin.getCustomItemManager().getCustomItemType(tool).STAT_AMOUNT;
 
-        switch (tool.getType()) {
-            case BOW:
-                return 40;
-            case CROSSBOW:
-                return 50;
-            default:
-                return 0;
-        }
+        if (CustomItemType.Category.getFallbackCategory(tool.getType()) != CustomItemType.Category.RANGED)
+            return 3;
+
+        return CustomItemType.getFallbackStat(tool.getType());
     }
 
     private double getMeleeWeaponBaseDamage(ItemStack tool) {
 
-        if (plugin.getCustomItemManager().isDragonSword(tool))
-            return 110;
+        if (plugin.getCustomItemManager().isCustomItem(tool))
+            return plugin.getCustomItemManager().getCustomItemType(tool).STAT_AMOUNT;
 
-        switch (tool.getType()) {
+        if (CustomItemType.Category.getFallbackCategory(tool.getType()) != CustomItemType.Category.MELEE)
+            return 3;
 
-            case DIAMOND_AXE:
-                return 80;
-            case DIAMOND_SWORD:
-                return 70;
-
-            case IRON_AXE:
-                return 65;
-            case IRON_SWORD:
-                return 55;
-
-            case GOLDEN_AXE:
-                return 50;
-            case GOLDEN_SWORD:
-                return 40;
-
-            case STONE_AXE:
-                return 35;
-            case STONE_SWORD:
-                return 25;
-
-            case WOODEN_AXE:
-                return 20;
-            case WOODEN_SWORD:
-                return 15;
-            default:
-                return 5;
-        }
+        return CustomItemType.getFallbackStat(tool.getType());
     }
 
     /**
@@ -362,9 +334,9 @@ public class GlobalDamageManager implements Listener {
     private double calculateEntityDamage(LivingEntity entity){
 
         int mobLevel = plugin.getMobManager().getMobLevel(entity);
-        double damage = mobLevel * mobLevel * (mobLevel / 100.);
-        if (mobLevel < 20)
-            damage += 15;
+
+        // For context, this damage value is what the average mob should be doing. Certain mobs will hit harder/softer
+        double damage = mobLevel * mobLevel * (mobLevel / 30.) + 25;
 
         double damagePercent = 1.0;
 
@@ -380,7 +352,7 @@ public class GlobalDamageManager implements Listener {
                 break;
 
             case SKELETON:
-                damagePercent = .9;
+                damagePercent = .95;
                 break;
 
             case SPIDER:
@@ -388,13 +360,13 @@ public class GlobalDamageManager implements Listener {
             case SHULKER:
             case SHULKER_BULLET:
             case BLAZE:
-                damagePercent = .8;
+                damagePercent = .9;
                 break;
 
             case CREEPER:
                 // TODO: Make scale based on distance
-                damagePercent = 2.0;
-                if (((Creeper) entity).isPowered()) { damagePercent += 1.0; }
+                damagePercent = 2.5;
+                if (((Creeper) entity).isPowered()) { damagePercent += 1.5; }
                 break;
 
             case ENDERMAN:

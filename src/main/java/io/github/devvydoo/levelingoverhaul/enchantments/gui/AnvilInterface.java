@@ -55,7 +55,7 @@ public class AnvilInterface implements Listener {
 
     private int getMaterialRefundAmount(ItemStack item, String viewTitle) throws IllegalArgumentException {
         if (viewTitle.equals(GRINDSTONE_INTERFACE_NAME)) {
-            int itemLevel = plugin.getEnchantmentManager().getItemLevel(item);
+            int itemLevel = plugin.getCustomItemManager().getItemLevel(item);
             return itemLevel / 3;
         }
         switch (item.getType()) {

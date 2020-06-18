@@ -43,7 +43,7 @@ public class PlayerToolListeners implements Listener {
         if (toolUsed.getType() == Material.AIR)
             return;
 
-        int toolLevel = plugin.getEnchantmentManager().getItemLevel(toolUsed);
+        int toolLevel = plugin.getCustomItemManager().getItemLevel(toolUsed);
 
         if (toolLevel > player.getLevel())
             cancelEquipmentUse(event, player, toolLevel);
@@ -66,7 +66,7 @@ public class PlayerToolListeners implements Listener {
         if (toolUsed.getType() == Material.AIR)
             return;
 
-        int toolLevel = plugin.getEnchantmentManager().getItemLevel(toolUsed);
+        int toolLevel = plugin.getCustomItemManager().getItemLevel(toolUsed);
 
         if (toolLevel > player.getLevel())
             cancelEquipmentUse(event, player, toolLevel);

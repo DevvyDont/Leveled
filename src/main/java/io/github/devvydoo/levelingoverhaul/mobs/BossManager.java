@@ -2,7 +2,7 @@ package io.github.devvydoo.levelingoverhaul.mobs;
 
 import io.github.devvydoo.levelingoverhaul.LevelingOverhaul;
 import io.github.devvydoo.levelingoverhaul.enchantments.enchants.CustomEnchantType;
-import io.github.devvydoo.levelingoverhaul.items.CustomItems;
+import io.github.devvydoo.levelingoverhaul.items.CustomItemType;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.EnchantmentCalculator;
 import io.github.devvydoo.levelingoverhaul.enchantments.calculator.PotentialEnchantment;
 import io.github.devvydoo.levelingoverhaul.player.LeveledPlayer;
@@ -35,7 +35,7 @@ public class BossManager implements Listener {
 
     private ItemStack getRandomEnderDragonDrop(int level){
         int random = (int)(Math.random() * 5);
-        CustomItems[] choices = {CustomItems.DRAGON_HELMET, CustomItems.DRAGON_CHESTPLATE, CustomItems.DRAGON_LEGGINGS, CustomItems.DRAGON_BOOTS, CustomItems.DRAGON_SWORD};
+        CustomItemType[] choices = {CustomItemType.DRAGON_HELMET, CustomItemType.DRAGON_CHESTPLATE, CustomItemType.DRAGON_LEGGINGS, CustomItemType.DRAGON_BOOTS, CustomItemType.DRAGON_SWORD};
         ItemStack drop = plugin.getCustomItemManager().getCustomItem(choices[random]);
 
         drop = enchantBossDrop(drop, level + 10, level);
@@ -55,7 +55,7 @@ public class BossManager implements Listener {
                 plugin.getEnchantmentManager().addEnchant(itemStack, (CustomEnchantType) enchantment.getEnchantType(), enchantmentLevelMap.get(enchantment));
             }
         }
-        plugin.getEnchantmentManager().setItemLevel(itemStack, itemLevel);
+        plugin.getCustomItemManager().setItemLevel(itemStack, itemLevel);
         return itemStack;
     }
 
@@ -116,7 +116,7 @@ public class BossManager implements Listener {
             if (Math.random() > dropPercent)
                 return;
 
-            ItemStack bow = plugin.getCustomItemManager().getCustomItem(CustomItems.ENDER_BOW);
+            ItemStack bow = plugin.getCustomItemManager().getCustomItem(CustomItemType.ENDER_BOW);
             int endermanLevel = plugin.getMobManager().getMobLevel(event.getEntity());
             bow = enchantBossDrop(bow, endermanLevel + 10, endermanLevel);
             spawnBossDrop(bow, event.getEntity().getLocation(), true);
@@ -152,8 +152,8 @@ public class BossManager implements Listener {
             if (Math.random() > dropPercent)
                 return;
 
-            ItemStack magicMirror = plugin.getCustomItemManager().getCustomItem(CustomItems.MAGIC_MIRROR);
-            plugin.getEnchantmentManager().setItemLevel(magicMirror, 90);
+            ItemStack magicMirror = plugin.getCustomItemManager().getCustomItem(CustomItemType.MAGIC_MIRROR);
+            plugin.getCustomItemManager().setItemLevel(magicMirror, 90);
             spawnBossDrop(magicMirror, event.getEntity().getLocation(), false);
         }
     }

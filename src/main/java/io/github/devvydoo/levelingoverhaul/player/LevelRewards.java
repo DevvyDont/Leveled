@@ -156,6 +156,10 @@ public abstract class LevelRewards {
             case LEATHER_LEGGINGS:
             case LEATHER_BOOTS:
                 return LEATHER_ARMOR_UNLOCK;
+            case BOW:
+                return NORMAL_BOW_UNLOCK;
+            case CROSSBOW:
+                return CROSSBOW_UNLOCK;
 
             default:
                 return 0;
