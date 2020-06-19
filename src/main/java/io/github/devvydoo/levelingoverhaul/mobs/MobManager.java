@@ -131,6 +131,10 @@ public class MobManager implements Listener {
     }
 
     public int getMobLevel(LivingEntity mob) {
+
+        if (mob instanceof Player)
+            return ((Player) mob).getLevel();
+
         return getLeveledEntity(mob).getLevel();
     }
 

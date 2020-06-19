@@ -83,17 +83,17 @@ public class PlayerExperienceGainListeners implements Listener {
         LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
         LivingEntity livingEntity = event.getEntity();
 
-        // At this point a player has killed another entity and we can calculate their xp
-        int xp = BaseExperience.getBaseExperienceFromMob(livingEntity);
-
-        double extraLevelXp = 0;
+        //TODO: maybe add logic for players who pvp or something
+        if (livingEntity instanceof Player)
+            return;
 
         int mobLevel = plugin.getMobManager().getMobLevel(livingEntity);
 
-        if (!(livingEntity instanceof Player))
-            extraLevelXp = mobLevel * mobLevel * mobLevel * (Math.random() + .5) / 4;
+        // At this point a player has killed another entity and we can calculate their xp
+        int xp = (int) (500 * mobLevel * mobLevel - (500 * mobLevel) / (10 + Math.pow(mobLevel - 1, 1.25)));
 
-        xp += (int) extraLevelXp;
+        // Some mobs have multipliers
+        xp *= BaseExperience.getMobExperienceMultiplier(livingEntity.getType());
 
         // 5% chance for double xp :)
         double doubleXpChance = .05;

@@ -3,156 +3,49 @@ package io.github.devvydoo.levelingoverhaul.player;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 
 public abstract class BaseExperience {
 
-    /**
-     * A helper method that returns the amount of xp we should receive when killing a mob
-     *
-     * @param mob - The Entity object that was killed
-     * @return the int base amount of XP that we should earn
-     */
-    public static int getBaseExperienceFromMob(LivingEntity mob) {
-        switch (mob.getType()) {
+    public static float getMobExperienceMultiplier(EntityType type) {
 
-            // Bosses
-            case WITHER:
-                return 400000;  // 400k
-            case GIANT:
-                return 999999;  // 999,9999 idk lmao
-            case ENDER_DRAGON:
-                return 250000;  // 250k
-            case ELDER_GUARDIAN:
-                return 80000;  // 80k
-
-            // Passive (lvl 1-3)
-            case SHEEP:
-            case CHICKEN:
-            case PIG:
-            case TROPICAL_FISH:
-            case PUFFERFISH:
-            case COD:
-            case SALMON:
-            case RABBIT:
-            case MUSHROOM_COW:
-            case DONKEY:
-            case SQUID:
-            case SNOWMAN:
-            case OCELOT:
-            case PARROT:
-            case TURTLE:
-            case DOLPHIN:
-            case BAT:
-            case CAT:
-            case COW:
-            case FOX:
-            case MULE:
-            case HORSE:
-            case LLAMA:
-            case SKELETON_HORSE:
-            case ZOMBIE_HORSE:
-            case TRADER_LLAMA:
-                return 50;
-
-            case VILLAGER:
-                return 750;
-
-            // Neutral (lvl 5-15)
-            case WOLF:
-            case BEE:
-            case PANDA:
-            case POLAR_BEAR:
-
-            // Overworld easy
-
-            case PHANTOM:
-                return 400;
-
-            case ZOMBIE:
-            case ZOMBIE_VILLAGER:
-            case HUSK:
-            case DROWNED:
-                return 500;
-
-            case SKELETON:
-            case STRAY:
-                return 750;
-
-            case SPIDER:
-                return 600;
-
-            case CREEPER:
-                return 800;
-
-            case CAVE_SPIDER:
-                return 900;
-
-            case SLIME:
-                return 1200;
-
-            // Overworld medium
-            case WITCH:
-                return 1500;
-
-            case PILLAGER:
-            case VINDICATOR:
-            case VEX:
-            case EVOKER:
-                return 2500;
-
-            case RAVAGER:
-                return 5000;
-
-            case ILLUSIONER:
-                return 6000;
-
+        switch (type) {
 
             case IRON_GOLEM:
-                return 7500;
+            case ENDERMAN:
+                return 1.3f;
 
-            // Nether (40-60)
-            case PIG_ZOMBIE:
-                return 10000;
-
-            case GHAST:
-                return 14500;
-
-            case BLAZE:
-                return 15000;
-
-            case MAGMA_CUBE:  // TODO: Give custom logic for size
-                return 10000;
+            case RAVAGER:
+                return 1.5f;
 
             case WITHER_SKELETON:
-                return 22000;
+                return 1.1f;
 
-            // Overworld hard
-            case SILVERFISH:
-                return 30000;
+            case PHANTOM:
+                return .7f;
 
-            case ENDERMAN:
-                return 50000;
+            case VILLAGER:
+                return .1f;
 
-            case GUARDIAN:
-                return 55000;
+            case CREEPER:
+                return 1.25f;
 
-            // The end (60-80)
-            case ENDERMITE:
-                return 55000;
+            case VINDICATOR:
+                return 1.15f;
 
-            case SHULKER:
-                return 65000;
-
-
-            case PLAYER:
-                // TODO: Give players custom logic for xp drop
+            // Boss logic is handled somewhere else
+            case ELDER_GUARDIAN:
+            case ENDER_DRAGON:
+            case WITHER:
                 return 0;
+
             default:
-                return 0;
+                return 1f;
 
         }
+
     }
 
     /**
