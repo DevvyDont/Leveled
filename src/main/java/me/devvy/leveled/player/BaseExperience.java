@@ -13,6 +13,12 @@ public abstract class BaseExperience {
 
         switch (type) {
 
+            case COW:
+            case PIG:
+            case CHICKEN:
+            case SHEEP:
+                return .75f;
+
             case IRON_GOLEM:
             case ENDERMAN:
                 return 1.3f;
