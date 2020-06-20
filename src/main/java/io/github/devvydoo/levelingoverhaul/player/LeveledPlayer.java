@@ -130,10 +130,11 @@ public class LeveledPlayer {
         this.boots = spigotPlayer.getInventory().getBoots();
 
         this.strength = 10 + spigotPlayer.getLevel() * 2;
-        this.defense = calculateDefense();
-        this.fireDefense = calculateFireDefense();
-        this.explosionDefense = calculateExplosionDefense();
-        this.projectileDefense = calculateProjectileDefense();
+
+        calculateDefense();
+        calculateFireDefense();
+        calculateExplosionDefense();
+        calculateProjectileDefense();
 
         this.bonusHealth = calculateBonusHealth();
         calculateTotalHealth();
@@ -142,7 +143,7 @@ public class LeveledPlayer {
         spigotPlayer.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(128);
     }
 
-    private int calculateDefense() {
+    private void calculateDefense() {
         this.defense = 10 + spigotPlayer.getLevel() * 3;
         int protectionLevel;
 
@@ -151,53 +152,15 @@ public class LeveledPlayer {
         for (ItemStack armor : armorPieces){
             if (armor == null)
                 continue;
-            this.defense += getBaseArmorDefense(armor);
+
+            int armorDef = getBaseArmorDefense(armor);
             protectionLevel = armor.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL);
-            int armorTier = getArmorTier(armor);
-            this.defense += (Math.pow(protectionLevel, 1.05 + .25 * armorTier) / 4);
-        }
-
-        return this.defense;
-    }
-
-    private int getArmorTier(ItemStack armor) {
-
-        // TODO: Change armor to use flat rates, prot be % increase
-
-        switch (armor.getType()){
-            case DIAMOND_HELMET:
-            case DIAMOND_CHESTPLATE:
-            case DIAMOND_LEGGINGS:
-            case DIAMOND_BOOTS:
-                return 5;
-            case IRON_HELMET:
-            case IRON_CHESTPLATE:
-            case IRON_LEGGINGS:
-            case IRON_BOOTS:
-                return 4;
-            case CHAINMAIL_BOOTS:
-            case CHAINMAIL_CHESTPLATE:
-            case CHAINMAIL_HELMET:
-            case CHAINMAIL_LEGGINGS:
-                return 3;
-            case GOLDEN_BOOTS:
-            case GOLDEN_CHESTPLATE:
-            case GOLDEN_HELMET:
-            case GOLDEN_LEGGINGS:
-            case ELYTRA:
-                return 2;
-            case LEATHER_HELMET:
-            case LEATHER_BOOTS:
-            case LEATHER_CHESTPLATE:
-            case LEATHER_LEGGINGS:
-            case TURTLE_HELMET:
-                return 1;
-            default:
-                return 0;
+            armorDef += 1 + (protectionLevel / 10.);
+            this.defense += armorDef;
         }
     }
 
-    private int calculateFireDefense() {
+    private void calculateFireDefense() {
         this.fireDefense = 0;
         int protectionLevel = 0;
 
@@ -207,10 +170,9 @@ public class LeveledPlayer {
                 protectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION_FIRE);
 
         this.fireDefense += (Math.pow(protectionLevel, 2));
-        return this.fireDefense;
     }
 
-    private int calculateExplosionDefense() {
+    private void calculateExplosionDefense() {
         this.explosionDefense = 0;
         int protectionLevel = 0;
 
@@ -220,10 +182,9 @@ public class LeveledPlayer {
                 protectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION_EXPLOSIONS);
 
         this.explosionDefense += (Math.pow(protectionLevel, 2));
-        return this.explosionDefense;
     }
 
-    private int calculateProjectileDefense() {
+    private void calculateProjectileDefense() {
         this.projectileDefense = 0;
         int protectionLevel = 0;
 
@@ -233,7 +194,6 @@ public class LeveledPlayer {
                 protectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION_PROJECTILE);
 
         this.projectileDefense += (Math.pow(protectionLevel, 2));
-        return this.projectileDefense;
     }
 
     public double calculateBaseHealth() {
