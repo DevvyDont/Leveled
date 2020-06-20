@@ -67,17 +67,18 @@ public abstract class BaseExperience {
             case GRASS_BLOCK:
                 return Math.random() < .01 ? 1 : 0;
             case COAL_ORE:
-                return 150;
+                return 1000;
             case NETHER_QUARTZ_ORE:
                 return 10000;
             case LAPIS_ORE:
-                return 3500;
+                return 4000;
+            // Cant mine until lvl 20
             case REDSTONE_ORE:
-                return 3000;
+                return 7500;
             case DIAMOND_ORE:
-                return 20000;
+                return 15000;
             case EMERALD_ORE:
-                return 80000;
+                return 50000;
             default:
                 return 0;
         }
@@ -93,6 +94,9 @@ public abstract class BaseExperience {
 
         double base;
         switch (materialSmelted) {
+            case STONE:
+                base = 40;
+                break;
             case COOKED_BEEF:
             case COOKED_CHICKEN:
             case COOKED_COD:
@@ -100,17 +104,17 @@ public abstract class BaseExperience {
             case COOKED_PORKCHOP:
             case COOKED_RABBIT:
             case COOKED_SALMON:
-                base = 100;
+                base = 210;
                 break;
             case DRIED_KELP:
             case BAKED_POTATO:
-                base = 40;
+                base = 100;
                 break;
             case IRON_INGOT:
-                base = 250;
+                base = 2500;
                 break;
             case GOLD_INGOT:
-                base = 500;
+                base = 10000;
                 break;
             default:
                 base = 0;
@@ -225,7 +229,7 @@ public abstract class BaseExperience {
             case "adventure/trade":
                 return 5000;
             case "story/upgrade_tools":  // Stone tools capped at level 5
-                return 2500;
+                return 2000;
             case "husbandry/tactical_fishing":  // Catch fish using a bucket
             case "story/lava_bucket":  // Iron capped at lvl 15
             case "adventure/summon_iron_golem":  // Iron capped at lvl 15
@@ -233,27 +237,29 @@ public abstract class BaseExperience {
             case "story/smelt_iron":  // Iron capped at lvl 15
             case "adventure/voluntary_exile":  // Kill raid captain
             case "story/deflect_arrow":  // Shield capped at lvl 20
-                return 80000;
+                return 20000;
             case "adventure/shoot_arrow":  // Bow capped at lvl 15
             case "adventure/sniper_duel":  // Bow capped at level 15
-                return 50000;
+                return 40000;
             case "story/iron_tools": // Capped at level 25
+            case "story/obtain_armor":  // Clarification: Equip iron armor, capped at lvl 35
+                return 15000;
             case "story/mine_diamond": // Capped at level 25
+                return 100000;
             case "story/enchant_item":  // Enchanting capped at 30
-                return 50000;
+                return 200000;
             case "adventure/arbalistic":  // Shoot a crossbow i think?
             case "adventure/ol_betsy":  // Shoot a crossbow i think?
             case "adventure/totem_of_undying":  // Cheat death
             case "adventure/two_birds_one_arrow":  // Crossbow capped at 30, kill two phantoms with piercing
             case "adventure/whos_the_pillager_now":  // Crossbow capped at 30, kill illager with it
-            case "adventure/hero_of_the_village":  // Raid
             case "adventure/very_very_frightening":  // STrike a villager with lightning
             case "adventure/throw_trident":  // Throw a trident
             case "husbandry/silk_touch_nest":  // Silk touch bee nest with 3 bees inside
-            case "story/obtain_armor":  // Clarification: Equip iron armor, capped at lvl 35
                 return 250000;
             case "husbandry/bred_all_animals":  // Difficult to pull off, should reward a good amount
             case "husbandry/complete_catalogue":  // Difficult to pull off, tame all cat variants
+            case "adventure/hero_of_the_village":  // Raid
                 return 1000000;
             case "husbandry/balanced_diet":  // Eat everything, not easy
                 return 1000000;
@@ -302,9 +308,9 @@ public abstract class BaseExperience {
             case "end/levitate":
             case "end/respawn_dragon":
             case "nether/all_potions":  // have every potion effect in the game, super difficult
-                return 4000000;
+                return 3000000;
             case "end/elytra":
-                return 5000000;
+                return 2500000;
             default:
                 System.out.println("[Achievements]: Came across unexpected achievement: " + advancementKey);
                 return 0;

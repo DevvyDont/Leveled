@@ -98,7 +98,7 @@ public class PlayerExperienceGainListeners implements Listener {
 
         // Some mobs have multipliers
         xp *= BaseExperience.getMobExperienceMultiplier(livingEntity.getType());
-        
+
         // 5% chance for double xp :)
         double doubleXpChance = .05;
 
