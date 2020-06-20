@@ -1,28 +1,35 @@
-name: LevellingOverhaul
+name: Leveled
 version: ${project.version}
-main: io.github.devvydoo.levelingoverhaul.LevelingOverhaul
+main: me.devvy.leveled.Leveled
 api-version: 1.13
+
 commands:
+
   stats:
     description: See player stats
     usage: /stats
+
   party:
     description: Team up with other players, see their health, and disable friendly fire
     usage: /party < leave | list | invite | accept | tp > [player]
     aliases:
       - p
+
   adminmob:
     description: Spawns a test mob
     usage: /mob
     permission: op
+
   adminlevel:
     description: Used to modify player progression for debug purposes
     usage: /debug < reset | level | tp > [ CONFIRM / < new level > / [x, y, z] ]
     permission: op
+
   adminenchant:
     description: Used to enchant the item in your hand for debug purposes
     usage: /enchantdebug < level enchant > < quality >
     permission: op
+
   nametag:
     description: Used to change the name on a nametag
     usage: /nametag < name >
