@@ -23,7 +23,7 @@ public class ScoreboardManager implements Listener {
     private final Leveled plugin;
     private final HashMap<Player, Scoreboard> playerScoreboardMap;
 
-    private final String DEFAULT_HEADER = ChatColor.GREEN + "" + ChatColor.BOLD +  "Leveling Overhaul";
+    private final String DEFAULT_HEADER = ChatColor.GREEN + "" + ChatColor.BOLD +  "Minecraft Leveled";
     private final String DEFAULT_ONLINE_HEADER = ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + ">" + ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + " Online Players";
     private final String DEFAULT_ONLINE_KEY = "onlinePlayers";
     private final String DEFAULT_ONLINE_ENTRY = ChatColor.BLACK + "" + ChatColor.WHITE;

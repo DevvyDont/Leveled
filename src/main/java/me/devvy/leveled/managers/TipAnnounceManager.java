@@ -69,7 +69,7 @@ public class TipAnnounceManager {
         tips.add(String.format("Pickaxes with %sSilk Touch %scannot gain experience, however pickaxes with %sSmelting Touch %scan gain experience from Iron Ore and Gold Ore!", ChatColor.LIGHT_PURPLE, ChatColor.GRAY, ChatColor.LIGHT_PURPLE, ChatColor.GRAY));
         tips.add(String.format("Higher level %screepers%s explode much quicker and have a chance to %sspawn charged%s. Be careful!", ChatColor.DARK_GREEN, ChatColor.GRAY, ChatColor.AQUA, ChatColor.GRAY));
         tips.add(String.format("Some mobs spawn in at a fixed level, such as %sEndermen%s. If you are a %slow level%s, it would probably be smart to not mess with the Endermen yet...", ChatColor.DARK_PURPLE, ChatColor.GRAY, ChatColor.RED, ChatColor.GRAY));
-        tips.add(String.format("%sWant to make a change or see how the plugin works? See the %ssource code %sat:%s https://github.com/DevvyDoo/Leveling-Overhaul", ChatColor.GRAY, ChatColor.GREEN, ChatColor.GRAY, ChatColor.BLUE));
+        tips.add(String.format("%sWant to make a change or see how the plugin works? See the %ssource code %sat:%s https://github.com/DevvyDoo/Leveled", ChatColor.GRAY, ChatColor.GREEN, ChatColor.GRAY, ChatColor.BLUE));
         tips.add(String.format("The %sEnderdragon %sdrops powerful gear with %sunique abilities%s... Can you collect the full set?", ChatColor.RED, ChatColor.GRAY, ChatColor.BLUE, ChatColor.GRAY));
         tips.add(String.format("%sWitches %sdrop %sMagic Mirrors %swhich can be used to instantly teleport to any binded location.", ChatColor.RED, ChatColor.GRAY, ChatColor.AQUA, ChatColor.GRAY));
         tips.add(String.format("%sEndermen %son the %stiny End islands %shave a rare drop...", ChatColor.LIGHT_PURPLE, ChatColor.GRAY, ChatColor.GOLD, ChatColor.GRAY));
