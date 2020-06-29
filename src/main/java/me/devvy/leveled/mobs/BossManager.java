@@ -1,14 +1,11 @@
 package me.devvy.leveled.mobs;
 
 import me.devvy.leveled.Leveled;
-import me.devvy.leveled.enchantments.enchants.CustomEnchantType;
+import me.devvy.leveled.enchantments.EnchantmentManager;
 import me.devvy.leveled.items.CustomItemType;
-import me.devvy.leveled.enchantments.calculator.EnchantmentCalculator;
-import me.devvy.leveled.enchantments.calculator.PotentialEnchantment;
 import me.devvy.leveled.player.LeveledPlayer;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,7 +20,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class BossManager implements Listener {
 
@@ -43,19 +39,7 @@ public class BossManager implements Listener {
     }
 
     public ItemStack enchantBossDrop(ItemStack itemStack, int enchantLevel, int itemLevel){
-        EnchantmentCalculator calculator = new EnchantmentCalculator(plugin.getCustomItemManager(), plugin.getEnchantmentManager(), enchantLevel, plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR, itemStack);
-
-        ArrayList<PotentialEnchantment> enchantments = calculator.calculateEnchantmentTypes();
-        HashMap<PotentialEnchantment, Integer> enchantmentLevelMap = calculator.calculateEnchantmentLevels(enchantments);
-
-        for (PotentialEnchantment enchantment : enchantmentLevelMap.keySet()) {
-            if (enchantment.getEnchantType() instanceof Enchantment) {
-                plugin.getEnchantmentManager().addEnchant(itemStack, (Enchantment) enchantment.getEnchantType(), enchantmentLevelMap.get(enchantment));
-            } else if (enchantment.getEnchantType() instanceof CustomEnchantType) {
-                plugin.getEnchantmentManager().addEnchant(itemStack, (CustomEnchantType) enchantment.getEnchantType(), enchantmentLevelMap.get(enchantment));
-            }
-        }
-        plugin.getCustomItemManager().setItemLevel(itemStack, itemLevel);
+        plugin.getEnchantmentManager().doCalculatorEnchant(itemStack, enchantLevel, 12, itemLevel);
         return itemStack;
     }
 
@@ -98,17 +82,10 @@ public class BossManager implements Listener {
             Player player = (event.getEntity().getKiller());
             double dropPercent = .005;
 
-            int mainLevel = 0;
-            int offLevel = 0;
+            int mainLevel = player.getInventory().getItemInMainHand().getEnchantmentLevel(EnchantmentManager.PROSPECT);
+            int offLevel = player.getInventory().getItemInOffHand().getEnchantmentLevel(EnchantmentManager.PROSPECT);
 
-            try {
-                mainLevel = plugin.getEnchantmentManager().getEnchantLevel(player.getInventory().getItemInMainHand(), CustomEnchantType.PROSPECT);
-            } catch (IllegalArgumentException ignored){}
-            try {
-                offLevel = plugin.getEnchantmentManager().getEnchantLevel(player.getInventory().getItemInOffHand(), CustomEnchantType.PROSPECT);
-            } catch (IllegalArgumentException ignored){}
-
-            int prospectLevel = Math.max(mainLevel, offLevel);
+            int prospectLevel = mainLevel + offLevel;
 
             if (prospectLevel > 0)
                 dropPercent *= prospectLevel;
@@ -127,24 +104,18 @@ public class BossManager implements Listener {
     public void onWitchDeath(EntityDeathEvent event){
         if (event.getEntityType().equals(EntityType.WITCH)){
 
-            int mainLevel = 0;
-            int offLevel = 0;
+
 
             double dropPercent = .01;
 
             Player player = event.getEntity().getKiller();
-
             if (player == null)
                 return;
 
-            try {
-                mainLevel = plugin.getEnchantmentManager().getEnchantLevel(player.getInventory().getItemInMainHand(), CustomEnchantType.PROSPECT);
-            } catch (IllegalArgumentException ignored){}
-            try {
-                offLevel = plugin.getEnchantmentManager().getEnchantLevel(player.getInventory().getItemInOffHand(), CustomEnchantType.PROSPECT);
-            } catch (IllegalArgumentException ignored){}
+            int mainLevel = player.getInventory().getItemInMainHand().getEnchantmentLevel(EnchantmentManager.PROSPECT);
+            int offLevel = player.getInventory().getItemInOffHand().getEnchantmentLevel(EnchantmentManager.PROSPECT);
 
-            int prospectLevel = Math.max(mainLevel, offLevel);
+            int prospectLevel = mainLevel + offLevel;
 
             if (prospectLevel > 0)
                 dropPercent *= prospectLevel;
@@ -228,8 +199,8 @@ public class BossManager implements Listener {
 
                 @Override
                 public void run() {
-                    ((LivingEntity) event.getEntity()).setNoDamageTicks(0);
-                    ((LivingEntity) event.getEntity()).setMaximumNoDamageTicks(0);
+                    ((LivingEntity) event.getEntity()).setNoDamageTicks(10);
+                    ((LivingEntity) event.getEntity()).setMaximumNoDamageTicks(10);
                 }
 
             }.runTaskLater(plugin, 1);

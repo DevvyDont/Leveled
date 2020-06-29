@@ -1,653 +1,240 @@
 package me.devvy.leveled.enchantments;
 
 import me.devvy.leveled.Leveled;
-import me.devvy.leveled.enchantments.enchants.CustomEnchantType;
-import me.devvy.leveled.enchantments.enchants.CustomEnchantment;
-import me.devvy.leveled.util.ToolTypeHelpers;
-import org.apache.commons.lang.WordUtils;
+import me.devvy.leveled.enchantments.calculator.EnchantmentCalculator;
+import me.devvy.leveled.enchantments.calculator.PotentialEnchantment;
+import me.devvy.leveled.enchantments.customenchants.*;
+import me.devvy.leveled.player.PlayerExperience;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentWrapper;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 
-/**
- * Here's a quick overview on how our enchantment system works and how to add an enchantment:
- * <p>
- * First off, We have 3 main classes.
- * - EnchantmentManager
- * - CustomEnchantment
- * - CustomEnchantType
- * <p>
- * EnchantmentManager (This class) is a helper class that we can use throughout the plugin to make
- * adding enchantments, testing for enchantments, getting information, etc. easier. Think of it as a helper/controller
- * class, or a middleman between our complicated enchantment system and the rest of the plugin
- * <p>
- * CustomEnchantment is my attempt at making the lore based enchantment approach be brought into a more OOP friendly
- * implementation, to be more similar to extending from the Enchantment class bukkit/spigot provides. By doing this,
- * we can then use methods such as getType() and getName() when iterating through a list of enchantments that an item
- * has, similar to vanilla enchantments. This means when listening for events, instead of doing some crazy ass lore
- * parsing inside of an already hectic enough event, we simply can just do
- * if (CustomEnchantments.hasEnchant(event.getItem(), CustomEnchantType.EXPLOSIVE_TOUCH)){ do something }
- * which is a lot more consistent with how spigot handles things.
- * <p>
- * CustomEnchantType is just all the enums of the custom enchants that we should add, which brings up the question:
- * <p>
- * How do we add/register enchantments?
- * <p>
- * First, add your Enchantment to the CustomEnchantType enum, following normal java etiquette, this simply tells
- * this class here that your enchantment is valid when parsing through lore.
- * <p>
- * Second, you should add a description that matches your new type to a String case in the getEnchantmentDescription()
- * method. This is technically optional, but we should give our enchantments descriptions.
- * <p>
- * Lastly, if we are to follow the current format of things, we should make a new class inside the same directory
- * that is the name of your enchantment, but Camel-Cased. Inside of this class will be all events that are responsible
- * for making your enchantment do its thing by listening to events and modifying them (The level of the enchantment
- * is also available when getting the enchantments using enchantment.getLevel()). DO NOT FORGET TO REGISTER THE
- * CLASS AS A LISTENER IN THE MAIN PLUGIN CLASS
- * <p>
- * A quick example of doing this:
- * <p>
- * Let's say we want to make an enchantment that multiplies damage done for every level (OP i know...)
- * 1. Add SUPER_SHARPNESS as an enum in CustomEnchantType
- * 2. Add case SUPER_SHARPNESS: "Multiply your damage output for every level of enchantment" to the description method
- * 3. Make a new class called SuperSharpness in this package that implements Listener, and listen for an
- * EntityDamageEntityEvent, do checks to make sure the attacker is the player etc etc. and finally we want to simply do
- * this.
- * if (CustomEnchantments.hasEnchant(player.getInventory.getItemInMainHand(), CustomEnchantTypes.SUPER_SHARPNESS){
- * event.setFinalDamage(event.getFinalDamage() * CustomEnchantments.getEnchantLevel(player.getInventory.getItemInMainHand(), CustomEnchantTypes.SUPER_SHARPNESS));
- * }
- * <p>
- * OR
- * <p>
- * ArrayList<CustomEnchantment> customEnchants = CustomEnchantments.getCustomEnchantments(player.getInventory.getItemInMainHand());
- * for (CustomEnchantment e: customEnchants){
- * if (e.getType().equals(CustomEnchantType.SUPER_SHARPNESS)){
- * event.setFinalDamage(event.getFinalDamage() * e.getLevel());
- * }
- * }
- * <p>
- * Then don't forget to register the listener in the main LevellingOverhaul class by adding this line:
- * getServer().getPluginManager().registerEvents(new SuperSharpness(), this);
- * <p>
- * For the time being this is all we need to worry about, as the base system automates everything else with simple
- * string manipulation using the name of the enum we defined itself
- */
 public class EnchantmentManager {
 
     // A color to use for enchantment descriptions, should we use them. Enchantments never start with this color.
     public final String DESCRIPTION_COLOR = ChatColor.GRAY.toString();
-    public final String LEVEL_CAPPED_GEAR_STRING = "Level";
-    public final String LEVEL_CAPPED_GEAR_STRING_FULL = LEVEL_CAPPED_GEAR_STRING + " %s ";
+    public static final int MAX_ENCHANT_QUALITY_FACTOR = 12;
 
-    public final int MAX_ENCHANT_QUALITY_FACTOR = 12;
+    public static final Map<Enchantment, String> enchantDescriptionMap = new HashMap<>();
+
+    // All of our enchants. To add one, simply add the field here as you see, and register and deregister
+    public static final Enchantment EXPLOSIVE_TOUCH = new EnchantExplosiveTouch(new NamespacedKey(Leveled.getPlugin(Leveled.class), "explosivetouch"));
+    public static final Enchantment SATURATION = new EnchantSaturation(new NamespacedKey(Leveled.getPlugin(Leveled.class), "saturation"));
+    public static final Enchantment EXPERIENCED = new EnchantExperienced(new NamespacedKey(Leveled.getPlugin(Leveled.class), "experienced"));
+    public static final Enchantment GROWTH = new EnchantGrowth(new NamespacedKey(Leveled.getPlugin(Leveled.class), "growth"));
+    public static final Enchantment SMARTY_PANTS = new EnchantSmartyPants(new NamespacedKey(Leveled.getPlugin(Leveled.class), "smartypants"));
+    public static final Enchantment SMELTING_TOUCH = new EnchantSmeltingTouch(new NamespacedKey(Leveled.getPlugin(Leveled.class), "smeltingtouch"));
+    public static final Enchantment CRITICAL_SHOT = new EnchantCriticalShot(new NamespacedKey(Leveled.getPlugin(Leveled.class), "criticalshot"));
+    public static final Enchantment CRITICAL_STRIKE = new EnchantCriticalStrike(new NamespacedKey(Leveled.getPlugin(Leveled.class), "criticalstrike"));
+    public static final Enchantment SNIPE = new EnchantSnipe(new NamespacedKey(Leveled.getPlugin(Leveled.class), "snipe"));
+    public static final Enchantment GOLDEN_DIET = new EnchantSnipe(new NamespacedKey(Leveled.getPlugin(Leveled.class), "goldendiet"));
+    public static final Enchantment HOMING = new EnchantHoming(new NamespacedKey(Leveled.getPlugin(Leveled.class), "homing"));
+    public static final Enchantment PROSPECT = new EnchantProspect(new NamespacedKey(Leveled.getPlugin(Leveled.class), "prospect"));
+    public static final Enchantment FULL_METAL_JACKET = new EnchantFMJ(new NamespacedKey(Leveled.getPlugin(Leveled.class), "fmj"));
+    public static final Enchantment SPEEDSTER = new EnchantSpeedster(new NamespacedKey(Leveled.getPlugin(Leveled.class), "speedster"));
+    public static final Enchantment NETHER_HUNTER = new EnchantNetherHunter(new NamespacedKey(Leveled.getPlugin(Leveled.class), "netherhunter"));
+    public static final Enchantment ENDER_HUNTER = new EnchantEnderHunter(new NamespacedKey(Leveled.getPlugin(Leveled.class), "enderhunter"));
+    public static final Enchantment GREEDY_MINER = new EnchantGreedyMiner(new NamespacedKey(Leveled.getPlugin(Leveled.class), "greedyminer"));
+    public static final Enchantment BERSERK = new EnchantBerserk(new NamespacedKey(Leveled.getPlugin(Leveled.class), "berserk"));
+    public static final Enchantment EXECUTIONER = new EnchantExecutioner(new NamespacedKey(Leveled.getPlugin(Leveled.class), "executioner"));
+
 
     private final Leveled plugin;
 
-    public EnchantmentManager(Leveled plugin) {
-        this.plugin = plugin;
-    }
+    public EnchantmentManager() {
 
-    /**
-     * Returns an arraylist of custom enchants on an item stack, we do this by parsing the lore of the item stack
-     *
-     * @param item - The ItemStack that we are checking the lore for
-     * @return an arraylist of CustomEnchantment objects on the item stack
-     */
-    public ArrayList<CustomEnchantment> getCustomEnchantments(ItemStack item) {
+        this.plugin = Leveled.getPlugin(Leveled.class);
 
-        ArrayList<CustomEnchantment> enchantments = new ArrayList<>();
+        // A map used to easily retrieve enchantment descriptions
+        enchantDescriptionMap.put(EXPLOSIVE_TOUCH, "Explosions :)");
+        enchantDescriptionMap.put(SATURATION, "Increases saturation from food");
+        enchantDescriptionMap.put(EXPERIENCED, "Increases bonus XP chance");
+        enchantDescriptionMap.put(GROWTH, "Increases Max HP");
+        enchantDescriptionMap.put(SMARTY_PANTS, "Increases advancement XP");
+        enchantDescriptionMap.put(SMELTING_TOUCH, "Automatically smelts blocks broken");
+        enchantDescriptionMap.put(CRITICAL_SHOT, "Increases critical arrow chance");
+        enchantDescriptionMap.put(CRITICAL_STRIKE, "Increases critical damage");
+        enchantDescriptionMap.put(GOLDEN_DIET, "Converts some food into instant HP");
+        enchantDescriptionMap.put(HOMING, "Arrows home onto the nearest target");
+        enchantDescriptionMap.put(PROSPECT, "Increases drop chance of rare items");
+        enchantDescriptionMap.put(FULL_METAL_JACKET, "Increases damage against bosses");
+        enchantDescriptionMap.put(SPEEDSTER, "Increases movement speed");
+        enchantDescriptionMap.put(NETHER_HUNTER, "Increases damage dealt in the Nether");
+        enchantDescriptionMap.put(ENDER_HUNTER, "Increases damage dealt in The End");
+        enchantDescriptionMap.put(GREEDY_MINER, "Mining ores heals HP");
+        enchantDescriptionMap.put(BERSERK, "Deal double damage, receive tripled damage");
+        enchantDescriptionMap.put(EXECUTIONER, "Increases damage dealt to entities low on HP");
+        enchantDescriptionMap.put(Enchantment.PROTECTION_FIRE, "Damage caused by fire is reduced");
+        enchantDescriptionMap.put(Enchantment.DAMAGE_ALL, "General damage is increased");
+        enchantDescriptionMap.put(Enchantment.ARROW_FIRE, "Enemies shot will get ignited");
+        enchantDescriptionMap.put(Enchantment.WATER_WORKER, "Underwater block breaking speeds are increased");
+        enchantDescriptionMap.put(Enchantment.ARROW_KNOCKBACK, "Enemies hit by arrows get knocked back further");
+        enchantDescriptionMap.put(Enchantment.LOYALTY, "Your trident will return to you upon throwing");
+        enchantDescriptionMap.put(Enchantment.DEPTH_STRIDER, "Move faster when in water");
+        enchantDescriptionMap.put(Enchantment.VANISHING_CURSE, "When this item is dropped, it will vanish");
+        enchantDescriptionMap.put(Enchantment.DURABILITY, "This tool has a chance to not use durability upon use");
+        enchantDescriptionMap.put(Enchantment.KNOCKBACK, "Enemies hit will get knocked back");
+        enchantDescriptionMap.put(Enchantment.LUCK, "You might find it easier to catch better stuff...");
+        enchantDescriptionMap.put(Enchantment.BINDING_CURSE, "Careful! This item cannot be un-equipped!");
+        enchantDescriptionMap.put(Enchantment.LOOT_BONUS_BLOCKS, "Item drops from mining blocks is increased");
+        enchantDescriptionMap.put(Enchantment.PROTECTION_ENVIRONMENTAL, "Increases resistance against general damage from enemies");
+        enchantDescriptionMap.put(Enchantment.DIG_SPEED, "Increases mining speed");
+        enchantDescriptionMap.put(Enchantment.MENDING, "Experience gains will contribute to extra tool durability");
+        enchantDescriptionMap.put(Enchantment.FROST_WALKER, "Walk on water... Technically...");
+        enchantDescriptionMap.put(Enchantment.LURE, "Fish will be caught quicker");
+        enchantDescriptionMap.put(Enchantment.LOOT_BONUS_MOBS, "Increases drop amount and chance from enemies");
+        enchantDescriptionMap.put(Enchantment.PIERCING, "Increases damage done from arrows that pass through enemies");
+        enchantDescriptionMap.put(Enchantment.PROTECTION_EXPLOSIONS, "Reduces damage taken from explosions");
+        enchantDescriptionMap.put(Enchantment.DAMAGE_UNDEAD, "Increases damage done against the undead");
+        enchantDescriptionMap.put(Enchantment.MULTISHOT, "Increases the amount of arrows that can be shot at once");
+        enchantDescriptionMap.put(Enchantment.FIRE_ASPECT, "Causes enemies to be lit on fire when attacked");
+        enchantDescriptionMap.put(Enchantment.CHANNELING, "Summon a lightning bold in thunder storms");
+        enchantDescriptionMap.put(Enchantment.SWEEPING_EDGE, "Increases damage done from sweep attacks");
+        enchantDescriptionMap.put(Enchantment.THORNS, "Reflects damage back on enemies");
+        enchantDescriptionMap.put(Enchantment.DAMAGE_ARTHROPODS, "Increases damage done against Spiders, Silverfish, and Bees");
+        enchantDescriptionMap.put(Enchantment.OXYGEN, "Increases lung capacity");
+        enchantDescriptionMap.put(Enchantment.RIPTIDE, "Increases effectiveness in water");
+        enchantDescriptionMap.put(Enchantment.SILK_TOUCH, "Causes most blocks broken to drop its original form");
+        enchantDescriptionMap.put(Enchantment.QUICK_CHARGE, "Increases fire rate");
+        enchantDescriptionMap.put(Enchantment.PROTECTION_PROJECTILE, "Decreases damage taken from projectiles");
+        enchantDescriptionMap.put(Enchantment.IMPALING, "Increases damage done when the Trident hits an enemy");
+        enchantDescriptionMap.put(Enchantment.PROTECTION_FALL, "Decreases fall damage taken");
+        enchantDescriptionMap.put(Enchantment.ARROW_DAMAGE, "Increases the damage done for arrows shot by this bow");
+        enchantDescriptionMap.put(Enchantment.ARROW_INFINITE, "Arrows have a chance to not deplete upon shooting");
 
-        // Apparently this is possible... check just in case
-        if (item == null || item.getItemMeta() == null || item.getItemMeta().getLore() == null) {
-            return enchantments;  // Returns an empty list, no biggie
-        }
-
-        for (String lore : item.getItemMeta().getLore()) {
-            // Add the enchantment if it's not a description AND it's not null
-            if (!lore.startsWith(DESCRIPTION_COLOR)) {
-                CustomEnchantment newEnchant = getEnchantmentFromLore(lore);
-                if (newEnchant != null) {
-                    enchantments.add(newEnchant);
-                }
-            }
-        }
-        return enchantments;
-    }
-
-    public HashMap<CustomEnchantType, CustomEnchantment> getCustomEnchantmentMap(ItemStack itemStack){
-
-        HashMap<CustomEnchantType, CustomEnchantment> enchantmentHashMap = new HashMap<>();
-
-        for (CustomEnchantment enchantment : getCustomEnchantments(itemStack))
-            enchantmentHashMap.put(enchantment.getType(), enchantment);
-
-        return enchantmentHashMap;
-
-    }
-
-    /**
-     * Used to add an enchantment to an item stack if it doesn't already have it, we do this simply by adding lore
-     * to the item stack
-     *
-     * @param item        - The ItemStack that we want to enchant
-     * @param enchantment - The enchantment that we want to test for, use the constants defined in this class
-     */
-    public void addEnchant(ItemStack item, CustomEnchantType enchantment, int level) {
-
-        ItemMeta meta = item.getItemMeta();
-
-        // Again, this is possible, don't know when or why or how, but check them just in case
-        if (meta == null) {
+        // Begin hacky way to get our custom enchants registered into vanilla mc
+        try {
+            Field field = Enchantment.class.getDeclaredField("acceptingNew");
+            field.setAccessible(true);
+            field.set(null, true);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            plugin.getServer().getPluginManager().disablePlugin(plugin);
             return;
         }
 
-        // Sanity check, don't add an enchantment if we already have it
-        if (hasEnchant(item, enchantment)) {
-            plugin.getCustomItemManager().updateItemLore(item);
-            return;
-        }
+        // First register the enchants with the server, make sure we don't re-register enchants
+        for (Enchantment e : enchantDescriptionMap.keySet()) {
 
-        // Construct our new lore we are going to add
-        ArrayList<String> loreToAdd = new ArrayList<>();
-        loreToAdd.add("");  // Basically a newline
-        loreToAdd.add(CustomEnchantment.getLoreContent(enchantment, level));
-        loreToAdd.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment));
+            // Enchantments that are an instance of this class are vanilla, skip
+            if (e instanceof EnchantmentWrapper)
+                continue;
 
-        // If we don't have lore, let's make a new list, otherwise let's just use what we got
-        List<String> lore = (meta.getLore() == null) ? new ArrayList<>() : meta.getLore();
-
-        // Append the new lore, set it, and apply it to the item
-        lore.addAll(loreToAdd);
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-
-        plugin.getCustomItemManager().updateItemLore(item);
-    }
-
-    /**
-     * Since we have lore that explains enchantments, we need to keep it in sync with vanilla enchantments as well
-     *
-     * @param item        - The ItemStack we are enchanting
-     * @param enchantment - The vanilla Enchantment we are adding
-     * @param level       - The level of the enchantment
-     */
-    public void addEnchant(ItemStack item, Enchantment enchantment, int level) {
-
-        // Don't enchant it twice
-        if (item.containsEnchantment(enchantment)) {
-            return;
-        }
-
-        item.addUnsafeEnchantment(enchantment, level);
-        plugin.getCustomItemManager().updateItemLore(item);
-    }
-
-    /**
-     * Used to check whether or not an item has a certain enchantment, we do this by parsing the lore of the item
-     *
-     * @param item        - The ItemStack we are checking against
-     * @param enchantment - The CustomEnchantment we are looking for
-     * @return a boolean representing whether or not the item has the enchantment
-     */
-    public boolean hasEnchant(ItemStack item, CustomEnchantType enchantment) {
-
-        // Loop through all the enchantments on the item, if it has the enchantment we are looking for, return true
-        for (CustomEnchantment e : getCustomEnchantments(item)) {
-            if (e.getType().equals(enchantment)) {
-                return true;
+            try {
+                Enchantment.registerEnchantment(e);
+            } catch (Exception err) {
+                System.out.println("Enchantment " + e + " is already registered.");
             }
+
         }
-        return false;  // Didn't find it, return false
+
+        // Enchants that need to take an advantage of an event go here
+        plugin.getServer().getPluginManager().registerEvents(new EnchantInfinity(), plugin);
+
+        plugin.getServer().getPluginManager().registerEvents((Listener) HOMING, plugin);
     }
 
-    public int getEnchantLevel(ItemStack item, CustomEnchantType enchantment) {
-
-        // Loop through all the enchantments on the item, if it has the enchantment we are looking for, return the level
-        for (CustomEnchantment e : getCustomEnchantments(item)) {
-            if (e.getType().equals(enchantment)) {
-                return e.getLevel();
-            }
-        }
-        throw new IllegalArgumentException(String.format("Tried to find level for enchantment %s for %s, but item didn't have it!", enchantment, item.getType())); // Didn't find it, we shouldn't do anything
-    }
 
     /**
-     * A helper method that parses a line of lore to find a potential enchantment
+     * Enchants the item using our enchant calculator. Should be used for drops that come enchanted, or when using
+     * an enchantment table.
      *
-     * @param loreLine - The string of lore we are reading
-     * @return a potential CustomEnchantment parsed from the line, can be null
+     * @param itemStack The item to enchant
+     * @param levelToEnchant The level to calculate an enchant for
+     * @param quality How "lucky" this enchant is, 0 is shit and 12 is really good
      */
-    private CustomEnchantment getEnchantmentFromLore(String loreLine) {
-
-        // This is a description line, we can't do anything with it
-        if (loreLine.startsWith(DESCRIPTION_COLOR)) {
-            return null;
-        }
-        // Clean the color from the line, we want to read the raw text
-        String cleanLine = ChatColor.stripColor(loreLine);
-        // Loop through all the possible types and see if we can find our enchantment
-        for (CustomEnchantType type : CustomEnchantType.values()) {
-            // If the Enchantment matches the enum type, we found a match.
-            if (cleanLine.toUpperCase().replace(' ', '_').startsWith(type.toString().toUpperCase())) {
-                // We are going to split the String by the space that separates the title and the level
-                int level = Integer.parseInt(cleanLine.substring(cleanLine.lastIndexOf(' ') + 1));
-                // Hopefully nothing went wrong...
-                return new CustomEnchantment(this, type, level);
-            }
-        }
-        // Couldn't find it, usually isn't a big deal
-        return null;
-    }
-
-    public List<String> getEnchantmentLoreSection(ItemStack itemStack) {
-
-        List<String> newLore = new ArrayList<>();
-
-        // First we need to get the custom enchantment objects on the item
-        List<CustomEnchantment> customEnchantments = getCustomEnchantments(itemStack);
-        customEnchantments.sort(Comparator.comparing(CustomEnchantment::getName));
-        // Next get the vanilla enchantments the item has
-        Map<Enchantment, Integer> vanillaEnchantments = itemStack.getEnchantments();
-
-        // Alphabetize them boys
-        ArrayList<Enchantment> orderedVanillaEnchs = new ArrayList<>(vanillaEnchantments.keySet());
-        orderedVanillaEnchs.sort(Comparator.comparing(o -> o.getKey().toString()));
-
-
-        for (Enchantment enchantment : orderedVanillaEnchs) {
-            int levelDisplay = vanillaEnchantments.get(enchantment);
-            newLore.add("");  // Basically a newline
-            newLore.add(String.format(ChatColor.BLUE + "%s %d", WordUtils.capitalize(enchantment.getKey().toString().replace("minecraft:", "").replace('_', ' ')), levelDisplay));
-            newLore.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment));
-        }
-
-        // Now add the new lore
-        for (CustomEnchantment enchantment : customEnchantments) {
-            newLore.add("");  // Basically a newline
-            newLore.add(CustomEnchantment.getLoreContent(enchantment.getType(), enchantment.getLevel()));
-            newLore.add(DESCRIPTION_COLOR + getEnchantmentDescription(enchantment.getType()));
-        }
-
-        return newLore;
-    }
-
-    public int getEnchantQuality(CustomEnchantType type) {
-
-        switch (type) {
-            case EXPLOSIVE_TOUCH:
-            case BERSERK:
-                return 5;
-            case SATURATION:
-            case CRITICAL_SHOT:
-            case CRITICAL_STRIKE:
-                return 11;
-            case SNIPE:
-            case HOMING:
-            case FULL_METAL_JACKET:
-            case ENDER_HUNTER:
-                return 10;
-            case EXPERIENCED:
-            case GOLDEN_DIET:
-            case PROSPECT:
-            case NETHER_HUNTER:
-            case EXECUTIONER:
-                return 8;
-            case GROWTH:
-            case SMELTING_TOUCH:
-                return 9;
-            case SMARTY_PANTS:
-            case SPEEDSTER:
-            case GREEDY_MINER:
-                return 4;
-            default:
-                throw new IllegalArgumentException("Received invalid argument for getEnchantQuality: " + type);
-        }
-
-    }
-
-    public int getEnchantQuality(Enchantment type) {
-
-        switch (type.getKey().toString().replace("minecraft:", "")) {
-            case "fire_protection":
-                return 4;
-            case "sharpness":
-            case "protection":
-            case "mending":
-            case "looting":
-            case "luck_of_the_sea":
-                return 10;
-            case "feather_falling":
-            case "infinity":
-            case "power":
-            case "fortune":
-                return 11;
-            case "blast_protection":
-            case "sweeping":
-            case "punch":
-            case "depth_strider":
-            case "unbreaking":
-                return 5;
-            case "smite":
-            case "respiration":
-            case "aqua_affinity":
-            case "frost_walker":
-            case "knockback":
-                return 2;
-            case "bane_of_arthropods":
-            case "vanishing_curse":
-            case "binding_curse":
-                return 1;
-            case "projectile_protection":
-            case "channeling":
-            case "thorns":
-                return 3;
-            case "efficiency":
-            case "piercing":
-            case "multishot":
-            case "flame":
-                return 9;
-            case "lure":
-            case "silk_touch":
-                return 7;
-
-            case "fire_aspect":
-            case "riptide":
-            case "quick_charge":
-            case "impaling":
-            case "loyalty":
-                return 8;
-
-            default:
-                throw new IllegalArgumentException("Received invalid argument for getEnchantQuality: " + type.getKey().toString().replace("minecraft:", ""));
-        }
-    }
-
-    public boolean canEnchantItem(CustomEnchantType type, ItemStack itemStack) {
-        ArrayList<Material> allowedTargets = new ArrayList<>();
-
-        switch (type) {
-            case EXPLOSIVE_TOUCH:
-                ToolTypeHelpers.addShovelsToList(allowedTargets);
-                break;
-            case SATURATION:
-                ToolTypeHelpers.addHelmetsToList(allowedTargets);
-                break;
-            case EXPERIENCED:
-                ToolTypeHelpers.addAllToolsToList(allowedTargets);
-                break;
-            case GROWTH:
-                ToolTypeHelpers.addAllArmorToList(allowedTargets);
-                break;
-            case SMARTY_PANTS:
-                ToolTypeHelpers.addLeggingsToList(allowedTargets);
-                break;
-            case SMELTING_TOUCH:
-            case GREEDY_MINER:
-                ToolTypeHelpers.addPickaxesToList(allowedTargets);
-                break;
-            case CRITICAL_SHOT:
-            case SNIPE:
-            case HOMING:
-                allowedTargets.add(Material.BOW);
-                allowedTargets.add(Material.CROSSBOW);
-                break;
-            case PROSPECT:
-            case FULL_METAL_JACKET:
-            case NETHER_HUNTER:
-            case ENDER_HUNTER:
-            case EXECUTIONER:
-                allowedTargets.add(Material.BOW);
-                allowedTargets.add(Material.CROSSBOW);
-                ToolTypeHelpers.addMeleeWeaponsToList(allowedTargets);
-                break;
-            case CRITICAL_STRIKE:
-                ToolTypeHelpers.addMeleeWeaponsToList(allowedTargets);
-                break;
-            case GOLDEN_DIET:
-                ToolTypeHelpers.addChestplatesToList(allowedTargets);
-                break;
-            case SPEEDSTER:
-                ToolTypeHelpers.addBootsToList(allowedTargets);
-                break;
-            case BERSERK:
-                allowedTargets.add(Material.WOODEN_AXE);
-                allowedTargets.add(Material.STONE_AXE);
-                allowedTargets.add(Material.GOLDEN_AXE);
-                allowedTargets.add(Material.IRON_AXE);
-                allowedTargets.add(Material.DIAMOND_AXE);
-                break;
-            default:
-                throw new IllegalArgumentException("Tried to find EnchantmentTarget for " + type);
-        }
-
-        return allowedTargets.contains(itemStack.getType());
-    }
-
-
-    public ArrayList<Object> getConflictingEnchantTypes(CustomEnchantType type) {
-        ArrayList<Object> conflictingEnchantments = new ArrayList<>();
-
-        switch (type) {
-            case EXPLOSIVE_TOUCH:
-                conflictingEnchantments.add("silk_touch");
-                conflictingEnchantments.add("fortune");
-                conflictingEnchantments.add(CustomEnchantType.EXPERIENCED);
-                break;
-            case EXPERIENCED:
-                conflictingEnchantments.add("silk_touch");
-                conflictingEnchantments.add(CustomEnchantType.EXPLOSIVE_TOUCH);
-                break;
-            case SMELTING_TOUCH:
-            case GREEDY_MINER:
-                conflictingEnchantments.add("silk_touch");
-                break;
-        }
-
-        return conflictingEnchantments;
-    }
-
-    public ArrayList<Object> getConflictingEnchantTypes(Enchantment type) {
-        ArrayList<Object> conflictingEnchantments = new ArrayList<>();
-
-        switch (type.getKey().toString().replace("minecraft:", "")) {
-            case "fire_protection":
-                conflictingEnchantments.add("protection");
-                conflictingEnchantments.add("blast_protection");
-                conflictingEnchantments.add("projectile_protection");
-                break;
-            case "sharpness":
-                conflictingEnchantments.add("smite");
-                conflictingEnchantments.add("bane_of_arthropods");
-                break;
-            case "protection":
-                conflictingEnchantments.add("fire_protection");
-                conflictingEnchantments.add("blast_protection");
-                conflictingEnchantments.add("projectile_protection");
-                break;
-            case "blast_protection":
-                conflictingEnchantments.add("fire_protection");
-                conflictingEnchantments.add("protection");
-                conflictingEnchantments.add("projectile_protection");
-                break;
-            case "smite":
-                conflictingEnchantments.add("bane_of_arthropods");
-                conflictingEnchantments.add("sharpness");
-                break;
-            case "bane_of_arthropods":
-                conflictingEnchantments.add("smite");
-                conflictingEnchantments.add("sharpness");
-                break;
-            case "projectile_protection":
-                conflictingEnchantments.add("fire_protection");
-                conflictingEnchantments.add("protection");
-                conflictingEnchantments.add("blast_protection");
-                break;
-            case "fortune":
-                conflictingEnchantments.add("silk_touch");
-                conflictingEnchantments.add(CustomEnchantType.EXPLOSIVE_TOUCH);
-                break;
-            case "silk_touch":
-                conflictingEnchantments.add("fortune");
-                conflictingEnchantments.add(CustomEnchantType.EXPLOSIVE_TOUCH);
-                conflictingEnchantments.add(CustomEnchantType.SMELTING_TOUCH);
-                conflictingEnchantments.add(CustomEnchantType.GREEDY_MINER);
-                break;
-            case "riptide":
-                conflictingEnchantments.add("channeling");
-                break;
-            case "channeling":
-                conflictingEnchantments.add("riptide");
-                break;
-            default:
-                break;
-        }
-
-        return conflictingEnchantments;
+    public void doCalculatorEnchant(ItemStack itemStack, int levelToEnchant, int quality) {
+        doCalculatorEnchant(itemStack, levelToEnchant, quality, levelToEnchant);
     }
 
     /**
-     * A method used by the CustomEnchantments class, simply returns a description
+     * Enchants the item using our enchant calculator. Should be used for drops that come enchanted, or when using
+     * an enchantment table.
      *
-     * @param type - The CustomEnchantType we want to check
+     * @param itemStack The item to enchant
+     * @param levelToEnchant The level to calculate an enchant for
+     * @param quality How "lucky" this enchant is, 0 is shit and 12 is really good
+     * @param newItemLevel The level to lock the item to afterwards, usually is the level of the enchant
+     */
+    public void doCalculatorEnchant(ItemStack itemStack, int levelToEnchant, int quality, int newItemLevel) {
+
+        if (quality < 0 || quality > 12)
+            throw new IllegalArgumentException("Quality must be in between 0 and 12!");
+
+        if (newItemLevel < 1 || newItemLevel > PlayerExperience.LEVEL_CAP)
+            throw new IllegalArgumentException("Cannot set item level less than 0 or higher than the level cap!");
+
+        EnchantmentCalculator calculator = new EnchantmentCalculator(levelToEnchant, quality, itemStack);
+
+        ArrayList<PotentialEnchantment> types = calculator.calculateEnchantmentTypes();
+        HashMap<PotentialEnchantment, Integer> lvls = calculator.calculateEnchantmentLevels(types);
+
+        for (PotentialEnchantment newEnch: lvls.keySet())
+            itemStack.addUnsafeEnchantment(newEnch.getEnchantment(), lvls.get(newEnch));
+
+        plugin.getCustomItemManager().setItemLevel(itemStack, newItemLevel);
+        plugin.getCustomItemManager().updateItemLore(itemStack);
+    }
+
+    /**
+     * matches enchantments with a neat little description
+     *
+     * @param type The enchant you want a description for
      * @return a string of the description of that type
      */
-    public String getEnchantmentDescription(CustomEnchantType type) {
-        switch (type) {
-            case EXPLOSIVE_TOUCH:
-                return "Explosions :)";
-            case SATURATION:
-                return "Increases saturation from food";
-            case EXPERIENCED:
-                return "Increases bonus XP chance";
-            case GROWTH:
-                return "Increases Max HP";
-            case SMARTY_PANTS:
-                return "Increases advancement XP";
-            case SMELTING_TOUCH:
-                return "Automatically smelts blocks broken";
-            case CRITICAL_SHOT:
-                return "Increases critical arrow chance";
-            case CRITICAL_STRIKE:
-                return "Increases critical damage";
-            case SNIPE:
-                return "Increases long distance arrow damage";
-            case GOLDEN_DIET:
-                return "Converts some food into instant HP";
-            case HOMING:
-                return "Arrows home onto the nearest target";
-            case PROSPECT:
-                return "Increases drop chance of rare items";
-            case FULL_METAL_JACKET:
-                return "Increases damage against bosses";
-            case SPEEDSTER:
-                return "Increases movement speed";
-            case NETHER_HUNTER:
-                return "Increases damage dealt in the Nether";
-            case ENDER_HUNTER:
-                return "Increases damage dealt in The End";
-            case GREEDY_MINER:
-                return "Mining ores heals HP";
-            case BERSERK:
-                return "Deal double damage, receive tripled damage";
-            case EXECUTIONER:
-                return "Increases damage dealt to entities low on HP";
-            default:
-                return "This enchantment doesn't have a description :(";
-        }
+    public String getEnchantmentDescription(Enchantment type) {
+        if (!enchantDescriptionMap.containsKey(type))
+            return DESCRIPTION_COLOR + "This enchant doesn't have a description :( dev pls fix";
+
+        return DESCRIPTION_COLOR + enchantDescriptionMap.get(type);
     }
 
-    /**
-     * A method used by the CustomEnchantments class, simply returns a description
-     *
-     * @param enchantment - The Enchantment we want to check
-     * @return a string of the description of that type
-     */
-    public String getEnchantmentDescription(Enchantment enchantment) {
-        switch (enchantment.getKey().toString().replace("minecraft:", "")) {
-            case "fire_protection":
-                return "Damage caused by fire is reduced";
-            case "sharpness":
-                return "General damage is increased";
-            case "flame":
-                return "Enemies shot will get ignited";
-            case "aqua_affinity":
-                return "Underwater block breaking speeds are increased";
-            case "punch":
-                return "Enemies hit by arrows get knocked back further";
-            case "loyalty":
-                return "Your trident will return to you upon throwing";
-            case "depth_strider":
-                return "Move faster when in water";
-            case "vanishing_curse":
-                return "When this item is dropped, it will vanish";
-            case "unbreaking":
-                return "This tool has a chance to not use durability upon use";
-            case "knockback":
-                return "Enemies hit will get knocked back";
-            case "luck_of_the_sea":
-                return "You might find it easier to catch better stuff...";
-            case "binding_curse":
-                return "Careful! This item cannot be un-equipped!";
-            case "fortune":
-                return "Item drops from mining blocks is increased";
-            case "protection":
-                return "Increases resistance against general damage from enemies";
-            case "efficiency":
-                return "Increases mining speed";
-            case "mending":
-                return "Experience gains will contribute to extra tool durability";
-            case "frost_walker":
-                return "Walk on water... Technically...";
-            case "lure":
-                return "Fish will be caught quicker.";
-            case "looting":
-                return "Increases drop amount and chance from enemies";
-            case "piercing":
-                return "Increases damage done from arrows that pass through enemies";
-            case "blast_protection":
-                return "Reduces damage taken from explosions";
-            case "smite":
-                return "Increases damage done against the undead";
-            case "multishot":
-                return "Increases the amount of arrows that can be shot at once";
-            case "fire_aspect":
-                return "Causes enemies to be lit on fire when attacked";
-            case "channeling":
-                return "Summon a lightning bold in thunder storms";
-            case "sweeping":
-                return "Increases damage done from sweep attacks";
-            case "thorns":
-                return "Reflects damage back on enemies";
-            case "bane_of_arthropods":
-                return "Increases damage done against Spiders, Silverfish, and Bees";
-            case "respiration":
-                return "Increases lung capacity";
-            case "riptide":
-                return "Increases effectiveness in water";
-            case "silk_touch":
-                return "Causes most blocks broken to drop its original form";
-            case "quick_charge":
-                return "Increases fire rate";
-            case "projectile_protection":
-                return "Decreases damage taken from projectiles";
-            case "impaling":
-                return "Increases damage done when the Trident hits an enemy";
-            case "feather_falling":
-                return "Decreases fall damage taken";
-            case "power":
-                return "Increases the damage done for arrows shot by this bow";
-            case "infinity":
-                return "Arrows have a chance to not deplete upon shooting";
-            default:
-                System.out.println("[Enchanting] Unknown enchantment " + enchantment.getKey().toString());
-                return "This enchantment doesn't have a description :(";
-        }
+    public Collection<Enchantment> getAllRegisteredEnchantments() {
+        return enchantDescriptionMap.keySet();
     }
+
+    public void unregisterCustomEnchantments(){
+
+        // Annoying ass way to unregister enchants when we disable the plugin
+        try {
+            Field keyField = Enchantment.class.getDeclaredField("byKey");
+            keyField.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            HashMap<NamespacedKey, Enchantment> byKey = (HashMap<NamespacedKey, Enchantment>) keyField.get(null);
+
+            for (Enchantment enchantment : enchantDescriptionMap.keySet()){
+
+                if (enchantment instanceof EnchantmentWrapper)
+                    continue;
+
+                byKey.remove(enchantment.getKey());
+            }
+
+            Field nameField = Enchantment.class.getDeclaredField("byName");
+
+            nameField.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            HashMap<String, Enchantment> byName = (HashMap<String, Enchantment>) nameField.get(null);
+
+            for (Enchantment enchantment : enchantDescriptionMap.keySet()){
+
+                if (enchantment instanceof EnchantmentWrapper)
+                    continue;
+
+                byName.remove(enchantment.getName());
+            }
+        } catch (Exception ignored) { }
+
+
+    }
+
 }
 
 

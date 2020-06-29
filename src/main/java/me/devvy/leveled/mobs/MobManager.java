@@ -280,6 +280,12 @@ public class MobManager implements Listener {
                     spawnCustomLeveledMob(CustomLeveledEntityType.FIREFOX, entityLocation);
                 break;
 
+            case NORMAL:
+
+                if (event.getEntity().getType() == EntityType.ZOMBIE  && entityLocation.getY() <= 30 && Math.random() < CustomLeveledEntityType.LOST_MINER.FREQUENCY)
+                    spawnCustomLeveledMob(CustomLeveledEntityType.LOST_MINER, entityLocation);
+                break;
+
         }
 
     }

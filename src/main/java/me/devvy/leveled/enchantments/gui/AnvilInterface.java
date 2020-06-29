@@ -261,9 +261,8 @@ public class AnvilInterface implements Listener {
     public void onAnvilInterfaceClick(InventoryClickEvent event) {
 
         // Do we have the anvil interface open?
-        if (!event.getView().getTitle().equals(ANVIL_INTERFACE_NAME) && !event.getView().getTitle().equals(GRINDSTONE_INTERFACE_NAME)) {
+        if (!event.getView().getTitle().equals(ANVIL_INTERFACE_NAME) && !event.getView().getTitle().equals(GRINDSTONE_INTERFACE_NAME))
             return;
-        }
 
         // Never allow shift clicks in custom guis
         if (event.getClick().isShiftClick()){
@@ -298,7 +297,7 @@ public class AnvilInterface implements Listener {
             // Check if we should update the output
             if (!event.getCursor().getType().equals(Material.AIR)) {
                 ItemStack cursor = event.getCursor();
-                if (cursor.getEnchantments().size() != 0 || plugin.getEnchantmentManager().getCustomEnchantments(cursor).size() != 0) {
+                if (cursor.getEnchantments().size() != 0) {
                     try {
                         String viewTitle = event.getView().getTitle();
                         ItemStack item = new ItemStack(getMaterialRefundType(cursor, viewTitle), getMaterialRefundAmount(cursor, viewTitle));
@@ -331,9 +330,8 @@ public class AnvilInterface implements Listener {
             }
         }
         // In the case that we click our inventory and it wasn't a shift click, don't cancel it
-        else if (!event.getClick().equals(ClickType.SHIFT_LEFT) && !event.getClick().equals(ClickType.SHIFT_RIGHT) && event.getClickedInventory() instanceof PlayerInventory) {
+        else if (!event.getClick().equals(ClickType.SHIFT_LEFT) && !event.getClick().equals(ClickType.SHIFT_RIGHT) && event.getClickedInventory() instanceof PlayerInventory)
             event.setCancelled(false);
-        }
 
     }
 
@@ -341,18 +339,16 @@ public class AnvilInterface implements Listener {
     public void onAnvilInterfaceClose(InventoryCloseEvent event) {
 
         // Was our anvil interface open?
-        if (!event.getView().getTitle().equals(ANVIL_INTERFACE_NAME) && !event.getView().getTitle().equals(GRINDSTONE_INTERFACE_NAME)) {
+        if (!event.getView().getTitle().equals(ANVIL_INTERFACE_NAME) && !event.getView().getTitle().equals(GRINDSTONE_INTERFACE_NAME))
             return;
-        }
 
         // Is there an item in the input slot?
         if (event.getInventory().getItem(ANVIL_INPUT_SLOT) != null && !event.getInventory().getItem(ANVIL_INPUT_SLOT).getType().equals(Material.AIR)) {
             // Give them the item, just in case their inventory was full keep track of the overflow
             Collection<ItemStack> overflow = event.getPlayer().getInventory().addItem(event.getInventory().getItem(ANVIL_INPUT_SLOT)).values();
             // If there was overflow, drop the item
-            if (overflow.size() != 0) {
+            if (overflow.size() != 0)
                 overflow.forEach(itemStack -> event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), itemStack));
-            }
         }
 
     }

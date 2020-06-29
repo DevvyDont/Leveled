@@ -33,3 +33,8 @@ commands:
   nametag:
     description: Used to change the name on a nametag
     usage: /nametag < name >
+
+  leveledenchant:
+    description: Used to enchant a tool with any enchant
+    usage: /leveledenchant <enchant> <level>
+    permission: op

@@ -12,12 +12,6 @@ import org.bukkit.event.Listener;
  */
 public class VanillaExperienceCancellingListeners implements Listener {
 
-    private final Leveled plugin;
-
-    public VanillaExperienceCancellingListeners(Leveled plugin) {
-        this.plugin = plugin;
-    }
-
     @EventHandler
     public void onPlayerAttemptPickupExp(PlayerPickupExperienceEvent event){
         event.getExperienceOrb().setExperience(0);

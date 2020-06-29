@@ -1,24 +1,71 @@
-package me.devvy.leveled.enchantments.enchants;
+package me.devvy.leveled.enchantments.customenchants;
 
 import me.devvy.leveled.Leveled;
+import me.devvy.leveled.enchantments.EnchantmentManager;
 import org.bukkit.Effect;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class HomingArrows implements Listener {
+public class EnchantHoming extends Enchantment implements Listener {
 
-    private final Leveled plugin;
-    private final HashMap<Player, Long> homingArrowCooldown = new HashMap<>();
+    private final Leveled plugin = Leveled.getPlugin(Leveled.class);
+    private final Map<Player, Long> homingArrowCooldown = new HashMap<>();
 
-    public HomingArrows(Leveled plugin) {
-        this.plugin = plugin;
+    public EnchantHoming(NamespacedKey key) {
+        super(key);
+    }
+
+    @Override
+    public String getName() {
+        return "Homing";
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return 3;
+    }
+
+    @Override
+    public int getStartLevel() {
+        return 1;
+    }
+
+    @Override
+    public EnchantmentTarget getItemTarget() {
+        return EnchantmentTarget.BOW;
+    }
+
+    @Override
+    public boolean isTreasure() {
+        return false;
+    }
+
+    @Override
+    public boolean isCursed() {
+        return false;
+    }
+
+    @Override
+    public boolean conflictsWith(Enchantment enchantment) {
+        return false;
+    }
+
+    @Override
+    public boolean canEnchantItem(ItemStack itemStack) {
+        return itemStack.getType() == Material.BOW || itemStack.getType() == Material.CROSSBOW;
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -28,18 +75,14 @@ public class HomingArrows implements Listener {
 
             Player player = (Player) event.getEntity();
 
-            if (homingArrowCooldown.containsKey(player)) {
-                if (homingArrowCooldown.get(player) > System.currentTimeMillis()){
+            if (homingArrowCooldown.containsKey(player))
+                if (homingArrowCooldown.get(player) > System.currentTimeMillis())
                     return;
-                }
-            }
 
-            int homingLevel;
-            try {
-                homingLevel = plugin.getEnchantmentManager().getEnchantLevel(player.getInventory().getItemInMainHand(), CustomEnchantType.HOMING);
-            } catch (IllegalArgumentException ignored) {
+            int homingLevel = player.getInventory().getItemInMainHand().getEnchantmentLevel(EnchantmentManager.HOMING);
+
+            if (homingLevel <= 0)
                 return;
-            }
 
             homingArrowCooldown.put(player, System.currentTimeMillis() + 1000);
 

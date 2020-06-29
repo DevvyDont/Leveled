@@ -38,7 +38,6 @@ public class ScoreboardManager implements Listener {
     private final String DEFAULT_PARTY_FOUR_KEY = "partySlot4";
     private final String DEFAULT_PARTY_FOUR_ENTRY = ChatColor.YELLOW + "" + ChatColor.BLACK;
 
-
     private class ScoreboardUpdater extends BukkitRunnable {
 
         @Override

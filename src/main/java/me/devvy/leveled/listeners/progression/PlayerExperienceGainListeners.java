@@ -1,8 +1,7 @@
 package me.devvy.leveled.listeners.progression;
 
 import me.devvy.leveled.Leveled;
-import me.devvy.leveled.enchantments.enchants.CustomEnchantType;
-import me.devvy.leveled.enchantments.enchants.CustomEnchantment;
+import me.devvy.leveled.enchantments.EnchantmentManager;
 import me.devvy.leveled.items.Rarity;
 import me.devvy.leveled.player.LeveledPlayer;
 import me.devvy.leveled.player.PlayerExperience;
@@ -51,14 +50,6 @@ public class PlayerExperienceGainListeners implements Listener {
      * @return the new double xp chance
      */
     private double getDoubleXpChance(Player player, double doubleXpChance) {
-        ItemStack tool = player.getInventory().getItemInMainHand();
-        if (!tool.getType().equals(Material.AIR)) {
-            for (CustomEnchantment enchantment : plugin.getEnchantmentManager().getCustomEnchantments(tool)) {
-                if (enchantment.getType().equals(CustomEnchantType.EXPERIENCED)) {
-                    doubleXpChance += enchantment.getLevel() / 33.;
-                }
-            }
-        }
         return doubleXpChance;
     }
 
@@ -145,18 +136,16 @@ public class PlayerExperienceGainListeners implements Listener {
 
         int xpGained = 0;
 
-        Map<CustomEnchantType, CustomEnchantment> customEnchantments = plugin.getEnchantmentManager().getCustomEnchantmentMap(tool);
-
         // Special case, if we mined iron ore gold ore...
         if (block.getType().equals(Material.GOLD_ORE) || block.getType().equals(Material.IRON_ORE)) {
             // If their tool has smelting touch...
-            if (customEnchantments.containsKey(CustomEnchantType.SMELTING_TOUCH)) {
+            if (tool.getItemMeta().hasEnchant(EnchantmentManager.SMELTING_TOUCH)) {
                 event.setDropItems(false);
                 int numDrop = 1;
                 int fortuneLevel = tool.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
-                if (fortuneLevel > 0) {
+                if (fortuneLevel > 0)
                     numDrop += Math.floor(fortuneLevel / 1.5) + (Math.random() < .5 ? 1 : 0);
-                }
+
                 // We know we have either iron or gold, so set type to be equal to the block mined
                 Material dropType = block.getType().equals(Material.IRON_ORE) ? Material.IRON_INGOT : Material.GOLD_INGOT;
                 ItemStack drop = new ItemStack(dropType, numDrop);
@@ -164,7 +153,7 @@ public class PlayerExperienceGainListeners implements Listener {
                 xpGained = block.getType().equals(Material.IRON_ORE) ? 1 : 3;
             }
         } else if (block.getType().equals(Material.STONE)) {
-            if (customEnchantments.containsKey(CustomEnchantType.SMELTING_TOUCH)) {
+            if (tool.getItemMeta().hasEnchant(EnchantmentManager.SMELTING_TOUCH)) {
                 event.setDropItems(false);
                 block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.STONE));
             }
@@ -177,22 +166,19 @@ public class PlayerExperienceGainListeners implements Listener {
             return;
         }
 
-        if (customEnchantments.containsKey(CustomEnchantType.GREEDY_MINER) && !player.isDead()) {
-            double healBonus = customEnchantments.get(CustomEnchantType.GREEDY_MINER).getLevel() / 10. * player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+        if (tool.getItemMeta().hasEnchant(EnchantmentManager.GREEDY_MINER) && !player.isDead()) {
+            double healBonus = tool.getEnchantmentLevel(EnchantmentManager.GREEDY_MINER)/ 10. * player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
             player.setHealth(Math.min(player.getHealth() + healBonus, player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()));
         }
 
         // Never ever ever give someone xp for silk touch breaks
-        if (event.getPlayer().getInventory().getItemInMainHand().getItemMeta() != null) {
-            if (event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasEnchant(Enchantment.SILK_TOUCH)) {
+        if (event.getPlayer().getInventory().getItemInMainHand().getItemMeta() != null)
+            if (event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasEnchant(Enchantment.SILK_TOUCH))
                 return;
-            }
-        }
 
         // Does the player even need experience?
-        if (player.getLevel() >= PlayerExperience.LEVEL_CAP) {
+        if (player.getLevel() >= PlayerExperience.LEVEL_CAP)
             return;
-        }
 
         String xpMessage = ChatColor.BLUE + "+" + xpGained + " XP";
 
@@ -327,10 +313,10 @@ public class PlayerExperienceGainListeners implements Listener {
         // Smarty pants?
         double multiplier = 1;
         String message = ChatColor.GREEN + "Challenge Completed! " + ChatColor.LIGHT_PURPLE + "+" + xpEarned + " XP";
-        try {
-            multiplier += plugin.getEnchantmentManager().getEnchantLevel(player.getInventory().getLeggings(), CustomEnchantType.SMARTY_PANTS) * .15;
-        } catch (NullPointerException | IllegalArgumentException ignored) {
-        }
+
+        if (player.getInventory().getLeggings() != null && player.getInventory().getLeggings().getItemMeta() != null)
+            multiplier += player.getInventory().getLeggings().getEnchantmentLevel(EnchantmentManager.SMARTY_PANTS) * .15;
+
         if (multiplier > 1) {
             xpEarned *= multiplier;
             message = ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "BONUS! " + message;

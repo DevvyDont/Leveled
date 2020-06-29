@@ -5,6 +5,8 @@ import me.devvy.leveled.player.LevelRewards;
 import me.devvy.leveled.player.abilities.CustomAbility;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.*;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
@@ -129,9 +131,18 @@ public class CustomItemManager implements Listener {
             }
         }
 
-        // Next we add the enchantments that are on the item
-        if (!itemStack.getEnchantments().isEmpty())
-            newLore.addAll(Leveled.getPlugin(Leveled.class).getEnchantmentManager().getEnchantmentLoreSection(itemStack));
+        for (Enchantment enchantment : itemStack.getEnchantments().keySet()) {
+
+            String enchantName;
+            if (enchantment.getKey().toString().contains("minecraft:"))
+                enchantName = WordUtils.capitalize(enchantment.getKey().toString().replace("minecraft:", "").replace('_', ' '));
+            else
+                enchantName = enchantment.getName();
+
+            newLore.add("");
+            newLore.add(ChatColor.BLUE + enchantName + " " + itemStack.getEnchantments().get(enchantment));  // Add the name and level of the enchant
+            newLore.add(Leveled.getPlugin(Leveled.class).getEnchantmentManager().getEnchantmentDescription(enchantment));  // Add the desc
+        }
 
         ItemMeta meta = itemStack.getItemMeta();
         meta.setLore(newLore);

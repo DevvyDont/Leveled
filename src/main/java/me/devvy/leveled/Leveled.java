@@ -2,10 +2,6 @@ package me.devvy.leveled;
 
 import me.devvy.leveled.items.CustomItemManager;
 import me.devvy.leveled.enchantments.EnchantmentManager;
-import me.devvy.leveled.enchantments.enchants.ExplosiveTouchEnchantment;
-import me.devvy.leveled.enchantments.enchants.FoodEnchantments;
-import me.devvy.leveled.enchantments.enchants.HomingArrows;
-import me.devvy.leveled.enchantments.enchants.Infinity;
 import me.devvy.leveled.enchantments.gui.AnvilInterface;
 import me.devvy.leveled.enchantments.gui.EnchantingInterface;
 import me.devvy.leveled.items.GlobalItemManager;
@@ -131,7 +127,7 @@ public final class Leveled extends JavaPlugin {
             }
         }
 
-        enchantmentManager = new EnchantmentManager(this);
+        enchantmentManager = new EnchantmentManager();
         customItemManager = new CustomItemManager();
         globalItemManager = new GlobalItemManager(this);
         playerManager = new LeveledPlayerManager(this);
@@ -152,7 +148,7 @@ public final class Leveled extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerJoinListeners(this), this);
         getServer().getPluginManager().registerEvents(new PlayerLeveledUpListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerExperienceGainListeners(this), this);
-        getServer().getPluginManager().registerEvents(new VanillaExperienceCancellingListeners(this), this);
+        getServer().getPluginManager().registerEvents(new VanillaExperienceCancellingListeners(), this);
 
         // Listeners involving level capped gear
         getServer().getPluginManager().registerEvents(new PlayerArmorListeners(this), this);
@@ -164,10 +160,6 @@ public final class Leveled extends JavaPlugin {
         // Listeners involving custom enchantments
         getServer().getPluginManager().registerEvents(new EnchantingInterface(this), this);
         getServer().getPluginManager().registerEvents(new AnvilInterface(this), this);
-        getServer().getPluginManager().registerEvents(new ExplosiveTouchEnchantment(this), this);
-        getServer().getPluginManager().registerEvents(new FoodEnchantments(this), this);
-        getServer().getPluginManager().registerEvents(new Infinity(), this);
-        getServer().getPluginManager().registerEvents(new HomingArrows(this), this);
         getServer().getPluginManager().registerEvents(customItemManager, this);
 
         // Listeners involving chat
@@ -190,17 +182,21 @@ public final class Leveled extends JavaPlugin {
 
         // Register commands
         PartyCommand partyCommand = new PartyCommand(this);
+        CommandLeveledEnchant leveledEnchant = new CommandLeveledEnchant();
         getCommand("adminmob").setExecutor(new TestMobCommand());
         getCommand("stats").setExecutor(new PlayerStatsCommand(this));
         getCommand("party").setExecutor(partyCommand);
         getCommand("party").setTabCompleter(partyCommand);
         getCommand("adminlevel").setExecutor(new DebugLevelSetter(this));
         getCommand("adminenchant").setExecutor(new DebugEnchant(this));
+        getCommand("leveledenchant").setExecutor(leveledEnchant);
+        getCommand("leveledenchant").setTabCompleter(leveledEnchant);
         getCommand("nametag").setExecutor(new NametagCommand(this));
     }
 
     @Override
     public void onDisable() {
         getServer().resetRecipes();  // Reset the recipes TODO: Currently this wont support other plugins if we are unloading, figure out a way to make this work
+        enchantmentManager.unregisterCustomEnchantments();
     }
 }

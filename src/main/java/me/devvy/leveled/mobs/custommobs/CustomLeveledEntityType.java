@@ -5,8 +5,9 @@ import org.bukkit.entity.EntityType;
 
 public enum CustomLeveledEntityType {
 
-    CORRUPTED_SKELETON(CustomLeveledEntityCorruptedSkeleton.class, EntityType.STRAY, "Corrupted Skeleton", 70, .2f),
-    FIREFOX(CustomLeveledEntityFireFox.class, EntityType.FOX,  ChatColor.RED + "Firefox", 50, .25f);
+    CORRUPTED_SKELETON(CustomLeveledEntityCorruptedSkeleton.class, EntityType.STRAY, "Corrupted Skeleton",          70, .2f),
+    FIREFOX(           CustomLeveledEntityFireFox.class,           EntityType.FOX,    ChatColor.RED + "Firefox",    50, .25f),
+    LOST_MINER(        CustomLeveledEntityZombieMiner.class,       EntityType.ZOMBIE, ChatColor.RED + "Lost Miner", 15, .2f);
 
     public final Class<? extends CustomLeveledEntity> CLAZZ;
     public final EntityType ENTITY_TYPE;

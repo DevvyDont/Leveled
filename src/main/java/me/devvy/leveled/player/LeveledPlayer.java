@@ -1,6 +1,5 @@
 package me.devvy.leveled.player;
 
-import me.devvy.leveled.enchantments.enchants.CustomEnchantType;
 import me.devvy.leveled.items.CustomItemManager;
 import me.devvy.leveled.enchantments.EnchantmentManager;
 import me.devvy.leveled.items.CustomItemType;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 
 public class LeveledPlayer {
 
-    private final EnchantmentManager enchantmentManager;
     private final CustomItemManager customItemManager;
 
     private final Player spigotPlayer;
@@ -38,8 +36,7 @@ public class LeveledPlayer {
     private ItemStack leggings;
     private ItemStack boots;
 
-    public LeveledPlayer(EnchantmentManager enchantmentManager, CustomItemManager customItemManager, Player player) {
-        this.enchantmentManager = enchantmentManager;
+    public LeveledPlayer(CustomItemManager customItemManager, Player player) {
         this.customItemManager = customItemManager;
         this.spigotPlayer = player;
         this.experience = new PlayerExperience(this);
@@ -207,10 +204,8 @@ public class LeveledPlayer {
         // Attempt to grab the Growth enchant level for all gear, if we get a nullptr, they don't have a helmet, if we get an illegalarg, they dont have growth
         ItemStack[] armorPieces = new ItemStack[]{this.helmet, this.chestplate, this.leggings, this.boots};
         for (ItemStack armor : armorPieces){
-            try {
-                growthFactor += enchantmentManager.getEnchantLevel(armor, CustomEnchantType.GROWTH);
-            } catch (IllegalArgumentException | NullPointerException ignored) {
-            }
+            if (armor != null && armor.getItemMeta() != null)
+                growthFactor += armor.getEnchantmentLevel(EnchantmentManager.GROWTH);
         }
 
         // Best growth currently is Growth %5 x 20, so best HP we can have is +100% HP
@@ -230,9 +225,8 @@ public class LeveledPlayer {
     private double calculateSpeed() {
         speed = 0.19982229;
         int speedsterLevel = 0;
-        try {
-            speedsterLevel = enchantmentManager.getEnchantLevel(boots, CustomEnchantType.SPEEDSTER);
-        } catch (IllegalArgumentException | NullPointerException ignored){}
+        if (boots != null && boots.getItemMeta() != null)
+            speedsterLevel += boots.getEnchantmentLevel(EnchantmentManager.SPEEDSTER);
         if (speedsterLevel > 0)
             speed += (speedsterLevel * .03);
         spigotPlayer.setWalkSpeed((float) speed);

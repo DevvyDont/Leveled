@@ -1,7 +1,7 @@
 package me.devvy.leveled.enchantments.gui;
 
 import me.devvy.leveled.Leveled;
-import me.devvy.leveled.enchantments.enchants.CustomEnchantType;
+import me.devvy.leveled.enchantments.EnchantmentManager;
 import me.devvy.leveled.enchantments.calculator.EnchantmentCalculator;
 import me.devvy.leveled.enchantments.calculator.PotentialEnchantment;
 import me.devvy.leveled.player.PlayerExperience;
@@ -105,7 +105,7 @@ public class EnchantingInterface implements Listener {
 
     private boolean canBeEnchanted(ItemStack itemStack) {
         // If it's already enchanted we can't do anything
-        if (plugin.getEnchantmentManager().getCustomEnchantments(itemStack).size() > 0 || itemStack.getEnchantments().size() > 0)
+        if (itemStack.getEnchantments().size() > 0)
             return false;
 
         // Check if the material type is allowed to be enchanted
@@ -177,7 +177,7 @@ public class EnchantingInterface implements Listener {
 
                     if (block.getType().equals(Material.BOOKSHELF)) {
                         qualityFactor++;
-                        if (qualityFactor >= plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR)
+                        if (qualityFactor >= EnchantmentManager.MAX_ENCHANT_QUALITY_FACTOR)
                             break masterLoop;
                     }
 
@@ -185,26 +185,14 @@ public class EnchantingInterface implements Listener {
             }
         }
 
-        if (qualityFactor > plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR)
-            qualityFactor = plugin.getEnchantmentManager().MAX_ENCHANT_QUALITY_FACTOR;
+        if (qualityFactor > EnchantmentManager.MAX_ENCHANT_QUALITY_FACTOR)
+            qualityFactor = EnchantmentManager.MAX_ENCHANT_QUALITY_FACTOR;
 
-        EnchantmentCalculator calculator = new EnchantmentCalculator(plugin.getCustomItemManager(), plugin.getEnchantmentManager(), player.getLevel(), qualityFactor, item);
-        ArrayList<PotentialEnchantment> potentialEnchantments = calculator.calculateEnchantmentTypes();
-        HashMap<PotentialEnchantment, Integer> enchantLevels = calculator.calculateEnchantmentLevels(potentialEnchantments);
+        plugin.getEnchantmentManager().doCalculatorEnchant(item, qualityFactor, player.getLevel());
 
-        if (enchantLevels.isEmpty())
+        if (item.getEnchantments().isEmpty())
             System.out.println(ChatColor.RED + "[Enchanting] ERROR: Enchanting interface attempted to enchant item: " + item.getType() + " and didn't roll any enchantments!");
 
-        for (PotentialEnchantment enchantment : enchantLevels.keySet()) {
-
-            if (enchantment.getEnchantType() instanceof Enchantment)
-                plugin.getEnchantmentManager().addEnchant(item, (Enchantment) enchantment.getEnchantType(), enchantLevels.get(enchantment));
-             else if (enchantment.getEnchantType() instanceof CustomEnchantType)
-                plugin.getEnchantmentManager().addEnchant(item, (CustomEnchantType) enchantment.getEnchantType(), enchantLevels.get(enchantment));
-             else
-                throw new IllegalStateException("PotentialEnchantment enchantType was not Enchantment or CustomEnchantType!");
-
-        }
         return item;
     }
 
@@ -353,9 +341,6 @@ public class EnchantingInterface implements Listener {
                         // Do we have an enchantable item?
                         if (canBeEnchanted(gui.getItem(EQUIPMENT_SLOT))) {
                             ItemStack newItem = enchantItem(player, player.getTargetBlockExact(10), gui.getItem(EQUIPMENT_SLOT)); // Enchant
-                            if (newItem.getEnchantments().isEmpty() && plugin.getEnchantmentManager().getCustomEnchantments(newItem).isEmpty()){ return; }
-                            plugin.getCustomItemManager().setItemLevel(newItem, player.getLevel());
-                            if (newItem.getEnchantmentLevel(Enchantment.DURABILITY) < 1) { newItem.addEnchantment(Enchantment.DURABILITY, 1); }
                             gui.setItem(EQUIPMENT_SLOT, newItem);
 
                             if (lapisBeforeClick <= getLapisRequired(player.getLevel()))
