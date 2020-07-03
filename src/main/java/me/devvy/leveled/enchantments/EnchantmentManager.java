@@ -61,6 +61,7 @@ public class EnchantmentManager {
         enchantDescriptionMap.put(SMELTING_TOUCH, "Automatically smelts blocks broken");
         enchantDescriptionMap.put(CRITICAL_SHOT, "Increases critical arrow chance");
         enchantDescriptionMap.put(CRITICAL_STRIKE, "Increases critical damage");
+        enchantDescriptionMap.put(SNIPE, "Increases long shot damage");
         enchantDescriptionMap.put(GOLDEN_DIET, "Converts some food into instant HP");
         enchantDescriptionMap.put(HOMING, "Arrows home onto the nearest target");
         enchantDescriptionMap.put(PROSPECT, "Increases drop chance of rare items");
