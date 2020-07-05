@@ -226,7 +226,7 @@ public class LeveledLivingEntity {
                 return 70;
 
             // Nether plains
-            case PIG_ZOMBIE:
+            case ZOMBIFIED_PIGLIN:
             case MAGMA_CUBE:
                 return 38 + (int)(Math.random() * 7);
 
@@ -235,10 +235,17 @@ public class LeveledLivingEntity {
 
             // Nether fortress
             case BLAZE:
+            case HOGLIN:
+            case STRIDER:
+            case ZOGLIN:
                 return 45 + (int)(Math.random() * 5);
 
             case WITHER_SKELETON:
                 return 50 + (int)(Math.random() * 5);
+
+            // End game nether
+            case PIGLIN:
+                return 89 + (int)(Math.random() * 6);
 
             case POLAR_BEAR:
             case TRADER_LLAMA:
@@ -374,7 +381,7 @@ public class LeveledLivingEntity {
             case ENDER_DRAGON:
                 break;
 
-            case PIG_ZOMBIE:
+            case ZOMBIFIED_PIGLIN:
                 if (entity.getEquipment() != null) {
                     ItemStack goldSword = new ItemStack(Material.GOLDEN_SWORD);
                     goldSword.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
@@ -484,7 +491,9 @@ public class LeveledLivingEntity {
             case STRAY:
             case BLAZE:
             case ILLUSIONER:
-            case PIG_ZOMBIE:
+            case ZOMBIFIED_PIGLIN:
+            case PIGLIN:
+            case STRIDER:
             case VINDICATOR:
             case PILLAGER:
             case GUARDIAN:
@@ -497,6 +506,8 @@ public class LeveledLivingEntity {
             case WITHER_SKELETON:
             case RAVAGER:
             case IRON_GOLEM:
+            case HOGLIN:
+            case ZOGLIN:
                 multiplier = 1.35;
                 break;
 

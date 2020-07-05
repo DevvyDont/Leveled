@@ -67,6 +67,8 @@ public enum CustomItemType {
                 return 150;
             case DIAMOND_SWORD:
                 return 300;
+            case NETHERITE_SWORD:
+                return 2500;
 
             case WOODEN_AXE:
                 return 12;
@@ -78,6 +80,8 @@ public enum CustomItemType {
                 return 170;
             case DIAMOND_AXE:
                 return 330;
+            case NETHERITE_AXE:
+                return 2875;
 
             // ========
             // RANGED
@@ -140,6 +144,15 @@ public enum CustomItemType {
             case DIAMOND_BOOTS:
                 return 32;
 
+            case NETHERITE_CHESTPLATE:
+                return 70;
+            case NETHERITE_LEGGINGS:
+                return 65;
+            case NETHERITE_HELMET:
+                return 62;
+            case NETHERITE_BOOTS:
+                return 58;
+
             case ELYTRA:
                 return 10;
 
@@ -198,12 +211,14 @@ public enum CustomItemType {
                 case IRON_SWORD:
                 case GOLDEN_SWORD:
                 case DIAMOND_SWORD:
+                case NETHERITE_SWORD:
 
                 case WOODEN_AXE:
                 case STONE_AXE:
                 case IRON_AXE:
                 case GOLDEN_AXE:
                 case DIAMOND_AXE:
+                case NETHERITE_AXE:
                     return MELEE;
 
                 case BOW:
@@ -211,6 +226,10 @@ public enum CustomItemType {
                 case TRIDENT:
                     return RANGED;
 
+                case NETHERITE_CHESTPLATE:
+                case NETHERITE_LEGGINGS:
+                case NETHERITE_HELMET:
+                case NETHERITE_BOOTS:
                 case DIAMOND_CHESTPLATE:
                 case DIAMOND_LEGGINGS:
                 case DIAMOND_HELMET:

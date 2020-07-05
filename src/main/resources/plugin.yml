@@ -1,7 +1,7 @@
 name: Leveled
 version: ${project.version}
 main: me.devvy.leveled.Leveled
-api-version: 1.13
+api-version: 1.16
 
 commands:
 

@@ -59,6 +59,18 @@ public enum Rarity {
             case SKELETON_SKULL:
             case BEACON:
             case CONDUIT:
+            case NETHERITE_AXE:
+            case NETHERITE_BOOTS:
+            case NETHERITE_BLOCK:
+            case NETHERITE_CHESTPLATE:
+            case NETHERITE_HELMET:
+            case NETHERITE_HOE:
+            case NETHERITE_INGOT:
+            case NETHERITE_LEGGINGS:
+            case NETHERITE_PICKAXE:
+            case NETHERITE_SCRAP:
+            case NETHERITE_SHOVEL:
+            case NETHERITE_SWORD:
                 return LEGENDARY;
 
             case ENCHANTED_GOLDEN_APPLE:

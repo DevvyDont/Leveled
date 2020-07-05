@@ -31,7 +31,8 @@ public abstract class LevelRewards {
 
     public static final int UNIVERSAL_CRAFTING_ABILITY_UNLOCK = 70;
     public static final int CRAFT_WITHER_SKULLS_UNLOCK = 80;  // TODO: Implement
-    public static final int FLIGHT_FEATHER_UNLOCK = 90;  // TODO: Implement
+    public static final int NETHERITE_TOOLS_UNLOCK = 85;
+    public static final int NETHERITE_ARMOR_UNLOCK = 90;
     public static final int UNBREAKABLE_TOOLS_UNLOCK = PlayerExperience.LEVEL_CAP;  // TODO: Implement
 
     /**
@@ -89,6 +90,10 @@ public abstract class LevelRewards {
                 return "You may now use Ender Chests, Shulker Boxes, and Elytras!";
             case CRAFT_WITHER_SKULLS_UNLOCK:
                 return "You have unlocked the ability to craft Wither Skulls with a skeleton head, obsidian, and coal blocks!";
+            case NETHERITE_ARMOR_UNLOCK:
+                return "You may now wear Netherite Armor!";
+            case NETHERITE_TOOLS_UNLOCK:
+                return "You may now use Netherite Tools!";
 
             default:
                 return "";
@@ -99,6 +104,18 @@ public abstract class LevelRewards {
 
         switch (itemStack.getType()){
 
+            case NETHERITE_AXE:
+            case NETHERITE_SWORD:
+            case NETHERITE_HOE:
+            case NETHERITE_PICKAXE:
+            case NETHERITE_SHOVEL:
+                return NETHERITE_TOOLS_UNLOCK;
+
+            case NETHERITE_CHESTPLATE:
+            case NETHERITE_LEGGINGS:
+            case NETHERITE_BOOTS:
+            case NETHERITE_HELMET:
+                return NETHERITE_ARMOR_UNLOCK;
 
             case DIAMOND_CHESTPLATE:
             case DIAMOND_HELMET:
@@ -154,6 +171,7 @@ public abstract class LevelRewards {
             case LEATHER_HELMET:
             case LEATHER_LEGGINGS:
             case LEATHER_BOOTS:
+            case TURTLE_HELMET:
                 return LEATHER_ARMOR_UNLOCK;
             case BOW:
                 return NORMAL_BOW_UNLOCK;
