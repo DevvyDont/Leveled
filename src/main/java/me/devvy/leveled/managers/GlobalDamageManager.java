@@ -318,6 +318,11 @@ public class GlobalDamageManager implements Listener {
 
         damage *= damagePercent;
         damage *= (1 + ((Math.random() - .5) / 10));
+
+        if (entity instanceof Ageable && !((Ageable) entity).isAdult())
+            damage *= .33;
+
+
         return damage;
     }
 
