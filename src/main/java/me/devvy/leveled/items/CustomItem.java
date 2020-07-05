@@ -18,11 +18,12 @@ public abstract class CustomItem implements Listener {
         this.type = type;
         this.itemStack = new ItemStack(type.TYPE);
 
-        // Flag this item as a custom item
-        itemStack.getItemMeta().getPersistentDataContainer().set(CustomItemManager.CUSTOM_ITEM_INDEX_KEY, PersistentDataType.INTEGER, type.ordinal());
-
         // Setup any things that will be common with all custom items
         ItemMeta meta = itemStack.getItemMeta();
+
+        // Flag this item as a custom item
+        meta.getPersistentDataContainer().set(CustomItemManager.CUSTOM_ITEM_INDEX_KEY, PersistentDataType.INTEGER, type.ordinal());
+
         meta.setDisplayName(type.RARITY.NAME_LABEL_COLOR + type.NAME);
 
         List<String> lore = new ArrayList<>();
@@ -33,7 +34,7 @@ public abstract class CustomItem implements Listener {
             lore.add("");
         }
 
-        lore.addAll(type.LORE);
+        lore.addAll(getLoreHeader());
         meta.setLore(lore);
         meta.setUnbreakable(true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
@@ -44,6 +45,12 @@ public abstract class CustomItem implements Listener {
     }
 
     public void setupItemStack() {}
+
+    public List<String> getLoreHeader() {
+        List<String> lore = new ArrayList<>();
+        lore.addAll(type.LORE);
+        return lore;
+    }
 
     public ItemStack getItemStackClone() {
         return itemStack.clone();

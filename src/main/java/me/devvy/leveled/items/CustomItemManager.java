@@ -52,51 +52,54 @@ public class CustomItemManager implements Listener {
 
     // Simply just tags the item as leveled, provide an arg of 0 if it isn't capped. A cap of 0 will not show up.
     public void setItemLevel(ItemStack item, int level) {
-        if (item != null && item.getItemMeta() != null){
 
-            ItemMeta itemMeta = item.getItemMeta();
-            String itemName = "";
+        if (item == null || item.getItemMeta() == null)
+            return;
 
-            // We need to find out if this item is already leveled, if it is it means that we already added a level tag
-            if (itemMeta.getPersistentDataContainer().has(ITEM_LEVEL_KEY, PersistentDataType.INTEGER)) {
-                String[] components = itemMeta.getDisplayName().split(" ");  // Lv. xx "name"    which means we omit index 0 and 1
-                for (int i = 2; i < components.length; i++)
-                    itemName += components[i] + " ";
-            }
-            else
-                itemName = itemMeta.hasDisplayName() ? ChatColor.stripColor(itemMeta.getDisplayName()) : WordUtils.capitalizeFully(item.getType().toString().replace("_", " "));
 
-            // Actually set the container to the level
-            itemMeta.getPersistentDataContainer().set(ITEM_LEVEL_KEY, PersistentDataType.INTEGER, level);
+        ItemMeta itemMeta = item.getItemMeta();
+        StringBuilder itemName = new StringBuilder();
 
-            // Now we can go ahead and update the display name
-            // Attempt to get the custom item that this thing could potentially be
-            CustomItemType customItemType = getCustomItemType(item);
-
-            Rarity itemRarity;
-
-            // Is it custom?
-            if (customItemType != null)
-                itemRarity = customItemType.RARITY;
-            else
-                itemRarity = Rarity.getItemRarity(item);  // Resort to default rarity if it's not custom
-
-            // If the rarity isn't legendary, and the item has enchants, then the item is enchanted rarity
-            if (itemRarity != Rarity.LEGENDARY && !item.getEnchantments().isEmpty())
-                itemRarity = Rarity.ENCHANTED;
-
-            // Now actually update the name
-            if (level > 0)
-                itemMeta.setDisplayName(itemRarity.LEVEL_LABEL_COLOR + "Lv. " + level + " " + itemRarity.NAME_LABEL_COLOR + ChatColor.stripColor(itemName));
-            else
-                itemMeta.setDisplayName(itemRarity.LEVEL_LABEL_COLOR + ChatColor.stripColor(itemName));
-
-            // Other stuff that 'fixes' our items
-            itemMeta.setUnbreakable(true);
-            itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
-
-            item.setItemMeta(itemMeta);
+        // We need to find out if this item is already leveled, if it is it means that we already added a level tag
+        if (itemMeta.getPersistentDataContainer().has(ITEM_LEVEL_KEY, PersistentDataType.INTEGER)) {
+            String[] components = itemMeta.getDisplayName().split(" ");  // Lv. xx "name"    which means we omit index 0 and 1
+            for (int i = 2; i < components.length; i++)
+                itemName.append(components[i]).append(" ");
         }
+        else
+            itemName = new StringBuilder(itemMeta.hasDisplayName() ? ChatColor.stripColor(itemMeta.getDisplayName()) : WordUtils.capitalizeFully(item.getType().toString().replace("_", " ")));
+
+        // Actually set the container to the level
+        itemMeta.getPersistentDataContainer().set(ITEM_LEVEL_KEY, PersistentDataType.INTEGER, level);
+
+        // Now we can go ahead and update the display name
+        // Attempt to get the custom item that this thing could potentially be
+        CustomItemType customItemType = getCustomItemType(item);
+
+        Rarity itemRarity;
+
+        // Is it custom?
+        if (customItemType != null)
+            itemRarity = customItemType.RARITY;
+        else
+            itemRarity = Rarity.getItemRarity(item);  // Resort to default rarity if it's not custom
+
+        // If the rarity isn't legendary, and the item has enchants, then the item is enchanted rarity
+        if (itemRarity != Rarity.LEGENDARY && !item.getEnchantments().isEmpty())
+            itemRarity = Rarity.ENCHANTED;
+
+        // Now actually update the name
+        if (level > 0)
+            itemMeta.setDisplayName(itemRarity.LEVEL_LABEL_COLOR + "Lv. " + level + " " + itemRarity.NAME_LABEL_COLOR + ChatColor.stripColor(itemName.toString()));
+        else
+            itemMeta.setDisplayName(itemRarity.LEVEL_LABEL_COLOR + ChatColor.stripColor(itemName.toString()));
+
+        // Other stuff that 'fixes' our items
+        itemMeta.setUnbreakable(true);
+        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
+
+        item.setItemMeta(itemMeta);
+
     }
 
     public int getItemLevel(ItemStack itemStack) {
@@ -129,6 +132,12 @@ public class CustomItemManager implements Listener {
                 newLore.add("");
                 newLore.add(CustomItemType.Category.getCategoryStatPrefix(categoryOfItem) + CustomItemType.getFallbackStat(itemStack.getType()));
             }
+        }
+
+        // Some custom items need lore sections
+        if (isCustomItem(itemStack)) {
+            newLore.add("");
+            newLore.addAll(customItemMap.get(getCustomItemType(itemStack)).getLoreHeader());
         }
 
         for (Enchantment enchantment : itemStack.getEnchantments().keySet()) {
