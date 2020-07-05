@@ -38,3 +38,8 @@ commands:
     description: Used to enchant a tool with any enchant
     usage: /leveledenchant <enchant> <level>
     permission: op
+
+  leveledgive:
+    description: Used to give custom items
+    usage: /leveledgive <type> [amount]
+    permission: op

@@ -183,14 +183,24 @@ public final class Leveled extends JavaPlugin {
         // Register commands
         PartyCommand partyCommand = new PartyCommand(this);
         CommandLeveledEnchant leveledEnchant = new CommandLeveledEnchant();
+        CommandGiveCustomItem customItemCommand = new CommandGiveCustomItem();
         getCommand("adminmob").setExecutor(new TestMobCommand());
+
         getCommand("stats").setExecutor(new PlayerStatsCommand(this));
+
         getCommand("party").setExecutor(partyCommand);
         getCommand("party").setTabCompleter(partyCommand);
+
         getCommand("adminlevel").setExecutor(new DebugLevelSetter(this));
+
         getCommand("adminenchant").setExecutor(new DebugEnchant(this));
+
         getCommand("leveledenchant").setExecutor(leveledEnchant);
         getCommand("leveledenchant").setTabCompleter(leveledEnchant);
+
+        getCommand("leveledgive").setExecutor(customItemCommand);
+        getCommand("leveledgive").setTabCompleter(customItemCommand);
+
         getCommand("nametag").setExecutor(new NametagCommand(this));
     }
 
