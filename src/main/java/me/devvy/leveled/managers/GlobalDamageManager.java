@@ -2,9 +2,9 @@ package me.devvy.leveled.managers;
 
 import me.devvy.leveled.Leveled;
 import me.devvy.leveled.events.EntityDamagedByMiscEvent;
+import me.devvy.leveled.events.EntityHitByProjectileEvent;
+import me.devvy.leveled.events.EntityShootArrowEvent;
 import me.devvy.leveled.items.CustomItemType;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.enchantments.Enchantment;
@@ -14,8 +14,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
+
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Map;
@@ -28,10 +28,10 @@ import java.util.Map;
 public class GlobalDamageManager implements Listener {
 
     private final Leveled plugin;
-    private final String ARROW_DMG_METANAME = "base_damage";
-    private final String ARROW_SNIPE_ENCHANT_METANAME = "snipe_enchant_level";
-    private final String ARROW_FMJ_ENCHANT_METANAME = "fmj_enchant_level";
-    private final String ARROW_EXECUTE_ENCHANT_METANAME = "exe_enchant_level";
+
+    public static final String ARROW_SNIPE_ENCHANT_METANAME = "snipe_enchant_level";
+    public static final String ARROW_FMJ_ENCHANT_METANAME = "fmj_enchant_level";
+    public static final String ARROW_EXECUTE_ENCHANT_METANAME = "exe_enchant_level";
 
     public GlobalDamageManager(Leveled plugin) {
         this.plugin = plugin;
@@ -127,51 +127,35 @@ public class GlobalDamageManager implements Listener {
      * @param event The EntityShootBowEvent we are listening to
      */
     @EventHandler
-    public void onPlayerShotBow(EntityShootBowEvent event) {
+    public void onEntityShotBow(EntityShootBowEvent event) {
 
-        if (event.getEntity() instanceof Player) {
+        ItemStack bow = event.getBow();
 
-            ItemStack bow = event.getBow();
+        // Don't care if we dont have a bow
+        if (bow == null)
+            return;
 
-            // Don't care if we dont have a bow
-            if (bow == null)
-                return;
+        double baseDamage = getRangedWeaponBaseDamage(event.getBow());
 
-            double damage = getRangedWeaponBaseDamage(event.getBow());
+        if (baseDamage <= 0)
+            return;
 
-            if (damage <= 0)
-                return;
+        EntityShootArrowEvent shootArrowEvent = new EntityShootArrowEvent(event.getEntity(), bow, event.getArrowItem(), event.getProjectile(), event.getForce(), baseDamage);
+        plugin.getServer().getPluginManager().callEvent(shootArrowEvent);
 
-            // Now we take into account force the bow shot with
-            damage *= event.getForce();
-            float damageMultiplier = 1.0f;
-
-            // And then we calculate damage increased from the power enchantment
-            int powerLevel = bow.getEnchantmentLevel(Enchantment.ARROW_DAMAGE);
-            if (powerLevel > 0)
-                damageMultiplier += powerLevel / 10f;
-
-            // 20% chance to crit for double damage
-            double critPercent = .2;
-
-            // Test for crit
-            if (Math.random() < critPercent) {
-                damage *= 2;
-                event.getEntity().getWorld().spawnParticle(Particle.CRIT_MAGIC, event.getEntity().getLocation().add(0, 1.6, 0), 50);
-                event.getEntity().getWorld().playSound(event.getEntity().getLocation().add(0, 1.6, 0), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, .3f, .6f);
-            }
-
-            damage *= damageMultiplier;
-
-            // Check for strength (INCLUDES STRENGTH POTS)
-            damage *= plugin.getPlayerManager().getLeveledPlayer((Player) event.getEntity()).getStrengthBonus();
-
-            // 5% variance
-            damage *= (1 + ((Math.random() - .5) / 10.));
-
-            // Now we can put this value on the arrow to modify later in a different event
-            event.getProjectile().setMetadata(ARROW_DMG_METANAME, new FixedMetadataValue(plugin, damage));
+        if (shootArrowEvent.isCancelled()) {
+            event.setCancelled(true);
+            return;
         }
+
+        if (event.getEntity() instanceof Player)
+            shootArrowEvent.multiplyDamage((float) plugin.getPlayerManager().getLeveledPlayer((Player) event.getEntity()).getStrengthBonus());
+        else if (event.getEntity().getPotionEffect(PotionEffectType.INCREASE_DAMAGE) != null && event.getEntity().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() != 0)
+            shootArrowEvent.multiplyDamage(event.getEntity().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() * 1.3f);
+
+        // Marks the arrow with the damage calculated
+        shootArrowEvent.finalizeDamage();
+
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -182,8 +166,14 @@ public class GlobalDamageManager implements Listener {
             return;
 
         Arrow arrow = (Arrow) event.getDamager();
-        if (!(arrow.getShooter() instanceof Player))
+
+        if (!(arrow.getShooter() instanceof LivingEntity))
             return;
+
+        EntityHitByProjectileEvent entityHitByProjectileEvent = new EntityHitByProjectileEvent(arrow, event.getEntity(), event.getFinalDamage());
+        plugin.getServer().getPluginManager().callEvent(entityHitByProjectileEvent);
+        
+        event.setDamage(entityHitByProjectileEvent.getDamage());
     }
 
     @EventHandler

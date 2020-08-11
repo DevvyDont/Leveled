@@ -139,7 +139,9 @@ public class EnchantmentManager {
         // Enchants that need to take an advantage of an event go here
         plugin.getServer().getPluginManager().registerEvents(new EnchantInfinity(), plugin);
 
-        plugin.getServer().getPluginManager().registerEvents((Listener) HOMING, plugin);
+        for (Enchantment enchantment : enchantDescriptionMap.keySet())
+            if (enchantment instanceof Listener)
+                plugin.getServer().getPluginManager().registerEvents((Listener) enchantment, plugin);
     }
 
 
