@@ -16,8 +16,6 @@ public class BrewingListeners implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBrewingStandInteract(PlayerInteractEvent event) {
-
-
         Player player = event.getPlayer();
         Action action = event.getAction();
 
@@ -38,43 +36,5 @@ public class BrewingListeners implements Listener {
             player.sendActionBar(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to brew potions!");
             player.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, .3f, .7f);
         }
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPotionDrink(PlayerItemConsumeEvent event) {
-        Player player = event.getPlayer();
-        ItemStack itemDrank = event.getItem();
-
-        // Are we drinking a potion?
-        if (!itemDrank.getType().equals(Material.POTION))
-            return;
-
-        // Are we high enough level?
-        if (player.getLevel() < LevelRewards.BREWING_UNLOCK) {
-            event.setCancelled(true);
-            player.sendActionBar(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to drink potions!");
-            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, .3f, .7f);
-        }
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPotionThrow(PlayerInteractEvent event){
-
-        if (!event.hasItem())
-            return;
-
-        if (event.getItem() == null)
-            return;
-
-        if (!(event.getItem().getType() == Material.SPLASH_POTION || event.getItem().getType() == Material.LINGERING_POTION))
-            return;
-
-        // Are we high enough level?
-        if (event.getPlayer().getLevel() < LevelRewards.BREWING_UNLOCK) {
-            event.setCancelled(true);
-            event.getPlayer().sendActionBar(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + LevelRewards.BREWING_UNLOCK + ChatColor.RED + " to throw potions!");
-            event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, .3f, .7f);
-        }
-
     }
 }

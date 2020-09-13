@@ -36,44 +36,12 @@ public class MiscEquipmentListeners implements Listener {
 
         this.equipmentRequirements = new HashMap<>();
 
-        this.equipmentRequirements.put(Material.SHEARS, 1);
-        this.equipmentRequirements.put(Material.FISHING_ROD, 1);
-
-        this.equipmentRequirements.put(Material.ENDER_PEARL, LevelRewards.PRE_ENDER_EQUIPMENT);
-        this.equipmentRequirements.put(Material.ENDER_EYE, LevelRewards.PRE_ENDER_EQUIPMENT);
-        this.equipmentRequirements.put(Material.ENDER_CHEST, LevelRewards.POST_ENDER_EQUIPMENT);
-        this.equipmentRequirements.put(Material.SHULKER_BOX, LevelRewards.POST_ENDER_EQUIPMENT);
-
         this.equipmentRequirements.put(Material.BOW, LevelRewards.NORMAL_BOW_UNLOCK);
         this.equipmentRequirements.put(Material.CROSSBOW, LevelRewards.CROSSBOW_UNLOCK);
 
         this.equipmentRequirements.put(Material.SHIELD, LevelRewards.SHIELD_UNLOCK);
     }
 
-    private boolean isShulker(Material material){
-        switch (material){
-            case SHULKER_BOX:
-            case BLACK_SHULKER_BOX:
-            case BLUE_SHULKER_BOX:
-            case BROWN_SHULKER_BOX:
-            case CYAN_SHULKER_BOX:
-            case GRAY_SHULKER_BOX:
-            case LIGHT_BLUE_SHULKER_BOX:
-            case LIME_SHULKER_BOX:
-            case GREEN_SHULKER_BOX:
-            case MAGENTA_SHULKER_BOX:
-            case ORANGE_SHULKER_BOX:
-            case PINK_SHULKER_BOX:
-            case LIGHT_GRAY_SHULKER_BOX:
-            case PURPLE_SHULKER_BOX:
-            case RED_SHULKER_BOX:
-            case WHITE_SHULKER_BOX:
-            case YELLOW_SHULKER_BOX:
-                return true;
-            default:
-                return false;
-        }
-    }
 
     private Sound getSoundFromMaterial(Material material) {
         switch (material) {
@@ -134,10 +102,10 @@ public class MiscEquipmentListeners implements Listener {
         boolean mainHandNeedsChecked = equipmentRequirements.containsKey(itemInHand.getType());
         boolean offhandNeedsChecked = equipmentRequirements.containsKey(itemInOffhand.getType());
         boolean blockClickedNeedsChecked = action.equals(Action.RIGHT_CLICK_BLOCK) &&
-                event.getClickedBlock() != null && (equipmentRequirements.containsKey(event.getClickedBlock().getType()) || isShulker(event.getClickedBlock().getType()));
-        if (!(mainHandNeedsChecked || offhandNeedsChecked || blockClickedNeedsChecked)) {
+                event.getClickedBlock() != null && (equipmentRequirements.containsKey(event.getClickedBlock().getType()));
+
+        if (!(mainHandNeedsChecked || offhandNeedsChecked || blockClickedNeedsChecked))
             return;
-        }
 
         // We may potentially run into issues, check their main hand first
         if (mainHandNeedsChecked) {
@@ -157,20 +125,11 @@ public class MiscEquipmentListeners implements Listener {
                 player.playSound(player.getLocation(), this.getSoundFromMaterial(itemInOffhand.getType()), .3f, .7f);
             }
         } if (blockClickedNeedsChecked) {
-            if (isShulker(event.getClickedBlock().getType())) {
-                if (player.getLevel() < equipmentRequirements.get(Material.SHULKER_BOX)) {
-                    event.setCancelled(true);
-                    player.sendActionBar(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(Material.SHULKER_BOX) + ChatColor.RED + " to interact with this item!");
-                    player.playSound(player.getLocation(), this.getSoundFromMaterial(Material.SHULKER_BOX), .3f, .7f);
-                }
-            } else {
-                if (player.getLevel() < equipmentRequirements.get(event.getClickedBlock().getType())){
-                    event.setCancelled(true);
-                    player.sendActionBar( ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(event.getClickedBlock().getType()) + ChatColor.RED + " to interact with this item!");
-                    player.playSound(player.getLocation(), this.getSoundFromMaterial(event.getClickedBlock().getType()), .3f, .7f);
-                }
+            if (player.getLevel() < equipmentRequirements.get(event.getClickedBlock().getType())){
+                event.setCancelled(true);
+                player.sendActionBar( ChatColor.RED + "You must be level " + ChatColor.DARK_RED + equipmentRequirements.get(event.getClickedBlock().getType()) + ChatColor.RED + " to interact with this item!");
+                player.playSound(player.getLocation(), this.getSoundFromMaterial(event.getClickedBlock().getType()), .3f, .7f);
             }
-
         }
 
     }
