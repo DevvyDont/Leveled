@@ -27,10 +27,10 @@ public class GlobalItemManager implements Listener {
     }
 
     public void fixItem(ItemStack itemStack){
-        if (itemStack != null && itemStack.getItemMeta() != null && !itemStack.getItemMeta().isUnbreakable()) {
-            plugin.getCustomItemManager().getItemLevel(itemStack);
-            plugin.getCustomItemManager().updateItemLore(itemStack);
-        }
+        if (itemStack == null || itemStack.getItemMeta() == null)
+            return;
+        plugin.getCustomItemManager().getItemLevel(itemStack);
+        plugin.getCustomItemManager().updateItemLore(itemStack);
     }
 
     @EventHandler

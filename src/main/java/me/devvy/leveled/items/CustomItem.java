@@ -1,5 +1,6 @@
 package me.devvy.leveled.items;
 
+import me.devvy.leveled.Leveled;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -8,6 +9,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public abstract class CustomItem implements Listener {
 
@@ -53,6 +55,8 @@ public abstract class CustomItem implements Listener {
     }
 
     public ItemStack getItemStackClone() {
-        return itemStack.clone();
+        ItemStack item = itemStack.clone();
+        Leveled.getPlugin(Leveled.class).getCustomItemManager().setItemLevel(item, type.DEFAULT_LEVEL);
+        return item;
     }
 }

@@ -104,6 +104,9 @@ public class CustomItemManager implements Listener {
 
     public int getItemLevel(ItemStack itemStack) {
 
+        if (itemStack.getItemMeta() == null)
+            return 0;
+
         // If the item has the key, then the level of the item is that. If not, assume 0.
         if (itemStack.getItemMeta().getPersistentDataContainer().has(ITEM_LEVEL_KEY, PersistentDataType.INTEGER))
             return itemStack.getItemMeta().getPersistentDataContainer().get(ITEM_LEVEL_KEY, PersistentDataType.INTEGER);
