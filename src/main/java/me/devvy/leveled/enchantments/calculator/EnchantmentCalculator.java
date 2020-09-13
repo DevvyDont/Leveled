@@ -119,7 +119,7 @@ public class EnchantmentCalculator {
         enchs.add(new PotentialEnchantment(EnchantmentManager.FULL_METAL_JACKET,55, 120, 5,  10));
         enchs.add(new PotentialEnchantment(EnchantmentManager.SPEEDSTER,        40, 110, 5,  6));
         enchs.add(new PotentialEnchantment(EnchantmentManager.NETHER_HUNTER,    40, 80,  5,  5));
-        enchs.add(new PotentialEnchantment(EnchantmentManager.ENDER_HUNTER,     60, 120, 5,  10));
+        enchs.add(new PotentialEnchantment(EnchantmentManager.ENDER_ENDER,     60, 120, 5,  10));
         enchs.add(new PotentialEnchantment(EnchantmentManager.GREEDY_MINER,     30, 110, 4,  2));
         enchs.add(new PotentialEnchantment(EnchantmentManager.BERSERK,          30, 30,  1,  4));
         enchs.add(new PotentialEnchantment(EnchantmentManager.EXECUTIONER,      45, 110, 5,  8));

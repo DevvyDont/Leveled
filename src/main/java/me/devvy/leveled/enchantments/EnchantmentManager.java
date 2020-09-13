@@ -40,7 +40,7 @@ public class EnchantmentManager {
     public static final Enchantment FULL_METAL_JACKET = new EnchantFMJ(new NamespacedKey(Leveled.getPlugin(Leveled.class), "fmj"));
     public static final Enchantment SPEEDSTER = new EnchantSpeedster(new NamespacedKey(Leveled.getPlugin(Leveled.class), "speedster"));
     public static final Enchantment NETHER_HUNTER = new EnchantNetherHunter(new NamespacedKey(Leveled.getPlugin(Leveled.class), "netherhunter"));
-    public static final Enchantment ENDER_HUNTER = new EnchantEnderHunter(new NamespacedKey(Leveled.getPlugin(Leveled.class), "enderhunter"));
+    public static final Enchantment ENDER_ENDER = new EnchantEnderEnder(new NamespacedKey(Leveled.getPlugin(Leveled.class), "enderender"));
     public static final Enchantment GREEDY_MINER = new EnchantGreedyMiner(new NamespacedKey(Leveled.getPlugin(Leveled.class), "greedyminer"));
     public static final Enchantment BERSERK = new EnchantBerserk(new NamespacedKey(Leveled.getPlugin(Leveled.class), "berserk"));
     public static final Enchantment EXECUTIONER = new EnchantExecutioner(new NamespacedKey(Leveled.getPlugin(Leveled.class), "executioner"));
@@ -68,7 +68,7 @@ public class EnchantmentManager {
         enchantDescriptionMap.put(FULL_METAL_JACKET, "Increases damage against bosses");
         enchantDescriptionMap.put(SPEEDSTER, "Increases movement speed");
         enchantDescriptionMap.put(NETHER_HUNTER, "Increases damage dealt in the Nether");
-        enchantDescriptionMap.put(ENDER_HUNTER, "Increases damage dealt in The End");
+        enchantDescriptionMap.put(ENDER_ENDER, "Increases damage dealt in The End");
         enchantDescriptionMap.put(GREEDY_MINER, "Mining ores heals HP");
         enchantDescriptionMap.put(BERSERK, "Deal double damage, receive tripled damage");
         enchantDescriptionMap.put(EXECUTIONER, "Increases damage dealt to entities low on HP");
@@ -137,7 +137,7 @@ public class EnchantmentManager {
         }
 
         // Enchants that need to take an advantage of an event go here
-        plugin.getServer().getPluginManager().registerEvents(new EnchantInfinity(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new VanillaOverrides(), plugin);
 
         for (Enchantment enchantment : enchantDescriptionMap.keySet())
             if (enchantment instanceof Listener)

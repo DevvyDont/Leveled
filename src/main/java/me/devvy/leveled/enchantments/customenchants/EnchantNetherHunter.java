@@ -1,15 +1,20 @@
 package me.devvy.leveled.enchantments.customenchants;
 
+import me.devvy.leveled.enchantments.EnchantmentManager;
+import me.devvy.leveled.events.EntityShootArrowEvent;
 import me.devvy.leveled.util.ToolTypeHelpers;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 
-public class EnchantNetherHunter extends Enchantment {
+public class EnchantNetherHunter extends Enchantment implements Listener {
 
     public EnchantNetherHunter(NamespacedKey key) {
         super(key);
@@ -57,5 +62,18 @@ public class EnchantNetherHunter extends Enchantment {
         allowedMats.add(Material.CROSSBOW);
         allowedMats.add(Material.BOW);
         return allowedMats.contains(itemStack.getType());
+    }
+
+    @EventHandler
+    public void onBowShotWithNetherHunter(EntityShootArrowEvent event) {
+        assert event.getBow() != null;
+
+        if (!event.getBow().containsEnchantment(this))
+            return;
+
+        if (event.getEntity().getWorld().getEnvironment() != World.Environment.NETHER)
+            return;
+
+        event.multiplyDamage(1 + event.getBow().getEnchantmentLevel(EnchantmentManager.NETHER_HUNTER) * .25f);
     }
 }

@@ -89,7 +89,6 @@ public class EnchantExecutioner extends Enchantment implements Listener {
             return;
 
         double hpPercent = ((LivingEntity) event.getHitEntity()).getHealth() / ((LivingEntity) event.getHitEntity()).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-        System.out.println(hpPercent);
 
         if (hpPercent > .25)
             return;
