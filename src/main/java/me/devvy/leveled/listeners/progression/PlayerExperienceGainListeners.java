@@ -82,7 +82,7 @@ public class PlayerExperienceGainListeners implements Listener {
         int xpCalcLevel = mobLevel + 1;
 
         int xpRequiredForLevel = 500 * xpCalcLevel * xpCalcLevel - (500 * mobLevel);
-        double avgMobsToDefeat = 10 + Math.pow(mobLevel, 1.25);
+        double avgMobsToDefeat = 10 + Math.pow(mobLevel, 1.15);
 
         // At this point a player has killed another entity and we can calculate their xp
         int xp = (int) (xpRequiredForLevel / avgMobsToDefeat);
