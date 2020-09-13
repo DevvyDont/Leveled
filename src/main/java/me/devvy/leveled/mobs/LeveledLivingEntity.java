@@ -223,7 +223,7 @@ public class LeveledLivingEntity {
 
                 if (numPlayers > 0 && totalPlayerLevels / numPlayers > 68)
                     return level + totalPlayerLevels / numPlayers;
-                return 70;
+                return 72;
 
             // Nether plains
             case ZOMBIFIED_PIGLIN:
