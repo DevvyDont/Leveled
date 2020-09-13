@@ -268,6 +268,10 @@ public class GlobalDamageManager implements Listener {
                 damagePercent = 1.25;
                 break;
 
+            case PIGLIN_BRUTE:
+                damagePercent = 1.4;
+                break;
+
             case GHAST:
             case HOGLIN:
             case ZOGLIN:

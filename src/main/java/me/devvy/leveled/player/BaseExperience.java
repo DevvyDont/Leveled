@@ -70,6 +70,8 @@ public abstract class BaseExperience {
                 return 1000;
             case NETHER_QUARTZ_ORE:
                 return 10000;
+            case NETHER_GOLD_ORE:
+                return 12500;
             case LAPIS_ORE:
                 return 4000;
             // Cant mine until lvl 20

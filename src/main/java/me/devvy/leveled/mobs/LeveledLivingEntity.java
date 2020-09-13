@@ -245,6 +245,7 @@ public class LeveledLivingEntity {
 
             // End game nether
             case PIGLIN:
+            case PIGLIN_BRUTE:
                 return 89 + (int)(Math.random() * 6);
 
             case POLAR_BEAR:
@@ -493,6 +494,7 @@ public class LeveledLivingEntity {
             case ILLUSIONER:
             case ZOMBIFIED_PIGLIN:
             case PIGLIN:
+            case PIGLIN_BRUTE:
             case STRIDER:
             case VINDICATOR:
             case PILLAGER:
