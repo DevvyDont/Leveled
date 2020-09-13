@@ -41,6 +41,8 @@ public class LeveledPlayer {
         this.spigotPlayer = player;
         this.experience = new PlayerExperience(this);
         updateAttributes();
+        this.spigotPlayer.setInvulnerable(false);
+        this.spigotPlayer.setGlowing(false);
     }
 
     public Player getSpigotPlayer() {
