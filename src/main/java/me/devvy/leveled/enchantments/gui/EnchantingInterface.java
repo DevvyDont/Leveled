@@ -188,7 +188,7 @@ public class EnchantingInterface implements Listener {
         if (qualityFactor > EnchantmentManager.MAX_ENCHANT_QUALITY_FACTOR)
             qualityFactor = EnchantmentManager.MAX_ENCHANT_QUALITY_FACTOR;
 
-        plugin.getEnchantmentManager().doCalculatorEnchant(item, qualityFactor, player.getLevel());
+        plugin.getEnchantmentManager().doCalculatorEnchant(item, player.getLevel(), qualityFactor);
 
         if (item.getEnchantments().isEmpty())
             System.out.println(ChatColor.RED + "[Enchanting] ERROR: Enchanting interface attempted to enchant item: " + item.getType() + " and didn't roll any enchantments!");
