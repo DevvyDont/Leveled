@@ -100,7 +100,7 @@ public class EnchantingInterface implements Listener {
 
 
     private int getLapisRequired(int level) {
-        return level / 2;
+        return level / 10;
     }
 
     private boolean canBeEnchanted(ItemStack itemStack) {
