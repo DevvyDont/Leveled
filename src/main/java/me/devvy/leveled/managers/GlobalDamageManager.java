@@ -461,7 +461,6 @@ public class GlobalDamageManager implements Listener {
         else
             oldPercent = event.getDamage() / ((LivingEntity) event.getEntity()).getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
 
-        System.out.println(ChatColor.AQUA + "Damage would have done " + event.getDamage() + " but now will do " + ((LivingEntity) event.getEntity()).getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() * oldPercent);
         event.setDamage(((LivingEntity) event.getEntity()).getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() * oldPercent);
     }
 
