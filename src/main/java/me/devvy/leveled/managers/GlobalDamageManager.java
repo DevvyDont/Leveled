@@ -4,7 +4,9 @@ import me.devvy.leveled.Leveled;
 import me.devvy.leveled.events.EntityDamagedByMiscEvent;
 import me.devvy.leveled.events.EntityHitByProjectileEvent;
 import me.devvy.leveled.events.EntityShootArrowEvent;
+import me.devvy.leveled.events.PlayerDealtMeleeDamageEvent;
 import me.devvy.leveled.items.CustomItemType;
+import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.enchantments.Enchantment;
@@ -74,49 +76,24 @@ public class GlobalDamageManager implements Listener {
         Player player = (Player) event.getDamager();
         ItemStack tool = player.getInventory().getItemInMainHand();
 
-        // First let's get a base setup for how much certain weapons should do
-        double newDamage = getMeleeWeaponBaseDamage(tool);
-
-        float damageMultiplier = 1.0f;
-
-        // In the case we have sharpness, we should increase raw damage
-        int sharpnessLevel = tool.getEnchantmentLevel(Enchantment.DAMAGE_ALL);
-        if (sharpnessLevel > 0)
-            damageMultiplier += sharpnessLevel / 10f;
-
-        // In the case we have smite, we should increase damage against certain entities
-        else if (event.getEntity() instanceof Zombie || event.getEntity() instanceof Skeleton || event.getEntity() instanceof Phantom || event.getEntity() instanceof Wither || event.getEntity() instanceof SkeletonHorse) {
-            int smiteLevel = tool.getEnchantmentLevel(Enchantment.DAMAGE_UNDEAD);
-            if (smiteLevel > 0)
-                damageMultiplier += smiteLevel / 5f;
-        }
-        // In the case we have bane of artho, we should increase against certain entities
-        else if (event.getEntity() instanceof Spider || event.getEntity() instanceof Bee || event.getEntity() instanceof Silverfish || event.getEntity() instanceof Endermite) {
-            int baneLevel = tool.getEnchantmentLevel(Enchantment.DAMAGE_ARTHROPODS);
-            if (baneLevel > 0)
-                damageMultiplier += baneLevel / 5f;
-        }
-
-        newDamage *= damageMultiplier;
+        PlayerDealtMeleeDamageEvent playerDealtMeleeDamageEvent = new PlayerDealtMeleeDamageEvent(player, event.getEntity(), event.getCause(), getMeleeWeaponBaseDamage(tool));
+        plugin.getServer().getPluginManager().callEvent(playerDealtMeleeDamageEvent);
 
         // Player strength (THIS INCLUDES STRENGTH POTS)
-        newDamage *= plugin.getPlayerManager().getLeveledPlayer(player).getStrengthBonus();
+        playerDealtMeleeDamageEvent.multiplyDamage(plugin.getPlayerManager().getLeveledPlayer(player).getStrengthBonus());
 
         // Give it a 5% variance
-        newDamage *= (1 + ((Math.random() - .5) / 10.));
+        playerDealtMeleeDamageEvent.multiplyDamage(1 + ((Math.random() - .5) / 10f));
 
         // Sweeping edge needs to have reduced damage
         if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)) {
             int sweepLevel = tool.getEnchantmentLevel(Enchantment.SWEEPING_EDGE);
-            if (sweepLevel > 0) {
-                newDamage *= (sweepLevel) / 11.;
-            } else {
-                newDamage *= .03;
-            }
+            float mult = sweepLevel > 0 ? sweepLevel / 11f : .03f;
+            playerDealtMeleeDamageEvent.multiplyDamage(mult);
         }
 
         // Now set the damage, good to go
-        event.setDamage(newDamage);
+        event.setDamage(playerDealtMeleeDamageEvent.getDamage());
     }
 
     /**
@@ -195,8 +172,7 @@ public class GlobalDamageManager implements Listener {
         int mobLevel = plugin.getMobManager().getMobLevel(entity);
 
         // For context, this damage value is what the average mob should be doing. Certain mobs will hit harder/softer
-        double damage = mobLevel * mobLevel * (mobLevel / 30.) + 25;
-
+        double damage = Math.pow(mobLevel, 1.5) * (mobLevel / 25.) + 25;
         double damagePercent = 1.0;
 
         switch (entity.getType()){
@@ -316,6 +292,9 @@ public class GlobalDamageManager implements Listener {
         if (entity instanceof Ageable && !((Ageable) entity).isAdult())
             damage *= .33;
 
+        // Players get resist against mobs
+        if (victim instanceof Player)
+            damage *= plugin.getPlayerManager().getLeveledPlayer((Player) victim).getEnvResist();
 
         return damage;
     }
@@ -325,6 +304,11 @@ public class GlobalDamageManager implements Listener {
 
         if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0)
             return;
+
+        if (event.getDamager() instanceof Firework) {
+            event.setCancelled(true);
+            return;
+        }
 
         // If the entity hit wasnt living don't worry
         if (!(event.getEntity() instanceof LivingEntity))
@@ -404,12 +388,12 @@ public class GlobalDamageManager implements Listener {
                 break;
 
             case FIRE:
-                dmg = fivePercentHP / 5f;
+                dmg = fivePercentHP * 2;
                 break;
 
             case LAVA:
             case VOID:
-                dmg = fivePercentHP / 2f;
+                dmg = fivePercentHP * 5;
                 break;
 
             case FALL:
@@ -425,7 +409,7 @@ public class GlobalDamageManager implements Listener {
                 break;
 
             case HOT_FLOOR:
-                dmg = fivePercentHP / 10f;
+                dmg = fivePercentHP / 1.5f;
                 break;
 
             case BLOCK_EXPLOSION:
@@ -467,7 +451,7 @@ public class GlobalDamageManager implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerGotHit(EntityDamageEvent event) {
 
-        if (event.getEntity().isDead())
+        if (event.getEntity().isDead() || event.isCancelled())
             return;
 
         if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0) {
@@ -475,9 +459,8 @@ public class GlobalDamageManager implements Listener {
         }
 
         // Is a player being hit?
-        if (!(event.getEntity() instanceof Player)) {
+        if (!(event.getEntity() instanceof Player))
             return;
-        }
 
         Player player = (Player) event.getEntity();
         if (player.getHealth() <= 0) { player.damage(2000000000); }
