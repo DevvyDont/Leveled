@@ -5,6 +5,7 @@ import me.devvy.leveled.enchantments.EnchantmentManager;
 import me.devvy.leveled.items.CustomItemType;
 import me.devvy.leveled.player.LeveledPlayer;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -293,9 +294,12 @@ public class BossManager implements Listener {
 
     @EventHandler
     public void onPlayerRegen(EntityRegainHealthEvent event){
-        if (event.getEntity() instanceof Player && poisonedPlayers.contains(event.getEntity())){
+
+        if (event.getRegainReason() == EntityRegainHealthEvent.RegainReason.ENDER_CRYSTAL)
+            event.setAmount(((EnderDragon) event.getEntity()).getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() / 200);
+        else if (event.getEntity() instanceof Player && poisonedPlayers.contains(event.getEntity()))
             event.setCancelled(true);
-        }
+
     }
 
     @EventHandler

@@ -6,6 +6,7 @@ import me.devvy.leveled.events.EntityHitByProjectileEvent;
 import me.devvy.leveled.events.EntityShootArrowEvent;
 import me.devvy.leveled.events.PlayerDealtMeleeDamageEvent;
 import me.devvy.leveled.items.CustomItemType;
+import me.devvy.leveled.util.DamagePopup;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -135,7 +136,7 @@ public class GlobalDamageManager implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityHitByBow(EntityDamageByEntityEvent event) {
 
         // Make sure we are dealing with arrows and arrows being shot by players here
@@ -144,7 +145,7 @@ public class GlobalDamageManager implements Listener {
 
         Arrow arrow = (Arrow) event.getDamager();
 
-        if (!(arrow.getShooter() instanceof LivingEntity))
+        if (!(arrow.getShooter() instanceof Player))
             return;
 
         EntityHitByProjectileEvent entityHitByProjectileEvent = new EntityHitByProjectileEvent(arrow, event.getEntity(), event.getFinalDamage());
@@ -299,7 +300,7 @@ public class GlobalDamageManager implements Listener {
         return damage;
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onMobInflictedDamage(EntityDamageByEntityEvent event) {
 
         if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0)
@@ -343,7 +344,7 @@ public class GlobalDamageManager implements Listener {
         event.setDamage(newDamage);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onEntityHit(EntityDamageEvent event) {
 
         if (event.getEntity() instanceof Player) {
@@ -442,6 +443,28 @@ public class GlobalDamageManager implements Listener {
         event.setDamage(miscDamageEvent.getDamage());
     }
 
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onEnvironmentExplosionDamage(EntityDamageEvent event) {
+
+        if (event instanceof EntityDamageByEntityEvent && !(((EntityDamageByEntityEvent) event).getDamager() instanceof LivingEntity)) {}
+        else if (event.getCause() != EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)
+            return;
+
+        if (!(event.getEntity() instanceof LivingEntity))
+            return;
+
+        // Calculate the percentage that the explosion would have done
+        double oldPercent;
+
+        if (event.getEntity() instanceof Boss)
+            oldPercent = event.getDamage() / 250;
+        else
+            oldPercent = event.getDamage() / ((LivingEntity) event.getEntity()).getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
+
+        System.out.println(ChatColor.AQUA + "Damage would have done " + event.getDamage() + " but now will do " + ((LivingEntity) event.getEntity()).getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() * oldPercent);
+        event.setDamage(((LivingEntity) event.getEntity()).getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() * oldPercent);
+    }
+
     /**
      * Overkill protection mechanic, if we are hit by a blow that is supposed to kill a player but they have 50% hp
      * keep them at 1 hp
@@ -477,6 +500,8 @@ public class GlobalDamageManager implements Listener {
         if (player.getHealth() / maxHP < .5) {
             return;
         }
+
+        new DamagePopup(plugin, event.getFinalDamage(), (LivingEntity) event.getEntity());
 
         // At this point a player is due to die, but has > 50% of their hp, leave them at 1/2 a heart
         event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);

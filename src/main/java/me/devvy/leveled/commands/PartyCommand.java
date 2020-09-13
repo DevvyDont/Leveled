@@ -203,7 +203,7 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(ChatColor.RED + "You cannot tp to a party member that is downed!");
             return;
         }
-        
+
         // Same worlds?
         if (player.getWorld() != friend.getWorld()) {
             player.sendMessage(ChatColor.RED + "You cannot tp to a party member in a different dimension!");
@@ -212,7 +212,7 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
 
         // All good to tp
         player.teleport(friend.getLocation());
-        player.sendTitle(ChatColor.GREEN + "Teleporting...", "", 20, 20, 10);
+        player.sendTitle("", ChatColor.GREEN + "Teleporting to " + friend.getDisplayName(), 20, 20, 10);
         friend.sendTitle("", ChatColor.AQUA + player.getDisplayName() + ChatColor.GRAY + " teleported to you", 20, 15, 10);
         friend.getWorld().playSound(friend.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
     }
