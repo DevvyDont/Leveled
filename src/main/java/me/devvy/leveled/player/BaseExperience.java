@@ -76,11 +76,11 @@ public abstract class BaseExperience {
                 return 4000;
             // Cant mine until lvl 20
             case REDSTONE_ORE:
-                return 7500;
+                return 9000;
             case DIAMOND_ORE:
-                return 15000;
+                return 30000;
             case EMERALD_ORE:
-                return 50000;
+                return 80000;
             default:
                 return 0;
         }
