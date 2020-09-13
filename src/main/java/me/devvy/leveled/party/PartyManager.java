@@ -38,6 +38,23 @@ public class PartyManager implements Listener {
         }
     }
 
+    private void printParties() {
+
+        for (UUID playerID : playerPartyHashMap.keySet()) {
+
+            Party party = playerPartyHashMap.get(playerID);
+            Player player = Bukkit.getPlayer(playerID);
+
+            if (player == null) {
+                System.out.println(ChatColor.AQUA.toString() + playerID + " is offline.");
+                continue;
+            }
+
+            System.out.println(ChatColor.AQUA + "Player: " + player.getName() + " Party: " + party.toString());
+        }
+
+    }
+
     private int getSecondWindSeconds(Player player){
 
         int downs = numDowns.get(player.getUniqueId());
@@ -127,6 +144,7 @@ public class PartyManager implements Listener {
                 disbandParty(player);
             else
                 party.removePlayer(player);
+            playerPartyHashMap.remove(player.getUniqueId());
         }
     }
 
@@ -185,7 +203,6 @@ public class PartyManager implements Listener {
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event){
-        numDowns.remove(event.getPlayer().getUniqueId());
         if (playerPartyHashMap.containsKey(event.getPlayer().getUniqueId()))
             removePlayerFromParty(event.getPlayer());
 
@@ -193,6 +210,7 @@ public class PartyManager implements Listener {
             event.getPlayer().setHealth(0);
             event.getPlayer().setInvulnerable(false);
             downedPlayers.remove(event.getPlayer().getUniqueId());
+            numDowns.remove(event.getPlayer().getUniqueId());
         }
     }
 
@@ -234,6 +252,9 @@ public class PartyManager implements Listener {
         Entity killer = event.getEntity();
         if (event.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent)
             killer = ((EntityDamageByEntityEvent)event.getEntity().getLastDamageCause()).getDamager();
+
+        if (killer instanceof Projectile && ((Projectile) killer).getShooter() != null)
+            killer = (Entity) ((Projectile) killer).getShooter();
 
         event.setCancelled(true);
         downPlayer(event.getEntity(), killer);

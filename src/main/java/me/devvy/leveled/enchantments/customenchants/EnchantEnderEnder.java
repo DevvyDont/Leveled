@@ -1,23 +1,28 @@
 package me.devvy.leveled.enchantments.customenchants;
 
+import me.devvy.leveled.enchantments.EnchantmentManager;
+import me.devvy.leveled.events.EntityShootArrowEvent;
 import me.devvy.leveled.util.ToolTypeHelpers;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 
-public class EnchantEnderHunter extends Enchantment {
+public class EnchantEnderEnder extends Enchantment implements Listener {
 
-    public EnchantEnderHunter(NamespacedKey key) {
+    public EnchantEnderEnder(NamespacedKey key) {
         super(key);
     }
 
     @Override
     public String getName() {
-        return "Ender Hunter";
+        return "Ender Ender";
     }
 
     @Override
@@ -57,5 +62,18 @@ public class EnchantEnderHunter extends Enchantment {
         allowedMats.add(Material.CROSSBOW);
         allowedMats.add(Material.BOW);
         return allowedMats.contains(itemStack.getType());
+    }
+
+    @EventHandler
+    public void onArrowShotWithEnderEnder(EntityShootArrowEvent event) {
+
+        assert event.getBow() != null;
+        if (!event.getBow().containsEnchantment(this))
+            return;
+
+        if (event.getEntity().getWorld().getEnvironment() != World.Environment.THE_END)
+            return;
+
+        event.multiplyDamage(1 + event.getBow().getEnchantmentLevel(EnchantmentManager.ENDER_ENDER) * .25f);
     }
 }

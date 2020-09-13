@@ -1,6 +1,7 @@
 package me.devvy.leveled.party;
 
 import me.devvy.leveled.Leveled;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -63,5 +64,14 @@ public class Party {
 
     public boolean isFull(){
         return size() >= MEMBER_CAP;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (UUID id : members) {
+            sb.append(Bukkit.getPlayer(id) != null ? Bukkit.getPlayer(id).getName() : id + " ");
+        }
+        return sb.toString();
     }
 }
