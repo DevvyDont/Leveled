@@ -157,6 +157,7 @@ public class EnchantingInterface implements Listener {
             case FISHING_ROD:
             case ELYTRA:
             case SHEARS:
+            case DRAGON_HEAD:
                 return true;
             default:
                 return false;

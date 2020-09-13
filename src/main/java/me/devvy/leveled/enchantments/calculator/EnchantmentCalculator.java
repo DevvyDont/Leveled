@@ -1,6 +1,7 @@
 package me.devvy.leveled.enchantments.calculator;
 
 import me.devvy.leveled.enchantments.EnchantmentManager;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,7 +37,23 @@ public class EnchantmentCalculator {
 
         // Loop through and see which ones are allowed
         potentialEnchantments.removeIf(enchantment -> playerLevel < enchantment.getMinPlayerLevelRequired());
-        potentialEnchantments.removeIf(enchantment -> !enchantment.getEnchantment().canEnchantItem(item));
+        potentialEnchantments.removeIf(enchantment -> !canEnchantItem(enchantment.getEnchantment(), item));
+    }
+
+    private boolean canEnchantItem(Enchantment enchantment, ItemStack itemStack) {
+
+        switch (itemStack.getType()) {
+            case DRAGON_HEAD:
+            case CREEPER_HEAD:
+            case PLAYER_HEAD:
+            case ZOMBIE_HEAD:
+                return enchantment.canEnchantItem(new ItemStack(Material.DIAMOND_HELMET));
+            case ELYTRA:
+                return enchantment.canEnchantItem(new ItemStack(Material.DIAMOND_CHESTPLATE));
+            default:
+                return enchantment.canEnchantItem(itemStack);
+        }
+
     }
 
     /**
