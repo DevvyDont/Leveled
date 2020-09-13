@@ -118,7 +118,7 @@ public class PlayerExperienceGainListeners implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
 
-        if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE || event.isCancelled())
             return;
 
         // Never ever ever give xp if the block isn't supposed to drop
