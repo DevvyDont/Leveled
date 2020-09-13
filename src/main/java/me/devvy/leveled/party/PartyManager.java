@@ -58,6 +58,10 @@ public class PartyManager implements Listener {
         return task != null ? task.getSecondsRemaining() : -1;
     }
 
+    public boolean isDown(Player player) {
+        return getTimeRemainingDowned(player) != -1;
+    }
+
     public void downPlayer(Player player, Entity killer){
 
         for (Entity e : player.getNearbyEntities(100, 50, 100))

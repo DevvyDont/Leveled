@@ -175,22 +175,41 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
     }
 
     private void handleTpSubCommand(Player player, String[] args) {
+
         // Is the player in a party?
         if (!plugin.getPartyManager().isPlayerInParty(player)){
             player.sendMessage(ChatColor.RED + "You must be in a party to use that command!");
             return;
         }
+
         // Was a valid player given?
         Player friend = plugin.getServer().getPlayerExact(args[1]);
         if (friend == null){
             player.sendMessage(ChatColor.RED + "Could not find player " + ChatColor.DARK_RED +  args[1]);
             return;
         }
+
         // Are the players in the same party?
         if (!plugin.getPartyManager().inSameParty(player, friend)){
             player.sendMessage(ChatColor.RED + "You must be in the same party as someone to tp to them!");
             return;
         }
+
+        // Is either player down?
+        if (plugin.getPartyManager().isDown(player)) {
+            player.sendMessage(ChatColor.RED + "You cannot tp when you are downed!");
+            return;
+        } else if (plugin.getPartyManager().isDown(friend)) {
+            player.sendMessage(ChatColor.RED + "You cannot tp to a party member that is downed!");
+            return;
+        }
+        
+        // Same worlds?
+        if (player.getWorld() != friend.getWorld()) {
+            player.sendMessage(ChatColor.RED + "You cannot tp to a party member in a different dimension!");
+            return;
+        }
+
         // All good to tp
         player.teleport(friend.getLocation());
         player.sendTitle(ChatColor.GREEN + "Teleporting...", "", 20, 20, 10);
