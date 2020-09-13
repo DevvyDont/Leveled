@@ -10,18 +10,18 @@ import java.util.List;
 public enum CustomItemType {
 
     DRAGON_SWORD(     "Aspect of the Dragons", CustomItemDragonSword.class,    Material.GOLDEN_SWORD,       Rarity.LEGENDARY, Category.MELEE,   70, 1000, ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Instant Transmission", ChatColor.GRAY + "Right click to instantly " + ChatColor.AQUA + "teleport 10 blocks!", ChatColor.GRAY + "Careful though... It kinda stings..."),
-    DRAGON_HELMET(    "Dragon Helmet",         CustomItemDragonHelmet.class,   Material.DRAGON_HEAD,        Rarity.LEGENDARY, Category.ARMOR,   70, 50,   ChatColor.GOLD + ChatColor.BOLD.toString() + "FULL SET BONUS", ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Boundless Rockets", ChatColor.GRAY + "Wear the full set to increase " + ChatColor.RED + "firework efficiency!", ChatColor.GRAY + "Fireworks have a " + ChatColor.GREEN + "50% chance" + ChatColor.GRAY + " to preserve when Elytra boosting"),
-    DRAGON_CHESTPLATE("Dragon Wings",          CustomItemDragonWings.class,    Material.ELYTRA,             Rarity.LEGENDARY, Category.ARMOR,   70, 65,   ChatColor.GOLD + ChatColor.BOLD.toString() + "FULL SET BONUS", ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Boundless Rockets", ChatColor.GRAY + "Wear the full set to increase " + ChatColor.RED + "firework efficiency!", ChatColor.GRAY + "Fireworks have a " + ChatColor.GREEN + "50% chance" + ChatColor.GRAY + " to preserve when Elytra boosting"),
-    DRAGON_LEGGINGS(  "Dragon Leggings",       CustomItemDragonLeggings.class, Material.LEATHER_LEGGINGS,   Rarity.LEGENDARY, Category.ARMOR,   70, 55,   ChatColor.GOLD + ChatColor.BOLD.toString() + "FULL SET BONUS", ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Boundless Rockets", ChatColor.GRAY + "Wear the full set to increase " + ChatColor.RED + "firework efficiency!", ChatColor.GRAY + "Fireworks have a " + ChatColor.GREEN + "50% chance" + ChatColor.GRAY + " to preserve when Elytra boosting"),
-    DRAGON_BOOTS(     "Dragon Boots",          CustomItemDragonBoots.class,    Material.LEATHER_BOOTS,      Rarity.LEGENDARY, Category.ARMOR,   70, 45,   ChatColor.GOLD + ChatColor.BOLD.toString() + "FULL SET BONUS", ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Boundless Rockets", ChatColor.GRAY + "Wear the full set to increase " + ChatColor.RED + "firework efficiency!", ChatColor.GRAY + "Fireworks have a " + ChatColor.GREEN + "50% chance" + ChatColor.GRAY + " to preserve when Elytra boosting"),
+    DRAGON_HELMET(    "Dragon Helmet",         CustomItemDragonHelmet.class,   Material.DRAGON_HEAD,        Rarity.LEGENDARY, Category.ARMOR,   70, 320,   ChatColor.GOLD + ChatColor.BOLD.toString() + "FULL SET BONUS", ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Boundless Rockets", ChatColor.GRAY + "Wear the full set to increase " + ChatColor.RED + "firework efficiency!", ChatColor.GRAY + "Fireworks have a " + ChatColor.GREEN + "50% chance" + ChatColor.GRAY + " to preserve when Elytra boosting"),
+    DRAGON_CHESTPLATE("Dragon Wings",          CustomItemDragonWings.class,    Material.ELYTRA,             Rarity.LEGENDARY, Category.ARMOR,   70, 250,   ChatColor.GOLD + ChatColor.BOLD.toString() + "FULL SET BONUS", ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Boundless Rockets", ChatColor.GRAY + "Wear the full set to increase " + ChatColor.RED + "firework efficiency!", ChatColor.GRAY + "Fireworks have a " + ChatColor.GREEN + "50% chance" + ChatColor.GRAY + " to preserve when Elytra boosting"),
+    DRAGON_LEGGINGS(  "Dragon Leggings",       CustomItemDragonLeggings.class, Material.LEATHER_LEGGINGS,   Rarity.LEGENDARY, Category.ARMOR,   70, 345,   ChatColor.GOLD + ChatColor.BOLD.toString() + "FULL SET BONUS", ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Boundless Rockets", ChatColor.GRAY + "Wear the full set to increase " + ChatColor.RED + "firework efficiency!", ChatColor.GRAY + "Fireworks have a " + ChatColor.GREEN + "50% chance" + ChatColor.GRAY + " to preserve when Elytra boosting"),
+    DRAGON_BOOTS(     "Dragon Boots",          CustomItemDragonBoots.class,    Material.LEATHER_BOOTS,      Rarity.LEGENDARY, Category.ARMOR,   70, 300,   ChatColor.GOLD + ChatColor.BOLD.toString() + "FULL SET BONUS", ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Boundless Rockets", ChatColor.GRAY + "Wear the full set to increase " + ChatColor.RED + "firework efficiency!", ChatColor.GRAY + "Fireworks have a " + ChatColor.GREEN + "50% chance" + ChatColor.GRAY + " to preserve when Elytra boosting"),
     ENDER_BOW(        "Ender Bow",             CustomItemEnderBow.class,       Material.BOW,                Rarity.LEGENDARY, Category.RANGED,  80, 1250, ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Ender Displacement", ChatColor.GRAY + "Shooting an arrow while " + ChatColor.BLUE + "sneaking" + ChatColor.GRAY + " will", ChatColor.GRAY + "cause you to " + ChatColor.LIGHT_PURPLE + "teleport" + ChatColor.GRAY + " where the arrow lands!"),
     MAGIC_MIRROR(     "Magic Mirror",          CustomItemMagicMirror.class,    Material.COMPASS,            Rarity.RARE,      Category.UTILITY, 90, 0,    ChatColor.DARK_RED + "UNBINDED!", ChatColor.RED + "Right click with this item in your hand", ChatColor.RED + "to bind this mirror to a location!", "", ChatColor.AQUA + "Interacting with this item will instantly", ChatColor.AQUA + "teleport the user to the binded location!"),
-    MOZILLA(          "Mozilla",               CustomItemMozillaSword.class,   Material.GOLDEN_SWORD,       Rarity.LEGENDARY, Category.MELEE,   50, 650,  ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() +  "Auto-Clicker", ChatColor.GRAY + "bottom text"),
+    MOZILLA(          "Mozilla",               CustomItemMozillaSword.class,   Material.GOLDEN_SWORD,       Rarity.LEGENDARY, Category.MELEE,   50, 450,  ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() +  "Auto-Clicker", ChatColor.GRAY + "bottom text"),
     MINER_PICKAXE(    "Miner's Pickaxe",       CustomItemMinerPickaxe.class,   Material.IRON_PICKAXE,       Rarity.LEGENDARY, Category.MELEE,   15, 60,   ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() +  "Sharpened Edges", ChatColor.GRAY + "Wait is this a weapon?"),
-    MINER_HELMET(     "Miner's Helmet",        CustomItemMinerHelmet.class,    Material.LEATHER_HELMET,     Rarity.RARE, Category.ARMOR,        15, 22,   ChatColor.RED  +  "Don't mine at night..."),
-    MINER_CHESTPLATE( "Miner's Chestplate",    CustomItemMinerChestplate.class,Material.LEATHER_CHESTPLATE, Rarity.RARE, Category.ARMOR,        15, 28,   ChatColor.RED  +  "Don't mine at night..."),
-    MINER_LEGGINGS(   "Miner's Leggings",      CustomItemMinerLeggings.class,  Material.LEATHER_LEGGINGS,   Rarity.RARE, Category.ARMOR,        15, 25,   ChatColor.RED  +  "Don't mine at night..."),
-    MINER_BOOTS(      "Miner's Boots",         CustomItemMinerBoots.class,     Material.LEATHER_BOOTS,      Rarity.RARE, Category.ARMOR,        15, 19,   ChatColor.RED  +  "Don't mine at night..."),
+    MINER_HELMET(     "Miner's Helmet",        CustomItemMinerHelmet.class,    Material.LEATHER_HELMET,     Rarity.RARE, Category.ARMOR,        15, 50,   ChatColor.RED  +  "Don't mine at night..."),
+    MINER_CHESTPLATE( "Miner's Chestplate",    CustomItemMinerChestplate.class,Material.LEATHER_CHESTPLATE, Rarity.RARE, Category.ARMOR,        15, 60,   ChatColor.RED  +  "Don't mine at night..."),
+    MINER_LEGGINGS(   "Miner's Leggings",      CustomItemMinerLeggings.class,  Material.LEATHER_LEGGINGS,   Rarity.RARE, Category.ARMOR,        15, 48,   ChatColor.RED  +  "Don't mine at night..."),
+    MINER_BOOTS(      "Miner's Boots",         CustomItemMinerBoots.class,     Material.LEATHER_BOOTS,      Rarity.RARE, Category.ARMOR,        15, 42,   ChatColor.RED  +  "Don't mine at night..."),
     ;
 
     public final String NAME;
@@ -99,62 +99,62 @@ public enum CustomItemType {
             // ========
 
             case LEATHER_CHESTPLATE:
-                return 5;
+                return 20;
             case LEATHER_LEGGINGS:
-                return 3;
+                return 15;
             case LEATHER_HELMET:
             case TURTLE_HELMET:
-                return 2;
-            case LEATHER_BOOTS:
-                return 1;
-
-            case GOLDEN_CHESTPLATE:
-                return 15;
-            case GOLDEN_LEGGINGS:
-                return 12;
-            case GOLDEN_HELMET:
                 return 10;
-            case GOLDEN_BOOTS:
-                return 8;
+            case LEATHER_BOOTS:
+                return 7;
 
             case CHAINMAIL_CHESTPLATE:
-                return 22;
+                return 44;
             case CHAINMAIL_LEGGINGS:
-                return 19;
+                return 38;
             case CHAINMAIL_HELMET:
-                return 17;
+                return 30;
             case CHAINMAIL_BOOTS:
-                return 15;
+                return 24;
 
             case IRON_CHESTPLATE:
-                return 30;
+                return 52;
             case IRON_LEGGINGS:
-                return 27;
+                return 45;
             case IRON_HELMET:
-                return 23;
+                return 40;
             case IRON_BOOTS:
-                return 20;
+                return 37;
+
+            case GOLDEN_CHESTPLATE:
+                return 80;
+            case GOLDEN_LEGGINGS:
+                return 68;
+            case GOLDEN_HELMET:
+                return 60;
+            case GOLDEN_BOOTS:
+                return 56;
 
             case DIAMOND_CHESTPLATE:
-                return 50;
+                return 100;
             case DIAMOND_LEGGINGS:
-                return 40;
+                return 80;
             case DIAMOND_HELMET:
-                return 35;
+                return 70;
             case DIAMOND_BOOTS:
-                return 32;
+                return 64;
 
             case NETHERITE_CHESTPLATE:
-                return 70;
+                return 450;
             case NETHERITE_LEGGINGS:
-                return 65;
+                return 420;
             case NETHERITE_HELMET:
-                return 62;
+                return 385;
             case NETHERITE_BOOTS:
-                return 58;
+                return 350;
 
             case ELYTRA:
-                return 10;
+                return 25;
 
             default:
                 return 0;
