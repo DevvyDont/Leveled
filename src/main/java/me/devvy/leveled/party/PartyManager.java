@@ -103,8 +103,8 @@ public class PartyManager implements Listener {
         player.setInvulnerable(true);
         player.setHealth(1);
 
-        if (player.getFoodLevel() >= 6)
-            player.setFoodLevel(6);
+        if (player.getFoodLevel() >= 12)
+            player.setFoodLevel(12);
         player.setSaturation(0);
         player.setGlowing(true);
 
