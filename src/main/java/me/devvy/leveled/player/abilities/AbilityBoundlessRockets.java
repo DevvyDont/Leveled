@@ -10,7 +10,7 @@ public class AbilityBoundlessRockets implements Listener {
 
     @EventHandler
     public void onElytraBoost(PlayerElytraBoostEvent event){
-        Leveled plugin = Leveled.getPlugin(Leveled.class);
+        Leveled plugin = Leveled.getInstance();
         if (plugin.getPlayerManager().getLeveledPlayer(event.getPlayer()).getAbilities().contains(CustomAbility.BOUNDLESS_ROCKETS)){
             if (Math.random() < .5){
                 event.setShouldConsume(false);

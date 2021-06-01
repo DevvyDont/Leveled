@@ -12,12 +12,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class DebugEnchant implements CommandExecutor {
 
-    private final Leveled plugin;
-
-    public DebugEnchant(Leveled plugin) {
-        this.plugin = plugin;
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
@@ -63,7 +57,7 @@ public class DebugEnchant implements CommandExecutor {
             return true;
         }
 
-        plugin.getEnchantmentManager().doCalculatorEnchant(hand, levelToEnchant, qualityOfEnchant, levelToSetItem);
+        Leveled.getInstance().getEnchantmentManager().doCalculatorEnchant(hand, levelToEnchant, qualityOfEnchant, levelToSetItem);
         player.sendMessage(ChatColor.GREEN + "Enchanted your item!");
         return true;
     }

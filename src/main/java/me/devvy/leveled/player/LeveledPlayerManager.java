@@ -20,18 +20,16 @@ import java.util.HashMap;
  */
 public class LeveledPlayerManager implements Listener {
 
-    private final Leveled plugin;
     private final HashMap<Player, LeveledPlayer> playerArmorAttributesMap;
 
-    public LeveledPlayerManager(Leveled plugin) {
-        this.plugin = plugin;
+    public LeveledPlayerManager() {
         playerArmorAttributesMap = new HashMap<>();
-        for (Player player : plugin.getServer().getOnlinePlayers())
-            playerArmorAttributesMap.put(player, new LeveledPlayer(plugin.getCustomItemManager(), player));
+        for (Player player : Leveled.getInstance().getServer().getOnlinePlayers())
+            playerArmorAttributesMap.put(player, new LeveledPlayer(Leveled.getInstance().getCustomItemManager(), player));
 
         // Register ability classes
-        plugin.getServer().getPluginManager().registerEvents(new AbilityExpertCrafter(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new AbilityBoundlessRockets(), plugin);
+        Leveled.getInstance().getServer().getPluginManager().registerEvents(new AbilityExpertCrafter(), Leveled.getInstance());
+        Leveled.getInstance().getServer().getPluginManager().registerEvents(new AbilityBoundlessRockets(), Leveled.getInstance());
     }
 
     public void updateLeveledPlayerAttributes(Player player){
@@ -39,17 +37,17 @@ public class LeveledPlayerManager implements Listener {
             @Override
             public void run() {
                 if (!playerArmorAttributesMap.containsKey(player))
-                    playerArmorAttributesMap.put(player, new LeveledPlayer(plugin.getCustomItemManager(), player));
+                    playerArmorAttributesMap.put(player, new LeveledPlayer(Leveled.getInstance().getCustomItemManager(), player));
                 else
                     playerArmorAttributesMap.get(player).updateAttributes();
             }
-        }.runTaskLater(plugin, 1);
+        }.runTaskLater(Leveled.getInstance(), 1);
     }
 
     public LeveledPlayer getLeveledPlayer(Player player){
         if (playerArmorAttributesMap.containsKey(player))
             return playerArmorAttributesMap.get(player);
-        return playerArmorAttributesMap.put(player, new LeveledPlayer(plugin.getCustomItemManager(), player));
+        return playerArmorAttributesMap.put(player, new LeveledPlayer(Leveled.getInstance().getCustomItemManager(), player));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -60,7 +58,7 @@ public class LeveledPlayerManager implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
         playerArmorAttributesMap.remove(event.getPlayer());
-        playerArmorAttributesMap.put(event.getPlayer(), new LeveledPlayer(plugin.getCustomItemManager(), event.getPlayer()));
+        playerArmorAttributesMap.put(event.getPlayer(), new LeveledPlayer(Leveled.getInstance().getCustomItemManager(), event.getPlayer()));
     }
 
     @EventHandler

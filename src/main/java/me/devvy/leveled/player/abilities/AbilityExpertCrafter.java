@@ -13,7 +13,7 @@ public class AbilityExpertCrafter implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
 
-        LeveledPlayer leveledPlayer = Leveled.getPlugin(Leveled.class).getPlayerManager().getLeveledPlayer(event.getPlayer());
+        LeveledPlayer leveledPlayer = Leveled.getInstance().getPlayerManager().getLeveledPlayer(event.getPlayer());
 
         if (!leveledPlayer.getAbilities().contains(CustomAbility.EXPERT_CRAFTER))
             return;

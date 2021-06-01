@@ -14,12 +14,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerToolListeners implements Listener {
 
-    Leveled plugin;
-
-    public PlayerToolListeners(Leveled plugin) {
-        this.plugin = plugin;
-    }
-
     private void cancelEquipmentUse(Cancellable event, Player player, int requiredLevel) {
         event.setCancelled(true);
         player.sendActionBar( ChatColor.RED + "You must be level " + ChatColor.DARK_RED + requiredLevel + ChatColor.RED + " to use that item!");
@@ -40,7 +34,7 @@ public class PlayerToolListeners implements Listener {
         if (toolUsed.getType() == Material.AIR)
             return;
 
-        int toolLevel = plugin.getCustomItemManager().getItemLevel(toolUsed);
+        int toolLevel = Leveled.getInstance().getCustomItemManager().getItemLevel(toolUsed);
 
         if (toolLevel > player.getLevel())
             cancelEquipmentUse(event, player, toolLevel);
@@ -63,7 +57,7 @@ public class PlayerToolListeners implements Listener {
         if (toolUsed.getType() == Material.AIR)
             return;
 
-        int toolLevel = plugin.getCustomItemManager().getItemLevel(toolUsed);
+        int toolLevel = Leveled.getInstance().getCustomItemManager().getItemLevel(toolUsed);
 
         if (toolLevel > player.getLevel())
             cancelEquipmentUse(event, player, toolLevel);

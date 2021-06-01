@@ -24,23 +24,17 @@ import java.util.ArrayList;
 
 public class BossManager implements Listener {
 
-    private final Leveled plugin;
-
-    public BossManager(Leveled plugin) {
-        this.plugin = plugin;
-    }
-
     private ItemStack getRandomEnderDragonDrop(int level){
         int random = (int)(Math.random() * 5);
         CustomItemType[] choices = {CustomItemType.DRAGON_HELMET, CustomItemType.DRAGON_CHESTPLATE, CustomItemType.DRAGON_LEGGINGS, CustomItemType.DRAGON_BOOTS, CustomItemType.DRAGON_SWORD};
-        ItemStack drop = plugin.getCustomItemManager().getCustomItem(choices[random]);
+        ItemStack drop = Leveled.getInstance().getCustomItemManager().getCustomItem(choices[random]);
 
         drop = enchantBossDrop(drop, level + 10, level);
         return drop;
     }
 
     public ItemStack enchantBossDrop(ItemStack itemStack, int enchantLevel, int itemLevel){
-        plugin.getEnchantmentManager().doCalculatorEnchant(itemStack, enchantLevel, 12, itemLevel);
+        Leveled.getInstance().getEnchantmentManager().doCalculatorEnchant(itemStack, enchantLevel, 12, itemLevel);
         return itemStack;
     }
 
@@ -53,7 +47,7 @@ public class BossManager implements Listener {
         drop.setCustomName(drop.getItemStack().getItemMeta().getDisplayName());
         drop.setCustomNameVisible(true);
         drop.setVelocity(new Vector(Math.random() - .5, Math.random() - .5, Math.random() - .5));
-        drop.setMetadata("unique_drop", new FixedMetadataValue(plugin, true));
+        drop.setMetadata("unique_drop", new FixedMetadataValue(Leveled.getInstance(), true));
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -69,7 +63,7 @@ public class BossManager implements Listener {
                 meta.addEffect(effectBuilder.build());
                 firework.setFireworkMeta(meta);
             }
-        }.runTaskTimer(plugin, 1, 20);
+        }.runTaskTimer(Leveled.getInstance(), 1, 20);
     }
 
     @EventHandler
@@ -94,8 +88,8 @@ public class BossManager implements Listener {
             if (Math.random() > dropPercent)
                 return;
 
-            ItemStack bow = plugin.getCustomItemManager().getCustomItem(CustomItemType.ENDER_BOW);
-            int endermanLevel = plugin.getMobManager().getMobLevel(event.getEntity());
+            ItemStack bow = Leveled.getInstance().getCustomItemManager().getCustomItem(CustomItemType.ENDER_BOW);
+            int endermanLevel = Leveled.getInstance().getMobManager().getMobLevel(event.getEntity());
             bow = enchantBossDrop(bow, endermanLevel + 10, endermanLevel);
             spawnBossDrop(bow, event.getEntity().getLocation(), true);
         }
@@ -124,8 +118,8 @@ public class BossManager implements Listener {
             if (Math.random() > dropPercent)
                 return;
 
-            ItemStack magicMirror = plugin.getCustomItemManager().getCustomItem(CustomItemType.MAGIC_MIRROR);
-            plugin.getCustomItemManager().setItemLevel(magicMirror, 90);
+            ItemStack magicMirror = Leveled.getInstance().getCustomItemManager().getCustomItem(CustomItemType.MAGIC_MIRROR);
+            Leveled.getInstance().getCustomItemManager().setItemLevel(magicMirror, 90);
             spawnBossDrop(magicMirror, event.getEntity().getLocation(), false);
         }
     }
@@ -137,7 +131,7 @@ public class BossManager implements Listener {
             case WITHER:
             case ELDER_GUARDIAN:
                 if (event.getEntity().getCustomName() != null)
-                    plugin.getServer().broadcastMessage(ChatColor.GRAY + "A " + event.getEntity().getCustomName() + ChatColor.GRAY + " has spawned!");
+                    Leveled.getInstance().getServer().broadcastMessage(ChatColor.GRAY + "A " + event.getEntity().getCustomName() + ChatColor.GRAY + " has spawned!");
         }
     }
 
@@ -152,41 +146,41 @@ public class BossManager implements Listener {
 
         switch (enemy) {
             case ENDER_DRAGON:
-                int dragonLevel = plugin.getMobManager().getMobLevel(event.getEntity());
+                int dragonLevel = Leveled.getInstance().getMobManager().getMobLevel(event.getEntity());
                 // We are going to give all players in the end a bonus
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
-                    LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(p);
+                    LeveledPlayer leveledPlayer = Leveled.getInstance().getPlayerManager().getLeveledPlayer(p);
                     int xp = Math.min(dragonLevel * 20000, 900000);
                     leveledPlayer.giveExperience(xp);
                     p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Ender Dragon" + ChatColor.YELLOW + "! +" + xp + "XP");
                 }
                 spawnBossDrop(getRandomEnderDragonDrop(dragonLevel - 2), event.getEntity().getLocation(), true);
                 if (event.getEntity().getKiller() != null && event.getEntity().getCustomName() != null)
-                    plugin.getServer().broadcastMessage(ChatColor.GREEN + event.getEntity().getKiller().getDisplayName() + ChatColor.GRAY + " has killed the " + event.getEntity().getCustomName());
+                    Leveled.getInstance().getServer().broadcastMessage(ChatColor.GREEN + event.getEntity().getKiller().getDisplayName() + ChatColor.GRAY + " has killed the " + event.getEntity().getCustomName());
                 break;
             case WITHER:
                 // All players within 100 block radius from the wither get credit
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
                     if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
-                        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(p);
+                        LeveledPlayer leveledPlayer = Leveled.getInstance().getPlayerManager().getLeveledPlayer(p);
                         leveledPlayer.giveExperience(1000000);
                         p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Wither" + ChatColor.YELLOW + "! +1,000,000XP");
                     }
                 }
                 if (event.getEntity().getKiller() != null && event.getEntity().getCustomName() != null)
-                    plugin.getServer().broadcastMessage(ChatColor.GREEN + event.getEntity().getKiller().getDisplayName() + ChatColor.GRAY +  " has killed the " + event.getEntity().getCustomName());
+                    Leveled.getInstance().getServer().broadcastMessage(ChatColor.GREEN + event.getEntity().getKiller().getDisplayName() + ChatColor.GRAY +  " has killed the " + event.getEntity().getCustomName());
                 break;
             case ELDER_GUARDIAN:
                 // All players within 100 block radius from the guardian get credit
                 for (Player p : event.getEntity().getWorld().getPlayers()) {
                     if (p.getLocation().distance(event.getEntity().getLocation()) < 100) {
-                        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(p);
+                        LeveledPlayer leveledPlayer = Leveled.getInstance().getPlayerManager().getLeveledPlayer(p);
                         leveledPlayer.giveExperience(200000);
                         p.sendMessage(ChatColor.GOLD + "You killed " + ChatColor.RED + "The Elder Guardian" + ChatColor.YELLOW + "! +200,000XP");
                     }
                 }
                 if (event.getEntity().getKiller() != null && event.getEntity().getCustomName() != null)
-                    plugin.getServer().broadcastMessage(ChatColor.GREEN + event.getEntity().getKiller().getDisplayName() + ChatColor.GRAY + " has killed the " + event.getEntity().getCustomName());
+                    Leveled.getInstance().getServer().broadcastMessage(ChatColor.GREEN + event.getEntity().getKiller().getDisplayName() + ChatColor.GRAY + " has killed the " + event.getEntity().getCustomName());
                 break;
         }
     }
@@ -204,7 +198,7 @@ public class BossManager implements Listener {
                     ((LivingEntity) event.getEntity()).setMaximumNoDamageTicks(10);
                 }
 
-            }.runTaskLater(plugin, 1);
+            }.runTaskLater(Leveled.getInstance(), 1);
         }
 
     }
@@ -214,7 +208,7 @@ public class BossManager implements Listener {
         if (event.getPlayer().getInventory().firstEmpty() == -1)
             return;
         if (event.getItem().hasMetadata("unique_drop"))
-            plugin.getServer().broadcastMessage(ChatColor.GREEN + "" + ChatColor.BOLD + event.getPlayer().getDisplayName() + ChatColor.GRAY + " has found a " + event.getItem().getItemStack().getItemMeta().getDisplayName() + ChatColor.GRAY + "!");
+            Leveled.getInstance().getServer().broadcastMessage(ChatColor.GREEN + "" + ChatColor.BOLD + event.getPlayer().getDisplayName() + ChatColor.GRAY + " has found a " + event.getItem().getItemStack().getItemMeta().getDisplayName() + ChatColor.GRAY + "!");
     }
 
     private final ArrayList<Player> poisonedPlayers = new ArrayList<>();
@@ -222,7 +216,7 @@ public class BossManager implements Listener {
     @EventHandler
     public void onDragonDirectHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof EnderDragon){
-            event.getEntity().setVelocity(event.getEntity().getVelocity().add(new Vector(0, plugin.getMobManager().getMobLevel((LivingEntity)event.getDamager()) / 5, 0)));
+            event.getEntity().setVelocity(event.getEntity().getVelocity().add(new Vector(0, Leveled.getInstance().getMobManager().getMobLevel((LivingEntity)event.getDamager()) / 5, 0)));
         }
     }
 
@@ -240,10 +234,9 @@ public class BossManager implements Listener {
             return;
 
         EnderDragon dragon = (EnderDragon) gas.getSource();
-        int dragonLevel = plugin.getMobManager().getMobLevel(dragon);
-        double dmg = dragonLevel;
+        double dmg = Leveled.getInstance().getMobManager().getMobLevel(dragon);
         if (hurt instanceof Player)
-            dmg += plugin.getPlayerManager().getLeveledPlayer((Player)hurt).getDefense();
+            dmg += Leveled.getInstance().getPlayerManager().getLeveledPlayer((Player)hurt).getDefense();
         event.setDamage(dmg);
 
         if (!(hurt instanceof Player))
@@ -270,7 +263,7 @@ public class BossManager implements Listener {
 
 
                 if (!poisonedPlayers.contains(player) || times >= 600){
-                    plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.GREEN + "" + ChatColor.BOLD + "CURED");
+                    Leveled.getInstance().getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.GREEN + "" + ChatColor.BOLD + "CURED");
                     poisonedPlayers.remove(player);
                     this.cancel();
                     return;
@@ -279,17 +272,17 @@ public class BossManager implements Listener {
                 try {
                     double dmg = Math.min(player.getLevel(), times / 20);
                     player.setHealth(player.getHealth() - dmg);
-                    plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "POISONED " + (29 - (times / 20)) + "." + (9 - (times % 20 / 2)) + "s");
+                    Leveled.getInstance().getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "POISONED " + (29 - (times / 20)) + "." + (9 - (times % 20 / 2)) + "s");
                 } catch (IllegalArgumentException ignored){
                     player.setHealth(1);
-                    plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "POISONED " + (29 - (times / 20)) + "." + (9 - (times % 20 / 2)) + "s");
+                    Leveled.getInstance().getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "POISONED " + (29 - (times / 20)) + "." + (9 - (times % 20 / 2)) + "s");
                 } catch(Exception ignored){
                     poisonedPlayers.remove(player);
                     this.cancel();
                 }
 
             }
-        }.runTaskTimer(plugin, 1, 1);
+        }.runTaskTimer(Leveled.getInstance(), 1, 1);
     }
 
     @EventHandler

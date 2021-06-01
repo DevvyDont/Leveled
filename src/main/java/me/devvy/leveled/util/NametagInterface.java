@@ -22,19 +22,17 @@ public class NametagInterface implements InventoryHolder, Listener {
 
 
     private final Inventory inv;
-    private final Leveled plugin;
     private final ItemStack nametag;
 
     private final int DISPLAY_SLOT = 19;
     private final int CLEAR_SLOT = 22;
     private final int RENAME_SLOT= 25;
 
-    public NametagInterface(Leveled plugin, ItemStack nametag) {
+    public NametagInterface(ItemStack nametag) {
         this.inv = Bukkit.createInventory(this, 45, ChatColor.RED + "NOT IMPLEMENTED USE /NAMETAG");
-        this.plugin = plugin;
         this.nametag = nametag;
         this.initMainInterface();
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        Leveled.getInstance().getServer().getPluginManager().registerEvents(this, Leveled.getInstance());
     }
 
     public void openInventory(final HumanEntity entity){

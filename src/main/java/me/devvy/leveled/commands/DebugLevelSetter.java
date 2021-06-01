@@ -16,12 +16,6 @@ import java.util.Iterator;
 
 public class DebugLevelSetter implements CommandExecutor {
 
-    private final Leveled plugin;
-
-    public DebugLevelSetter(Leveled plugin) {
-        this.plugin = plugin;
-    }
-
     private void resetPlayerProgress(Player player) {
 
         // First reset their level
@@ -29,7 +23,7 @@ public class DebugLevelSetter implements CommandExecutor {
         player.setExp(0);
 
         // Reset their advancements
-        Iterator<Advancement> iterator = plugin.getServer().advancementIterator();
+        Iterator<Advancement> iterator = Leveled.getInstance().getServer().advancementIterator();
         while (iterator.hasNext()) {
             Advancement advancement = iterator.next();
             for (String criteria : advancement.getCriteria()) {
@@ -43,7 +37,7 @@ public class DebugLevelSetter implements CommandExecutor {
         player.getInventory().setChestplate(new ItemStack(Material.AIR));
         player.getInventory().setLeggings(new ItemStack(Material.AIR));
         player.getInventory().setBoots(new ItemStack(Material.AIR));
-        plugin.getPlayerManager().updateLeveledPlayerAttributes(player);
+        Leveled.getInstance().getPlayerManager().updateLeveledPlayerAttributes(player);
 
     }
 
@@ -99,7 +93,7 @@ public class DebugLevelSetter implements CommandExecutor {
             }
             player.setLevel(lvl);
             player.setExp(0);
-            plugin.getPlayerManager().updateLeveledPlayerAttributes(player);
+            Leveled.getInstance().getPlayerManager().updateLeveledPlayerAttributes(player);
             player.sendMessage(ChatColor.GREEN + "You are now level " + lvl + "!");
             return true;
         } else if (args[0].toLowerCase().equals("tp")) {

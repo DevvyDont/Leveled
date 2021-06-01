@@ -64,7 +64,7 @@ public class BossInstance {
 
         // For all contributing players
         for (Player p: activePlayers){
-            LeveledPlayer leveledPlayer = Leveled.getPlugin(Leveled.class).getPlayerManager().getLeveledPlayer(p);
+            LeveledPlayer leveledPlayer = Leveled.getInstance().getPlayerManager().getLeveledPlayer(p);
             // If they contributed damage
             if (playerDamageMap.containsKey(p)){
                 // They earned BASE + (damage% of xp pool)

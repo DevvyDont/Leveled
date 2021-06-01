@@ -114,7 +114,7 @@ public class PlayerDownedTask extends BukkitRunnable {
         }
 
         if (!isCancelled())
-            Leveled.getPlugin(Leveled.class).getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_RED + "" + ChatColor.BOLD + "DOWNED! " + getSecondsRemainingWithDecimal() + "s");
+            Leveled.getInstance().getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_RED + "" + ChatColor.BOLD + "DOWNED! " + getSecondsRemainingWithDecimal() + "s");
     }
 
     @Override

@@ -30,7 +30,7 @@ public class CustomItemDragonSword extends CustomItem {
 
     private void doPlayerTeleport(Player player) {
 
-        Leveled plugin = Leveled.getPlugin(Leveled.class);
+        Leveled plugin = Leveled.getInstance();
         Location old = player.getEyeLocation();
 
         boolean foundSpot = false;
@@ -75,7 +75,7 @@ public class CustomItemDragonSword extends CustomItem {
         if (event.getRightClicked() instanceof Player || event.getRightClicked() instanceof ArmorStand || event.getRightClicked() instanceof Tameable)
             return;
 
-        Leveled plugin = Leveled.getPlugin(Leveled.class);
+        Leveled plugin = Leveled.getInstance();
 
         if (plugin.getCustomItemManager().isCustomItemType(event.getPlayer().getInventory().getItemInMainHand(), CustomItemType.DRAGON_SWORD))
             event.setCancelled(true);
@@ -91,7 +91,7 @@ public class CustomItemDragonSword extends CustomItem {
             return;
 
         // Do we have the sword?
-        if (!Leveled.getPlugin(Leveled.class).getCustomItemManager().isCustomItemType(event.getItem(), CustomItemType.DRAGON_SWORD))
+        if (!Leveled.getInstance().getCustomItemManager().isCustomItemType(event.getItem(), CustomItemType.DRAGON_SWORD))
             return;
 
         // Ignore right clicked blocks that do things

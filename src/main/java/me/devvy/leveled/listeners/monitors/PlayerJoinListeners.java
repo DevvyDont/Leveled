@@ -14,8 +14,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
  */
 public class PlayerJoinListeners implements Listener {
 
-    public PlayerJoinListeners(Leveled plugin) {
-        for (Player p: plugin.getServer().getOnlinePlayers()){
+    public PlayerJoinListeners() {
+        for (Player p: Leveled.getInstance().getServer().getOnlinePlayers()){
             if (p.getLevel() < 1) { p.setLevel(1); }  // Sanity check, don't let players be level 0
         }
     }

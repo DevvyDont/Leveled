@@ -25,9 +25,9 @@ public class TipAnnounceManager {
 
         @Override
         public void run() {
-            if (plugin.getServer().getOnlinePlayers().size() < 1) { return; }
+            if (Leveled.getInstance().getServer().getOnlinePlayers().size() < 1) { return; }
             if (tipIterator.hasNext()){
-                plugin.getServer().broadcastMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "Tip" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + tipIterator.next());
+                Leveled.getInstance().getServer().broadcastMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "Tip" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + tipIterator.next());
             } else {
                 tipIterator = tips.iterator();
                 run();
@@ -36,10 +36,8 @@ public class TipAnnounceManager {
 
     }
 
-    private final Leveled plugin;
 
-    public TipAnnounceManager(Leveled plugin) {
-        this.plugin = plugin;
+    public TipAnnounceManager() {
         ArrayList<String> tips = new ArrayList<>();
         tips.add(String.format("Reaching level %sLevel 30 %sgrants access to enchanting! To enchant a piece of gear, you only need half of your level's worth of %sLapis Lazuli%s.", ChatColor.GREEN, ChatColor.GRAY, ChatColor.BLUE, ChatColor.GRAY));
         tips.add(String.format("To increase your luck when %senchanting %syour gear, place bookshelves around the enchanting table. At least %s12 bookshelves %swill enchant with the best possible luck!", ChatColor.LIGHT_PURPLE, ChatColor.GRAY, ChatColor.RED, ChatColor.GRAY));
@@ -74,7 +72,7 @@ public class TipAnnounceManager {
         tips.add(String.format("%sWitches %sdrop %sMagic Mirrors %swhich can be used to instantly teleport to any binded location.", ChatColor.RED, ChatColor.GRAY, ChatColor.AQUA, ChatColor.GRAY));
         tips.add(String.format("%sEndermen %son the %stiny End islands %shave a rare drop...", ChatColor.LIGHT_PURPLE, ChatColor.GRAY, ChatColor.GOLD, ChatColor.GRAY));
         tips.add(String.format("You can invite other players to your party using the %s/party %scommand. This will turn off %sfriendly fire%s, prevent homing arrows from targeting each other, allow member teleportation, and some other fun stuff.", ChatColor.AQUA, ChatColor.GRAY, ChatColor.RED, ChatColor.GRAY));
-        new AnnounceTipTask(tips).runTaskTimerAsynchronously(plugin, TIP_TICK_DELAY, TIP_TICK_DELAY);
+        new AnnounceTipTask(tips).runTaskTimerAsynchronously(Leveled.getInstance(), TIP_TICK_DELAY, TIP_TICK_DELAY);
     }
 
 

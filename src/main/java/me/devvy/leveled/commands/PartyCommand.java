@@ -14,7 +14,6 @@ import java.util.*;
 
 public class PartyCommand implements CommandExecutor, TabCompleter {
 
-    private final Leveled plugin;
     private final HashMap<Player, PartyRequest> playerPartyRequests;
 
     private class PartyRequest {
@@ -36,12 +35,12 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
 
         public void completeRequest(){
             // Make sure the other player is party-less
-            if (plugin.getPartyManager().getParty(pendingMember) != null){
+            if (Leveled.getInstance().getPartyManager().getParty(pendingMember) != null){
                 invitee.sendMessage(ChatColor.RED + "The player " + ChatColor.DARK_RED + pendingMember.getDisplayName() + ChatColor.RED + " is already in a party!");
             }
 
             // Is the player in a party?
-            Party party = plugin.getPartyManager().getParty(invitee);
+            Party party = Leveled.getInstance().getPartyManager().getParty(invitee);
 
             // Logic for if the player is in a party
             if (party != null){
@@ -53,18 +52,17 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
                 }
 
                 // Should be good to invite them
-                plugin.getPartyManager().addPlayerToParty(party.getOwner(), pendingMember);
+                Leveled.getInstance().getPartyManager().addPlayerToParty(party.getOwner(), pendingMember);
                 return;
             }
 
             // Logic for when the player is party-less and is making a new party
-            plugin.getPartyManager().makeNewParty(invitee);
-            plugin.getPartyManager().addPlayerToParty(invitee, pendingMember);
+            Leveled.getInstance().getPartyManager().makeNewParty(invitee);
+            Leveled.getInstance().getPartyManager().addPlayerToParty(invitee, pendingMember);
         }
     }
 
-    public PartyCommand(Leveled plugin) {
-        this.plugin = plugin;
+    public PartyCommand() {
         playerPartyRequests = new HashMap<>();
     }
 
@@ -144,12 +142,12 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
 
     private void handleLeaveSubCommand(Player player){
         // Is the player in a party?
-        Party party = plugin.getPartyManager().getParty(player);
+        Party party = Leveled.getInstance().getPartyManager().getParty(player);
         if (party == null){
             player.sendMessage(ChatColor.RED + "You aren't in a party!");
             return;
         }
-        plugin.getPartyManager().removePlayerFromParty(player);
+        Leveled.getInstance().getPartyManager().removePlayerFromParty(player);
         party.sendPartyMessage(ChatColor.DARK_RED + player.getDisplayName() +  ChatColor.RED + " has left the party.");
         player.sendMessage(ChatColor.RED + "You have left the party.");
     }
@@ -165,7 +163,7 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
     }
 
     private void handleListSubCommand(Player player){
-        for (Party party: plugin.getPartyManager().getParties()){
+        for (Party party: Leveled.getInstance().getPartyManager().getParties()){
             player.sendMessage("Party owned by " + party.getOwner().getDisplayName());
             for (Player m: party.getMembers()){
                 player.sendMessage("Member: " + m.getDisplayName());
@@ -177,29 +175,29 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
     private void handleTpSubCommand(Player player, String[] args) {
 
         // Is the player in a party?
-        if (!plugin.getPartyManager().isPlayerInParty(player)){
+        if (!Leveled.getInstance().getPartyManager().isPlayerInParty(player)){
             player.sendMessage(ChatColor.RED + "You must be in a party to use that command!");
             return;
         }
 
         // Was a valid player given?
-        Player friend = plugin.getServer().getPlayerExact(args[1]);
+        Player friend = Leveled.getInstance().getServer().getPlayerExact(args[1]);
         if (friend == null){
             player.sendMessage(ChatColor.RED + "Could not find player " + ChatColor.DARK_RED +  args[1]);
             return;
         }
 
         // Are the players in the same party?
-        if (!plugin.getPartyManager().inSameParty(player, friend)){
+        if (!Leveled.getInstance().getPartyManager().inSameParty(player, friend)){
             player.sendMessage(ChatColor.RED + "You must be in the same party as someone to tp to them!");
             return;
         }
 
         // Is either player down?
-        if (plugin.getPartyManager().isDown(player)) {
+        if (Leveled.getInstance().getPartyManager().isDown(player)) {
             player.sendMessage(ChatColor.RED + "You cannot tp when you are downed!");
             return;
-        } else if (plugin.getPartyManager().isDown(friend)) {
+        } else if (Leveled.getInstance().getPartyManager().isDown(friend)) {
             player.sendMessage(ChatColor.RED + "You cannot tp to a party member that is downed!");
             return;
         }
@@ -219,7 +217,7 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
 
     private void handleInviteSubCommand(Player player, String potentialMember){
         // Attempt to get the player specified
-        Player member = plugin.getServer().getPlayerExact(potentialMember);
+        Player member = Leveled.getInstance().getServer().getPlayerExact(potentialMember);
 
         if (member == null){
             player.sendMessage(ChatColor.RED + "Could not find the player: " + ChatColor.DARK_RED + potentialMember);
@@ -233,7 +231,7 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
         }
 
         // Make sure the other player is party-less
-        if (plugin.getPartyManager().getParty(member) != null){
+        if (Leveled.getInstance().getPartyManager().getParty(member) != null){
             player.sendMessage(ChatColor.RED + "The player " + ChatColor.DARK_RED + member.getDisplayName() + ChatColor.RED + " is already in a party!");
             return;
         }

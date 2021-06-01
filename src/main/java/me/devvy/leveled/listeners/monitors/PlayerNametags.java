@@ -21,11 +21,9 @@ public class PlayerNametags implements Listener {
     private static final String HURT_HP_COLOR = ChatColor.GOLD.toString();
     private static final String CRITICAL_HP_COLOR = ChatColor.RED.toString();
     private static final String DEAD_HP_COLOR = ChatColor.DARK_GRAY.toString();
-    private final Leveled plugin;
 
-    public PlayerNametags(Leveled plugin) {
-        this.plugin = plugin;
-        for (Player p : plugin.getServer().getOnlinePlayers()) {
+    public PlayerNametags() {
+        for (Player p : Leveled.getInstance().getServer().getOnlinePlayers()) {
             updatePlayerScoreboard(p, p.getLevel(), p.getHealth(), p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         }
     }
@@ -74,7 +72,7 @@ public class PlayerNametags implements Listener {
                             updatePlayerScoreboard(player, player.getLevel(), player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
                         }
                     }
-                }.runTaskLater(this.plugin, 20 * 5);
+                }.runTaskLater(Leveled.getInstance(), 20 * 5);
             }
         }
     }

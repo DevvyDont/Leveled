@@ -19,7 +19,7 @@ public class TestMobCommand implements CommandExecutor {
             return true;
         }
 
-        Leveled plugin = Leveled.getPlugin(Leveled.class);
+        Leveled plugin = Leveled.getInstance();
 
         int numAlive = 0;
         int total = plugin.getMobManager().getEntityInstanceMap().size();

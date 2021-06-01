@@ -18,7 +18,7 @@ public class EntityHitByProjectileEvent extends ProjectileHitEvent {
         if (projectile.hasMetadata("damage")) {
 
             for (MetadataValue mv : projectile.getMetadata("damage")) {
-                if (mv.getOwningPlugin() == Leveled.getPlugin(Leveled.class)) {
+                if (mv.getOwningPlugin() == Leveled.getInstance()) {
                     this.damage = mv.asDouble();
                     break;
                 }
@@ -36,7 +36,7 @@ public class EntityHitByProjectileEvent extends ProjectileHitEvent {
             return 0;
 
         for (MetadataValue mv : getEntity().getMetadata(flag))
-            if (mv.getOwningPlugin() == Leveled.getPlugin(Leveled.class))
+            if (mv.getOwningPlugin() == Leveled.getInstance())
                 return mv.asInt();
 
         return 0;

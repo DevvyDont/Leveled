@@ -26,18 +26,12 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class PlayerLeveledUpListener implements Listener {
 
-    private final Leveled plugin;
-
-    public PlayerLeveledUpListener(Leveled plugin) {
-        this.plugin = plugin;
-    }
-
     private void playerLeveledUp(Player player, int oldLevel, int newLevel) {
 
         if (newLevel <= oldLevel)
             return;
 
-        this.plugin.getServer().broadcastMessage(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + player.getDisplayName() + ChatColor.GRAY + " is now level " + ChatColor.GREEN + ChatColor.BOLD + newLevel);
+        Leveled.getInstance().getServer().broadcastMessage(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + player.getDisplayName() + ChatColor.GRAY + " is now level " + ChatColor.GREEN + ChatColor.BOLD + newLevel);
         if (newLevel == PlayerExperience.LEVEL_CAP) {
             player.sendTitle(ChatColor.RED + "MAX Level!", ChatColor.GOLD + "You are now Level " + PlayerExperience.LEVEL_CAP + "!", 10, 140, 20);
         } else {
@@ -45,7 +39,7 @@ public class PlayerLeveledUpListener implements Listener {
         }
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, .7f, .5f);
         LevelRewards.playerLeveledUp(player, oldLevel, newLevel);
-        plugin.getPlayerManager().updateLeveledPlayerAttributes(player);
+        Leveled.getInstance().getPlayerManager().updateLeveledPlayerAttributes(player);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
@@ -61,7 +55,7 @@ public class PlayerLeveledUpListener implements Listener {
                     meta.addEffect(effectBuilder.build());
                     firework.setFireworkMeta(meta);
                 }
-            }.runTaskLater(plugin, i * 5);
+            }.runTaskLater(Leveled.getInstance(), i * 5);
         }
     }
 

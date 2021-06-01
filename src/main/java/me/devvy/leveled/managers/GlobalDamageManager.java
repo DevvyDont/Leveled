@@ -30,20 +30,14 @@ import java.util.Map;
  */
 public class GlobalDamageManager implements Listener {
 
-    private final Leveled plugin;
-
     public static final String ARROW_SNIPE_ENCHANT_METANAME = "snipe_enchant_level";
     public static final String ARROW_FMJ_ENCHANT_METANAME = "fmj_enchant_level";
     public static final String ARROW_EXECUTE_ENCHANT_METANAME = "exe_enchant_level";
 
-    public GlobalDamageManager(Leveled plugin) {
-        this.plugin = plugin;
-    }
-
     private double getRangedWeaponBaseDamage(ItemStack tool) {
 
-        if (plugin.getCustomItemManager().isCustomItem(tool))
-            return plugin.getCustomItemManager().getCustomItemType(tool).STAT_AMOUNT;
+        if (Leveled.getInstance().getCustomItemManager().isCustomItem(tool))
+            return Leveled.getInstance().getCustomItemManager().getCustomItemType(tool).STAT_AMOUNT;
 
         if (CustomItemType.Category.getFallbackCategory(tool.getType()) != CustomItemType.Category.RANGED)
             return 3;
@@ -53,8 +47,8 @@ public class GlobalDamageManager implements Listener {
 
     private double getMeleeWeaponBaseDamage(ItemStack tool) {
 
-        if (plugin.getCustomItemManager().isCustomItem(tool))
-            return plugin.getCustomItemManager().getCustomItemType(tool).STAT_AMOUNT;
+        if (Leveled.getInstance().getCustomItemManager().isCustomItem(tool))
+            return Leveled.getInstance().getCustomItemManager().getCustomItemType(tool).STAT_AMOUNT;
 
         if (CustomItemType.Category.getFallbackCategory(tool.getType()) != CustomItemType.Category.MELEE)
             return 3;
@@ -78,10 +72,10 @@ public class GlobalDamageManager implements Listener {
         ItemStack tool = player.getInventory().getItemInMainHand();
 
         PlayerDealtMeleeDamageEvent playerDealtMeleeDamageEvent = new PlayerDealtMeleeDamageEvent(player, event.getEntity(), event.getCause(), getMeleeWeaponBaseDamage(tool));
-        plugin.getServer().getPluginManager().callEvent(playerDealtMeleeDamageEvent);
+        Leveled.getInstance().getServer().getPluginManager().callEvent(playerDealtMeleeDamageEvent);
 
         // Player strength (THIS INCLUDES STRENGTH POTS)
-        playerDealtMeleeDamageEvent.multiplyDamage(plugin.getPlayerManager().getLeveledPlayer(player).getStrengthBonus());
+        playerDealtMeleeDamageEvent.multiplyDamage(Leveled.getInstance().getPlayerManager().getLeveledPlayer(player).getStrengthBonus());
 
         // Give it a 5% variance
         playerDealtMeleeDamageEvent.multiplyDamage(1 + ((Math.random() - .5) / 10f));
@@ -119,7 +113,7 @@ public class GlobalDamageManager implements Listener {
             return;
 
         EntityShootArrowEvent shootArrowEvent = new EntityShootArrowEvent(event.getEntity(), bow, event.getArrowItem(), event.getProjectile(), event.getForce(), baseDamage);
-        plugin.getServer().getPluginManager().callEvent(shootArrowEvent);
+        Leveled.getInstance().getServer().getPluginManager().callEvent(shootArrowEvent);
 
         if (shootArrowEvent.isCancelled()) {
             event.setCancelled(true);
@@ -127,7 +121,7 @@ public class GlobalDamageManager implements Listener {
         }
 
         if (event.getEntity() instanceof Player)
-            shootArrowEvent.multiplyDamage((float) plugin.getPlayerManager().getLeveledPlayer((Player) event.getEntity()).getStrengthBonus());
+            shootArrowEvent.multiplyDamage((float) Leveled.getInstance().getPlayerManager().getLeveledPlayer((Player) event.getEntity()).getStrengthBonus());
         else if (event.getEntity().getPotionEffect(PotionEffectType.INCREASE_DAMAGE) != null && event.getEntity().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() != 0)
             shootArrowEvent.multiplyDamage(event.getEntity().getPotionEffect(PotionEffectType.INCREASE_DAMAGE).getAmplifier() * 1.3f);
 
@@ -149,7 +143,7 @@ public class GlobalDamageManager implements Listener {
             return;
 
         EntityHitByProjectileEvent entityHitByProjectileEvent = new EntityHitByProjectileEvent(arrow, event.getEntity(), event.getFinalDamage());
-        plugin.getServer().getPluginManager().callEvent(entityHitByProjectileEvent);
+        Leveled.getInstance().getServer().getPluginManager().callEvent(entityHitByProjectileEvent);
         
         event.setDamage(entityHitByProjectileEvent.getDamage());
     }
@@ -163,14 +157,14 @@ public class GlobalDamageManager implements Listener {
         // If something other than a player is getting hit my thorns
         if (event.getCause().equals(EntityDamageEvent.DamageCause.THORNS)) {
             int level;
-            try { level = plugin.getMobManager().getMobLevel((LivingEntity) event.getDamager()); } catch (ClassCastException ignored) { return; }
+            try { level = Leveled.getInstance().getMobManager().getMobLevel((LivingEntity) event.getDamager()); } catch (ClassCastException ignored) { return; }
             event.setDamage(level * level * ((Math.random() - .5) / 100));
         }
     }
 
     private double calculateEntityDamage(LivingEntity entity, Entity victim){
 
-        int mobLevel = plugin.getMobManager().getMobLevel(entity);
+        int mobLevel = Leveled.getInstance().getMobManager().getMobLevel(entity);
 
         // For context, this damage value is what the average mob should be doing. Certain mobs will hit harder/softer
         double damage = Math.pow(mobLevel, 1.5) * (mobLevel / 25.) + 25;
@@ -295,7 +289,7 @@ public class GlobalDamageManager implements Listener {
 
         // Players get resist against mobs
         if (victim instanceof Player)
-            damage *= plugin.getPlayerManager().getLeveledPlayer((Player) victim).getEnvResist();
+            damage *= Leveled.getInstance().getPlayerManager().getLeveledPlayer((Player) victim).getEnvResist();
 
         return damage;
     }
@@ -355,7 +349,7 @@ public class GlobalDamageManager implements Listener {
                 public void run() {
                     ((LivingEntity) event.getEntity()).setNoDamageTicks(delay);
                 }
-            }.runTaskLater(plugin, 0);
+            }.runTaskLater(Leveled.getInstance(), 0);
         }
 
     }
@@ -424,7 +418,7 @@ public class GlobalDamageManager implements Listener {
 
         // Call an event for enchants, resist calculations to do some math
         EntityDamagedByMiscEvent miscDamageEvent = new EntityDamagedByMiscEvent(livingEntity, event.getCause(), dmg);
-        plugin.getServer().getPluginManager().callEvent(miscDamageEvent);  // Makes the server do stuff wherever this listener is at
+        Leveled.getInstance().getServer().getPluginManager().callEvent(miscDamageEvent);  // Makes the server do stuff wherever this listener is at
 
         // Did some class cancel the event?
         if (miscDamageEvent.isCancelled()) {
@@ -436,7 +430,7 @@ public class GlobalDamageManager implements Listener {
             event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
             event.setDamage(EntityDamageEvent.DamageModifier.MAGIC, 0);
         } catch (Exception e) {
-            plugin.getLogger().warning("DamageModifier broke shit again");
+            Leveled.getInstance().getLogger().warning("DamageModifier broke shit again");
             e.printStackTrace();
         }
 
@@ -500,7 +494,7 @@ public class GlobalDamageManager implements Listener {
             return;
         }
 
-        new DamagePopup(plugin, event.getFinalDamage(), (LivingEntity) event.getEntity());
+        new DamagePopup(event.getFinalDamage(), (LivingEntity) event.getEntity());
 
         // At this point a player is due to die, but has > 50% of their hp, leave them at 1/2 a heart
         event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);

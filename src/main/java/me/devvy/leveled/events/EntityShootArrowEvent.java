@@ -39,7 +39,7 @@ public class EntityShootArrowEvent extends EntityShootBowEvent {
      * Marks the base damage on the projectile
      */
     public void finalizeDamage() {
-        getProjectile().setMetadata("damage", new FixedMetadataValue(Leveled.getPlugin(Leveled.class), damage));
+        getProjectile().setMetadata("damage", new FixedMetadataValue(Leveled.getInstance(), damage));
     }
 
     /**
@@ -53,7 +53,7 @@ public class EntityShootArrowEvent extends EntityShootBowEvent {
         if (option == 0)
             throw new IllegalArgumentException("Cannot set the flag option as 0! This represents null... Please use something else");
 
-        getProjectile().setMetadata(flag, new FixedMetadataValue(Leveled.getPlugin(Leveled.class), option));
+        getProjectile().setMetadata(flag, new FixedMetadataValue(Leveled.getInstance(), option));
     }
 
     private static final HandlerList HANDLERS = new HandlerList();

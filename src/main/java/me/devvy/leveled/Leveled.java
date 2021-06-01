@@ -31,6 +31,12 @@ import java.util.Iterator;
 
 public final class Leveled extends JavaPlugin {
 
+    static Leveled INSTANCE;
+
+    public static Leveled getInstance() {
+        return INSTANCE;
+    }
+
     // TODO: Make this not hacky
     private NamespacedKey NAMETAG_KEY;
 
@@ -92,6 +98,8 @@ public final class Leveled extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        INSTANCE = this;
+
         // First do some checks to make sure the server is setup right...
         // Can HP be really high?
         if (getServer().spigot().getSpigotConfig().getDouble("settings.attribute.maxHealth.max") < 2000000000){
@@ -129,14 +137,14 @@ public final class Leveled extends JavaPlugin {
 
         enchantmentManager = new EnchantmentManager();
         customItemManager = new CustomItemManager();
-        globalItemManager = new GlobalItemManager(this);
-        playerManager = new LeveledPlayerManager(this);
-        damageManager = new GlobalDamageManager(this);
-        actionBarManager = new ActionBarManager(this);
+        globalItemManager = new GlobalItemManager();
+        playerManager = new LeveledPlayerManager();
+        damageManager = new GlobalDamageManager();
+        actionBarManager = new ActionBarManager();
         partyManager = new PartyManager();
-        scoreboardManager = new ScoreboardManager(this);
-        bossManager = new BossManager(this);
-        new TipAnnounceManager(this);
+        scoreboardManager = new ScoreboardManager();
+        bossManager = new BossManager();
+        new TipAnnounceManager();
 
         // Listeners that change how natural progression works
         getServer().getPluginManager().registerEvents(new ProgressionModifyingListeners(), this);
@@ -145,55 +153,55 @@ public final class Leveled extends JavaPlugin {
         getServer().getPluginManager().registerEvents(globalItemManager, this);
 
         // Register listeners regarding experience
-        getServer().getPluginManager().registerEvents(new PlayerJoinListeners(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerLeveledUpListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerExperienceGainListeners(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListeners(), this);
+        getServer().getPluginManager().registerEvents(new PlayerLeveledUpListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerExperienceGainListeners(), this);
         getServer().getPluginManager().registerEvents(new VanillaExperienceCancellingListeners(), this);
 
         // Listeners involving level capped gear
-        getServer().getPluginManager().registerEvents(new PlayerArmorListeners(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerToolListeners(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerArmorListeners(), this);
+        getServer().getPluginManager().registerEvents(new PlayerToolListeners(), this);
         getServer().getPluginManager().registerEvents(new EnchantmentListeners(), this);
         getServer().getPluginManager().registerEvents(new BrewingListeners(), this);
-        getServer().getPluginManager().registerEvents(new MiscEquipmentListeners(this), this);
+        getServer().getPluginManager().registerEvents(new MiscEquipmentListeners(), this);
 
         // Listeners involving custom enchantments
-        getServer().getPluginManager().registerEvents(new EnchantingInterface(this), this);
-        getServer().getPluginManager().registerEvents(new AnvilInterface(this), this);
+        getServer().getPluginManager().registerEvents(new EnchantingInterface(), this);
+        getServer().getPluginManager().registerEvents(new AnvilInterface(), this);
         getServer().getPluginManager().registerEvents(customItemManager, this);
 
         // Listeners involving chat
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
 
         // Listeners involving the scoreboard
-        getServer().getPluginManager().registerEvents(new PlayerNametags(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerNametags(), this);
         getServer().getPluginManager().registerEvents(actionBarManager, this);
         getServer().getPluginManager().registerEvents(partyManager, this);
         getServer().getPluginManager().registerEvents(scoreboardManager, this);
 
         // Register custom recipes
-        Recipes.registerRecipes(this);
+        Recipes.registerRecipes();
 
         // Listeners involving mobs
         mobManager = new MobManager(getServer().getWorlds());  // Initialize all worlds.
         getServer().getPluginManager().registerEvents(mobManager, this);
-        getServer().getPluginManager().registerEvents(new DamagePopupManager(this), this);
+        getServer().getPluginManager().registerEvents(new DamagePopupManager(), this);
         getServer().getPluginManager().registerEvents(bossManager, this);
 
         // Register commands
-        PartyCommand partyCommand = new PartyCommand(this);
+        PartyCommand partyCommand = new PartyCommand();
         CommandLeveledEnchant leveledEnchant = new CommandLeveledEnchant();
         CommandGiveCustomItem customItemCommand = new CommandGiveCustomItem();
         getCommand("adminmob").setExecutor(new TestMobCommand());
 
-        getCommand("stats").setExecutor(new PlayerStatsCommand(this));
+        getCommand("stats").setExecutor(new PlayerStatsCommand());
 
         getCommand("party").setExecutor(partyCommand);
         getCommand("party").setTabCompleter(partyCommand);
 
-        getCommand("adminlevel").setExecutor(new DebugLevelSetter(this));
+        getCommand("adminlevel").setExecutor(new DebugLevelSetter());
 
-        getCommand("adminenchant").setExecutor(new DebugEnchant(this));
+        getCommand("adminenchant").setExecutor(new DebugEnchant());
 
         getCommand("leveledenchant").setExecutor(leveledEnchant);
         getCommand("leveledenchant").setTabCompleter(leveledEnchant);
@@ -201,7 +209,7 @@ public final class Leveled extends JavaPlugin {
         getCommand("leveledgive").setExecutor(customItemCommand);
         getCommand("leveledgive").setTabCompleter(customItemCommand);
 
-        getCommand("nametag").setExecutor(new NametagCommand(this));
+        getCommand("nametag").setExecutor(new NametagCommand());
     }
 
     @Override

@@ -27,18 +27,14 @@ import java.util.HashMap;
 
 public class MiscEquipmentListeners implements Listener {
 
-    private final Leveled plugin;
     private final HashMap<Material, Integer> equipmentRequirements;
 
-    public MiscEquipmentListeners(Leveled plugin) {
-
-        this.plugin = plugin;
+    public MiscEquipmentListeners() {
 
         this.equipmentRequirements = new HashMap<>();
 
         this.equipmentRequirements.put(Material.BOW, LevelRewards.NORMAL_BOW_UNLOCK);
         this.equipmentRequirements.put(Material.CROSSBOW, LevelRewards.CROSSBOW_UNLOCK);
-
         this.equipmentRequirements.put(Material.SHIELD, LevelRewards.SHIELD_UNLOCK);
     }
 
@@ -65,12 +61,12 @@ public class MiscEquipmentListeners implements Listener {
     }
 
     private void renameItem(ItemStack itemStack, String newName){
-        int level = plugin.getCustomItemManager().getItemLevel(itemStack);
+        int level = Leveled.getInstance().getCustomItemManager().getItemLevel(itemStack);
         ItemMeta meta = itemStack.getItemMeta();
         meta.setDisplayName(ChatColor.stripColor(newName));
         itemStack.setItemMeta(meta);
         if (level > 0)
-            plugin.getCustomItemManager().setItemLevel(itemStack, level);
+            Leveled.getInstance().getCustomItemManager().setItemLevel(itemStack, level);
     }
 
     private boolean isRightClick(Action action){
@@ -109,7 +105,7 @@ public class MiscEquipmentListeners implements Listener {
 
         // We may potentially run into issues, check their main hand first
         if (mainHandNeedsChecked) {
-            int levelRequired = Math.max(plugin.getCustomItemManager().getItemLevel(itemInHand), equipmentRequirements.get(itemInHand.getType()));
+            int levelRequired = Math.max(Leveled.getInstance().getCustomItemManager().getItemLevel(itemInHand), equipmentRequirements.get(itemInHand.getType()));
             if (levelRequired > player.getLevel()) {
                 event.setCancelled(true);
                 player.sendActionBar(ChatColor.RED + "You must be level " + ChatColor.DARK_RED + levelRequired + ChatColor.RED + " to use this item!");
@@ -118,7 +114,7 @@ public class MiscEquipmentListeners implements Listener {
             // Now check their offhand
         }
         if (offhandNeedsChecked) {
-            int levelRequired = Math.max(plugin.getCustomItemManager().getItemLevel(itemInOffhand), equipmentRequirements.get(itemInOffhand.getType()));
+            int levelRequired = Math.max(Leveled.getInstance().getCustomItemManager().getItemLevel(itemInOffhand), equipmentRequirements.get(itemInOffhand.getType()));
             if (levelRequired > player.getLevel()) {
                 event.setCancelled(true);
                 player.sendActionBar( ChatColor.RED + "You must be level " + ChatColor.DARK_RED + levelRequired + ChatColor.RED + " to use this item!");
@@ -140,7 +136,7 @@ public class MiscEquipmentListeners implements Listener {
         // If a player right clicks with a nametag in their hand
         if (isRightClick(event.getAction()) && event.getItem() != null && event.getMaterial() == Material.NAME_TAG){
             event.setCancelled(true);
-            NametagInterface gui = new NametagInterface(plugin, event.getItem());
+            NametagInterface gui = new NametagInterface(event.getItem());
             gui.openInventory(event.getPlayer());
         }
 
@@ -152,11 +148,11 @@ public class MiscEquipmentListeners implements Listener {
         // Nametag?
         if (event.getCursor() != null && event.getCursor().getType() == Material.NAME_TAG){
             // Has a name?
-            if (event.getCursor().getItemMeta().getPersistentDataContainer().has(plugin.getNametagKey(), PersistentDataType.STRING)) {
+            if (event.getCursor().getItemMeta().getPersistentDataContainer().has(Leveled.getInstance().getNametagKey(), PersistentDataType.STRING)) {
                 // Clicked on another thing that can be named?
                 if (event.getCurrentItem() != null && canBeRenamed(event.getCurrentItem())) {
                     event.setCancelled(true);
-                    String newName = event.getCursor().getItemMeta().getPersistentDataContainer().get(plugin.getNametagKey(), PersistentDataType.STRING);
+                    String newName = event.getCursor().getItemMeta().getPersistentDataContainer().get(Leveled.getInstance().getNametagKey(), PersistentDataType.STRING);
                     this.renameItem(event.getCurrentItem(), newName);
                     event.getCursor().setAmount(event.getCursor().getAmount() - 1);
                     event.getWhoClicked().getWorld().playSound(event.getWhoClicked().getEyeLocation(), Sound.BLOCK_BEACON_POWER_SELECT, .8f, 1.5f);
@@ -183,12 +179,12 @@ public class MiscEquipmentListeners implements Listener {
 
         event.setCancelled(true);
 
-        if (!itemUsed.getItemMeta().getPersistentDataContainer().has(plugin.getNametagKey(), PersistentDataType.STRING))
+        if (!itemUsed.getItemMeta().getPersistentDataContainer().has(Leveled.getInstance().getNametagKey(), PersistentDataType.STRING))
             return;
 
-        String newName = itemUsed.getItemMeta().getPersistentDataContainer().get(plugin.getNametagKey(), PersistentDataType.STRING);
+        String newName = itemUsed.getItemMeta().getPersistentDataContainer().get(Leveled.getInstance().getNametagKey(), PersistentDataType.STRING);
 
-        LeveledLivingEntity leveledLivingEntity = plugin.getMobManager().getLeveledEntity((LivingEntity) event.getRightClicked());
+        LeveledLivingEntity leveledLivingEntity = Leveled.getInstance().getMobManager().getLeveledEntity((LivingEntity) event.getRightClicked());
         leveledLivingEntity.setName(newName);
         leveledLivingEntity.update();
 

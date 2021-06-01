@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class EnchantHoming extends Enchantment implements Listener {
 
-    private final Leveled plugin = Leveled.getPlugin(Leveled.class);
+    private final Leveled plugin = Leveled.getInstance();
     private final Map<Player, Long> homingArrowCooldown = new HashMap<>();
 
     public EnchantHoming(NamespacedKey key) {

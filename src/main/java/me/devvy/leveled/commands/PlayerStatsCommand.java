@@ -13,12 +13,6 @@ import org.bukkit.entity.Player;
 
 public class PlayerStatsCommand implements CommandExecutor {
 
-    private final Leveled plugin;
-
-    public PlayerStatsCommand(Leveled plugin) {
-        this.plugin = plugin;
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
@@ -28,7 +22,7 @@ public class PlayerStatsCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
+        LeveledPlayer leveledPlayer = Leveled.getInstance().getPlayerManager().getLeveledPlayer(player);
         int envDef = leveledPlayer.getDefense();
         int fireDef = leveledPlayer.getFireDefense();
         int explDef = leveledPlayer.getExplosionDefense();

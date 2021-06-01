@@ -23,15 +23,10 @@ import java.util.Collection;
 
 public class AnvilInterface implements Listener {
 
-    private final Leveled plugin;
     private final String ANVIL_INTERFACE_NAME = ChatColor.DARK_GRAY + "Anvil";
     private final String GRINDSTONE_INTERFACE_NAME = ChatColor.DARK_GRAY + "Grindstone";
     private final int ANVIL_INPUT_SLOT = 20;
     private final int ANVIL_OUTPUT_SLOT = 24;
-
-    public AnvilInterface(Leveled plugin) {
-        this.plugin = plugin;
-    }
 
     private void forceUpdateInventory(Player player) {
         new BukkitRunnable() {
@@ -39,7 +34,7 @@ public class AnvilInterface implements Listener {
             public void run() {
                 player.updateInventory();
             }
-        }.runTaskLater(plugin, 2);
+        }.runTaskLater(Leveled.getInstance(), 2);
     }
 
     private ItemStack setItemLore(ItemStack itemStack, String itemTitle) {
@@ -55,7 +50,7 @@ public class AnvilInterface implements Listener {
 
     private int getMaterialRefundAmount(ItemStack item, String viewTitle) throws IllegalArgumentException {
         if (viewTitle.equals(GRINDSTONE_INTERFACE_NAME)) {
-            int itemLevel = plugin.getCustomItemManager().getItemLevel(item);
+            int itemLevel = Leveled.getInstance().getCustomItemManager().getItemLevel(item);
             return itemLevel / 3;
         }
         switch (item.getType()) {
@@ -181,7 +176,7 @@ public class AnvilInterface implements Listener {
     }
 
     private void openAnvilInterface(Player player) {
-        Inventory gui = plugin.getServer().createInventory(player, 54, ANVIL_INTERFACE_NAME);
+        Inventory gui = Leveled.getInstance().getServer().createInventory(player, 54, ANVIL_INTERFACE_NAME);
         for (int i = 0; i < 54; i++) {
             switch (i) {
                 case 10:
@@ -206,7 +201,7 @@ public class AnvilInterface implements Listener {
     }
 
     private void openGrindstoneInterface(Player player) {
-        Inventory gui = plugin.getServer().createInventory(player, 54, GRINDSTONE_INTERFACE_NAME);
+        Inventory gui = Leveled.getInstance().getServer().createInventory(player, 54, GRINDSTONE_INTERFACE_NAME);
         for (int i = 0; i < 54; i++) {
             switch (i) {
                 case 10:
@@ -301,7 +296,7 @@ public class AnvilInterface implements Listener {
                     try {
                         String viewTitle = event.getView().getTitle();
                         ItemStack item = new ItemStack(getMaterialRefundType(cursor, viewTitle), getMaterialRefundAmount(cursor, viewTitle));
-                        plugin.getGlobalItemManager().fixItem(item);
+                        Leveled.getInstance().getGlobalItemManager().fixItem(item);
                         event.getClickedInventory().setItem(ANVIL_OUTPUT_SLOT, item);
                     } catch (IllegalArgumentException e) {
                         // we were given an illegal item, no need to do anything

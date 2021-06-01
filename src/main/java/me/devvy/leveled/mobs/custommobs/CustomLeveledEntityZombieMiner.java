@@ -22,7 +22,7 @@ public class CustomLeveledEntityZombieMiner extends CustomLeveledEntity {
     @Override
     public void setup() {
 
-        Leveled plugin = Leveled.getPlugin(Leveled.class);
+        Leveled plugin = Leveled.getInstance();
 
         ItemStack[] items = new ItemStack[]{
                                 plugin.getCustomItemManager().getCustomItem(CustomItemType.MINER_PICKAXE),

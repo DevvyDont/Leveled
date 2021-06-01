@@ -23,8 +23,8 @@ import java.util.Map;
 
 public class CustomItemManager implements Listener {
 
-    public static final NamespacedKey CUSTOM_ITEM_INDEX_KEY = new NamespacedKey(Leveled.getPlugin(Leveled.class), "custom-item-index");
-    public static final NamespacedKey ITEM_LEVEL_KEY = new NamespacedKey(Leveled.getPlugin(Leveled.class), "item-level");
+    public static final NamespacedKey CUSTOM_ITEM_INDEX_KEY = new NamespacedKey(Leveled.getInstance(), "custom-item-index");
+    public static final NamespacedKey ITEM_LEVEL_KEY = new NamespacedKey(Leveled.getInstance(), "item-level");
     private final Map<CustomItemType, CustomItem> customItemMap;
 
     public CustomItemManager() {
@@ -38,7 +38,7 @@ public class CustomItemManager implements Listener {
                 customItemMap.put(type, type.CLAZZ.getDeclaredConstructor(CustomItemType.class).newInstance(type));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
-                Leveled.getPlugin(Leveled.class).getPluginLoader().disablePlugin(Leveled.getPlugin(Leveled.class));
+                Leveled.getInstance().getPluginLoader().disablePlugin(Leveled.getInstance());
                 return;
             }
 
@@ -46,7 +46,7 @@ public class CustomItemManager implements Listener {
 
         // Register all the events
         for (CustomItem cu : customItemMap.values())
-            Leveled.getPlugin(Leveled.class).getServer().getPluginManager().registerEvents(cu, Leveled.getPlugin(Leveled.class));
+            Leveled.getInstance().getServer().getPluginManager().registerEvents(cu, Leveled.getInstance());
 
     }
 
@@ -153,7 +153,7 @@ public class CustomItemManager implements Listener {
 
             newLore.add("");
             newLore.add(ChatColor.BLUE + enchantName + " " + itemStack.getEnchantments().get(enchantment));  // Add the name and level of the enchant
-            newLore.add(Leveled.getPlugin(Leveled.class).getEnchantmentManager().getEnchantmentDescription(enchantment));  // Add the desc
+            newLore.add(Leveled.getInstance().getEnchantmentManager().getEnchantmentDescription(enchantment));  // Add the desc
         }
 
         ItemMeta meta = itemStack.getItemMeta();

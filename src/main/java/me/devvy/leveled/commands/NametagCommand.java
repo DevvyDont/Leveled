@@ -13,12 +13,6 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class NametagCommand implements CommandExecutor {
 
-    private final Leveled plugin;
-
-    public NametagCommand(Leveled plugin) {
-        this.plugin = plugin;
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
@@ -49,7 +43,7 @@ public class NametagCommand implements CommandExecutor {
         }
 
         nametagMeta.setDisplayName(ChatColor.BLUE + String.format("Name Tag (%s)", ChatColor.ITALIC + newName));
-        nametagMeta.getPersistentDataContainer().set(plugin.getNametagKey(), PersistentDataType.STRING, newName);
+        nametagMeta.getPersistentDataContainer().set(Leveled.getInstance().getNametagKey(), PersistentDataType.STRING, newName);
         nametag.setItemMeta(nametagMeta);
         sender.sendMessage(ChatColor.GRAY + "Renamed your name tag to " + ChatColor.LIGHT_PURPLE + newName + ChatColor.GRAY + "!");
         return true;

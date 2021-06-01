@@ -24,14 +24,14 @@ public class Party {
     public Collection<Player> getMembers() {
         ArrayList<Player> buffer = new ArrayList<>();
         for (UUID id : members)
-            if (Leveled.getPlugin(Leveled.class).getServer().getPlayer(id) != null)
-                buffer.add(Leveled.getPlugin(Leveled.class).getServer().getPlayer(id));
+            if (Leveled.getInstance().getServer().getPlayer(id) != null)
+                buffer.add(Leveled.getInstance().getServer().getPlayer(id));
 
         return buffer;
     }
 
     public Player getOwner() {
-        return Leveled.getPlugin(Leveled.class).getServer().getPlayer(owner);
+        return Leveled.getInstance().getServer().getPlayer(owner);
     }
 
     public void setOwner(Player owner) {
@@ -51,7 +51,7 @@ public class Party {
     public void sendPartyMessage(String message){
 
         for (UUID member: members) {
-            Player p = Leveled.getPlugin(Leveled.class).getServer().getPlayer(member);
+            Player p = Leveled.getInstance().getServer().getPlayer(member);
             if (p != null)
                 p.sendMessage(message);
         }

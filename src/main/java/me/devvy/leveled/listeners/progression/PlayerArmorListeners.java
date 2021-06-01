@@ -19,12 +19,6 @@ import org.bukkit.inventory.ItemStack;
  */
 public class PlayerArmorListeners implements Listener {
 
-    private final Leveled plugin;
-
-    public PlayerArmorListeners(Leveled plugin) {
-        this.plugin = plugin;
-    }
-
     /**
      * Because there may be exploits that allow players to equip over leveled armor, check the player to make sure
      * their armor is legal
@@ -40,7 +34,7 @@ public class PlayerArmorListeners implements Listener {
             if (armorItem == null || armorItem.getType() == Material.AIR)
                 continue;
 
-            int level = plugin.getCustomItemManager().getItemLevel(armorItem);
+            int level = Leveled.getInstance().getCustomItemManager().getItemLevel(armorItem);
 
             if (level > player.getLevel()){
                 player.getWorld().dropItemNaturally(player.getLocation(), armorItem.clone());
@@ -107,7 +101,7 @@ public class PlayerArmorListeners implements Listener {
             return;
 
         // Does our player have the required level to equip this?
-        int requiredLevel = plugin.getCustomItemManager().getItemLevel(event.getItem());
+        int requiredLevel = Leveled.getInstance().getCustomItemManager().getItemLevel(event.getItem());
 
         if (event.getPlayer().getLevel() < requiredLevel)
             cancelArmorEvent(event, event.getPlayer(), requiredLevel);
@@ -137,7 +131,7 @@ public class PlayerArmorListeners implements Listener {
             if (itemHeld == null || !isWearable(itemHeld.getType()))
                 return;
 
-            int requiredLevel = plugin.getCustomItemManager().getItemLevel(itemHeld);
+            int requiredLevel = Leveled.getInstance().getCustomItemManager().getItemLevel(itemHeld);
 
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel) {
@@ -156,7 +150,7 @@ public class PlayerArmorListeners implements Listener {
                 return;
 
             // Are they a high enough level to equip it?
-            int requiredLevel = plugin.getCustomItemManager().getItemLevel(itemClicked);
+            int requiredLevel = Leveled.getInstance().getCustomItemManager().getItemLevel(itemClicked);
 
             // Does our player have the required level to interact with this item?
             if (player.getLevel() < requiredLevel)

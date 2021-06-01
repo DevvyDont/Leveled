@@ -201,7 +201,7 @@ public class LeveledLivingEntity {
                             return (int) (Math.random() * 5 + 80);
 
                     default:
-                        Leveled.getPlugin(Leveled.class).getLogger().warning("Could not determine environment for enderman, defaulting to level 1");
+                        Leveled.getInstance().getLogger().warning("Could not determine environment for enderman, defaulting to level 1");
                         return 1;
                 }
 
@@ -255,7 +255,7 @@ public class LeveledLivingEntity {
             case PHANTOM:
                 Phantom phantom = (Phantom) entity;
                 if (phantom.getSpawningEntity() != null) {
-                    Player target = Leveled.getPlugin(Leveled.class).getServer().getPlayer(phantom.getSpawningEntity());
+                    Player target = Leveled.getInstance().getServer().getPlayer(phantom.getSpawningEntity());
 
                     if (target != null)
                         return target.getLevel();
@@ -303,7 +303,7 @@ public class LeveledLivingEntity {
                 return 1;
 
             default:
-                Leveled.getPlugin(Leveled.class).getLogger().warning("Entity " + entity + " was not defined to have a level in MobManager. Defaulting to level 1");
+                Leveled.getInstance().getLogger().warning("Entity " + entity + " was not defined to have a level in MobManager. Defaulting to level 1");
                 return 1;
         }
     }
@@ -401,7 +401,7 @@ public class LeveledLivingEntity {
                 break;
 
             default:
-                Leveled.getPlugin(Leveled.class).getLogger().finest("Entity " + entity + " was not defined to have attributes in MobManager. Defaulting to vanilla stats");
+                Leveled.getInstance().getLogger().finest("Entity " + entity + " was not defined to have attributes in MobManager. Defaulting to vanilla stats");
                 break;
         }
 
@@ -533,7 +533,7 @@ public class LeveledLivingEntity {
                 break;
 
             default:
-                Leveled.getPlugin(Leveled.class).getLogger().warning("Came across unexpected entity for HP calculation: " + entity.getType());
+                Leveled.getInstance().getLogger().warning("Came across unexpected entity for HP calculation: " + entity.getType());
                 multiplier = 1;
                 break;
         }

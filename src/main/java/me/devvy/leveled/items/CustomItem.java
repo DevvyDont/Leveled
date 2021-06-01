@@ -56,7 +56,7 @@ public abstract class CustomItem implements Listener {
 
     public ItemStack getItemStackClone() {
         ItemStack item = itemStack.clone();
-        Leveled.getPlugin(Leveled.class).getCustomItemManager().setItemLevel(item, type.DEFAULT_LEVEL);
+        Leveled.getInstance().getCustomItemManager().setItemLevel(item, type.DEFAULT_LEVEL);
         return item;
     }
 }

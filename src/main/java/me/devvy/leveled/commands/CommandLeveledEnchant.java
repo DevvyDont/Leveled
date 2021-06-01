@@ -18,7 +18,7 @@ public class CommandLeveledEnchant implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
 
-        Leveled plugin = Leveled.getPlugin(Leveled.class);
+        Leveled plugin = Leveled.getInstance();
 
         ArrayList<String> options = new ArrayList<>();
 
@@ -37,7 +37,7 @@ public class CommandLeveledEnchant implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 
-        Leveled plugin = Leveled.getPlugin(Leveled.class);
+        Leveled plugin = Leveled.getInstance();
 
         if (!(commandSender instanceof Player)) {
             System.out.println("Only players can use this!");

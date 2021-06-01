@@ -20,17 +20,11 @@ import java.util.List;
 
 public class GlobalItemManager implements Listener {
 
-    Leveled plugin;
-
-    public GlobalItemManager(Leveled plugin) {
-        this.plugin = plugin;
-    }
-
     public void fixItem(ItemStack itemStack){
         if (itemStack == null || itemStack.getItemMeta() == null)
             return;
-        plugin.getCustomItemManager().getItemLevel(itemStack);
-        plugin.getCustomItemManager().updateItemLore(itemStack);
+        Leveled.getInstance().getCustomItemManager().getItemLevel(itemStack);
+        Leveled.getInstance().getCustomItemManager().updateItemLore(itemStack);
     }
 
     @EventHandler

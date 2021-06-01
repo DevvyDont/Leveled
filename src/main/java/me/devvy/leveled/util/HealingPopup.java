@@ -9,8 +9,8 @@ import org.bukkit.entity.LivingEntity;
 public class HealingPopup extends DamagePopup {
 
 
-    public HealingPopup(Leveled plugin, double amount, LivingEntity entityHit) {
-        super(plugin, amount, entityHit);
+    public HealingPopup(double amount, LivingEntity entityHit) {
+        super(amount, entityHit);
     }
 
     @Override

@@ -9,10 +9,10 @@ import org.bukkit.inventory.ShapedRecipe;
 
 public abstract class Recipes {
 
-    public static void registerRecipes(Leveled plugin) {
+    public static void registerRecipes() {
 
         DiamondBowRecipe dbr = new DiamondBowRecipe();
-        plugin.getServer().addRecipe(dbr.getShapedRecipe());
+        Leveled.getInstance().getServer().addRecipe(dbr.getShapedRecipe());
 
         ItemStack chainHelmet = new ItemStack(Material.CHAINMAIL_HELMET);
         ItemStack chainChest = new ItemStack(Material.CHAINMAIL_CHESTPLATE);
@@ -21,12 +21,12 @@ public abstract class Recipes {
 
         ItemStack witherHead = new ItemStack(Material.WITHER_SKELETON_SKULL);
 
-        ShapedRecipe chainHelmetRecipe = new ShapedRecipe(new NamespacedKey(plugin, "chain_helmet_recipe"), chainHelmet);
-        ShapedRecipe chainChestRecipe = new ShapedRecipe(new NamespacedKey(plugin, "chain_chest_recipe"), chainChest);
-        ShapedRecipe chainLeggingsRecipe = new ShapedRecipe(new NamespacedKey(plugin, "chain_leggings_recipe"), chainLeggings);
-        ShapedRecipe chainBootsRecipe = new ShapedRecipe(new NamespacedKey(plugin, "chain_boots_recipe"), chainBoots);
+        ShapedRecipe chainHelmetRecipe = new ShapedRecipe(new NamespacedKey(Leveled.getInstance(), "chain_helmet_recipe"), chainHelmet);
+        ShapedRecipe chainChestRecipe = new ShapedRecipe(new NamespacedKey(Leveled.getInstance(), "chain_chest_recipe"), chainChest);
+        ShapedRecipe chainLeggingsRecipe = new ShapedRecipe(new NamespacedKey(Leveled.getInstance(), "chain_leggings_recipe"), chainLeggings);
+        ShapedRecipe chainBootsRecipe = new ShapedRecipe(new NamespacedKey(Leveled.getInstance(), "chain_boots_recipe"), chainBoots);
 
-        ShapedRecipe witherHeadRecipe = new ShapedRecipe(new NamespacedKey(plugin, "wither_head_recipe"), witherHead);
+        ShapedRecipe witherHeadRecipe = new ShapedRecipe(new NamespacedKey(Leveled.getInstance(), "wither_head_recipe"), witherHead);
 
         chainHelmetRecipe.shape("BBB", "BAB");
         chainHelmetRecipe.setIngredient('B', Material.IRON_BARS);
@@ -49,11 +49,11 @@ public abstract class Recipes {
         witherHeadRecipe.setIngredient('H', Material.SKELETON_SKULL);
         witherHeadRecipe.setIngredient('O', Material.OBSIDIAN);
 
-        plugin.getServer().addRecipe(chainHelmetRecipe);
-        plugin.getServer().addRecipe(chainChestRecipe);
-        plugin.getServer().addRecipe(chainLeggingsRecipe);
-        plugin.getServer().addRecipe(chainBootsRecipe);
+        Leveled.getInstance().getServer().addRecipe(chainHelmetRecipe);
+        Leveled.getInstance().getServer().addRecipe(chainChestRecipe);
+        Leveled.getInstance().getServer().addRecipe(chainLeggingsRecipe);
+        Leveled.getInstance().getServer().addRecipe(chainBootsRecipe);
 
-        plugin.getServer().addRecipe(witherHeadRecipe);
+        Leveled.getInstance().getServer().addRecipe(witherHeadRecipe);
     }
 }

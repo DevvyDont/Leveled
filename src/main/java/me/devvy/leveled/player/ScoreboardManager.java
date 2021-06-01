@@ -20,7 +20,6 @@ import java.util.NoSuchElementException;
 
 public class ScoreboardManager implements Listener {
 
-    private final Leveled plugin;
     private final HashMap<Player, Scoreboard> playerScoreboardMap;
 
     private final String DEFAULT_HEADER = ChatColor.GREEN + "" + ChatColor.BOLD +  "Minecraft Leveled";
@@ -47,16 +46,15 @@ public class ScoreboardManager implements Listener {
         }
     }
 
-    public ScoreboardManager(Leveled plugin) {
-        this.plugin = plugin;
+    public ScoreboardManager() {
         playerScoreboardMap = new HashMap<>();
-        for (Player player : plugin.getServer().getOnlinePlayers())
+        for (Player player : Leveled.getInstance().getServer().getOnlinePlayers())
             setDefaultPlayerScoreboard(player);
-        new ScoreboardUpdater().runTaskTimer(plugin, 20, 20);
+        new ScoreboardUpdater().runTaskTimer(Leveled.getInstance(), 20, 20);
     }
 
     private String getOnlinePlayersString(){
-        return ChatColor.WHITE + "" + plugin.getServer().getOnlinePlayers().size() + ChatColor.DARK_GRAY + "/" + ChatColor.DARK_GRAY + plugin.getServer().getMaxPlayers();
+        return ChatColor.WHITE + "" + Leveled.getInstance().getServer().getOnlinePlayers().size() + ChatColor.DARK_GRAY + "/" + ChatColor.DARK_GRAY + Leveled.getInstance().getServer().getMaxPlayers();
     }
 
     private String getPartyMemberPrefix(Player player, boolean isOwner){
@@ -66,14 +64,14 @@ public class ScoreboardManager implements Listener {
 
     private String getPartyMemberSuffix(Player player){
 
-        if (plugin.getPartyManager().getTimeRemainingDowned(player) != -1)
-            return ChatColor.RED + " ☠" + ChatColor.DARK_RED + plugin.getPartyManager().getTimeRemainingDowned(player);
+        if (Leveled.getInstance().getPartyManager().getTimeRemainingDowned(player) != -1)
+            return ChatColor.RED + " ☠" + ChatColor.DARK_RED + Leveled.getInstance().getPartyManager().getTimeRemainingDowned(player);
 
         return ChatColor.DARK_RED + " ❤" + PlayerNametags.getChatColorFromHealth(player.getHealth(), player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) + (int) player.getHealth();
     }
 
     private void setDefaultPlayerScoreboard(Player player){
-        Scoreboard scoreboard = plugin.getServer().getScoreboardManager().getNewScoreboard();
+        Scoreboard scoreboard = Leveled.getInstance().getServer().getScoreboardManager().getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective("lvloverhaul", "dummy", DEFAULT_HEADER);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
@@ -133,7 +131,7 @@ public class ScoreboardManager implements Listener {
         scoreboard.getTeam(DEFAULT_PARTY_ONE_KEY).setPrefix(getPartyMemberPrefix(player, true));
         scoreboard.getTeam(DEFAULT_PARTY_ONE_KEY).setSuffix(getPartyMemberSuffix(player));
 
-        Party party = plugin.getPartyManager().getParty(player);
+        Party party = Leveled.getInstance().getPartyManager().getParty(player);
         if (party != null){
 
             ArrayList<Player> members = new ArrayList<>(party.getMembers());

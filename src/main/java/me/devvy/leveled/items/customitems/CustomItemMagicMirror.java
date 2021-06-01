@@ -15,32 +15,30 @@ import java.util.ArrayList;
 
 public class CustomItemMagicMirror extends CustomItem {
 
-    public static final NamespacedKey MAGIC_MIRROR_DATA_KEY = new NamespacedKey(Leveled.getPlugin(Leveled.class), "magic-mirror-data");
-    private final Leveled plugin;
+    public static final NamespacedKey MAGIC_MIRROR_DATA_KEY = new NamespacedKey(Leveled.getInstance(), "magic-mirror-data");
 
     public CustomItemMagicMirror(CustomItemType type) {
         super(type);
-        this.plugin = Leveled.getPlugin(Leveled.class);
     }
 
     //TODO: Add proper error checking if something goes wrong here, theoretically it shouldnt doe
     public Location getMagicMirrorLocation(ItemStack itemStack){
 
         // Obviously only do something if it's the custom item
-        if (plugin.getCustomItemManager().isCustomItemType(itemStack, CustomItemType.MAGIC_MIRROR)) {
+        if (Leveled.getInstance().getCustomItemManager().isCustomItemType(itemStack, CustomItemType.MAGIC_MIRROR)) {
 
             String location = itemStack.getItemMeta().getPersistentDataContainer().get(MAGIC_MIRROR_DATA_KEY, PersistentDataType.STRING);
             if (location == null || location.equalsIgnoreCase(""))
                 return null;
 
             String[] parsedLocation = location.split(",");
-            return new Location(plugin.getServer().getWorld(parsedLocation[0]), Double.parseDouble(parsedLocation[1]), Double.parseDouble(parsedLocation[2]), Double.parseDouble(parsedLocation[3]));
+            return new Location(Leveled.getInstance().getServer().getWorld(parsedLocation[0]), Double.parseDouble(parsedLocation[1]), Double.parseDouble(parsedLocation[2]), Double.parseDouble(parsedLocation[3]));
         }
         return null;
     }
 
     public void setMagicMirrorLocation(ItemStack itemStack, Location location){
-        if (plugin.getCustomItemManager().isCustomItemType(itemStack, CustomItemType.MAGIC_MIRROR)) {
+        if (Leveled.getInstance().getCustomItemManager().isCustomItemType(itemStack, CustomItemType.MAGIC_MIRROR)) {
             String[] mirrorVal = {location.getWorld().getName(), String.valueOf(location.getBlockX()), String.valueOf(location.getBlockY()), String.valueOf(location.getBlockZ())};
             ItemMeta meta = itemStack.getItemMeta();
             meta.getPersistentDataContainer().set(MAGIC_MIRROR_DATA_KEY, PersistentDataType.STRING, String.join(",", mirrorVal[0], mirrorVal[1], mirrorVal[2], mirrorVal[3]));
@@ -71,7 +69,7 @@ public class CustomItemMagicMirror extends CustomItem {
 
     @EventHandler
     public void onMagicMirrorInteract(PlayerInteractEvent event){
-        if (event.getItem() != null && plugin.getCustomItemManager().isCustomItemType(event.getItem(), CustomItemType.MAGIC_MIRROR)){
+        if (event.getItem() != null && Leveled.getInstance().getCustomItemManager().isCustomItemType(event.getItem(), CustomItemType.MAGIC_MIRROR)){
 
             // We have a magic mirror, what should we do?
             Location magicMirrorLocation = getMagicMirrorLocation(event.getItem());

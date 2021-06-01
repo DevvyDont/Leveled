@@ -9,14 +9,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class DamagePopup {
 
-    public DamagePopup(Leveled plugin, double amount, LivingEntity entityHit) {
+    public DamagePopup(double amount, LivingEntity entityHit) {
 
         if (amount <= 0)
             return;
 
         ArmorStand armorStand = getArmorStandPopup(entityHit.getLocation(), amount);
         ArmorStandRemovalTask removalTask = new ArmorStandRemovalTask(armorStand);
-        removalTask.runTaskLater(plugin, 20);
+        removalTask.runTaskLater(Leveled.getInstance(), 20);
     }
 
     protected ArmorStand getArmorStandPopup(Location spawnLocation, double amount){

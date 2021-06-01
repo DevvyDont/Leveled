@@ -26,7 +26,7 @@ public class CustomItemEnderBow extends CustomItem {
             return;
 
         // Needs to be the bow
-        Leveled plugin = Leveled.getPlugin(Leveled.class);
+        Leveled plugin = Leveled.getInstance();
         if (!(plugin.getCustomItemManager().isCustomItemType(event.getBow(), CustomItemType.ENDER_BOW)))
             return;
 

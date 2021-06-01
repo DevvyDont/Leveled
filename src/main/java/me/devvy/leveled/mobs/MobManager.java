@@ -20,11 +20,11 @@ import java.util.*;
 public class MobManager implements Listener {
 
     // Mobs have this key that determines their level
-    public final static NamespacedKey MOB_LEVEL_KEY = new NamespacedKey(Leveled.getPlugin(Leveled.class), "mob-level-key");
+    public final static NamespacedKey MOB_LEVEL_KEY = new NamespacedKey(Leveled.getInstance(), "mob-level-key");
     // Mobs have this key that determines what their name is
-    public final static NamespacedKey MOB_NAME_KEY = new NamespacedKey(Leveled.getPlugin(Leveled.class), "mob-name-key");
+    public final static NamespacedKey MOB_NAME_KEY = new NamespacedKey(Leveled.getInstance(), "mob-name-key");
     // Mobs have this key that defines the enum that defines their custom mob status (index of custom mob type enum, -1 if vanilla)
-    public final static NamespacedKey MOB_CUSTOM_FLAG_KEY = new NamespacedKey(Leveled.getPlugin(Leveled.class), "mob-custom-key");
+    public final static NamespacedKey MOB_CUSTOM_FLAG_KEY = new NamespacedKey(Leveled.getInstance(), "mob-custom-key");
 
     private final int MOB_CLEANUP_DELAY = 20 * 60 * 5;  // TODO: make config option, this is used to keep mem usage down
 
@@ -38,7 +38,7 @@ public class MobManager implements Listener {
      */
     public MobManager(List<World> worlds) {
 
-        Leveled plugin = Leveled.getPlugin(Leveled.class);
+        Leveled plugin = Leveled.getInstance();
 
         // Loop through all the worlds
         plugin.getLogger().info("Starting mob manager...");
@@ -247,7 +247,7 @@ public class MobManager implements Listener {
                     getLeveledEntity(event.getEntity()).update();
                     event.getEntity().getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, .5f, .5f);
                 }
-            }.runTaskLater(Leveled.getPlugin(Leveled.class), 1);
+            }.runTaskLater(Leveled.getInstance(), 1);
         }
 
     }

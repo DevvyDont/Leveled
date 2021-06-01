@@ -13,11 +13,8 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 public class ActionBarManager implements Listener {
 
-    private final Leveled plugin;
-
-    public ActionBarManager(Leveled plugin) {
-        this.plugin = plugin;
-        for (Player p : plugin.getServer().getOnlinePlayers()) {
+    public ActionBarManager() {
+        for (Player p : Leveled.getInstance().getServer().getOnlinePlayers()) {
             displayActionBarText(p, (int) p.getHealth(), (int) p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), "");
         }
     }
@@ -29,7 +26,7 @@ public class ActionBarManager implements Listener {
      */
     private void displayActionBarText(Player player, int currentHP, int maxHP, String extra) {
 
-        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
+        LeveledPlayer leveledPlayer = Leveled.getInstance().getPlayerManager().getLeveledPlayer(player);
         String accumulated = FormattingHelpers.getFormattedInteger(leveledPlayer.getExperience().getAccumulatedExperienceToNextLevel());
         String totalNeeded = FormattingHelpers.getFormattedInteger(leveledPlayer.getExperience().getTotalExperienceRequiredForNextLevel());
 

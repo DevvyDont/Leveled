@@ -27,20 +27,12 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Map;
-
 /**
  * Listeners in charge of listening for events where we should earn xp. Not to be confused with PlayerExperienceListeners
  * where we are just handling what we should do when we gain experience in general This class is the main source of
  * experience for our players
  */
 public class PlayerExperienceGainListeners implements Listener {
-
-    private final Leveled plugin;
-
-    public PlayerExperienceGainListeners(Leveled plugin) {
-        this.plugin = plugin;
-    }
 
     /**
      * Helper method that gets double xp chance from the experienced enchant
@@ -71,14 +63,14 @@ public class PlayerExperienceGainListeners implements Listener {
         if (player.getGameMode() == GameMode.CREATIVE)
             return;
 
-        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
+        LeveledPlayer leveledPlayer = Leveled.getInstance().getPlayerManager().getLeveledPlayer(player);
         LivingEntity livingEntity = event.getEntity();
 
         //TODO: maybe add logic for players who pvp or something
         if (livingEntity instanceof Player)
             return;
 
-        int mobLevel = plugin.getMobManager().getMobLevel(livingEntity);
+        int mobLevel = Leveled.getInstance().getMobManager().getMobLevel(livingEntity);
         int xpCalcLevel = mobLevel + 1;
 
         int xpRequiredForLevel = 500 * xpCalcLevel * xpCalcLevel - (500 * mobLevel);
@@ -107,7 +99,7 @@ public class PlayerExperienceGainListeners implements Listener {
 
         leveledPlayer.giveExperience(xp); // Gives player exp
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, (float) .5, 1);
-        plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, bonus + ChatColor.YELLOW + "+" + xp + " XP");
+        Leveled.getInstance().getActionBarManager().dispalyActionBarTextWithExtra(player, bonus + ChatColor.YELLOW + "+" + xp + " XP");
     }
 
     /**
@@ -126,7 +118,7 @@ public class PlayerExperienceGainListeners implements Listener {
             return;
 
         Player player = event.getPlayer();
-        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
+        LeveledPlayer leveledPlayer = Leveled.getInstance().getPlayerManager().getLeveledPlayer(player);
         ItemStack tool = player.getInventory().getItemInMainHand();
         Block block = event.getBlock();
 
@@ -196,7 +188,7 @@ public class PlayerExperienceGainListeners implements Listener {
         // Looks good to give them xp
         leveledPlayer.giveExperience(xpGained);
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .5f, 1);
-        plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, xpMessage);
+        Leveled.getInstance().getActionBarManager().dispalyActionBarTextWithExtra(player, xpMessage);
     }
 
     /**
@@ -216,7 +208,7 @@ public class PlayerExperienceGainListeners implements Listener {
         if (player.getGameMode() == GameMode.CREATIVE)
             return;
 
-        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
+        LeveledPlayer leveledPlayer = Leveled.getInstance().getPlayerManager().getLeveledPlayer(player);
 
         // Does the player even need xp?
         if (player.getLevel() >= PlayerExperience.LEVEL_CAP) {
@@ -227,7 +219,7 @@ public class PlayerExperienceGainListeners implements Listener {
         int xpGained = BaseExperience.getBaseExperienceFromSmelt(event.getItemType(), event.getItemAmount());
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .5f, 1);
         leveledPlayer.giveExperience(xpGained);
-        plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.GOLD + "+" + xpGained + " XP");
+        Leveled.getInstance().getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.GOLD + "+" + xpGained + " XP");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -259,7 +251,7 @@ public class PlayerExperienceGainListeners implements Listener {
         }
 
         Player player = (Player) event.getWhoClicked();
-        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
+        LeveledPlayer leveledPlayer = Leveled.getInstance().getPlayerManager().getLeveledPlayer(player);
 
         // If the cursor is empty we have nothing to worry about, the trade should be fine
         if (event.getCursor() == null || event.getCursor().getType() == Material.AIR){
@@ -272,7 +264,7 @@ public class PlayerExperienceGainListeners implements Listener {
             leveledPlayer.giveExperience(xp);
 
             player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
-            plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_GREEN + "+" + FormattingHelpers.getFormattedInteger(xp) + "XP");
+            Leveled.getInstance().getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_GREEN + "+" + FormattingHelpers.getFormattedInteger(xp) + "XP");
 
         } else {
 
@@ -308,7 +300,7 @@ public class PlayerExperienceGainListeners implements Listener {
         }
 
         Player player = event.getPlayer();
-        LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
+        LeveledPlayer leveledPlayer = Leveled.getInstance().getPlayerManager().getLeveledPlayer(player);
 
         // Smarty pants?
         double multiplier = 1;
@@ -325,6 +317,6 @@ public class PlayerExperienceGainListeners implements Listener {
         // Gib xp
         player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, .5f, 1);
         leveledPlayer.giveExperience(xpEarned);
-        plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, message);
+        Leveled.getInstance().getActionBarManager().dispalyActionBarTextWithExtra(player, message);
     }
 }

@@ -96,7 +96,7 @@ public class PartyManager implements Listener {
                 }
 
         downedPlayers.put(player.getUniqueId(), new PlayerDownedTask(this, player, killer, getSecondWindSeconds(player)));
-        downedPlayers.get(player.getUniqueId()).runTaskTimer(Leveled.getPlugin(Leveled.class), 0, 1);
+        downedPlayers.get(player.getUniqueId()).runTaskTimer(Leveled.getInstance(), 0, 1);
         numDowns.put(player.getUniqueId(), numDowns.get(player.getUniqueId()) + 1);
         player.sendTitle(ChatColor.DARK_RED + "DOWNED!", ChatColor.GRAY + "Get a kill to get back up!", 2, 40, 10);
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_DEATH, .9f, .3f);
@@ -109,9 +109,9 @@ public class PartyManager implements Listener {
         player.setGlowing(true);
 
         if (killer.equals(player))
-            Leveled.getPlugin(Leveled.class).getServer().broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getDisplayName() + ChatColor.DARK_GRAY + " is down!");
+            Leveled.getInstance().getServer().broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getDisplayName() + ChatColor.DARK_GRAY + " is down!");
         else
-            Leveled.getPlugin(Leveled.class).getServer().broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getDisplayName() + ChatColor.DARK_GRAY + " was downed by " + ChatColor.RED + ChatColor.BOLD.toString() + killer.getName());
+            Leveled.getInstance().getServer().broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getDisplayName() + ChatColor.DARK_GRAY + " was downed by " + ChatColor.RED + ChatColor.BOLD.toString() + killer.getName());
     }
 
     public void downPlayer(Player player){
@@ -125,7 +125,7 @@ public class PartyManager implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20 * 30, 3, false, false, true));
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * .1);
         player.sendTitle(ChatColor.AQUA + "REVIVED!", "", 2, 20, 10);
-        Leveled.getPlugin(Leveled.class).getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.AQUA + "REVIVED");
+        Leveled.getInstance().getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.AQUA + "REVIVED");
         player.getWorld().playSound(player.getLocation(), Sound.ITEM_TOTEM_USE, .9f, 1);
     }
 

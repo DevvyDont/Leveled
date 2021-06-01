@@ -10,7 +10,7 @@ import org.bukkit.inventory.ShapedRecipe;
 public class DiamondBowRecipe {
 
     public ShapedRecipe getShapedRecipe() {
-        ShapedRecipe sr = new ShapedRecipe(new NamespacedKey(Leveled.getPlugin(Leveled.class), this.getClass().getName()), getItemStackResult());
+        ShapedRecipe sr = new ShapedRecipe(new NamespacedKey(Leveled.getInstance(), this.getClass().getName()), getItemStackResult());
         sr.shape("SD ",
                  "S D",
                  "SD ");
@@ -20,7 +20,7 @@ public class DiamondBowRecipe {
     }
 
     public ItemStack getItemStackResult() {
-        return Leveled.getPlugin(Leveled.class).getCustomItemManager().getCustomItem(CustomItemType.DIAMOND_BOW);
+        return Leveled.getInstance().getCustomItemManager().getCustomItem(CustomItemType.DIAMOND_BOW);
     }
 
 }

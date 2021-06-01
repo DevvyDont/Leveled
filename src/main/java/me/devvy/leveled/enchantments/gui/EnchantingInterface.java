@@ -34,17 +34,12 @@ import static org.bukkit.event.EventPriority.HIGHEST;
 
 public class EnchantingInterface implements Listener {
 
-    private final Leveled plugin;
     private final String INTERFACE_NAME = ChatColor.LIGHT_PURPLE + "Enchanting";
     private final int LAPIS_SLOT = 38;
     private final int BUTTON_SLOT = 42;
     private final int EQUIPMENT_SLOT = 13;
     private final HashMap<Player, Long> interfaceInteractCooldownPlayers = new HashMap<>();
     private final ArrayList<Player> inventoryRefreshCooldownPlayers = new ArrayList<>();
-
-    public EnchantingInterface(Leveled plugin) {
-        this.plugin = plugin;
-    }
 
     // Helper Methods
 
@@ -73,7 +68,7 @@ public class EnchantingInterface implements Listener {
                 player.updateInventory();
                 inventoryRefreshCooldownPlayers.remove(player);
             }
-        }.runTaskLater(plugin, 5);
+        }.runTaskLater(Leveled.getInstance(), 5);
     }
 
     private ItemStack setupButton(Inventory gui, ItemStack itemStack, int level, boolean active) {
@@ -189,7 +184,7 @@ public class EnchantingInterface implements Listener {
         if (qualityFactor > EnchantmentManager.MAX_ENCHANT_QUALITY_FACTOR)
             qualityFactor = EnchantmentManager.MAX_ENCHANT_QUALITY_FACTOR;
 
-        plugin.getEnchantmentManager().doCalculatorEnchant(item, player.getLevel(), qualityFactor);
+        Leveled.getInstance().getEnchantmentManager().doCalculatorEnchant(item, player.getLevel(), qualityFactor);
 
         if (item.getEnchantments().isEmpty())
             System.out.println(ChatColor.RED + "[Enchanting] ERROR: Enchanting interface attempted to enchant item: " + item.getType() + " and didn't roll any enchantments!");
@@ -204,7 +199,7 @@ public class EnchantingInterface implements Listener {
             return;
 
         // Create the GUI
-        Inventory gui = plugin.getServer().createInventory(player, 54, INTERFACE_NAME);
+        Inventory gui = Leveled.getInstance().getServer().createInventory(player, 54, INTERFACE_NAME);
         gui.setMaxStackSize(PlayerExperience.LEVEL_CAP);  // Hopefully this works, didn't work in 1.8 xd
         // Make slots be black stained glass
         for (int i = 0; i < 54; i++) {
@@ -376,7 +371,7 @@ public class EnchantingInterface implements Listener {
             return;
 
         // Give them enchanting advancement
-        event.getPlayer().getAdvancementProgress(plugin.getEnchantAdvancement()).awardCriteria("enchanted_item");
+        event.getPlayer().getAdvancementProgress(Leveled.getInstance().getEnchantAdvancement()).awardCriteria("enchanted_item");
 
         // Open the GUI
         event.setCancelled(true);

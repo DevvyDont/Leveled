@@ -27,10 +27,10 @@ public class CustomLeveledEntityFireFox extends CustomLeveledEntity {
             Fox fox = (Fox) entity;
             fox.setFoxType(Fox.Type.RED);
             fox.getEquipment().setItemInMainHand(new ItemStack(Material.GOLDEN_SWORD));
-            new FoxTargetPlayerTask(fox).runTaskTimer(Leveled.getPlugin(Leveled.class), 1, 60);
+            new FoxTargetPlayerTask(fox).runTaskTimer(Leveled.getInstance(), 1, 60);
 
             lootTable = new CustomLeveledEntityLootTable();
-            lootTable.setPossibleItems(new CustomLeveledEntityLootTableItem(Leveled.getPlugin(Leveled.class).getCustomItemManager().getCustomItem(CustomItemType.MOZILLA), 1f));
+            lootTable.setPossibleItems(new CustomLeveledEntityLootTableItem(Leveled.getInstance().getCustomItemManager().getCustomItem(CustomItemType.MOZILLA), 1f));
 
             fox.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(4500 + (int)(Math.random() * 10) * 100);
             fox.setHealth(fox.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());

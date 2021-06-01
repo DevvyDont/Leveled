@@ -25,33 +25,28 @@ public class EnchantmentManager {
     public static final Map<Enchantment, String> enchantDescriptionMap = new HashMap<>();
 
     // All of our enchants. To add one, simply add the field here as you see, and register and deregister
-    public static final Enchantment EXPLOSIVE_TOUCH = new EnchantExplosiveTouch(new NamespacedKey(Leveled.getPlugin(Leveled.class), "explosivetouch"));
-    public static final Enchantment SATURATION = new EnchantSaturation(new NamespacedKey(Leveled.getPlugin(Leveled.class), "saturation"));
-    public static final Enchantment EXPERIENCED = new EnchantExperienced(new NamespacedKey(Leveled.getPlugin(Leveled.class), "experienced"));
-    public static final Enchantment GROWTH = new EnchantGrowth(new NamespacedKey(Leveled.getPlugin(Leveled.class), "growth"));
-    public static final Enchantment SMARTY_PANTS = new EnchantSmartyPants(new NamespacedKey(Leveled.getPlugin(Leveled.class), "smartypants"));
-    public static final Enchantment SMELTING_TOUCH = new EnchantSmeltingTouch(new NamespacedKey(Leveled.getPlugin(Leveled.class), "smeltingtouch"));
-    public static final Enchantment CRITICAL_SHOT = new EnchantCriticalShot(new NamespacedKey(Leveled.getPlugin(Leveled.class), "criticalshot"));
-    public static final Enchantment CRITICAL_STRIKE = new EnchantCriticalStrike(new NamespacedKey(Leveled.getPlugin(Leveled.class), "criticalstrike"));
-    public static final Enchantment SNIPE = new EnchantSnipe(new NamespacedKey(Leveled.getPlugin(Leveled.class), "snipe"));
-    public static final Enchantment GOLDEN_DIET = new EnchantSnipe(new NamespacedKey(Leveled.getPlugin(Leveled.class), "goldendiet"));
-    public static final Enchantment HOMING = new EnchantHoming(new NamespacedKey(Leveled.getPlugin(Leveled.class), "homing"));
-    public static final Enchantment PROSPECT = new EnchantProspect(new NamespacedKey(Leveled.getPlugin(Leveled.class), "prospect"));
-    public static final Enchantment FULL_METAL_JACKET = new EnchantFMJ(new NamespacedKey(Leveled.getPlugin(Leveled.class), "fmj"));
-    public static final Enchantment SPEEDSTER = new EnchantSpeedster(new NamespacedKey(Leveled.getPlugin(Leveled.class), "speedster"));
-    public static final Enchantment NETHER_HUNTER = new EnchantNetherHunter(new NamespacedKey(Leveled.getPlugin(Leveled.class), "netherhunter"));
-    public static final Enchantment ENDER_ENDER = new EnchantEnderEnder(new NamespacedKey(Leveled.getPlugin(Leveled.class), "enderender"));
-    public static final Enchantment GREEDY_MINER = new EnchantGreedyMiner(new NamespacedKey(Leveled.getPlugin(Leveled.class), "greedyminer"));
-    public static final Enchantment BERSERK = new EnchantBerserk(new NamespacedKey(Leveled.getPlugin(Leveled.class), "berserk"));
-    public static final Enchantment EXECUTIONER = new EnchantExecutioner(new NamespacedKey(Leveled.getPlugin(Leveled.class), "executioner"));
-
-
-    private final Leveled plugin;
-
+    public static final Enchantment EXPLOSIVE_TOUCH = new EnchantExplosiveTouch(new NamespacedKey(Leveled.getInstance(), "explosivetouch"));
+    public static final Enchantment SATURATION = new EnchantSaturation(new NamespacedKey(Leveled.getInstance(), "saturation"));
+    public static final Enchantment EXPERIENCED = new EnchantExperienced(new NamespacedKey(Leveled.getInstance(), "experienced"));
+    public static final Enchantment GROWTH = new EnchantGrowth(new NamespacedKey(Leveled.getInstance(), "growth"));
+    public static final Enchantment SMARTY_PANTS = new EnchantSmartyPants(new NamespacedKey(Leveled.getInstance(), "smartypants"));
+    public static final Enchantment SMELTING_TOUCH = new EnchantSmeltingTouch(new NamespacedKey(Leveled.getInstance(), "smeltingtouch"));
+    public static final Enchantment CRITICAL_SHOT = new EnchantCriticalShot(new NamespacedKey(Leveled.getInstance(), "criticalshot"));
+    public static final Enchantment CRITICAL_STRIKE = new EnchantCriticalStrike(new NamespacedKey(Leveled.getInstance(), "criticalstrike"));
+    public static final Enchantment SNIPE = new EnchantSnipe(new NamespacedKey(Leveled.getInstance(), "snipe"));
+    public static final Enchantment GOLDEN_DIET = new EnchantSnipe(new NamespacedKey(Leveled.getInstance(), "goldendiet"));
+    public static final Enchantment HOMING = new EnchantHoming(new NamespacedKey(Leveled.getInstance(), "homing"));
+    public static final Enchantment PROSPECT = new EnchantProspect(new NamespacedKey(Leveled.getInstance(), "prospect"));
+    public static final Enchantment FULL_METAL_JACKET = new EnchantFMJ(new NamespacedKey(Leveled.getInstance(), "fmj"));
+    public static final Enchantment SPEEDSTER = new EnchantSpeedster(new NamespacedKey(Leveled.getInstance(), "speedster"));
+    public static final Enchantment NETHER_HUNTER = new EnchantNetherHunter(new NamespacedKey(Leveled.getInstance(), "netherhunter"));
+    public static final Enchantment ENDER_ENDER = new EnchantEnderEnder(new NamespacedKey(Leveled.getInstance(), "enderender"));
+    public static final Enchantment GREEDY_MINER = new EnchantGreedyMiner(new NamespacedKey(Leveled.getInstance(), "greedyminer"));
+    public static final Enchantment BERSERK = new EnchantBerserk(new NamespacedKey(Leveled.getInstance(), "berserk"));
+    public static final Enchantment EXECUTIONER = new EnchantExecutioner(new NamespacedKey(Leveled.getInstance(), "executioner"));
+    
     public EnchantmentManager() {
-
-        this.plugin = Leveled.getPlugin(Leveled.class);
-
+        
         // A map used to easily retrieve enchantment descriptions
         enchantDescriptionMap.put(EXPLOSIVE_TOUCH, "Explosions :)");
         enchantDescriptionMap.put(SATURATION, "Increases saturation from food");
@@ -117,7 +112,7 @@ public class EnchantmentManager {
             field.set(null, true);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
-            plugin.getServer().getPluginManager().disablePlugin(plugin);
+            Leveled.getInstance().getServer().getPluginManager().disablePlugin(Leveled.getInstance());
             return;
         }
 
@@ -137,11 +132,11 @@ public class EnchantmentManager {
         }
 
         // Enchants that need to take an advantage of an event go here
-        plugin.getServer().getPluginManager().registerEvents(new VanillaOverrides(), plugin);
+        Leveled.getInstance().getServer().getPluginManager().registerEvents(new VanillaOverrides(), Leveled.getInstance());
 
         for (Enchantment enchantment : enchantDescriptionMap.keySet())
             if (enchantment instanceof Listener)
-                plugin.getServer().getPluginManager().registerEvents((Listener) enchantment, plugin);
+                Leveled.getInstance().getServer().getPluginManager().registerEvents((Listener) enchantment, Leveled.getInstance());
     }
 
 
@@ -182,8 +177,8 @@ public class EnchantmentManager {
         for (PotentialEnchantment newEnch: lvls.keySet())
             itemStack.addUnsafeEnchantment(newEnch.getEnchantment(), lvls.get(newEnch));
 
-        plugin.getCustomItemManager().setItemLevel(itemStack, newItemLevel);
-        plugin.getCustomItemManager().updateItemLore(itemStack);
+        Leveled.getInstance().getCustomItemManager().setItemLevel(itemStack, newItemLevel);
+        Leveled.getInstance().getCustomItemManager().updateItemLore(itemStack);
     }
 
     /**
