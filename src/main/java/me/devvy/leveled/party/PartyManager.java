@@ -329,6 +329,7 @@ public class PartyManager implements Listener {
 
         event.setCancelled(true);
         downedPlayers.get(event.getPlayer().getUniqueId()).doReviveTick(event.getPlayer());
+        revivePlayer(event.getPlayer());
 
     }
 

@@ -22,6 +22,7 @@ public enum CustomItemType {
     MINER_CHESTPLATE( "Miner's Chestplate",    CustomItemMinerChestplate.class,Material.LEATHER_CHESTPLATE, Rarity.RARE, Category.ARMOR,        15, 60,   ChatColor.RED  +  "Don't mine at night..."),
     MINER_LEGGINGS(   "Miner's Leggings",      CustomItemMinerLeggings.class,  Material.LEATHER_LEGGINGS,   Rarity.RARE, Category.ARMOR,        15, 48,   ChatColor.RED  +  "Don't mine at night..."),
     MINER_BOOTS(      "Miner's Boots",         CustomItemMinerBoots.class,     Material.LEATHER_BOOTS,      Rarity.RARE, Category.ARMOR,        15, 42,   ChatColor.RED  +  "Don't mine at night..."),
+    DIAMOND_BOW(      "Diamond Bow",           NonSpecialCustomItem.class,     Material.BOW,                Rarity.RARE, Category.RANGED,       45, 275),
     ;
 
     public final String NAME;

@@ -1,6 +1,7 @@
 package me.devvy.leveled.items;
 
 import me.devvy.leveled.Leveled;
+import me.devvy.leveled.items.recipes.DiamondBowRecipe;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -9,6 +10,9 @@ import org.bukkit.inventory.ShapedRecipe;
 public abstract class Recipes {
 
     public static void registerRecipes(Leveled plugin) {
+
+        DiamondBowRecipe dbr = new DiamondBowRecipe();
+        plugin.getServer().addRecipe(dbr.getShapedRecipe());
 
         ItemStack chainHelmet = new ItemStack(Material.CHAINMAIL_HELMET);
         ItemStack chainChest = new ItemStack(Material.CHAINMAIL_CHESTPLATE);
