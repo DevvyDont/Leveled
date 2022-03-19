@@ -34,7 +34,7 @@ public class EnchantmentManager {
     public static final Enchantment CRITICAL_SHOT = new EnchantCriticalShot(new NamespacedKey(Leveled.getPlugin(Leveled.class), "criticalshot"));
     public static final Enchantment CRITICAL_STRIKE = new EnchantCriticalStrike(new NamespacedKey(Leveled.getPlugin(Leveled.class), "criticalstrike"));
     public static final Enchantment SNIPE = new EnchantSnipe(new NamespacedKey(Leveled.getPlugin(Leveled.class), "snipe"));
-    public static final Enchantment GOLDEN_DIET = new EnchantSnipe(new NamespacedKey(Leveled.getPlugin(Leveled.class), "goldendiet"));
+    public static final Enchantment GOLDEN_DIET = new EnchantGoldenDiet(new NamespacedKey(Leveled.getPlugin(Leveled.class), "goldendiet"));
     public static final Enchantment HOMING = new EnchantHoming(new NamespacedKey(Leveled.getPlugin(Leveled.class), "homing"));
     public static final Enchantment PROSPECT = new EnchantProspect(new NamespacedKey(Leveled.getPlugin(Leveled.class), "prospect"));
     public static final Enchantment FULL_METAL_JACKET = new EnchantFMJ(new NamespacedKey(Leveled.getPlugin(Leveled.class), "fmj"));
