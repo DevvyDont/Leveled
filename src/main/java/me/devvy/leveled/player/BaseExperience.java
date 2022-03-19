@@ -63,27 +63,29 @@ public abstract class BaseExperience {
      * @return the int amount of xp to give
      */
     public static int getBaseExperienceFromBlock(Block block) {
-        switch (block.getType()) {
-            case GRASS_BLOCK:
-                return Math.random() < .01 ? 1 : 0;
-            case COAL_ORE:
-                return 1000;
-            case NETHER_QUARTZ_ORE:
-                return 10000;
-            case NETHER_GOLD_ORE:
-                return 12500;
-            case LAPIS_ORE:
-                return 4000;
+        return switch (block.getType()) {
+            case GRASS_BLOCK -> Math.random() < .01 ? 1 : 0;
+            case COAL_ORE -> 750;
+            case DEEPSLATE_COAL_ORE -> 1500;
+            case IRON_ORE -> 900;
+            case DEEPSLATE_IRON_ORE -> 1800;
+            case GOLD_ORE -> 1250;
+            case DEEPSLATE_GOLD_ORE -> 3000;
+            case COPPER_ORE -> 850;
+            case DEEPSLATE_COPPER_ORE -> 1700;
+            case NETHER_QUARTZ_ORE -> 6500;
+            case NETHER_GOLD_ORE -> 8000;
+            case LAPIS_ORE -> 3500;
+            case DEEPSLATE_LAPIS_ORE -> 5000;
             // Cant mine until lvl 20
-            case REDSTONE_ORE:
-                return 9000;
-            case DIAMOND_ORE:
-                return 30000;
-            case EMERALD_ORE:
-                return 80000;
-            default:
-                return 0;
-        }
+            case REDSTONE_ORE -> 9000;
+            case DEEPSLATE_REDSTONE_ORE -> 12500;
+            case DIAMOND_ORE -> 15000;
+            case DEEPSLATE_DIAMOND_ORE -> 25000;
+            case EMERALD_ORE -> 80000;
+            case DEEPSLATE_EMERALD_ORE -> 120000;
+            default -> 0;
+        };
     }
 
     /**

@@ -134,7 +134,7 @@ public class PlayerExperienceGainListeners implements Listener {
         if (event.getBlock().getDrops(tool).isEmpty())
             return;
 
-        int xpGained = 0;
+        int xpGained = BaseExperience.getBaseExperienceFromBlock(event.getBlock());
 
         // Special case, if we mined iron ore gold ore...
         if (block.getType().equals(Material.GOLD_ORE) || block.getType().equals(Material.IRON_ORE)) {
@@ -150,21 +150,17 @@ public class PlayerExperienceGainListeners implements Listener {
                 Material dropType = block.getType().equals(Material.IRON_ORE) ? Material.IRON_INGOT : Material.GOLD_INGOT;
                 ItemStack drop = new ItemStack(dropType, numDrop);
                 block.getWorld().dropItemNaturally(block.getLocation(), drop);
-                xpGained = block.getType().equals(Material.IRON_ORE) ? 1 : 3;
             }
         } else if (block.getType().equals(Material.STONE)) {
             if (tool.getItemMeta().hasEnchant(EnchantmentManager.SMELTING_TOUCH)) {
                 event.setDropItems(false);
                 block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.STONE));
             }
-        } else {
-            xpGained = BaseExperience.getBaseExperienceFromBlock(event.getBlock());
         }
 
         // Did we even gain experience?
-        if (xpGained <= 0) {
+        if (xpGained <= 0)
             return;
-        }
 
         if (tool.getItemMeta().hasEnchant(EnchantmentManager.GREEDY_MINER) && !player.isDead()) {
             double healBonus = tool.getEnchantmentLevel(EnchantmentManager.GREEDY_MINER)/ 10. * player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
@@ -219,9 +215,8 @@ public class PlayerExperienceGainListeners implements Listener {
         LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
 
         // Does the player even need xp?
-        if (player.getLevel() >= PlayerExperience.LEVEL_CAP) {
+        if (player.getLevel() >= PlayerExperience.LEVEL_CAP)
             return;
-        }
 
         // We should be good to give xp
         int xpGained = BaseExperience.getBaseExperienceFromSmelt(event.getItemType(), event.getItemAmount());
@@ -296,16 +291,14 @@ public class PlayerExperienceGainListeners implements Listener {
             return;
 
         // We don't care about recipe advancements
-        if (event.getAdvancement().getKey().toString().startsWith("minecraft:recipes")) {
+        if (event.getAdvancement().getKey().toString().startsWith("minecraft:recipes"))
             return;
-        }
 
         int xpEarned = BaseExperience.getBaseExperienceFromAdvancement(event.getAdvancement());
 
         // Valid advancement?
-        if (xpEarned <= 0) {
+        if (xpEarned <= 0)
             return;
-        }
 
         Player player = event.getPlayer();
         LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
