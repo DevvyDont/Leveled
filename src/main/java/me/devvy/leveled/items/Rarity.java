@@ -1,6 +1,7 @@
 package me.devvy.leveled.items;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public enum Rarity {
@@ -34,155 +35,20 @@ public enum Rarity {
 
 
         // Legendary overrides
-        switch (itemStack.getType()){
-            case ELYTRA:
-                return LEGENDARY;
-        }
+        if (itemStack.getType() == Material.ELYTRA)
+            return LEGENDARY;
 
         // Enchanted overrides
         if (itemStack.getEnchantments().size() > 0)
             return ENCHANTED;
 
-        switch (itemStack.getType()){
-
-            case ELYTRA:
-            case TRIDENT:
-            case DRAGON_HEAD:
-            case ZOMBIE_HEAD:
-            case CREEPER_HEAD:
-            case PLAYER_HEAD:
-            case HEART_OF_THE_SEA:
-            case NETHER_STAR:
-            case TOTEM_OF_UNDYING:
-            case DRAGON_EGG:
-            case WITHER_SKELETON_SKULL:
-            case SKELETON_SKULL:
-            case BEACON:
-            case CONDUIT:
-            case NETHERITE_AXE:
-            case NETHERITE_BOOTS:
-            case NETHERITE_BLOCK:
-            case NETHERITE_CHESTPLATE:
-            case NETHERITE_HELMET:
-            case NETHERITE_HOE:
-            case NETHERITE_INGOT:
-            case NETHERITE_LEGGINGS:
-            case NETHERITE_PICKAXE:
-            case NETHERITE_SCRAP:
-            case NETHERITE_SHOVEL:
-            case NETHERITE_SWORD:
-                return LEGENDARY;
-
-            case ENCHANTED_GOLDEN_APPLE:
-            case SHULKER_BOX:
-            case BLACK_SHULKER_BOX:
-            case BLUE_SHULKER_BOX:
-            case BROWN_SHULKER_BOX:
-            case CYAN_SHULKER_BOX:
-            case GRAY_SHULKER_BOX:
-            case LIGHT_BLUE_SHULKER_BOX:
-            case LIME_SHULKER_BOX:
-            case GREEN_SHULKER_BOX:
-            case MAGENTA_SHULKER_BOX:
-            case ORANGE_SHULKER_BOX:
-            case PINK_SHULKER_BOX:
-            case LIGHT_GRAY_SHULKER_BOX:
-            case PURPLE_SHULKER_BOX:
-            case RED_SHULKER_BOX:
-            case WHITE_SHULKER_BOX:
-            case YELLOW_SHULKER_BOX:
-            case DRAGON_BREATH:
-                return ENCHANTED;
-
-            case DIAMOND_PICKAXE:
-            case DIAMOND_SWORD:
-            case DIAMOND_BOOTS:
-            case DIAMOND_CHESTPLATE:
-            case DIAMOND_HELMET:
-            case DIAMOND_LEGGINGS:
-            case DIAMOND_AXE:
-            case DIAMOND_HOE:
-            case DIAMOND_SHOVEL:
-            case DIAMOND_ORE:
-            case DIAMOND_BLOCK:
-            case DIAMOND:
-            case DIAMOND_HORSE_ARMOR:
-            case GOLDEN_APPLE:
-            case ENDER_CHEST:
-            case POTION:
-            case LINGERING_POTION:
-            case SPLASH_POTION:
-            case OBSIDIAN:
-            case END_CRYSTAL:
-            case NAME_TAG:
-            case ENDER_EYE:
-            case ENDER_PEARL:
-            case ENCHANTING_TABLE:
-            case EMERALD:
-            case EMERALD_ORE:
-            case EMERALD_BLOCK:
-                return RARE;
-
-            case IRON_PICKAXE:
-            case IRON_SWORD:
-            case IRON_BOOTS:
-            case IRON_CHESTPLATE:
-            case IRON_HELMET:
-            case IRON_LEGGINGS:
-            case IRON_AXE:
-            case IRON_HOE:
-            case IRON_SHOVEL:
-            case IRON_ORE:
-            case IRON_BLOCK:
-            case IRON_INGOT:
-            case IRON_HORSE_ARMOR:
-
-            case GOLDEN_PICKAXE:
-            case GOLDEN_SWORD:
-            case GOLDEN_BOOTS:
-            case GOLDEN_CHESTPLATE:
-            case GOLDEN_HELMET:
-            case GOLDEN_LEGGINGS:
-            case GOLDEN_AXE:
-            case GOLDEN_HOE:
-            case GOLDEN_SHOVEL:
-            case GOLD_ORE:
-            case GOLD_BLOCK:
-            case GOLD_INGOT:
-            case GOLDEN_HORSE_ARMOR:
-            case GHAST_TEAR:
-            case BLAZE_ROD:
-
-            case BOW:
-            case CROSSBOW:
-            case SHIELD:
-            case COAL:
-            case COAL_BLOCK:
-            case COAL_ORE:
-            case IRON_NUGGET:
-            case GOLD_NUGGET:
-            case LAPIS_LAZULI:
-            case LAPIS_ORE:
-            case LAPIS_BLOCK:
-            case REDSTONE:
-            case REDSTONE_ORE:
-            case REDSTONE_BLOCK:
-            case GLOWSTONE:
-            case GLOWSTONE_DUST:
-            case NETHER_QUARTZ_ORE:
-            case NETHER_WART:
-            case NETHER_WART_BLOCK:
-            case QUARTZ:
-            case QUARTZ_BLOCK:
-            case GRINDSTONE:
-            case ANVIL:
-            case CHIPPED_ANVIL:
-            case DAMAGED_ANVIL:
-                return UNCOMMON;
-
-            default:
-                return COMMON;
-        }
+        return switch (itemStack.getType()) {
+            case ELYTRA, TRIDENT, DRAGON_HEAD, ZOMBIE_HEAD, CREEPER_HEAD, PLAYER_HEAD, HEART_OF_THE_SEA, NETHER_STAR, TOTEM_OF_UNDYING, DRAGON_EGG, WITHER_SKELETON_SKULL, SKELETON_SKULL, BEACON, CONDUIT, NETHERITE_AXE, NETHERITE_BOOTS, NETHERITE_BLOCK, NETHERITE_CHESTPLATE, NETHERITE_HELMET, NETHERITE_HOE, NETHERITE_INGOT, NETHERITE_LEGGINGS, NETHERITE_PICKAXE, NETHERITE_SCRAP, NETHERITE_SHOVEL, NETHERITE_SWORD -> LEGENDARY;
+            case ENCHANTED_GOLDEN_APPLE, SHULKER_BOX, BLACK_SHULKER_BOX, BLUE_SHULKER_BOX, BROWN_SHULKER_BOX, CYAN_SHULKER_BOX, GRAY_SHULKER_BOX, LIGHT_BLUE_SHULKER_BOX, LIME_SHULKER_BOX, GREEN_SHULKER_BOX, MAGENTA_SHULKER_BOX, ORANGE_SHULKER_BOX, PINK_SHULKER_BOX, LIGHT_GRAY_SHULKER_BOX, PURPLE_SHULKER_BOX, RED_SHULKER_BOX, WHITE_SHULKER_BOX, YELLOW_SHULKER_BOX, DRAGON_BREATH -> ENCHANTED;
+            case DIAMOND_PICKAXE, DIAMOND_SWORD, DIAMOND_BOOTS, DIAMOND_CHESTPLATE, DIAMOND_HELMET, DIAMOND_LEGGINGS, DIAMOND_AXE, DIAMOND_HOE, DIAMOND_SHOVEL, DIAMOND_ORE, DIAMOND_BLOCK, DIAMOND, DIAMOND_HORSE_ARMOR, GOLDEN_APPLE, ENDER_CHEST, POTION, LINGERING_POTION, SPLASH_POTION, OBSIDIAN, END_CRYSTAL, NAME_TAG, ENDER_EYE, ENDER_PEARL, ENCHANTING_TABLE, EMERALD, EMERALD_ORE, EMERALD_BLOCK, DEEPSLATE_EMERALD_ORE, DEEPSLATE_DIAMOND_ORE -> RARE;
+            case IRON_PICKAXE, IRON_SWORD, IRON_BOOTS, IRON_CHESTPLATE, IRON_HELMET, IRON_LEGGINGS, IRON_AXE, IRON_HOE, IRON_SHOVEL, IRON_ORE, IRON_BLOCK, IRON_INGOT, IRON_HORSE_ARMOR, GOLDEN_PICKAXE, GOLDEN_SWORD, GOLDEN_BOOTS, GOLDEN_CHESTPLATE, GOLDEN_HELMET, GOLDEN_LEGGINGS, GOLDEN_AXE, GOLDEN_HOE, GOLDEN_SHOVEL, GOLD_ORE, GOLD_BLOCK, GOLD_INGOT, GOLDEN_HORSE_ARMOR, GHAST_TEAR, BLAZE_ROD, BOW, CROSSBOW, SHIELD, COAL, COAL_BLOCK, COAL_ORE, IRON_NUGGET, GOLD_NUGGET, LAPIS_LAZULI, LAPIS_ORE, LAPIS_BLOCK, REDSTONE, REDSTONE_ORE, REDSTONE_BLOCK, COPPER_ORE, GLOWSTONE, GLOWSTONE_DUST, NETHER_QUARTZ_ORE, NETHER_WART, NETHER_WART_BLOCK, QUARTZ, QUARTZ_BLOCK, GRINDSTONE, ANVIL, CHIPPED_ANVIL, DAMAGED_ANVIL, AMETHYST_BLOCK, AMETHYST_CLUSTER, AMETHYST_SHARD, IRON_BARS, RAW_IRON, RAW_IRON_BLOCK, DEEPSLATE_IRON_ORE, NETHER_GOLD_ORE, DEEPSLATE_COAL_ORE, DEEPSLATE_COPPER_ORE, DEEPSLATE_GOLD_ORE, DEEPSLATE_LAPIS_ORE, DEEPSLATE_REDSTONE_ORE, COPPER_BLOCK, COPPER_INGOT, RAW_COPPER -> UNCOMMON;
+            default -> COMMON;
+        };
 
     }
 
