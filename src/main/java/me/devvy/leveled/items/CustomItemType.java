@@ -52,114 +52,64 @@ public enum CustomItemType {
      * @return An integer representing either defense or damage depending on the item.
      */
     public static int getFallbackStat(Material material) {
-        switch (material) {
+        return switch (material) {
 
             // ========
             // MELEE
             // ========
 
-            case WOODEN_SWORD:
-                return 7;
-            case STONE_SWORD:
-                return 15;
-            case IRON_SWORD:
-                return 50;
-            case GOLDEN_SWORD:
-                return 120;
-            case DIAMOND_SWORD:
-                return 220;
-            case NETHERITE_SWORD:
-                return 1800;
-
-            case WOODEN_AXE:
-                return 6;
-            case STONE_AXE:
-                return 12;
-            case IRON_AXE:
-                return 45;
-            case GOLDEN_AXE:
-                return 105;
-            case DIAMOND_AXE:
-                return 200;
-            case NETHERITE_AXE:
-                return 1600;
+            case WOODEN_SWORD -> 7;
+            case STONE_SWORD -> 15;
+            case IRON_SWORD -> 50;
+            case GOLDEN_SWORD -> 120;
+            case DIAMOND_SWORD -> 220;
+            case NETHERITE_SWORD -> 1800;
+            case WOODEN_AXE -> 6;
+            case STONE_AXE -> 12;
+            case IRON_AXE -> 45;
+            case GOLDEN_AXE -> 105;
+            case DIAMOND_AXE -> 200;
+            case NETHERITE_AXE -> 1600;
 
             // ========
             // RANGED
             // ========
 
-            case BOW:
-                return 55;
-            case CROSSBOW:
-                return 160;
-            case TRIDENT:
-                return 400;
+            case BOW -> 55;
+            case CROSSBOW -> 160;
+            case TRIDENT -> 400;
 
             // ========
             // ARMOR
             // ========
 
-            case LEATHER_CHESTPLATE:
-                return 5;
-            case LEATHER_LEGGINGS:
-                return 3;
-            case LEATHER_HELMET:
-            case TURTLE_HELMET:
-                return 2;
-            case LEATHER_BOOTS:
-                return 1;
-
-            case CHAINMAIL_CHESTPLATE:
-                return 30;
-            case CHAINMAIL_LEGGINGS:
-                return 25;
-            case CHAINMAIL_HELMET:
-                return 22;
-            case CHAINMAIL_BOOTS:
-                return 18;
-
-            case IRON_CHESTPLATE:
-                return 52;
-            case IRON_LEGGINGS:
-                return 45;
-            case IRON_HELMET:
-                return 40;
-            case IRON_BOOTS:
-                return 37;
-
-            case GOLDEN_CHESTPLATE:
-                return 80;
-            case GOLDEN_LEGGINGS:
-                return 68;
-            case GOLDEN_HELMET:
-                return 60;
-            case GOLDEN_BOOTS:
-                return 56;
-
-            case DIAMOND_CHESTPLATE:
-                return 100;
-            case DIAMOND_LEGGINGS:
-                return 85;
-            case DIAMOND_HELMET:
-                return 75;
-            case DIAMOND_BOOTS:
-                return 70;
-
-            case NETHERITE_CHESTPLATE:
-                return 450;
-            case NETHERITE_LEGGINGS:
-                return 420;
-            case NETHERITE_HELMET:
-                return 385;
-            case NETHERITE_BOOTS:
-                return 350;
-
-            case ELYTRA:
-                return 25;
-
-            default:
-                return 0;
-        }
+            case LEATHER_CHESTPLATE -> 5;
+            case LEATHER_LEGGINGS -> 3;
+            case LEATHER_HELMET, TURTLE_HELMET -> 2;
+            case LEATHER_BOOTS -> 1;
+            case CHAINMAIL_CHESTPLATE -> 30;
+            case CHAINMAIL_LEGGINGS -> 25;
+            case CHAINMAIL_HELMET -> 22;
+            case CHAINMAIL_BOOTS -> 18;
+            case IRON_CHESTPLATE -> 52;
+            case IRON_LEGGINGS -> 45;
+            case IRON_HELMET -> 40;
+            case IRON_BOOTS -> 37;
+            case GOLDEN_CHESTPLATE -> 80;
+            case GOLDEN_LEGGINGS -> 68;
+            case GOLDEN_HELMET -> 60;
+            case GOLDEN_BOOTS -> 56;
+            case DIAMOND_CHESTPLATE -> 100;
+            case DIAMOND_LEGGINGS -> 85;
+            case DIAMOND_HELMET -> 75;
+            case DIAMOND_BOOTS -> 70;
+            case NETHERITE_CHESTPLATE -> 450;
+            case NETHERITE_LEGGINGS -> 420;
+            case NETHERITE_HELMET -> 385;
+            case NETHERITE_BOOTS -> 350;
+            case ELYTRA -> 25;
+            default -> 0;
+        };
     }
 
     public enum Category {
@@ -171,31 +121,21 @@ public enum CustomItemType {
 
         public static boolean hasCategoryStat(Category category) {
 
-            switch (category) {
-                case RANGED:
-                case MELEE:
-                case ARMOR:
-                    return true;
-                default:
-                    return false;
-            }
+            return switch (category) {
+                case RANGED, MELEE, ARMOR -> true;
+                default -> false;
+            };
 
         }
 
         public static String getCategoryStatPrefix(Category category) {
 
-            switch (category) {
-
-                case RANGED:
-                    return ChatColor.GRAY +  "Arrow Damage: " + ChatColor.RED;
-                case MELEE:
-                    return ChatColor.GRAY +  "Damage: " + ChatColor.RED;
-                case ARMOR:
-                    return ChatColor.GRAY +  "Defense: " + ChatColor.AQUA;
-                default:
-                    throw new IllegalArgumentException("Category " + category + " does not have an attatched stat to it.");
-
-            }
+            return switch (category) {
+                case RANGED -> ChatColor.GRAY + "Arrow Damage: " + ChatColor.RED;
+                case MELEE -> ChatColor.GRAY + "Damage: " + ChatColor.RED;
+                case ARMOR -> ChatColor.GRAY + "Defense: " + ChatColor.AQUA;
+                default -> throw new IllegalArgumentException("Category " + category + " does not have an attatched stat to it.");
+            };
         }
 
         /**
@@ -205,59 +145,12 @@ public enum CustomItemType {
          * @return An integer representing either defense or damage depending on the item.
          */
         public static Category getFallbackCategory(Material material) {
-            switch (material) {
-
-                case WOODEN_SWORD:
-                case STONE_SWORD:
-                case IRON_SWORD:
-                case GOLDEN_SWORD:
-                case DIAMOND_SWORD:
-                case NETHERITE_SWORD:
-
-                case WOODEN_AXE:
-                case STONE_AXE:
-                case IRON_AXE:
-                case GOLDEN_AXE:
-                case DIAMOND_AXE:
-                case NETHERITE_AXE:
-                    return MELEE;
-
-                case BOW:
-                case CROSSBOW:
-                case TRIDENT:
-                    return RANGED;
-
-                case NETHERITE_CHESTPLATE:
-                case NETHERITE_LEGGINGS:
-                case NETHERITE_HELMET:
-                case NETHERITE_BOOTS:
-                case DIAMOND_CHESTPLATE:
-                case DIAMOND_LEGGINGS:
-                case DIAMOND_HELMET:
-                case DIAMOND_BOOTS:
-                case IRON_CHESTPLATE:
-                case IRON_LEGGINGS:
-                case IRON_HELMET:
-                case IRON_BOOTS:
-                case CHAINMAIL_CHESTPLATE:
-                case CHAINMAIL_LEGGINGS:
-                case CHAINMAIL_HELMET:
-                case CHAINMAIL_BOOTS:
-                case GOLDEN_CHESTPLATE:
-                case GOLDEN_LEGGINGS:
-                case GOLDEN_HELMET:
-                case GOLDEN_BOOTS:
-                case LEATHER_CHESTPLATE:
-                case LEATHER_LEGGINGS:
-                case LEATHER_HELMET:
-                case TURTLE_HELMET:
-                case LEATHER_BOOTS:
-                case ELYTRA:
-                    return ARMOR;
-
-                default:
-                    return null;
-            }
+            return switch (material) {
+                case WOODEN_SWORD, STONE_SWORD, IRON_SWORD, GOLDEN_SWORD, DIAMOND_SWORD, NETHERITE_SWORD, WOODEN_AXE, STONE_AXE, IRON_AXE, GOLDEN_AXE, DIAMOND_AXE, NETHERITE_AXE -> MELEE;
+                case BOW, CROSSBOW, TRIDENT -> RANGED;
+                case NETHERITE_CHESTPLATE, NETHERITE_LEGGINGS, NETHERITE_HELMET, NETHERITE_BOOTS, DIAMOND_CHESTPLATE, DIAMOND_LEGGINGS, DIAMOND_HELMET, DIAMOND_BOOTS, IRON_CHESTPLATE, IRON_LEGGINGS, IRON_HELMET, IRON_BOOTS, CHAINMAIL_CHESTPLATE, CHAINMAIL_LEGGINGS, CHAINMAIL_HELMET, CHAINMAIL_BOOTS, GOLDEN_CHESTPLATE, GOLDEN_LEGGINGS, GOLDEN_HELMET, GOLDEN_BOOTS, LEATHER_CHESTPLATE, LEATHER_LEGGINGS, LEATHER_HELMET, TURTLE_HELMET, LEATHER_BOOTS, ELYTRA -> ARMOR;
+                default -> null;
+            };
         }
     }
 }
