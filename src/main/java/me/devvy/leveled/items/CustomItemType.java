@@ -59,30 +59,30 @@ public enum CustomItemType {
             // ========
 
             case WOODEN_SWORD:
-                return 10;
+                return 7;
             case STONE_SWORD:
-                return 25;
+                return 15;
             case IRON_SWORD:
-                return 70;
+                return 50;
             case GOLDEN_SWORD:
-                return 150;
+                return 120;
             case DIAMOND_SWORD:
-                return 300;
+                return 220;
             case NETHERITE_SWORD:
-                return 2500;
+                return 1800;
 
             case WOODEN_AXE:
-                return 12;
+                return 6;
             case STONE_AXE:
-                return 35;
+                return 12;
             case IRON_AXE:
-                return 85;
+                return 45;
             case GOLDEN_AXE:
-                return 170;
+                return 105;
             case DIAMOND_AXE:
-                return 330;
+                return 200;
             case NETHERITE_AXE:
-                return 2875;
+                return 1600;
 
             // ========
             // RANGED
@@ -100,23 +100,23 @@ public enum CustomItemType {
             // ========
 
             case LEATHER_CHESTPLATE:
-                return 20;
+                return 5;
             case LEATHER_LEGGINGS:
-                return 15;
+                return 3;
             case LEATHER_HELMET:
             case TURTLE_HELMET:
-                return 10;
+                return 2;
             case LEATHER_BOOTS:
-                return 7;
+                return 1;
 
             case CHAINMAIL_CHESTPLATE:
-                return 44;
-            case CHAINMAIL_LEGGINGS:
-                return 38;
-            case CHAINMAIL_HELMET:
                 return 30;
+            case CHAINMAIL_LEGGINGS:
+                return 25;
+            case CHAINMAIL_HELMET:
+                return 22;
             case CHAINMAIL_BOOTS:
-                return 24;
+                return 18;
 
             case IRON_CHESTPLATE:
                 return 52;
@@ -139,11 +139,11 @@ public enum CustomItemType {
             case DIAMOND_CHESTPLATE:
                 return 100;
             case DIAMOND_LEGGINGS:
-                return 80;
+                return 85;
             case DIAMOND_HELMET:
-                return 70;
+                return 75;
             case DIAMOND_BOOTS:
-                return 64;
+                return 70;
 
             case NETHERITE_CHESTPLATE:
                 return 450;
