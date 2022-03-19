@@ -185,6 +185,8 @@ public class GlobalDamageManager implements Listener {
             case EVOKER:
             case STRAY:
             case PILLAGER:
+
+            case GUARDIAN:
                 break;
 
             case SKELETON:
@@ -246,8 +248,6 @@ public class GlobalDamageManager implements Listener {
                 break;
 
             case PIGLIN_BRUTE:
-                damagePercent = 1.4;
-                break;
 
             case GHAST:
             case HOGLIN:
@@ -264,9 +264,6 @@ public class GlobalDamageManager implements Listener {
                 damagePercent = 1.6;
                 break;
 
-            case GUARDIAN:
-                damagePercent = 1.0;
-                break;
             case VEX:
                 damagePercent = .70;
                 break;
@@ -281,9 +278,9 @@ public class GlobalDamageManager implements Listener {
             case PUFFERFISH:
                 damagePercent = .01;
                 break;
+
             default:
                 System.out.println("[PlayerDamageModifer] Came across unknown entity to calculate damage for: " + entity.getType());
-                damagePercent = 1;
                 break;
         }
 
@@ -366,10 +363,9 @@ public class GlobalDamageManager implements Listener {
         if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM))
             return;
 
-        if (!(event.getEntity() instanceof LivingEntity))
+        if (!(event.getEntity() instanceof LivingEntity livingEntity))
             return;
 
-        LivingEntity livingEntity = (LivingEntity) event.getEntity();
         double fivePercentHP = livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 20.;
         double dmg = event.getDamage();
 
@@ -481,10 +477,9 @@ public class GlobalDamageManager implements Listener {
         }
 
         // Is a player being hit?
-        if (!(event.getEntity() instanceof Player))
+        if (!(event.getEntity() instanceof Player player))
             return;
 
-        Player player = (Player) event.getEntity();
         if (player.getHealth() <= 0) { player.damage(2000000000); }
 
         // Is the player supposed to die?
@@ -522,8 +517,7 @@ public class GlobalDamageManager implements Listener {
         }
 
         // This is basically just natural regen
-        if (event.getEntity() instanceof Player && (event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.SATIATED) || event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.REGEN) || event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.MAGIC_REGEN))  ) {
-            Player player = (Player) event.getEntity();
+        if (event.getEntity() instanceof Player player && (event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.SATIATED) || event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.REGEN) || event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.MAGIC_REGEN))  ) {
             double maxHP = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
             double halfHeartAmount = maxHP / 20.;
             double amountToRegen;

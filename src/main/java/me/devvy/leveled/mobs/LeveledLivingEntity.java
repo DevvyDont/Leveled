@@ -149,6 +149,7 @@ public class LeveledLivingEntity {
             case CAVE_SPIDER:
             case SLIME:
             case WITCH:
+            case GLOW_SQUID:
                 return 7 + (int)(Math.random() * 8);
 
             // Desert mobs ~15-20
@@ -283,6 +284,7 @@ public class LeveledLivingEntity {
             case PIG:
             case COW:
             case MUSHROOM_COW:
+            case GOAT:
             case SHEEP:
             case PANDA:
             case SQUID:
@@ -293,6 +295,7 @@ public class LeveledLivingEntity {
             case SALMON:
             case RABBIT:
             case COD:
+            case AXOLOTL:
             case BAT:
             case OCELOT:
             case SNOWMAN:
@@ -428,6 +431,7 @@ public class LeveledLivingEntity {
             // Passive mobs
             case SHEEP:
             case COW:
+            case GOAT:
             case PIG:
             case MULE:
             case MUSHROOM_COW:
@@ -454,6 +458,7 @@ public class LeveledLivingEntity {
             case BAT:
             case CAT:
             case COD:
+            case AXOLOTL:
                 multiplier = .4;
                 break;
 
