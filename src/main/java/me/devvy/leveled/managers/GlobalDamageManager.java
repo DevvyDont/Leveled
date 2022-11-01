@@ -258,6 +258,7 @@ public class GlobalDamageManager implements Listener {
 
             case RAVAGER:
             case IRON_GOLEM:
+            case WARDEN:
                 damagePercent = 2.0;
                 break;
 

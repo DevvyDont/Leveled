@@ -250,6 +250,10 @@ public class LeveledLivingEntity {
             case PIGLIN_BRUTE:
                 return 89 + (int)(Math.random() * 6);
 
+            // Scary warden dude
+            case WARDEN:
+                return 100;
+
             case POLAR_BEAR:
             case TRADER_LLAMA:
                 return 15;
@@ -537,6 +541,10 @@ public class LeveledLivingEntity {
                 multiplier = 150;
                 for (Player ignored : entity.getLocation().getNearbyPlayers(500))
                     multiplier += Math.random() * 50 + 100;
+                break;
+
+            case WARDEN:
+                multiplier = 200;
                 break;
 
             default:
