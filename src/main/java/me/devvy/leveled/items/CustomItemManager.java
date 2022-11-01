@@ -3,10 +3,9 @@ package me.devvy.leveled.items;
 import me.devvy.leveled.Leveled;
 import me.devvy.leveled.player.LevelRewards;
 import me.devvy.leveled.player.abilities.CustomAbility;
-import org.apache.commons.lang.WordUtils;
+import me.devvy.leveled.util.FormattingHelpers;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
@@ -14,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class CustomItemManager implements Listener {
                 itemName.append(components[i]).append(" ");
         }
         else
-            itemName = new StringBuilder(itemMeta.hasDisplayName() ? ChatColor.stripColor(itemMeta.getDisplayName()) : WordUtils.capitalizeFully(item.getType().toString().replace("_", " ")));
+            itemName = new StringBuilder(itemMeta.hasDisplayName() ? ChatColor.stripColor(itemMeta.getDisplayName()) : FormattingHelpers.capitalizeFully(item.getType().toString().replace("_", " ")));
 
         // Actually set the container to the level
         itemMeta.getPersistentDataContainer().set(ITEM_LEVEL_KEY, PersistentDataType.INTEGER, level);
@@ -147,7 +147,7 @@ public class CustomItemManager implements Listener {
 
             String enchantName;
             if (enchantment.getKey().toString().contains("minecraft:"))
-                enchantName = WordUtils.capitalize(enchantment.getKey().toString().replace("minecraft:", "").replace('_', ' '));
+                enchantName = FormattingHelpers.capitalize(enchantment.getKey().toString().replace("minecraft:", "").replace('_', ' '));
             else
                 enchantName = enchantment.getName();
 

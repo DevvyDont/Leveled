@@ -3,7 +3,7 @@ package me.devvy.leveled.items.customitems;
 import me.devvy.leveled.Leveled;
 import me.devvy.leveled.items.CustomItem;
 import me.devvy.leveled.items.CustomItemType;
-import org.apache.commons.lang.WordUtils;
+import me.devvy.leveled.util.FormattingHelpers;
 import org.bukkit.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -65,7 +65,7 @@ public class CustomItemMagicMirror extends CustomItem {
             case THE_END:
                 return "The End";
             default:
-                return WordUtils.capitalizeFully(env.toString());
+                return FormattingHelpers.capitalizeFully(env.toString());
         }
     }
 

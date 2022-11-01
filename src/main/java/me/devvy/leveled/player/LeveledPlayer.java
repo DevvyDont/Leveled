@@ -197,7 +197,10 @@ public class LeveledPlayer {
     }
 
     public double calculateBaseHealth() {
-        return 100 + ((2 * spigotPlayer.getLevel()/5.0) - 1) * 10;
+        if (spigotPlayer.getLevel() <= 1)
+            return 100;
+
+        return 110 + ((2 * spigotPlayer.getLevel()/5.0) - 1) * 10;
     }
 
     private double calculateBonusHealth() {
