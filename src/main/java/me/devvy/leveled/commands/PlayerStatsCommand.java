@@ -37,9 +37,9 @@ public class PlayerStatsCommand implements CommandExecutor {
         String header = ChatColor.GRAY + "=====- " + ChatColor.DARK_GREEN + "Lv. " + player.getLevel() + " " + ChatColor.GREEN +  player.getName() + ChatColor.GRAY + " -=====";
         player.sendMessage(header);
         player.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + FormattingHelpers.getFormattedInteger(leveledPlayer.getExperience().getTotalExperienceRequiredForNextLevel() - leveledPlayer.getExperience().getAccumulatedExperienceToNextLevel()) + ChatColor.GRAY + " XP required to level " + ChatColor.GREEN + ChatColor.BOLD + (player.getLevel() + 1));
-        player.sendMessage();
+        player.sendMessage("");
         player.sendMessage(ChatColor.DARK_RED + "❤ " + ChatColor.GREEN + "" + FormattingHelpers.getFormattedInteger((int) player.getHealth()) + ChatColor.GRAY + "/" + ChatColor.DARK_GREEN + FormattingHelpers.getFormattedInteger((int) player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) + ChatColor.GRAY + " | " + ChatColor.DARK_RED + "✦ " + ChatColor.RED + leveledPlayer.getStrength());
-        player.sendMessage();
+        player.sendMessage("");
         player.sendMessage(ChatColor.BLUE + "♠ " + getDefenseColor(envDef) + envDef + ChatColor.GRAY + " | " + ChatColor.GOLD + "♨ " + getDefenseColor(fireDef) + fireDef);
         player.sendMessage(ChatColor.DARK_GRAY + "☀ " + getDefenseColor(explDef) + explDef + ChatColor.GRAY + " | " + ChatColor.WHITE + "➹ " + getDefenseColor(projDef) + projDef);
         player.sendMessage(ChatColor.GRAY + Strings.repeat("=", ChatColor.stripColor(header).length()));

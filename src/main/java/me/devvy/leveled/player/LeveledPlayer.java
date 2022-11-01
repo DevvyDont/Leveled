@@ -79,7 +79,8 @@ public class LeveledPlayer {
         int bonusResist = 0;
         if (resistPot != null)
             bonusResist += (resistPot.getAmplifier() * 150);
-        return 300 / (defense + bonusResist + 300.);
+        int resistStat = defense + bonusResist;
+        return Math.pow(.5, resistStat/100.);
     }
 
     public int getFireDefense() {
@@ -143,7 +144,7 @@ public class LeveledPlayer {
     }
 
     private void calculateDefense() {
-        this.defense = 10 + spigotPlayer.getLevel() * 3;
+        this.defense = 10 + (6 * spigotPlayer.getLevel() / 5);
         int protectionLevel;
 
         ItemStack[] armorPieces = new ItemStack[]{this.helmet, this.chestplate, this.leggings, this.boots};
@@ -196,7 +197,7 @@ public class LeveledPlayer {
     }
 
     public double calculateBaseHealth() {
-        return 100 + (spigotPlayer.getLevel()-1) * 10;
+        return 100 + ((2 * spigotPlayer.getLevel()/5.0) - 1) * 10;
     }
 
     private double calculateBonusHealth() {

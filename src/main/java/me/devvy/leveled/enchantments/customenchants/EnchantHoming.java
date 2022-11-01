@@ -1,7 +1,9 @@
 package me.devvy.leveled.enchantments.customenchants;
 
+import io.papermc.paper.enchantments.EnchantmentRarity;
 import me.devvy.leveled.Leveled;
 import me.devvy.leveled.enchantments.EnchantmentManager;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -13,11 +15,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class EnchantHoming extends Enchantment implements Listener {
 
@@ -29,8 +35,48 @@ public class EnchantHoming extends Enchantment implements Listener {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "Homing";
+    }
+
+
+
+    @Override
+    public @NotNull Component displayName(int level) {
+        return Component.text(getName());
+    }
+
+    @Override
+    public boolean isTradeable() {
+        return true;
+    }
+
+    @Override
+    public boolean isDiscoverable() {
+        return true;
+    }
+
+    @Override
+    public @NotNull EnchantmentRarity getRarity() {
+        return EnchantmentRarity.UNCOMMON;
+    }
+
+    @Override
+    public float getDamageIncrease(int level, @NotNull EntityCategory entityCategory) {
+        return 0;
+    }
+
+    @Override
+    public @NotNull Set<EquipmentSlot> getActiveSlots() {
+        Set<EquipmentSlot> slots = new HashSet<>();
+        slots.add(EquipmentSlot.HAND);
+        slots.add(EquipmentSlot.OFF_HAND);
+        return slots;
+    }
+
+    @Override
+    public @NotNull String translationKey() {
+        return getName();
     }
 
     @Override
@@ -44,7 +90,7 @@ public class EnchantHoming extends Enchantment implements Listener {
     }
 
     @Override
-    public EnchantmentTarget getItemTarget() {
+    public @NotNull EnchantmentTarget getItemTarget() {
         return EnchantmentTarget.BOW;
     }
 
@@ -59,7 +105,7 @@ public class EnchantHoming extends Enchantment implements Listener {
     }
 
     @Override
-    public boolean conflictsWith(Enchantment enchantment) {
+    public boolean conflictsWith(@NotNull Enchantment enchantment) {
         return false;
     }
 

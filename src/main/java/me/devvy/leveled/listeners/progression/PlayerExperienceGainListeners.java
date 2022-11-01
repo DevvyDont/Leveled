@@ -1,5 +1,6 @@
 package me.devvy.leveled.listeners.progression;
 
+import io.papermc.paper.event.player.PlayerTradeEvent;
 import me.devvy.leveled.Leveled;
 import me.devvy.leveled.enchantments.EnchantmentManager;
 import me.devvy.leveled.items.Rarity;
@@ -226,57 +227,22 @@ public class PlayerExperienceGainListeners implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onTradeWithVillager(InventoryClickEvent event){
+    public void onTradeWithVillager(PlayerTradeEvent event){
 
-        if (event.getWhoClicked().getGameMode() == GameMode.CREATIVE)
+        ItemStack reward = event.getTrade().getResult();
+        if (reward.getType() == Material.AIR)
             return;
 
-        // Trading inventory?
-        if (event.getInventory().getType() != InventoryType.MERCHANT)
-            return;
-
-        // Clicking trading inventory?
-        if (event.getClickedInventory() != event.getInventory())
-            return;
-
-        // Clicking result slot?
-        if (event.getSlotType() != InventoryType.SlotType.RESULT)
-            return;
-
-        // Something to take?
-        if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
-            return;
-
-        // Don't allow shift clicks, can't award xp properly if we do that
-        if (event.isShiftClick()){
-            event.setCancelled(true);
-            return;
-        }
-
-        Player player = (Player) event.getWhoClicked();
+        Player player = event.getPlayer();
         LeveledPlayer leveledPlayer = plugin.getPlayerManager().getLeveledPlayer(player);
 
-        // If the cursor is empty we have nothing to worry about, the trade should be fine
-        if (event.getCursor() == null || event.getCursor().getType() == Material.AIR){
+        // Give them xp based on the rarity of the item
+        Rarity itemRarity = Rarity.getItemRarity(reward);
+        int xp = 75000 * (itemRarity.ordinal() + 1);
+        leveledPlayer.giveExperience(xp);
 
-//            plugin.getGlobalItemManager().fixItem(event.getCurrentItem());
-
-            // Give them xp based on the rarity of the item
-            Rarity itemRarity = Rarity.getItemRarity(event.getCurrentItem());
-            int xp = 75000 * (itemRarity.ordinal() + 1);
-            leveledPlayer.giveExperience(xp);
-
-            player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
-            plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_GREEN + "+" + FormattingHelpers.getFormattedInteger(xp) + "XP");
-
-        } else {
-
-            // Something is in the cursor TODO: do the annoying work to figure out if the item can stack, for now just don't let them do it
-            event.setCancelled(true);
-
-        }
-
-
+        player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+        plugin.getActionBarManager().dispalyActionBarTextWithExtra(player, ChatColor.DARK_GREEN + "+" + FormattingHelpers.getFormattedInteger(xp) + "XP");
     }
 
     /**

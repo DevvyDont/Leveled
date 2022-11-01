@@ -6,6 +6,7 @@ import me.devvy.leveled.events.EntityHitByProjectileEvent;
 import me.devvy.leveled.events.EntityShootArrowEvent;
 import me.devvy.leveled.events.PlayerDealtMeleeDamageEvent;
 import me.devvy.leveled.items.CustomItemType;
+import me.devvy.leveled.util.DamageEquationHelpers;
 import me.devvy.leveled.util.DamagePopup;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
@@ -173,7 +174,7 @@ public class GlobalDamageManager implements Listener {
         int mobLevel = plugin.getMobManager().getMobLevel(entity);
 
         // For context, this damage value is what the average mob should be doing. Certain mobs will hit harder/softer
-        double damage = Math.pow(mobLevel, 1.5) * (mobLevel / 25.) + 25;
+        double damage = DamageEquationHelpers.getExpectedEHPAtLevel(mobLevel) * .2;
         double damagePercent = 1.0;
 
         switch (entity.getType()){
@@ -290,14 +291,10 @@ public class GlobalDamageManager implements Listener {
         if (entity instanceof Ageable && !((Ageable) entity).isAdult())
             damage *= .33;
 
-        // Players get resist against mobs
-        if (victim instanceof Player)
-            damage *= plugin.getPlayerManager().getLeveledPlayer((Player) victim).getEnvResist();
-
         return damage;
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onMobInflictedDamage(EntityDamageByEntityEvent event) {
 
         if (event.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM) || event.getCause().equals(EntityDamageEvent.DamageCause.VOID) || event.getDamage() == 0)
@@ -325,16 +322,17 @@ public class GlobalDamageManager implements Listener {
         else
             return;
 
-
-        // We don't care for players doing damage
-        if (source instanceof Player)
-            return;
-
-        // Get the level of the attacker
-        double newDamage;
+        double newDamage = 0;
 
         // Calculates damage based on damage type, and the entity doing the damage, generally, the damage will be the % of a players max HP at the same level of the mob i.e. zombie does 15% damage to player on level
-        newDamage = calculateEntityDamage(source, event.getEntity());
+        if (!(source instanceof Player))
+            newDamage = calculateEntityDamage(source, event.getEntity());
+        else
+            newDamage = event.getDamage();
+
+        // Players get resist against mobs
+        if (event.getEntity() instanceof Player)
+            newDamage *= plugin.getPlayerManager().getLeveledPlayer((Player) event.getEntity()).getEnvResist();
 
         // Sanity check
         if (newDamage < 0) { newDamage = 0; }

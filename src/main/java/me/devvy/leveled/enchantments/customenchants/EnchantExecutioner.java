@@ -1,20 +1,27 @@
 package me.devvy.leveled.enchantments.customenchants;
 
+import io.papermc.paper.enchantments.EnchantmentRarity;
 import me.devvy.leveled.events.EntityHitByProjectileEvent;
 import me.devvy.leveled.events.EntityShootArrowEvent;
 import me.devvy.leveled.managers.GlobalDamageManager;
 import me.devvy.leveled.util.ToolTypeHelpers;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
+import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class EnchantExecutioner extends Enchantment implements Listener {
 
@@ -23,8 +30,47 @@ public class EnchantExecutioner extends Enchantment implements Listener {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "Executioner";
+    }
+
+
+    @Override
+    public @NotNull Component displayName(int level) {
+        return Component.text(getName());
+    }
+
+    @Override
+    public boolean isTradeable() {
+        return true;
+    }
+
+    @Override
+    public boolean isDiscoverable() {
+        return true;
+    }
+
+    @Override
+    public @NotNull EnchantmentRarity getRarity() {
+        return EnchantmentRarity.UNCOMMON;
+    }
+
+    @Override
+    public float getDamageIncrease(int level, @NotNull EntityCategory entityCategory) {
+        return 0;
+    }
+
+    @Override
+    public @NotNull Set<EquipmentSlot> getActiveSlots() {
+        Set<EquipmentSlot> slots = new HashSet<>();
+        slots.add(EquipmentSlot.HAND);
+        slots.add(EquipmentSlot.OFF_HAND);
+        return slots;
+    }
+
+    @Override
+    public @NotNull String translationKey() {
+        return getName();
     }
 
     @Override
@@ -38,7 +84,7 @@ public class EnchantExecutioner extends Enchantment implements Listener {
     }
 
     @Override
-    public EnchantmentTarget getItemTarget() {
+    public @NotNull EnchantmentTarget getItemTarget() {
         return EnchantmentTarget.WEAPON;
     }
 
@@ -53,7 +99,7 @@ public class EnchantExecutioner extends Enchantment implements Listener {
     }
 
     @Override
-    public boolean conflictsWith(Enchantment enchantment) {
+    public boolean conflictsWith(@NotNull Enchantment enchantment) {
         return false;
     }
 

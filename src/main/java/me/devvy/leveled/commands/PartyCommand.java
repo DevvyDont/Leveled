@@ -170,7 +170,7 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
             for (Player m: party.getMembers()){
                 player.sendMessage("Member: " + m.getDisplayName());
             }
-            player.sendMessage();
+            player.sendMessage("");
         }
     }
 

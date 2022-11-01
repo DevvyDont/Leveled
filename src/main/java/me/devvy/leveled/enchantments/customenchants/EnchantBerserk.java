@@ -1,21 +1,28 @@
 package me.devvy.leveled.enchantments.customenchants;
 
+import io.papermc.paper.enchantments.EnchantmentRarity;
 import me.devvy.leveled.enchantments.EnchantmentManager;
 import me.devvy.leveled.events.PlayerDealtMeleeDamageEvent;
 import me.devvy.leveled.util.ToolTypeHelpers;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
+import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 
 public class EnchantBerserk extends Enchantment implements Listener {
 
@@ -24,8 +31,43 @@ public class EnchantBerserk extends Enchantment implements Listener {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "Berkserk";
+    }
+
+    @Override
+    public @NotNull Component displayName(int level) {
+        return Component.text(getName());
+    }
+
+    @Override
+    public boolean isTradeable() {
+        return true;
+    }
+
+    @Override
+    public boolean isDiscoverable() {
+        return true;
+    }
+
+    @Override
+    public @NotNull EnchantmentRarity getRarity() {
+        return EnchantmentRarity.UNCOMMON;
+    }
+
+    @Override
+    public float getDamageIncrease(int level, @NotNull EntityCategory entityCategory) {
+        return 0;
+    }
+
+    @Override
+    public @NotNull Set<EquipmentSlot> getActiveSlots() {
+        return Collections.singleton(EquipmentSlot.CHEST);
+    }
+
+    @Override
+    public @NotNull String translationKey() {
+        return getName();
     }
 
     @Override
@@ -39,7 +81,7 @@ public class EnchantBerserk extends Enchantment implements Listener {
     }
 
     @Override
-    public EnchantmentTarget getItemTarget() {
+    public @NotNull EnchantmentTarget getItemTarget() {
         return EnchantmentTarget.WEAPON;
     }
 
@@ -54,7 +96,7 @@ public class EnchantBerserk extends Enchantment implements Listener {
     }
 
     @Override
-    public boolean conflictsWith(Enchantment enchantment) {
+    public boolean conflictsWith(@NotNull Enchantment enchantment) {
         return false;
     }
 

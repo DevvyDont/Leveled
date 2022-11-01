@@ -3,6 +3,7 @@ package me.devvy.leveled.mobs;
 import me.devvy.leveled.Leveled;
 import me.devvy.leveled.listeners.monitors.PlayerNametags;
 import me.devvy.leveled.mobs.custommobs.CustomLeveledEntityType;
+import me.devvy.leveled.util.DamageEquationHelpers;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -422,7 +423,7 @@ public class LeveledLivingEntity {
      */
     public static double calculateEntityHealth(LivingEntity entity, int level){
 
-        double baseHP =  level * level + 40;
+        double baseHP = DamageEquationHelpers.getExpectedEHPAtLevel(level);
 
         double multiplier;
 
@@ -515,6 +516,7 @@ public class LeveledLivingEntity {
             case IRON_GOLEM:
             case HOGLIN:
             case ZOGLIN:
+            case GLOW_SQUID:
                 multiplier = 1.35;
                 break;
 
